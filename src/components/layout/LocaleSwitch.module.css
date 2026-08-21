@@ -1,0 +1,33 @@
+.root {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-nav);
+  letter-spacing: var(--tracking-nav);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+}
+
+.divider {
+  width: 1px;
+  height: 0.9em;
+  margin-inline: var(--space-3);
+  background-color: currentColor;
+  opacity: 0.5;
+}
+
+.button {
+  color: var(--fg);
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.button[data-active] {
+  color: var(--accent);
+}
+
+.button:hover:not([data-active]) {
+  opacity: 0.6;
+}

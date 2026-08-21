@@ -1,0 +1,53 @@
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* Capa de filetes verticales. Detrás del contenido: caen sobre los márgenes de la
+   retícula, donde no hay nada, pero así nunca se dibujan encima de un logo. */
+.rules {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.rules > * {
+  height: 100%;
+}
+
+.rulesInner {
+  height: 100%;
+  margin-inline: var(--container-margin);
+  border-inline: 1px solid var(--rule);
+}
+
+/* Bandas a sangre: el filete cruza de un borde del viewport al otro, aunque el
+   contenido de dentro esté acotado. */
+.band {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.band[data-rule='bottom'] {
+  border-bottom: 1px solid var(--rule);
+}
+
+.band[data-rule='top'] {
+  border-top: 1px solid var(--rule);
+}
+
+.main {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  /* Absorbe la altura que sobra entre las dos bandas. */
+  flex: 1;
+  /* Sin esto, un hijo alto estira el contenedor y la barra inferior se va fuera
+     de pantalla en vez de quedarse al fondo. */
+  min-height: 0;
+}

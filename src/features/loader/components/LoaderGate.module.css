@@ -1,0 +1,10 @@
+.content {
+  /* Oculto pero montado: el navegador ya hizo layout y decodificó imágenes, así
+     que al revelarse no hay reflow ni imágenes a medio pintar.
+     Sin fundido: lo que descubre el contenido es la malla de píxeles. */
+  visibility: hidden;
+}
+
+.content[data-visible] {
+  visibility: visible;
+}

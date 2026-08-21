@@ -1,0 +1,12 @@
+white: #FFFFF4
+dark: #001D09
+green-base: #00B000
+green: #8FE200
+green-soft: #9DE250
+light: #F7FFD2
+dark-blue: #041DA2
+blue: #005BE8
+light-blue: #65A1FF
+yellow: #FFCA2C
+red: #F60015
+aqua: #61DDAF

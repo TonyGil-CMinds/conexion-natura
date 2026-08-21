@@ -1,0 +1,111 @@
+/**
+ * Design tokens — única fuente de verdad para color, tipografía y ritmo.
+ * Los valores de color vienen de la paleta de marca (_assets-src/colores.txt).
+ */
+:root {
+  /* Paleta de marca */
+  --color-white: #fffff4;
+  --color-dark: #001d09;
+  --color-green-base: #00b000;
+  --color-green: #8fe200;
+  --color-green-soft: #9de250;
+  --color-light: #f7ffd2;
+  --color-dark-blue: #041da2;
+  --color-blue: #005be8;
+  --color-light-blue: #65a1ff;
+  --color-yellow: #ffca2c;
+  --color-red: #f60015;
+  --color-aqua: #61ddaf;
+
+  /* Roles semánticos — tema oscuro */
+  --bg: var(--color-dark);
+  --fg: var(--color-light);
+  --accent: var(--color-green);
+  /* Líneas de retícula: el mismo tono del texto, muy rebajado. */
+  --rule: color-mix(in srgb, var(--fg) 16%, transparent);
+
+  /* Tipografía */
+  --font-sans: var(--font-host-grotesk), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-departure-mono), ui-monospace, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.5rem;
+
+  /**
+   * Escala del hero, derivada del diseño a 1280 px de ancho.
+   * Departure Mono: avance/em 0.6364, capHeight/em 0.7273 (leídos del .otf), así
+   * que estos valores reproducen los anchos y alturas medidos en la referencia.
+   * El tramo vw mantiene la proporción: al ser monoespaciada, el H1 conserva su
+   * medida de línea en cualquier ancho.
+   */
+  /* Titular de 3 líneas: cuerpo menor e interlínea corta respecto al de 2. */
+  --text-display: clamp(2rem, 5.94vw, 4.75rem); /* 76px @1280 */
+  --text-cta: clamp(1.0625rem, 1.95vw, 1.5625rem); /* 25px @1280 */
+  --text-nav: 0.9375rem; /* 15px */
+  --text-eyebrow: 0.875rem; /* 14px */
+  --text-caption: 0.5625rem; /* 9px */
+
+  --tracking-nav: 0.05em;
+  --tracking-display: 0.03em;
+  --tracking-eyebrow: 0.02em;
+  --tracking-cta: 0.145em;
+  --tracking-caption: 0.06em;
+
+  /* Espaciado — escala de 4px */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Radios */
+  --radius-cta: 12px;
+
+  /* Layout */
+  /* Margen interior de los bloques a pantalla completa (loader). */
+  --gutter: clamp(1.25rem, 4vw, 4rem);
+  /* Tope del contenido: más allá, la composición se estira y el titular se
+     separa demasiado de la criatura. */
+  --content-max: 1600px;
+  --container-margin: 44px;
+  --container-pad: 51px;
+  --header-height: 94px;
+  /* Ancho de las celdas laterales de la cabecera (logo / idioma). */
+  --header-side: 187px;
+
+  --z-header: 50;
+  --z-loader: 100;
+  --z-transition: 110;
+
+  /* Movimiento */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 240ms;
+  --duration-base: 600ms;
+  --duration-slow: 1200ms;
+  /* Ciclo del degradado del botón: lento, tiene que leerse como una marea. */
+  --duration-flow: 12s;
+}
+
+/* En pantallas estrechas el margen de la retícula se come el ancho útil. */
+@media (max-width: 640px) {
+  :root {
+    --container-margin: 16px;
+    --header-height: 72px;
+  }
+}
+
+/* Tema claro — el del hero. */
+[data-theme='light'] {
+  --bg: var(--color-light);
+  --fg: var(--color-dark);
+  --accent: var(--color-green-base);
+  --rule: color-mix(in srgb, var(--fg) 14%, transparent);
+}

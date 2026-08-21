@@ -1,0 +1,19 @@
+.root {
+  position: relative;
+  width: 100%;
+  /* Decorativo: no intercepta el puntero. La repulsión se calcula desde la
+     posición del puntero en la ventana, no desde eventos sobre la malla. */
+  pointer-events: none;
+}
+
+.pixel {
+  position: absolute;
+  display: block;
+  /* Visible por defecto a propósito: quien lo apaga antes de la entrada es el
+     hook, ya en el cliente. Si el CSS lo apagara, un fallo de JavaScript dejaría
+     el colibrí invisible para siempre. */
+  /* La repulsión escribe `transform` directamente; sin transición para que el
+     suavizado lo gobierne el ticker y no dos curvas a la vez.
+     Sin `will-change`: son 345 nodos y promoverlos todos a capa propia de forma
+     permanente cuesta memoria de GPU. El translate3d ya promociona al moverse. */
+}

@@ -1,0 +1,63 @@
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* Ocupa el hueco entre las dos bandas del armazón. */
+  flex: 1;
+  margin-inline: var(--container-margin);
+  /* El colibrí desborda por abajo: se recorta aquí, no en el body. */
+  overflow: hidden;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 88px var(--container-pad) 0;
+}
+
+.cta {
+  margin-top: 2.5rem;
+}
+
+/* Los logos se van al fondo del bloque de contenido, no a un punto fijo. */
+.partners {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 38px;
+  margin-top: auto;
+  padding-block: var(--space-12) var(--container-pad);
+}
+
+.partnerGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.partnerLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-caption);
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.partnerList {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .content {
+    padding: var(--space-12) var(--space-6) 0;
+  }
+
+  .partners {
+    gap: var(--space-8);
+  }
+}

@@ -1,0 +1,48 @@
+@import './tokens.css';
+@import './reset.css';
+
+html {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  /* Renderizado de fuente pedido por diseño: trazos finos, sin engrosado. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100dvh;
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+p {
+  max-width: 62ch;
+  text-wrap: pretty;
+}
+
+/* Píxel art / secuencias: nunca interpolar al escalar. */
+.pixelated {
+  image-rendering: pixelated;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

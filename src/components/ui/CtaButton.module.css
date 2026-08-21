@@ -1,0 +1,131 @@
+.root {
+  position: relative;
+  display: block;
+  width: min(617px, 100%);
+}
+
+/* Sombra dura: misma caja y mismo radio que el botón, justo detrás. En reposo
+   queda oculta debajo; el hover la descubre al desplazar el botón. */
+.shadow {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-cta);
+  background-color: var(--color-yellow);
+}
+
+.button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+  min-height: 137px;
+  /* Asimétrico como en el diseño: el icono queda más cerca del borde. */
+  padding-inline: 50px 32px;
+  border-radius: var(--radius-cta);
+  /* Opaco: es lo que mantiene la sombra invisible en reposo. */
+  background-color: var(--color-green-base);
+  color: var(--color-light);
+  /* Recorta el degradado al radio. */
+  overflow: hidden;
+  transition: transform var(--duration-fast) var(--ease-out-expo);
+}
+
+/**
+ * Degradado del hover, en movimiento lento.
+ *
+ * Los topes van A → B → A y el mosaico mide el doble del botón, así que al
+ * desplazar la posición de fondo un mosaico completo el patrón vuelve a coincidir
+ * consigo mismo y el bucle no da salto. Con un degradado de dos topes (A → B) el
+ * reinicio se vería como un corte.
+ *
+ * En reposo del hover la ventana visible muestra justo la primera mitad del
+ * mosaico, o sea el degradado del diseño: verde base a la izquierda, verde claro
+ * a la derecha.
+ */
+.gradient {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    100deg,
+    var(--color-green-base) 0%,
+    var(--color-green) 50%,
+    var(--color-green-base) 100%
+  );
+  background-size: 200% 100%;
+  background-position: 0% 50%;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out-expo);
+  animation: flow var(--duration-flow) linear infinite;
+  /* Detenido mientras no se ve: animar una capa invisible solo gasta repintado.
+     Al pausar en vez de quitar la animación, un segundo hover la retoma donde
+     iba en lugar de volver al principio. */
+  animation-play-state: paused;
+}
+
+@keyframes flow {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    /* Un mosaico exacto: cualquier otro valor deja el patrón desalineado. */
+    background-position: 200% 50%;
+  }
+}
+
+.label {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: var(--text-cta);
+  letter-spacing: var(--tracking-cta);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.icon {
+  position: relative;
+  flex-shrink: 0;
+  width: 27px;
+  height: 27px;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition:
+    opacity var(--duration-fast) var(--ease-out-expo),
+    transform var(--duration-fast) var(--ease-out-expo);
+}
+
+/* El estado va en el enlace, no en el contenedor: así lo activan tanto el ratón
+   como el foco de teclado. */
+.button:hover,
+.button:focus-visible {
+  transform: translate(7px, -7px);
+}
+
+.button:hover .gradient,
+.button:focus-visible .gradient {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+.button:hover .icon,
+.button:focus-visible .icon {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 4px;
+}
+
+.button:active {
+  transform: translate(0, 0);
+}
+
+@media (max-width: 640px) {
+  .button {
+    min-height: 104px;
+    padding-inline: var(--space-6) var(--space-4);
+    gap: var(--space-4);
+  }
+}

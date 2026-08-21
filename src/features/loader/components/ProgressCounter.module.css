@@ -1,0 +1,24 @@
+.root {
+  display: flex;
+  align-items: baseline;
+  gap: 0.14em;
+  font-family: var(--font-mono);
+  font-size: clamp(3.5rem, 9vw, 7rem);
+  line-height: 0.85;
+  letter-spacing: 0.02em;
+  color: var(--color-light);
+  /* La captura de referencia muestra trazos finos: sin engrosado del subpíxel. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.value {
+  /* Ancho fijo para que 0 → 100 no desplace el símbolo de porcentaje. */
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+  min-width: 1.2ch;
+}
+
+.unit {
+  opacity: 0.9;
+}

@@ -1,0 +1,12 @@
+.char {
+  /* En bloque en línea para que el glifo pueda cambiar sin reajustar la línea:
+     la fuente es monoespaciada, así que todos ocupan lo mismo. */
+  display: inline-block;
+  white-space: pre;
+}
+
+/* Mientras se revuelve, el carácter pierde algo de peso visual: ayuda a leer el
+   movimiento como transición y no como texto definitivo. */
+.char[data-scrambling] {
+  opacity: 0.55;
+}

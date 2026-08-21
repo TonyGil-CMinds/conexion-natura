@@ -1,0 +1,76 @@
+.root {
+  position: relative;
+  z-index: var(--z-header);
+  display: grid;
+  grid-template-columns: var(--header-side) 1fr var(--header-side);
+  height: var(--header-height);
+  margin-inline: var(--container-margin);
+  /* El filete inferior lo dibuja la banda de PageFrame, que va a sangre.
+     Sin fondo propio: es del mismo color que la página y solo servía para tapar
+     los filetes verticales, que tienen que llegar hasta el borde superior. Si la
+     cabecera pasa a ser fija habrá que devolvérselo y subir la capa de filetes. */
+}
+
+.logoCell,
+.navCell,
+.controlsCell {
+  display: flex;
+  align-items: center;
+}
+
+.logoCell {
+  justify-content: center;
+  border-right: 1px solid var(--rule);
+}
+
+.navCell {
+  justify-content: center;
+}
+
+.controlsCell {
+  justify-content: center;
+  gap: var(--space-10);
+  border-left: 1px solid var(--rule);
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+}
+
+.navLink {
+  font-family: var(--font-mono);
+  font-size: var(--text-nav);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  color: var(--fg);
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.navLink:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .root {
+    grid-template-columns: 1fr auto;
+    height: 72px;
+  }
+
+  /* Los enlaces se ocultan: el menú compacto todavía no está diseñado. */
+  .navCell {
+    display: none;
+  }
+
+  .logoCell {
+    justify-content: flex-start;
+    padding-left: var(--space-4);
+    border-right: none;
+  }
+
+  .controlsCell {
+    gap: var(--space-6);
+    padding-inline: var(--space-4);
+  }
+}

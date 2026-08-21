@@ -1,0 +1,24 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-transition);
+  display: grid;
+  /* La malla desborda a propósito: la última columna/fila se recorta en lugar de
+     dejar una franja sin cubrir. */
+  justify-content: start;
+  align-content: start;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cell {
+  display: block;
+  /* El cuadro es menor que su celda y queda centrado: así la malla tiene huecos,
+     como la del colibrí, en vez de ser un mosaico continuo. */
+  width: var(--pixel-size);
+  height: var(--pixel-size);
+  margin: auto;
+  transform: scale(0);
+  /* Sin will-change: son cientos de nodos y promoverlos todos a capa propia
+     agota memoria de GPU. GSAP ya fuerza transform 3D en el tween. */
+}

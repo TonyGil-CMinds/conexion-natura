@@ -1,0 +1,48 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-loader);
+  background-color: var(--color-dark);
+  overflow: hidden;
+}
+
+/* Glifo centrado en el viewport. */
+.mark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(120px, 14vw, 181px);
+}
+
+.mark > svg {
+  width: 100%;
+  height: auto;
+}
+
+/* Contador abajo a la izquierda. */
+.counter {
+  position: absolute;
+  bottom: var(--gutter);
+  left: var(--gutter);
+}
+
+/* Secuencia abajo a la derecha. */
+.sequence {
+  position: absolute;
+  bottom: var(--gutter);
+  right: var(--gutter);
+  width: clamp(160px, 19vw, 240px);
+}
+
+.sequence > div {
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 240 / 200;
+}
+
+@media (max-width: 640px) {
+  .sequence {
+    width: 45vw;
+  }
+}

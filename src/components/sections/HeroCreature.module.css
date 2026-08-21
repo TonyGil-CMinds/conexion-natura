@@ -1,0 +1,16 @@
+.root {
+  position: absolute;
+  /* Deja respirar el filete derecho de la retícula. */
+  right: 16px;
+  /* Arranca justo debajo de la cabecera y desborda el hero por abajo. */
+  /* Pegado bajo la cabecera; desborda el hero por abajo. */
+  top: 0;
+  width: 476px;
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .root {
+    display: none;
+  }
+}

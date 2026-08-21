@@ -1,0 +1,5 @@
+.root {
+  overflow: visible;
+  /* El relleno se mueve por atributo, no por CSS: la suavidad la da GSAP
+     al interpolar el progreso, así que aquí no hace falta transición. */
+}
