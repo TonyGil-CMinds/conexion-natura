@@ -15,12 +15,12 @@ npm run lint
 
 ```
 src/
-├─ app/                      Rutas (App Router): `/` y `/faq`. Solo composición.
+├─ app/                      Rutas: `/`, `/agenda`, `/speakers`, `/faq`.
 ├─ components/
 │  ├─ layout/                PageFrame, PageShell, SiteHeader, ThemeToggle, LocaleSwitch
-│  ├─ sections/              Hero (+ Headline, Media, Countdown), Faq
-│  └─ ui/                    CtaButton, ScrambleText
-├─ config/                   site.ts y faq.ts: copy fuera de los componentes
+│  ├─ sections/              Hero, Faq, PageCover, PageIntro
+│  └─ ui/                    CtaButton, ScrambleText, PixelMosaic, EmptyState
+├─ config/                   site.ts, faq.ts, pages.ts: copy fuera de los componentes
 ├─ features/
 │  ├─ hero-creature/         Colibrí por píxeles: estroboscopio + magnetismo
 │  ├─ transitions/pixel-reveal/  PixelReveal + usePixelGrid
@@ -277,6 +277,78 @@ El color (#A2E136) viene dentro del SVG y no de un token; es un verde que no est
 en `colores.txt` (el más cercano es green-soft #9DE250). Si tiene que responder al
 tema, hay que pasar el archivo a `mask-image` y pintarlo con una variable.
 
+## Páginas interiores (Agenda y Ponentes)
+
+`/agenda` compone `PageCover` + `EmptyState`; `/speakers`, `PageCover` +
+`PageIntro`. El copy de las dos está en `src/config/pages.ts`.
+
+La ruta de ponentes es `/speakers` y su rótulo en el menú "Ponentes": el idioma de
+la URL y el del contenido no tienen que coincidir.
+
+### Portada
+
+`PageCover` monta la fotografía a sangre (`100vw`, recortada con
+`object-fit: cover`), el mosaico de píxeles encima, y el rótulo dentro de un panel
+de color alineado al filete de la retícula.
+
+| Prop | Qué hace |
+|---|---|
+| `tone` | Color de acento: `yellow` (agenda) o `lime` (ponentes) |
+| `seed` | Patrón del mosaico |
+| `density` | Proporción de celdas con color |
+| `hasGradientBlock` | Bloque en escalera con degradado, al borde derecho |
+
+El tono viaja como variable CSS (`--cover-accent`), así que el mosaico no conoce
+la paleta de cada página: le basta el color que le pasa la portada.
+
+### Bloque en degradado (Ponentes)
+
+`asset-escalera.svg` (429×435), apoyado en la esquina inferior derecha de la
+portada con `background-size: auto 100%`: se ajusta a la altura y el ancho lo pone
+la proporción del asset. A 1280×832 da los 428×432 del diseño.
+
+Va como imagen de fondo y no como máscara sobre un degradado propio: el asset trae
+su forma y su degradado ya resueltos (lima a azul, en diagonal), así que no hay
+nada que recomponer.
+
+### Mosaico
+
+`PixelMosaic` reparte celdas: la mayoría transparentes (dejan ver la foto), unas
+en amarillo y otras del color de fondo. Va **sin JavaScript**: las celdas se emiten
+en orden y la retícula las coloca con `auto-fill`. Medir el viewport para calcular
+filas y columnas obligaría a un componente de cliente para algo decorativo.
+
+Dos detalles que costaron una vuelta:
+
+- Las columnas van con `minmax(var(--mosaic-cell), 1fr)`, no con pista fija. Con
+  pista fija, `auto-fill` cabe un número entero de celdas y deja el resto del
+  ancho sin cubrir — hasta 85px de foto sin mosaico en el borde derecho.
+- `--mosaic-cell` **escala con el ancho** (`clamp(52px, 6.7vw, 130px)`). Con lado
+  fijo, el número de columnas crece con la pantalla, el mosaico se densifica y el
+  patrón deja de ser el elegido. Con 6.7vw el recuento se mantiene en 14 columnas
+  de 1280 a 1920, y a 1280 la celda mide los 86px del diseño.
+
+### La semilla
+
+El patrón sale de `createRandom(seed)`, nunca de `Math.random()`: si no, servidor y
+cliente generarían mosaicos distintos y React reportaría desajuste.
+
+La semilla (13) se eligió barriendo las 400 primeras con tres criterios: entre 12 y
+18 celdas amarillas, repartidas entre las dos mitades, y **ninguna asomando junto
+al panel del rótulo** — una celda amarilla en el borde del panel lo convierte en
+una escalera y parece un error de maquetación. Solo 4 de 400 semillas cumplían las
+tres. El barrido se hizo simulando el reparto en texto, no a base de capturas.
+
+### Estado vacío
+
+`EmptyState` (agenda) centra el aviso y el separador en el hueco que queda bajo la
+portada. El separador es decorativo (`alt=""`); el aviso informa, así que va como
+texto.
+
+`PageIntro` (ponentes) reparte titular y apoyo en dos columnas `1.4fr 1fr`,
+alineadas **por arriba**: el titular tiene tres líneas y el apoyo dos, y centrarlas
+dejaría el icono flotando a media altura.
+
 ## FAQ
 
 Página propia en `/faq` (`src/app/faq/page.tsx`), componente en
@@ -475,8 +547,15 @@ virtual solo avanza cuando la página está inactiva y aquí nunca lo está.
   ámbar y negro, no la paleta.
 - `LocaleSwitch` solo guarda el estado visual: no hay traducciones ni enrutado
   por idioma.
-- `/#agenda` y `/#ponentes` apuntan a secciones que todavía no existen en la
-  portada.
+- **El mosaico de las portadas está generado**, no es el asset del diseño: las
+  referencias muestran patrones concretos que no se entregaron. Si llegan los SVG,
+  se colocan tal cual y las semillas dejan de hacer falta.
+- `speakers-portada.png` también mide 1280×430: mismo problema de nitidez por
+  encima de ese ancho.
+- La semilla está afinada para desktop (14 columnas). En móvil el recuento cambia,
+  el patrón se recompone y una celda puede volver a caer junto al panel.
+- `agenda-portada.png` mide 1280×430: por encima de ese ancho se amplía y pierde
+  nitidez. Convendría una versión a 2x.
 - El tema claro funciona a nivel de tokens, pero el diseño es el oscuro.
 - `ThemeToggle` no persiste la elección. Hacerlo pide un script en línea que
   aplique el tema antes del primer pintado, o la página parpadea al recargar.

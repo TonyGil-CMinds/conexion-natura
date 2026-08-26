@@ -1,0 +1,18 @@
+.root {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  /* `minmax` y no una pista fija: con pista fija, `auto-fill` cabe un número
+     entero de celdas y deja el resto del ancho sin cubrir — hasta 85px de foto
+     sin mosaico en el borde derecho. Estirando, las columnas llegan al borde. */
+  grid-template-columns: repeat(auto-fill, minmax(var(--mosaic-cell), 1fr));
+  grid-auto-rows: var(--mosaic-cell);
+  /* Las celdas de sobra se recortan: se emiten de más para cubrir pantallas
+     anchas sin tener que medir el viewport. */
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cell {
+  display: block;
+}

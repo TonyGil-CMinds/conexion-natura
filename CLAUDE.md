@@ -20,7 +20,7 @@ Tailwind), GSAP, Framer Motion, react-three-fiber.
 
 ## Rutas
 
-`/` (portada) y `/faq`. El armazón (`PageFrame` + `SiteHeader`) se compone en cada
+`/` (portada), `/agenda`, `/speakers` y `/faq`. El armazón (`PageFrame` + `SiteHeader`) se compone en cada
 página, no en el layout raíz: solo la portada va envuelta en `LoaderGate`, porque
 el loader es la entrada al sitio y no un peaje en cada ruta.
 
@@ -100,6 +100,18 @@ después la animación, en orden invertido.
 
 Quien apaga un elemento antes de su entrada es el cliente, no el CSS: si el CSS lo
 apagara, un fallo de JavaScript lo dejaría invisible para siempre.
+
+## Portadas de página
+
+`PageCover` + `PixelMosaic` + `EmptyState` / `PageIntro` son la base de las páginas
+interiores. El color de acento viaja como variable CSS (`--cover-accent`): el
+mosaico no conoce la paleta de cada página.
+El mosaico no mide el viewport: emite celdas y las coloca con `auto-fill` sobre
+columnas `minmax(--mosaic-cell, 1fr)`. La celda escala con el ancho para que el
+recuento de columnas —y por tanto el patrón— no cambie entre 1280 y 1920.
+
+Al añadir una portada, elegir la semilla comprobando que ninguna celda de color
+asome junto al panel del rótulo: convierte el panel en una escalera.
 
 ## Assets
 

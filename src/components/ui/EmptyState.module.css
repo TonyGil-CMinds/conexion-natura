@@ -1,0 +1,25 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  /* Ocupa el hueco que queda bajo la portada y se centra en él. */
+  flex: 1;
+  justify-content: center;
+  padding: var(--space-16) var(--container-margin);
+}
+
+.label {
+  max-width: none;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.separator {
+  width: 81px;
+  height: 24px;
+}

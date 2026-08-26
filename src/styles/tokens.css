@@ -57,6 +57,8 @@
   --text-eyebrow: 1.25rem; /* 20px */
   --text-meta: 1.125rem; /* 18px — sede */
   --text-note: 0.8125rem; /* 13px — cupo, invitación, cuenta atrás */
+  /* Rótulo de portada de página (Agenda). */
+  --text-cover: clamp(2.25rem, 4.84vw, 3.875rem); /* 62px @1280 */
   /* Rótulo de sección (FAQ). */
   --text-section: clamp(2.5rem, 6.72vw, 5.375rem); /* 86px @1280 */
   /* Acordeón: pregunta y respuesta van en Host Grotesk. */
@@ -106,6 +108,14 @@
   /* Tope del contenido: más allá, la composición se estira y el titular se
      separa demasiado de la criatura. */
   --content-max: 1600px;
+  /**
+   * Lado de la celda del mosaico de portada. Escala con el ancho a propósito: con
+   * un lado fijo, el número de columnas crece con la pantalla, el mosaico se
+   * densifica y el patrón deja de ser el elegido — incluidas las celdas junto al
+   * panel del rótulo. Con 6.7vw el recuento de columnas se mantiene en 14 desde
+   * 1280 hasta 1920. A 1280 da los 86px del diseño.
+   */
+  --mosaic-cell: clamp(52px, 6.7vw, 130px);
   --container-margin: 88px;
   --container-pad: 51px;
   --header-height: 88px;

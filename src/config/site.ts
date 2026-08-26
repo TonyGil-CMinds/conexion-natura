@@ -40,8 +40,8 @@ export const SITE = {
 /** `highlight` pinta el enlace con el color de acento: es una llamada a la acción
  *  dentro del menú, no un estado de selección. */
 export const NAV_LINKS = [
-  { label: 'Agenda', href: '/#agenda' },
-  { label: 'Ponentes', href: '/#ponentes' },
+  { label: 'Agenda', href: '/agenda' },
+  { label: 'Ponentes', href: '/speakers' },
   { label: 'FAQ', href: '/faq' },
   { label: 'Regístrate', href: '/#registro', highlight: true },
 ] as const;
