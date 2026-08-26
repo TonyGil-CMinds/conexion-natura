@@ -1,0 +1,69 @@
+.root {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  /* Un viewport de ancho, centrado sobre el contenedor: el contenedor está
+     centrado, así que esto equivale al ancho de la pantalla. */
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+  /* Al fondo: el texto del hero pasa por encima. */
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Campo de píxeles: pegado al borde derecho de la pantalla. */
+.field {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 733px;
+  height: auto;
+}
+
+/**
+ * El tamaño se fija por altura y no por ancho: lo que limita al ave es el hueco
+ * libre hasta el borde inferior, y eso depende del alto del viewport. Midiéndola
+ * en `vw` crecía sin control en pantallas anchas.
+ */
+.birdFrame {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  /* Por delante del contenido: el ave cruza el rótulo, no al revés. */
+  z-index: 2;
+  height: clamp(480px, 68vh, 860px);
+}
+
+.bird {
+  display: block;
+  width: auto;
+  height: 100%;
+}
+
+/* Suelo: funde el bajo de la foto con el fondo para que el corte del encuadre no
+   se vea. Va por delante del ave y a todo el ancho, porque un borde vertical se
+   notaría al cruzar los cuadros del campo. */
+.floor {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+  height: 210px;
+  background-image: linear-gradient(to top, var(--bg) 0%, transparent 100%);
+}
+
+@media (max-width: 900px) {
+  .field {
+    width: 90%;
+  }
+
+  .birdFrame {
+    height: 46vh;
+  }
+
+  .floor {
+    height: 160px;
+  }
+}

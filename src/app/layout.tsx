@@ -10,16 +10,15 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#F7FFD2',
+  themeColor: '#001D09',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    // El tema arranca en claro, que es el del diseño. El loader es oscuro por
-    // sí mismo: usa los colores de marca directamente, no los roles del tema.
+    // El tema arranca en oscuro, que es el del diseño. Los roles semánticos de
+    // tokens.css ya son los del tema oscuro, así que no hace falta atributo.
     <html
       lang="es"
-      data-theme="light"
       className={`${hostGrotesk.variable} ${departureMono.variable}`}
     >
       <body>{children}</body>

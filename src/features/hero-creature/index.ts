@@ -1,3 +1,3 @@
-export { PixelSprite } from './components/PixelSprite';
-export { COLIBRI_SPRITE } from './config/colibri';
+export { PixelField } from './components/PixelField';
+export { PIXEL_FIELD } from './config/pixelField';
 export { CREATURE_CONFIG } from './config/creature.config';

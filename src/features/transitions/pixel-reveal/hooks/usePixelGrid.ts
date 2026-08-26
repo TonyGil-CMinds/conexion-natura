@@ -1,12 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createRandom, weightedPick } from '@/lib/random';
-import {
-  PIXEL_PALETTE,
-  PIXEL_REVEAL_CONFIG,
-  paletteWeights,
-} from '../config/pixelReveal.config';
+import { createRandom } from '@/lib/random';
+import { PIXEL_REVEAL_CONFIG, cellColor } from '../config/pixelReveal.config';
 
 export type PixelCell = {
   key: string;
@@ -47,7 +43,6 @@ function buildGrid(width: number, height: number, seed: number): PixelGrid {
 
   for (let row = 0; row < rows; row += 1) {
     const depth = rows === 1 ? 1 : row / (rows - 1);
-    const weights = paletteWeights(depth);
 
     for (let col = 0; col < cols; col += 1) {
       cells.push({
@@ -55,7 +50,7 @@ function buildGrid(width: number, height: number, seed: number): PixelGrid {
         row,
         col,
         depth,
-        color: weightedPick(PIXEL_PALETTE, weights, random()),
+        color: cellColor(depth, random()),
         offset: random() * jitter,
       });
     }

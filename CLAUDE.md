@@ -18,12 +18,28 @@ Tailwind), GSAP, Framer Motion, react-three-fiber.
 - Fuentes vía `next/font` en `src/fonts/index.ts`. Host Grotesk para texto,
   Departure Mono solo para acentos tipo loader.
 
+## Rutas
+
+`/` (portada) y `/faq`. El armazón (`PageFrame` + `SiteHeader`) se compone en cada
+página, no en el layout raíz: solo la portada va envuelta en `LoaderGate`, porque
+el loader es la entrada al sitio y no un peaje en cada ruta.
+
+El indicador del navbar sale de `usePathname()`. Los enlaces con ancla
+(`/#agenda`) no pueden estar seleccionados: una ancla no es un destino.
+
 ## Ancho de página
 
 El contenido va en `PageShell` (`--content-max`, 1600px, centrado). Lo que va a
 pantalla completa queda fuera: loader y transición de píxeles. Acotar la
 transición dejaría los laterales sin cubrir en el momento en que tapa el cambio
 de contenido.
+
+La capa de filetes arranca bajo la cabecera: el navbar va sin verticales.
+
+Lo que tiene que sangrar a pantalla completa desde dentro del contenido acotado
+(capa de medios, cinta de la cuenta atrás) usa `width: 100vw; left: 50%;
+transform: translateX(-50%)`, y el recorte lo pone `PageFrame` con `overflow-x:
+clip`. Un `overflow: hidden` en la sección cortaría al ancho del contenido.
 
 Los filetes de la retícula los dibuja `PageFrame`, no los componentes: como
 bordes propios se cortan donde acaba el contenido acotado. Las horizontales van
@@ -42,14 +58,20 @@ de hidratación.
 
 ## Retícula y tipografía
 
-Los valores de la retícula (`--container-margin`, `--container-pad`,
-`--header-height`, `--header-side`) y la escala del hero viven en tokens.css.
+Los valores de la retícula (`--container-margin` 88px, `--header-height` 88px,
+`--header-side` 222px, `--cta-width` 328px) y la escala del hero viven en
+tokens.css. Hay cuatro
+filetes verticales: los dos bordes del contenedor y dos interiores a
+`--header-side` de cada lado.
 Los cuerpos del hero se despejaron de las métricas reales de Departure Mono
 (avance/em 0.6364, capHeight/em 0.7273): si hay que ajustar tamaños, se calcula
 con esas proporciones, no a ojo.
 
-Host Grotesk para párrafos y textos corridos. Departure Mono para el hero, el
-loader y datos: son los casos puntuales.
+Host Grotesk para párrafos y textos corridos (FAQ, cuerpos de texto). Departure
+Mono para el hero, el loader, rótulos de sección y datos: son los casos puntuales.
+
+El titular se define por **tramos**, no por líneas (`SITE.event.headline`): el
+resalte cae a mitad de línea, así que el color es decisión de diseño por tramo.
 
 ## Verificación visual
 
@@ -57,6 +79,13 @@ loader y datos: son los casos puntuales.
 instantes concretos y volca la consola. Para revisar animaciones hay que usar
 esto y no `chrome --screenshot --virtual-time-budget`: el tiempo virtual solo
 avanza cuando la página está inactiva, y con GSAP corriendo nunca lo está.
+
+## Ritmo vertical del hero
+
+Los huecos del hero son tokens (`--hero-*`) con escalones por **altura** de
+viewport: el hero tiene que caber en una pantalla, así que en portátiles se
+aprieta en vez de dejar crecer la página. Al añadir elementos al hero, su hueco
+va como token y entra en esos escalones.
 
 ## Animaciones de entrada
 
@@ -74,8 +103,10 @@ apagara, un fallo de JavaScript lo dejaría invisible para siempre.
 
 ## Assets
 
-Los SVG de píxeles se convierten a mapas de celdas en build
-(`node scripts/svg-to-pixels.js`), no se parsean en runtime.
+Los SVG de píxeles se convierten a mapas de celdas en build, no se parsean en
+runtime: `scripts/svg-to-pixels.js` para los que traen un rect por cuadro y
+`scripts/svg-polygons-to-pixels.js` para los que vienen como polígonos en
+escalera (recupera las celdas muestreando el centro de cada casilla).
 
 Los originales quedan en `_assets-src/` (referencia, incluida la paleta en
 `colores.txt`). Lo que se sirve va en `public/`, agrupado por uso.

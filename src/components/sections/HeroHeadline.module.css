@@ -1,20 +1,29 @@
 .root {
   display: flex;
   flex-direction: column;
-  /* Casi sin margen: la interlínea ya deja aire sobre la caja alta. */
-  margin-top: 2px;
-  /* Alineación óptica: el lateral izquierdo del glifo deja aire que descuadra el
-     titular respecto al borde del botón. */
-  margin-left: -0.05em;
   font-family: var(--font-mono);
   font-size: var(--text-display);
   font-weight: 400;
-  line-height: 1.05;
+  line-height: 1.31;
+  margin-top: var(--hero-gap-headline);
   letter-spacing: var(--tracking-display);
   text-transform: uppercase;
   color: var(--fg);
+  /* El titular desborda su columna a propósito: cruza el filete central. */
+  max-width: none;
 }
 
 .line {
   display: block;
+  white-space: nowrap;
+}
+
+.accent {
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .line {
+    white-space: normal;
+  }
 }

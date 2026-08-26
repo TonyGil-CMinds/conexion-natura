@@ -15,12 +15,12 @@ npm run lint
 
 ```
 src/
-├─ app/                      Rutas (App Router). Solo composición, sin lógica.
+├─ app/                      Rutas (App Router): `/` y `/faq`. Solo composición.
 ├─ components/
 │  ├─ layout/                PageFrame, PageShell, SiteHeader, ThemeToggle, LocaleSwitch
-│  ├─ sections/              Hero, HeroHeadline, HeroCreature, HeroMeta
+│  ├─ sections/              Hero (+ Headline, Media, Countdown), Faq
 │  └─ ui/                    CtaButton, ScrambleText
-├─ config/                   site.ts: copy, nav, socios (fuera de los componentes)
+├─ config/                   site.ts y faq.ts: copy fuera de los componentes
 ├─ features/
 │  ├─ hero-creature/         Colibrí por píxeles: estroboscopio + magnetismo
 │  ├─ transitions/pixel-reveal/  PixelReveal + usePixelGrid
@@ -83,26 +83,113 @@ Uso:
 </LoaderGate>
 ```
 
-## Hero: criatura de píxeles y titular
+## Hero
 
-### Mapa de píxeles
+`src/components/sections/`: `Hero` compone, y cada pieza se ocupa de lo suyo —
+`HeroHeadline` (titular), `HeroMedia` (campo de píxeles + foto), `HeroCountdown`
+(cinta de cuenta atrás).
 
-`node scripts/svg-to-pixels.js` convierte `asset-hero-colibri.svg` en
-`src/features/hero-creature/config/colibri.ts` (versionado, no se parsea SVG en
-runtime). Resultado: malla 26×39, paso 18.52, cuadro 15.243 (82.3 % del paso),
-345 píxeles en 2 tonos.
+El hero ocupa todo el ancho del contenedor y **no** lleva márgenes de retícula
+propios: los necesita la columna de texto, pero la capa de medios y la cinta de
+la cuenta atrás miden **un viewport completo**.
 
-El SVG viene con irregularidades de exportación — los rects miden entre 15.243 y
-16.336 px y se desvían hasta 3px de la malla. Encajarlos no pierde información
-(el script falla si dos rects caen en la misma celda) y a cambio deja una
-estructura discreta con la que se puede animar por píxel y calcular vecindades.
+Esas dos capas escapan del ancho acotado con `width: 100vw; left: 50%;
+transform: translateX(-50%)`, que funciona porque `PageShell` está centrado. Y el
+recorte de lo que sobresale vive en `PageFrame`, no en el hero: dentro del hero
+cortaba a la altura del contenido y dejaba el ave separada del borde de la
+pantalla. Se usa `overflow-x: clip` y no `hidden` para no crear un contenedor de
+scroll que rompería un `position: sticky` más adelante.
 
-Se reconstruye con 345 nodos en vez de pintar el SVG porque hacen falta píxeles
-independientes: una sola imagen no admite entrada por píxel ni repulsión
-individual. Todo se posiciona en porcentaje del ancho, así que la malla escala
-con el hero sin perder el encaje ni los huecos.
+El rótulo `CONEXION500` va como imagen (`logo-horizontal-blanco.svg`, 1100×117) y
+no como texto: es un logotipo, con formas propias que no se componen con la
+tipografía. En la cabecera solo va la X (`icon-logo.svg`).
 
-### Entrada estroboscópica
+### Retícula y tipografía
+
+Cuatro filetes verticales: los bordes del contenedor (`--container-margin`, 88px)
+y dos interiores a `--header-side` (222px) de cada lado, que separan las columnas
+de la cabecera y siguen bajando por toda la página. Los dibuja `PageFrame`.
+
+El botón tiene ancho propio (`--cta-width`, 380px) y no hereda `--header-side`:
+cruza el filete de la primera columna y necesita aire para el icono del hover.
+
+El rótulo ocupa todo el ancho útil del hero, entre los dos filetes del contenedor,
+así que crece con la pantalla sin tope. No hay que reservarle sitio: **el ave pasa
+por delante** y su pico cruza el rótulo.
+
+Orden de capas: campo 0 · contenido 1 · ave 2 · degradado inferior 3 · cinta 4.
+
+**El navbar no lleva filetes verticales.** La capa de filetes arranca en
+`--header-height`, y la cabecera no tiene divisores de celda propios.
+
+Los cuerpos salen de las métricas reales del `.otf` (avance/em 0.6364,
+capHeight/em 0.7273) despejadas contra la referencia a 1280px:
+
+| Elemento | Cuerpo | Tracking |
+|---|---|---|
+| Titular (3 líneas) | `--text-display` 38px | 0 |
+| Fecha y sede | `--text-nav` 15px | 0.05em |
+| CTA | `--text-cta` 21px | 0.145em |
+| Notas y cinta | `--text-note` 13px | 0.02em |
+
+El titular admite **tramos** con resalte (`SITE.event.headline`) porque en
+versiones anteriores el color cambiaba a mitad de línea. Ahora no se usa, pero la
+estructura se mantiene: el resalte es decisión de diseño por tramo, no por línea.
+
+### Campo de píxeles y foto
+
+`hero-green-pixels-2.svg` va como imagen, no reconstruido celda a celda: su
+relleno es un degradado continuo que cruza toda la figura más una capa de ruido
+del propio SVG. Partirlo en celdas obligaría a recomponer las dos cosas y
+perdería el ruido.
+
+Las dos sangran hasta el borde derecho del viewport.
+
+El tamaño del ave se fija **por altura** (`clamp(480px, 68vh, 860px)`) y no por
+ancho: lo que la limita es el hueco hasta el borde inferior, y eso depende del
+alto del viewport. Midiéndola en `vw` crecía sin control en pantallas anchas.
+
+### Ritmo vertical
+
+Los huecos del hero son tokens (`--hero-pad-top`, `--hero-gap-wordmark`,
+`--hero-gap-headline`, `--hero-gap-cta`, `--hero-gap-note`, `--hero-gap-invite`,
+`--hero-bottom`) con dos escalones por **altura** de viewport (860px y 720px). El
+hero tiene que caber en una pantalla: en portátiles se aprieta en lugar de dejar
+crecer la página. A 1192×672 sin los escalones el contenido desbordaba 146px.
+
+El bloque de registro se empuja al fondo con `margin-top: auto`, pero lleva
+`padding-top` además: el margen automático se anula cuando no sobra alto, y sin el
+relleno el botón se pegaba al titular.
+
+Contrapartida conocida: a alturas grandes (1200px y más) todo el sobrante se
+acumula en ese hueco, porque el bloque queda anclado abajo junto a la cinta. No
+hay referencia de diseño para esas alturas.
+
+Entra con un fundido y un desplazamiento vertical (Framer Motion, disparado por
+`useHasEntered`).
+
+El bajo de la capa lleva un degradado del color de fondo a transparente para que
+el corte del encuadre de la foto no se vea. Va a todo el ancho y no solo sobre la
+foto: un borde vertical se notaría al cruzar los cuadros del campo.
+
+### Cuenta atrás
+
+Cinta métrica a todo el ancho de la pantalla, con el marcador fijo en el centro:
+64px por día, marcas menores
+cada 8px dibujadas con un degradado repetido (no un nodo por marca), y una lupa
+que agranda las cifras cercanas al marcador.
+
+El cálculo va en el cliente y después del montaje: el número depende del día en
+que se mire, y hacerlo en el servidor lo dejaría congelado en la fecha de
+compilación y provocaría desajuste de hidratación. La fecha del evento está en
+`SITE.event.date`.
+
+### Entrada estroboscópica y repulsión magnética
+
+> **Sin destino ahora mismo.** Los dos efectos se hicieron para mallas de píxeles
+> reconstruidas celda a celda; el hero actual usa una foto y un SVG con degradado,
+> así que `PixelSprite`, `PixelField` y sus hooks están sin uso. El código sigue en
+> `src/features/hero-creature/` a la espera de decidir dónde van.
 
 Cada píxel parpadea entre 2 y 6 veces antes de quedarse encendido, en una ola
 que sube de abajo hacia arriba (la misma dirección que la transición). Usa
@@ -113,9 +200,7 @@ impar de pasadas, y el píxel termina encendido.
 Quien apaga la malla antes de la entrada es el hook, ya en el cliente, no el CSS:
 si el CSS la apagara, un fallo de JavaScript dejaría el colibrí invisible.
 
-### Repulsión magnética
-
-Al acercar el puntero, los píxeles cercanos se apartan de él: caída cuadrática
+Con la repulsión magnética, al acercar el puntero, los píxeles cercanos se apartan de él: caída cuadrática
 sobre un radio de 130px y hasta 26px de desplazamiento, con suavizado
 exponencial normalizado por delta de tiempo (`tau` 130ms) para que vuelvan solos
 al soltar y el movimiento no dependa de los fps.
@@ -162,6 +247,83 @@ es la clave de que las entradas se vean:
 Con `isVisible` las entradas se ejecutaban detrás de la cortina de píxeles y el
 usuario no veía ni el revuelto ni el estroboscopio.
 
+### Indicador del navbar
+
+`src/components/layout/PrimaryNav.tsx`. El zigzag
+(`public/selected-indicator.svg`) se pinta de izquierda a derecha al seleccionar
+un enlace y se despinta por donde vino al dejar de estarlo. Es una sola
+transición de `clip-path`, así que los dos sentidos salen gratis: al cambiar de
+enlace, uno se despinta y el otro se pinta a la vez.
+
+- Tiene que ser `clip-path` y no `width`: el ancho recalcularía el mosaico y el
+  zigzag se vería comprimirse en vez de dibujarse.
+- El motivo tiene periodo 24px y el archivo mide 48, así que `repeat-x` encaja
+  sin costura a cualquier ancho de enlace.
+- Va en posición absoluta para que aparecer y desaparecer no mueva la fila de
+  enlaces.
+- Ritmo constante (`--ease-paint: linear`). Con la curva de salida del proyecto
+  el trazo se adelantaba —90 % del recorrido en el primer tercio del tiempo— y no
+  se leía como algo que se dibuja.
+
+El estado seleccionado sale de la ruta (`usePathname()`), no de un clic: así el
+indicador acierta también al entrar directo a una URL o al volver con el botón
+atrás. Solo los enlaces a rutas pueden estar seleccionados; los que apuntan a
+secciones de la portada (`/#agenda`) llevan ancla, y una ancla no es un destino
+que la navegación pueda marcar como actual.
+
+El ítem de la ruta actual va además en color de acento, acompañando al zigzag.
+
+El color (#A2E136) viene dentro del SVG y no de un token; es un verde que no está
+en `colores.txt` (el más cercano es green-soft #9DE250). Si tiene que responder al
+tema, hay que pasar el archivo a `mask-image` y pintarlo con una variable.
+
+## FAQ
+
+Página propia en `/faq` (`src/app/faq/page.tsx`), componente en
+`src/components/sections/Faq.tsx`, contenido en `src/config/faq.ts` (14 preguntas).
+
+La ruta **no** lleva `LoaderGate`: el loader es la entrada al sitio, no un peaje en
+cada ruta. Por eso el armazón se compone en cada página en vez de en el layout
+raíz — solo la portada necesita envolverlo en el loader.
+
+El bloque ocupa **exactamente la columna central** de la retícula: desde el filete
+interior izquierdo hasta el derecho, con
+`margin-inline: calc(var(--container-margin) + var(--header-side))`. Por debajo de
+1100px pasa a ocupar el ancho del contenido, o la columna se queda sin medida.
+
+### Tipografía
+
+| Elemento | Fuente | Cuerpo |
+|---|---|---|
+| Rótulo `FAQ` | Departure Mono | `--text-section` 86px |
+| Pregunta | Host Grotesk | `--text-question` 16px |
+| Respuesta | Host Grotesk | `--text-answer` 13px |
+
+Es el primer bloque donde Host Grotesk hace el trabajo principal: son textos
+corridos, y el mono se queda para el rótulo.
+
+La respuesta lleva `max-width: none` para anular el tope de medida que
+`globals.css` pone a todo `<p>`: aquí la columna de la retícula ya acota la línea,
+y con 62ch la respuesta rompía antes de tiempo.
+
+### Comportamiento
+
+Acordeón de una sola abierta. Con catorce preguntas, permitir varias deja la lista
+imposible de recorrer. La primera arranca abierta porque da contexto al resto, y
+volver a pulsar la abierta la cierra — si no, no hay forma de plegar la lista.
+
+El panel se anima en alto (`height: 0` ↔ `auto`, Framer Motion). El elemento que
+se anima **no puede llevar relleno propio**: el relleno lucharía contra el
+`height: 0` y dejaría un resto visible al cerrarse, así que va en el párrafo de
+dentro.
+
+### Accesibilidad
+
+Cada pregunta es un `<button>` con `aria-expanded`, enlazado a su panel por
+`aria-controls`; el panel es un `role="region"` con `aria-labelledby` al botón. Los
+`<h3>` envuelven al botón en vez de sustituirlo, así que el índice de la página
+sigue teniendo sentido y el acordeón se maneja con teclado.
+
 ## Transición de píxeles
 
 `src/features/transitions/pixel-reveal/` — malla de cuadros que tapa la pantalla
@@ -181,15 +343,15 @@ Claves de la implementación:
   solo en la zona baja (`paletteWeights`), como en la referencia.
 - Solo se anima `scale`, sin `will-change`: son cientos de nodos y promoverlos
   todos a capa propia agota memoria de GPU.
-- La malla hereda el paso y la proporción cuadro/hueco del colibrí, para que los
-  píxeles de la transición y los de la criatura se lean como el mismo material.
-  El paso es 2× el del sprite: a 1× (18.52px) serían unas 3.100 celdas a pantalla
-  completa, y medido da p95 de 24.8ms con 19 cuadros sobre 32ms y picos de 176ms.
-  A 2× son unas 800 celdas, p95 de 18ms y ni un cuadro lento. Al ser múltiplo
-  entero, una celda de la transición cubre 2×2 del colibrí.
-- Los cuadros escalan hasta `coverScale` (paso/cuadro, más un 4 %) para cerrar el
-  hueco justo al tapar: durante el trayecto se leen como píxeles separados y en el
-  pico no dejan ver nada.
+- La malla habla el lenguaje del campo de píxeles del hero: cuadros grandes y
+  contiguos (media celda del asset, 74.25px) en lugar de la malla fina con huecos
+  de versiones anteriores, que venía del colibrí de píxeles y ya no está en la
+  página. A celda completa salen 54 cuadros en pantalla y la ola no tiene
+  resolución para leerse; a la mitad, unas 216.
+- El color reproduce el degradado del campo: verde oscuro arriba, lima abajo, con
+  un 16 % de celdas en lima como las brillantes del campo. Que la fila superior
+  sea casi del color del fondo no impide tapar el cambio de contenido —las celdas
+  siguen siendo opacas— y a cambio la malla se lee como el campo materializándose.
 - La aleatoriedad va con semilla (`src/lib/random.ts`) para que servidor y
   cliente generen la misma malla y no haya desajuste de hidratación.
 - `prefers-reduced-motion`: se conserva el corte, pero sin ola ni desorden.
@@ -199,18 +361,16 @@ Ajustes en `config/pixelReveal.config.ts`:
 | Campo | Qué hace |
 |---|---|
 | `pitch` / `cellSize` | Paso 37.04 y cuadro 30.5 (de ahí los huecos) |
-| `cellDuration` | Escalado de un píxel (0.34 s) |
-| `coverSpan` / `revealSpan` | Recorrido de la ola (0.85 / 0.95 s) |
-| `jitter` | Desorden dentro de cada fila (0.22 s) |
-| `holdS` | Pausa con la pantalla cubierta (0.12 s) |
+| `cellDuration` | Escalado de un píxel (0.2 s) |
+| `coverSpan` / `revealSpan` | Recorrido de la ola (0.45 / 0.5 s) |
+| `jitter` | Desorden dentro de cada fila (0.12 s) |
+| `holdS` | Pausa con la pantalla cubierta (0.06 s) |
 
-## Hero
-
-`src/components/sections/Hero.tsx` + `src/components/layout/SiteHeader.tsx`.
+## Ancho de página y retícula
 
 El contenido va dentro de `PageShell`, que lo acota a `--content-max` (1600px) y
 lo centra: más allá de ese ancho la composición se estira y el titular se separa
-demasiado de la criatura. El loader y la transición de píxeles quedan fuera a
+demasiado de la foto. El loader y la transición de píxeles quedan fuera a
 propósito, porque van a pantalla completa: acotar la transición dejaría los
 laterales sin cubrir justo cuando tiene que tapar el cambio de contenido.
 
@@ -232,41 +392,14 @@ devolvérselo y subir la capa de filetes por encima.
 La altura se reparte con flex, no con `calc(100dvh - cabecera - barra)`: no hay
 fórmulas que mantener sincronizadas con la altura de cada banda.
 
-La retícula del diseño está en tokens, no repartida por los componentes:
-`--container-margin` (44px, los filetes verticales), `--container-pad` (51px),
-`--header-height` (94px) y `--header-side` (187px, las celdas laterales de la
-cabecera). Los enlaces quedan centrados respecto al viewport porque las celdas
-laterales son de ancho fijo, no `auto`.
-
-### Tipografía del hero
-
-Todo el hero va en **Departure Mono**: es un caso de uso puntual, como el loader.
-Host Grotesk queda para párrafos y textos corridos.
-
-Los cuerpos salen de las métricas reales del `.otf` (avance/em 0.6364,
-capHeight/em 0.7273 sobre 550 unidades), despejadas contra la referencia a
-1280px de ancho:
-
-| Elemento | Cuerpo | Tracking |
-|---|---|---|
-| H1 (3 líneas) | `--text-display` 76px | 0.03em |
-| CTA | `--text-cta` 25px | 0.145em |
-| Nav | `--text-nav` 15px | 0.05em |
-| Antetítulo | `--text-eyebrow` 14px | 0.02em |
-| Créditos | `--text-caption` 9px | 0.06em |
-
-El H1 lleva `margin-left: -0.05em` de alineación óptica: a 85px de cuerpo el
-lateral izquierdo del glifo deja unos 4px de aire que descuadran el título
-respecto al borde del botón.
-
 ### Botón principal
 
 `src/components/ui/CtaButton.tsx` — dos estados:
 
 | | Fondo | Icono | Sombra |
 |---|---|---|---|
-| Reposo | verde plano | oculto | ninguna |
-| Hover / foco | degradado verde | entra deslizando | amarilla, abajo-izquierda |
+| Reposo | lima plano | oculto | ninguna |
+| Hover / foco | degradado en movimiento | entra deslizando | amarilla, abajo-izquierda |
 
 La sombra no se anima. Es una capa del mismo tamaño y radio que vive detrás del
 botón y en reposo queda exactamente tapada por él; se revela porque el botón se
@@ -275,6 +408,9 @@ botón tiene que mantener un fondo opaco para que la sombra siga oculta.
 
 El degradado es una capa aparte con `opacity`, no un cambio de `background`: CSS
 no interpola entre un color plano y un degradado.
+
+Con el botón a 328px, el rótulo a 21px no dejaba hueco para el icono del hover y
+se solapaban: el icono está fuera del flujo y mide 20px.
 
 **El degradado se mueve** (`--duration-flow`, 12s por ciclo). Los topes van
 A → B → A y el mosaico mide el doble del botón, así que al desplazar
@@ -302,8 +438,8 @@ duplicar la definición.
 
 El tema sale de roles semánticos (`--bg`, `--fg`, `--accent`, `--rule`), y
 `ThemeToggle` solo escribe `data-theme` en `<html>`: ningún componente conoce el
-tema. Arranca en claro, que es el del diseño. El loader es oscuro por sí mismo,
-porque usa los colores de marca directamente y no los roles.
+tema. Arranca en oscuro, que es el del diseño. El loader también es oscuro por sí
+mismo: usa los colores de marca directamente, no los roles.
 
 ## Verificación visual
 
@@ -322,19 +458,29 @@ virtual solo avanza cuando la página está inactiva y aquí nunca lo está.
 
 ## Pendiente
 
+- La referencia del FAQ abría con **"¿Qué es Conexión 500?"**, una pregunta que no
+  está en la lista entregada, y ordenaba las demás de otra forma. Se usó la lista
+  tal cual, en su orden. Si esa pregunta va, hay que añadirla a `faq.ts`.
+- **El rótulo no tiene variante clara.** `logo-horizontal-blanco.svg` se
+  actualizó a 1100×117 pero `logo-horizontal-dark.svg` sigue en 171×30, la
+  medida antigua. Con el tema claro activado el rótulo queda ilegible: hace
+  falta reexportar la variante oscura al tamaño nuevo.
+- **Estroboscopio y repulsión magnética están sin destino** (ver la sección).
+  Reconstruir el campo nuevo celda a celda recuperaría el estroboscopio a costa
+  del ruido del SVG; el magnetismo sobre cuadros de 148px probablemente no
+  funcione visualmente.
 - `loader-sequences/colibri` y `loader-sequences/jaguar` llegaron vacías. Al
   añadir los cuadros, registrarlas en `LOADER_SEQUENCES` con el mismo patrón.
 - `asset-hero-jaguar.svg` parece una exportación fallida: mide 21×40 px y usa
-  ámbar y negro, no la paleta. El colibrí (476×716) y la ballena (542×616) sí
-  están bien.
+  ámbar y negro, no la paleta.
 - `LocaleSwitch` solo guarda el estado visual: no hay traducciones ni enrutado
   por idioma.
-- El tema oscuro funciona a nivel de tokens, pero no está diseñado: el toggle
-  invierte fondo y texto y poco más.
+- `/#agenda` y `/#ponentes` apuntan a secciones que todavía no existen en la
+  portada.
+- El tema claro funciona a nivel de tokens, pero el diseño es el oscuro.
 - `ThemeToggle` no persiste la elección. Hacerlo pide un script en línea que
   aplique el tema antes del primer pintado, o la página parpadea al recargar.
-- Menú compacto: por debajo de 900px los enlaces de la cabecera se ocultan y el
-  colibrí se retira. Falta diseñar esa versión.
+- Menú compacto: por debajo de 900px los enlaces de la cabecera se ocultan y las
+  verticales interiores desaparecen. Falta diseñar esa versión.
+- La cinta de la cuenta atrás es estática: no se sabe si debe desplazarse.
 - Three.js está instalado y listo, pero todavía no hay escena 3D.
-#   c o n e x i o n - n a t u r a  
- 

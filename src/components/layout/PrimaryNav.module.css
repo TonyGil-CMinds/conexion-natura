@@ -1,0 +1,78 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.link {
+  /* Ancla del indicador, que va fuera del flujo. */
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--text-nav);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  color: var(--fg);
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.link:hover {
+  color: var(--accent);
+}
+
+/* Llamada a la acción dentro del menú: va en el color de acento de base. */
+.link[data-highlight] {
+  color: var(--accent);
+}
+
+/* La ruta actual: el color acompaña al zigzag. */
+.link[data-selected] {
+  color: var(--accent);
+}
+
+/**
+ * Indicador de selección.
+ *
+ * Va en posición absoluta para que aparecer y desaparecer no mueva los enlaces:
+ * si ocupara sitio en el flujo, seleccionar uno desplazaría toda la fila.
+ *
+ * El zigzag se repite en horizontal a su tamaño natural. El motivo tiene periodo
+ * 24px y el archivo mide 48, así que el mosaico encaja sin costura a cualquier
+ * ancho de enlace.
+ *
+ * El "pintarse" es un recorte que crece de izquierda a derecha. Tiene que ser
+ * `clip-path` y no `width`: el ancho recortaría el mosaico recalculándolo, y el
+ * zigzag se vería comprimirse en lugar de dibujarse.
+ */
+.indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -12px;
+  height: 9px;
+  background-image: url('/selected-indicator.svg');
+  background-repeat: repeat-x;
+  background-position: left center;
+  background-size: 48px 9px;
+  /* Sin pintar: recortado del todo por la derecha. */
+  clip-path: inset(0 100% 0 0);
+  /* La misma transición sirve para los dos sentidos: al deseleccionar, el
+     recorte vuelve y el zigzag se despinta por donde vino. */
+  transition: clip-path var(--duration-paint) var(--ease-paint);
+}
+
+.link[data-selected] .indicator {
+  clip-path: inset(0 0 0 0);
+}
+
+@media (max-width: 900px) {
+  .root {
+    display: none;
+  }
+}

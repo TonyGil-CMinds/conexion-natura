@@ -1,7 +1,10 @@
 .root {
   position: relative;
   display: block;
-  width: min(617px, 100%);
+  /* Ancho fijo por diseño. Con `min(..., 100%)` el 100% se resolvía contra un
+     contenedor que a su vez se ajustaba al contenido, así que ganaba el texto. */
+  width: var(--cta-width);
+  max-width: 100%;
 }
 
 /* Sombra dura: misma caja y mismo radio que el botón, justo detrás. En reposo
@@ -17,15 +20,14 @@
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-8);
-  min-height: 137px;
+  min-height: 90px;
   /* Asimétrico como en el diseño: el icono queda más cerca del borde. */
-  padding-inline: 50px 32px;
+  padding-inline: 30px 36px;
   border-radius: var(--radius-cta);
   /* Opaco: es lo que mantiene la sombra invisible en reposo. */
-  background-color: var(--color-green-base);
-  color: var(--color-light);
+  background-color: var(--color-lime);
+  /* Texto oscuro: sobre el lima del degradado el claro no contrasta. */
+  color: var(--color-dark);
   /* Recorta el degradado al radio. */
   overflow: hidden;
   transition: transform var(--duration-fast) var(--ease-out-expo);
@@ -49,11 +51,13 @@
   background-image: linear-gradient(
     100deg,
     var(--color-green-base) 0%,
-    var(--color-green) 50%,
+    var(--color-lime) 50%,
     var(--color-green-base) 100%
   );
   background-size: 200% 100%;
   background-position: 0% 50%;
+  /* Oculto en reposo: el diseño muestra el botón en lima plano y reserva el
+     degradado para el hover. */
   opacity: 0;
   transition: opacity var(--duration-fast) var(--ease-out-expo);
   animation: flow var(--duration-flow) linear infinite;
@@ -75,6 +79,8 @@
 
 .label {
   position: relative;
+  /* El rótulo va en una línea: el diseño da el ancho justo para eso. */
+  white-space: nowrap;
   font-family: var(--font-mono);
   font-size: var(--text-cta);
   letter-spacing: var(--tracking-cta);
@@ -82,11 +88,21 @@
   line-height: 1;
 }
 
+/* Fuera del flujo: si ocupara sitio estando oculto, restaría ancho al rótulo y
+   lo partiría en dos líneas. */
 .icon {
-  position: relative;
-  flex-shrink: 0;
-  width: 27px;
-  height: 27px;
+  position: absolute;
+  right: 28px;
+  top: 50%;
+  margin-top: -10px;
+  width: 20px;
+  height: 20px;
+  /* Toma el color del rótulo. */
+  background-color: currentColor;
+  mask-image: url('/icons/icon-arrow-white.svg');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
   opacity: 0;
   transform: translateX(-8px);
   transition:
@@ -124,8 +140,7 @@
 
 @media (max-width: 640px) {
   .button {
-    min-height: 104px;
-    padding-inline: var(--space-6) var(--space-4);
-    gap: var(--space-4);
+    min-height: 84px;
+    padding-inline: var(--space-5) 48px;
   }
 }

@@ -16,6 +16,11 @@
   --color-yellow: #ffca2c;
   --color-red: #f60015;
   --color-aqua: #61ddaf;
+  /* Verdes que llegan con los assets del hero nuevo y no están en colores.txt:
+     lima del campo de píxeles y del degradado del botón, y el del indicador
+     del navbar. Si entran en la paleta oficial, mover a colores.txt. */
+  --color-lime: #d0ff00;
+  --color-lime-soft: #a2e136;
 
   /* Roles semánticos — tema oscuro */
   --bg: var(--color-dark);
@@ -42,15 +47,25 @@
    * El tramo vw mantiene la proporción: al ser monoespaciada, el H1 conserva su
    * medida de línea en cualquier ancho.
    */
-  /* Titular de 3 líneas: cuerpo menor e interlínea corta respecto al de 2. */
-  --text-display: clamp(2rem, 5.94vw, 4.75rem); /* 76px @1280 */
-  --text-cta: clamp(1.0625rem, 1.95vw, 1.5625rem); /* 25px @1280 */
+  /* Titular de 3 líneas. 38px sin tracking: el avance medido en la referencia
+     (24.2px por carácter) coincide exactamente con 38 x 0.6364. */
+  --text-display: clamp(1.5rem, 2.97vw, 2.375rem); /* 38px @1280 */ /* 44px @1280 */
+  /* 20px: con el botón a 328px, a 21px el rótulo no deja hueco para el icono
+     que entra en el hover y se solapaban. */
+  --text-cta: clamp(0.9375rem, 1.64vw, 1.3125rem); /* 21px @1280 */
   --text-nav: 0.9375rem; /* 15px */
-  --text-eyebrow: 0.875rem; /* 14px */
+  --text-eyebrow: 1.25rem; /* 20px */
+  --text-meta: 1.125rem; /* 18px — sede */
+  --text-note: 0.8125rem; /* 13px — cupo, invitación, cuenta atrás */
+  /* Rótulo de sección (FAQ). */
+  --text-section: clamp(2.5rem, 6.72vw, 5.375rem); /* 86px @1280 */
+  /* Acordeón: pregunta y respuesta van en Host Grotesk. */
+  --text-question: 1rem; /* 16px */
+  --text-answer: 0.8125rem; /* 13px */
   --text-caption: 0.5625rem; /* 9px */
 
   --tracking-nav: 0.05em;
-  --tracking-display: 0.03em;
+  --tracking-display: 0;
   --tracking-eyebrow: 0.02em;
   --tracking-cta: 0.145em;
   --tracking-caption: 0.06em;
@@ -60,6 +75,7 @@
   --space-2: 0.5rem;
   --space-3: 0.75rem;
   --space-4: 1rem;
+  --space-5: 1.25rem;
   --space-6: 1.5rem;
   --space-8: 2rem;
   --space-10: 2.5rem;
@@ -68,6 +84,21 @@
 
   /* Radios */
   --radius-cta: 12px;
+  /* Ancho del botón principal: fijado por diseño, cruza el filete de columna. */
+  --cta-width: 380px;
+
+  /**
+   * Ritmo vertical del hero. Va en tokens porque lo consumen varios componentes y
+   * porque tiene que comprimirse por altura de viewport: el hero debe caber en una
+   * pantalla, así que en portátiles se aprieta en lugar de dejar crecer la página.
+   */
+  --hero-pad-top: 34px;
+  --hero-gap-wordmark: 43px;
+  --hero-gap-headline: 44px;
+  --hero-gap-cta: 36px;
+  --hero-gap-note: 17px;
+  --hero-gap-invite: 45px;
+  --hero-bottom: 110px;
 
   /* Layout */
   /* Margen interior de los bloques a pantalla completa (loader). */
@@ -75,11 +106,11 @@
   /* Tope del contenido: más allá, la composición se estira y el titular se
      separa demasiado de la criatura. */
   --content-max: 1600px;
-  --container-margin: 44px;
+  --container-margin: 88px;
   --container-pad: 51px;
-  --header-height: 94px;
+  --header-height: 88px;
   /* Ancho de las celdas laterales de la cabecera (logo / idioma). */
-  --header-side: 187px;
+  --header-side: 222px;
 
   --z-header: 50;
   --z-loader: 100;
@@ -90,8 +121,38 @@
   --duration-fast: 240ms;
   --duration-base: 600ms;
   --duration-slow: 1200ms;
+  /* Pintado del indicador del navbar. Ritmo constante: con una curva de salida
+     el trazo se adelanta (90 % del recorrido en el primer tercio del tiempo) y
+     no se lee como algo que se dibuja. */
+  --duration-paint: 420ms;
+  --ease-paint: linear;
   /* Ciclo del degradado del botón: lento, tiene que leerse como una marea. */
   --duration-flow: 12s;
+}
+
+/* Alturas de portátil. Los saltos son los mismos elementos, solo más juntos. */
+@media (max-height: 860px) {
+  :root {
+    --hero-pad-top: 24px;
+    --hero-gap-wordmark: 28px;
+    --hero-gap-headline: 32px;
+    --hero-gap-cta: 28px;
+    --hero-gap-note: 14px;
+    --hero-gap-invite: 28px;
+    --hero-bottom: 84px;
+  }
+}
+
+@media (max-height: 720px) {
+  :root {
+    --hero-pad-top: 14px;
+    --hero-gap-wordmark: 16px;
+    --hero-gap-headline: 20px;
+    --hero-gap-cta: 20px;
+    --hero-gap-note: 12px;
+    --hero-gap-invite: 16px;
+    --hero-bottom: 72px;
+  }
 }
 
 /* En pantallas estrechas el margen de la retícula se come el ancho útil. */

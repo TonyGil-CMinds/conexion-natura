@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import styles from './CtaButton.module.css';
 
 type Props = {
@@ -28,13 +27,9 @@ export function CtaButton({ label, href }: Props) {
       <a href={href} className={styles.button}>
         <span className={styles.gradient} aria-hidden />
         <span className={styles.label}>{label}</span>
-        <Image
-          src="/icons/icon-arrow-white.svg"
-          alt=""
-          width={27}
-          height={27}
-          className={styles.icon}
-        />
+        {/* Máscara y no imagen: así el icono toma el color del rótulo. El SVG
+            trae su relleno fijado, y aquí el texto va en oscuro. */}
+        <span className={styles.icon} aria-hidden />
       </a>
     </span>
   );

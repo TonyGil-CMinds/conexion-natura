@@ -3,13 +3,22 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
+  /* Recorta lo que sangra a los lados (la capa de medios y la cinta miden un
+     viewport) sin acotarlo al ancho del contenido, que es lo que hacía el hero.
+     `clip` y no `hidden`: no crea contenedor de scroll, así que no rompería un
+     `position: sticky` más adelante. */
+  overflow-x: clip;
 }
 
 /* Capa de filetes verticales. Detrás del contenido: caen sobre los márgenes de la
-   retícula, donde no hay nada, pero así nunca se dibujan encima de un logo. */
+   retícula, donde no hay nada, pero así nunca se dibujan encima de un logo.
+   Arranca bajo la cabecera: el navbar va sin verticales. */
 .rules {
   position: absolute;
-  inset: 0;
+  top: var(--header-height);
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: 0;
   pointer-events: none;
 }
@@ -19,9 +28,32 @@
 }
 
 .rulesInner {
+  position: relative;
   height: 100%;
   margin-inline: var(--container-margin);
   border-inline: 1px solid var(--rule);
+}
+
+.columnRule {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--rule);
+}
+
+.columnRule[data-side='start'] {
+  left: var(--header-side);
+}
+
+.columnRule[data-side='end'] {
+  right: var(--header-side);
+}
+
+@media (max-width: 900px) {
+  .columnRule {
+    display: none;
+  }
 }
 
 /* Bandas a sangre: el filete cruza de un borde del viewport al otro, aunque el

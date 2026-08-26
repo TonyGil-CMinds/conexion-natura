@@ -3,25 +3,47 @@
  * se editen sin tocar maquetación, y para tener un punto único cuando entre i18n.
  */
 
+/** Un tramo de titular. `accent` lo pinta con el color de acento del tema. */
+export type HeadlineSegment = { text: string; accent?: boolean };
+
 export const SITE = {
-  name: 'Conexión Natura',
+  name: 'Conexión500',
   event: {
-    date: '05 octubre 2026',
+    /** Fecha del evento, para la cuenta atrás. Mes en base 0 como en Date. */
+    date: { year: 2026, month: 9, day: 5 },
+    dateLabel: '05 octubre 2026',
     place: 'Quito, Ecuador',
-    /** Una entrada por línea: el salto es decisión de diseño, no del navegador. */
-    headline: ['El futuro', 'nace de la', 'biodiversidad'],
-    format: 'En persona',
+    /**
+     * Titular por líneas y por tramos: el salto de línea y el resalte son
+     * decisiones de diseño, no del navegador.
+     */
+    headline: [
+      [{ text: 'Noche por la' }],
+      [{ text: 'biodiversidad' }],
+      [{ text: 'y el futuro' }],
+    ] as HeadlineSegment[][],
   },
   cta: {
     label: 'Registro abierto',
     href: '#registro',
+    note: 'Cupo limitado*',
+  },
+  invite: {
+    label: '¿No recibiste invitación?',
+    href: '#invitacion',
+  },
+  countdown: {
+    label: 'Días para Conexión500',
   },
 } as const;
 
+/** `highlight` pinta el enlace con el color de acento: es una llamada a la acción
+ *  dentro del menú, no un estado de selección. */
 export const NAV_LINKS = [
-  { label: 'Acerca de', href: '#acerca' },
-  { label: 'Mi agenda', href: '#agenda' },
-  { label: 'Cómo llegar', href: '#llegar' },
+  { label: 'Agenda', href: '/#agenda' },
+  { label: 'Ponentes', href: '/#ponentes' },
+  { label: 'FAQ', href: '/faq' },
+  { label: 'Regístrate', href: '/#registro', highlight: true },
 ] as const;
 
 export const LOCALES = [

@@ -1,0 +1,118 @@
+.root {
+  position: relative;
+  z-index: 1;
+  padding-block: var(--space-12) var(--space-16);
+}
+
+/**
+ * El bloque ocupa exactamente la columna central de la retícula: desde el filete
+ * interior de la izquierda hasta el de la derecha.
+ */
+.inner {
+  margin-inline: calc(var(--container-margin) + var(--header-side));
+}
+
+.title {
+  padding-left: 35px;
+  font-family: var(--font-mono);
+  font-size: var(--text-section);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.list {
+  margin-top: var(--space-8);
+}
+
+.item {
+  /* El filete separa una pregunta de la siguiente. */
+  border-bottom: 1px solid var(--rule);
+}
+
+/* Abierta: degradado como el del botón principal, y el texto pasa a oscuro. */
+.item[data-open] {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-green-base) 0%,
+    var(--color-lime) 100%
+  );
+  border-bottom-color: transparent;
+}
+
+.heading {
+  /* El encabezado solo aporta jerarquía; el aspecto lo pone el botón. */
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+}
+
+.question {
+  display: block;
+  width: 100%;
+  min-height: 50px;
+  padding: 14px 32px;
+  text-align: left;
+  font-family: var(--font-sans);
+  font-size: var(--text-question);
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--fg);
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.question:hover {
+  color: var(--accent);
+}
+
+.question:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.item[data-open] .question {
+  color: var(--color-dark);
+  font-weight: 600;
+}
+
+.item[data-open] .question:hover,
+.item[data-open] .question:focus-visible {
+  color: var(--color-dark);
+}
+
+/* El panel se anima en alto, así que no puede tener relleno propio: el relleno
+   iría contra el `height: 0` y dejaría un resto visible al cerrarse. */
+.panel {
+  overflow: hidden;
+}
+
+.answer {
+  /* Sin el tope de medida de globals.css: aquí la columna de la retícula ya acota
+     la línea, y con 62ch la respuesta rompía antes de tiempo. */
+  max-width: none;
+  padding: 0 32px var(--space-6);
+  font-family: var(--font-sans);
+  font-size: var(--text-answer);
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--color-dark) 88%, transparent);
+}
+
+@media (max-width: 1100px) {
+  .inner {
+    margin-inline: var(--container-margin);
+  }
+}
+
+@media (max-width: 640px) {
+  .title {
+    padding-left: 0;
+  }
+
+  .question,
+  .answer {
+    padding-inline: var(--space-4);
+  }
+}

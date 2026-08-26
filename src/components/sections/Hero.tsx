@@ -1,53 +1,68 @@
 import Image from 'next/image';
-import { PARTNER_GROUPS, SITE } from '@/config/site';
+import { SITE } from '@/config/site';
 import { CtaButton } from '@/components/ui/CtaButton';
-import { HeroCreature } from './HeroCreature';
+import { HeroCountdown } from './HeroCountdown';
 import { HeroHeadline } from './HeroHeadline';
+import { HeroMedia } from './HeroMedia';
 import styles from './Hero.module.css';
 
 /**
  * Hero de portada.
  *
- * Las entradas (revuelto del titular, estroboscopio del colibrí) las disparan sus
- * propios componentes cuando la página se descubre, no este: el hero solo compone.
+ * Ocupa todo el ancho del contenedor y no lleva márgenes de retícula propios: los
+ * necesita el contenido, pero el campo de píxeles llega hasta el borde del
+ * viewport y la cinta de la cuenta atrás también.
  *
- * Los filetes de la retícula los dibuja `PageFrame`, no este componente: como
- * bordes propios se cortaban donde acaba el contenido acotado.
+ * El rótulo va como imagen y no como texto: es un logotipo, con formas propias
+ * que no se pueden componer con la tipografía.
+ *
+ * Los filetes de la retícula los dibuja `PageFrame`.
  */
 export function Hero() {
-  const { event, cta } = SITE;
+  const { event, cta, invite } = SITE;
 
   return (
     <section className={styles.root}>
+      <HeroMedia />
+
       <div className={styles.content}>
+        <p className={styles.when}>
+          <span>{event.dateLabel}</span>
+          <span className={styles.separator} aria-hidden>
+            /
+          </span>
+          <span className={styles.place}>{event.place}</span>
+        </p>
+
+        <Image
+          src="/brand/logo-horizontal-blanco.svg"
+          alt={SITE.name}
+          width={1100}
+          height={117}
+          priority
+          className={styles.wordmark}
+        />
+
         <HeroHeadline lines={event.headline} />
 
         <div className={styles.cta}>
           <CtaButton label={cta.label} href={cta.href} />
+          <p className={styles.note}>{cta.note}</p>
         </div>
 
-        <footer className={styles.partners}>
-          {PARTNER_GROUPS.map((group) => (
-            <div key={group.label} className={styles.partnerGroup}>
-              <p className={styles.partnerLabel}>{group.label}</p>
-              <ul className={styles.partnerList}>
-                {group.logos.map((logo) => (
-                  <li key={logo.src}>
-                    <Image
-                      src={logo.src}
-                      alt={logo.alt}
-                      width={logo.width}
-                      height={logo.height}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </footer>
+        <a className={styles.invite} href={invite.href}>
+          <Image
+            src="/hero/asset-riggle-red.svg"
+            alt=""
+            width={23}
+            height={19}
+            className={styles.inviteIcon}
+          />
+          <span>{invite.label}</span>
+        </a>
       </div>
 
-      <HeroCreature />
+      <HeroCountdown />
     </section>
   );
 }

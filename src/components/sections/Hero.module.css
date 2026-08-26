@@ -2,11 +2,12 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  /* Ocupa el hueco entre las dos bandas del armazón. */
+  /* Ocupa el hueco entre las bandas del armazón, y al menos una pantalla: con
+     otra sección debajo, `flex: 1` ya no basta para garantizarlo. */
   flex: 1;
-  margin-inline: var(--container-margin);
-  /* El colibrí desborda por abajo: se recorta aquí, no en el body. */
-  overflow: hidden;
+  min-height: calc(100dvh - var(--header-height));
+  /* Sin recorte propio: la capa de medios y la cinta miden un viewport completo y
+     aquí se cortarían al ancho del contenido. Recorta `PageFrame`. */
 }
 
 .content {
@@ -14,50 +15,111 @@
   z-index: 1;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  /* Llena el hero: sin esto, el `margin-top: auto` del bloque de registro no
+     tiene contra qué empujar y todo queda pegado al titular. */
   flex: 1;
-  padding: 88px var(--container-pad) 0;
+  min-height: 0;
+  /* El contenido arranca en el filete de la retícula, sin sangría interior. */
+  padding-left: var(--container-margin);
+  padding-top: var(--hero-pad-top);
 }
 
-.cta {
-  margin-top: 2.5rem;
-}
-
-/* Los logos se van al fondo del bloque de contenido, no a un punto fijo. */
-.partners {
+/* Fecha y sede, centradas respecto a la página y no a la columna de texto. */
+.when {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 38px;
-  margin-top: auto;
-  padding-block: var(--space-12) var(--container-pad);
-}
-
-.partnerGroup {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.partnerLabel {
+  align-items: center;
+  gap: 0.5em;
+  /* Se saca de la columna para poder centrarla en el ancho completo. */
+  align-self: stretch;
+  justify-content: center;
+  margin-right: var(--container-margin);
+  max-width: none;
   font-family: var(--font-mono);
-  font-size: var(--text-caption);
-  letter-spacing: var(--tracking-caption);
+  font-size: var(--text-nav);
+  letter-spacing: var(--tracking-nav);
   text-transform: uppercase;
   color: var(--fg);
 }
 
-.partnerList {
+.separator {
+  opacity: 0.6;
+}
+
+.place {
+  color: var(--accent);
+}
+
+/**
+ * Rótulo: ocupa el ancho útil entre los dos filetes del contenedor, así que crece
+ * con la pantalla. A 1280px eso da 1104px, que es su tamaño natural (1100), y a
+ * partir de ahí escala hasta el tope de `--content-max`.
+ */
+.wordmark {
+  /* Todo el ancho útil del hero, entre los dos filetes del contenedor. El ave
+     pasa por delante, así que no hay que reservarle sitio. */
+  width: calc(100% - var(--container-margin));
+  height: auto;
+  margin-top: var(--hero-gap-wordmark);
+}
+
+.cta {
+  /* Empuja el bloque de registro hacia abajo, sin fijarlo a una altura. */
+  margin-top: auto;
+  /* El margen automático se anula cuando no sobra alto, y entonces el botón se
+     pegaba al titular. El relleno garantiza el hueco mínimo. */
+  padding-top: var(--hero-gap-cta);
+}
+
+.note {
+  margin-top: var(--hero-gap-note);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+/* En el flujo, no en posición absoluta: colgaba de `.content`, que no llena el
+   hero, así que su distancia al borde inferior no era la del diseño. */
+.invite {
+  margin-top: var(--hero-gap-invite);
+  /* Deja libre la banda de la cuenta atrás. */
+  margin-bottom: var(--hero-bottom);
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg);
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.invite:hover {
+  color: var(--accent);
+}
+
+.inviteIcon {
+  flex-shrink: 0;
+  width: 23px;
+  height: 19px;
 }
 
 @media (max-width: 900px) {
-  .content {
-    padding: var(--space-12) var(--space-6) 0;
+
+
+  .when {
+    justify-content: flex-start;
+    margin-right: 0;
   }
 
-  .partners {
-    gap: var(--space-8);
+  .wordmark {
+    margin-top: var(--space-8);
+  }
+
+  .invite {
+    margin-bottom: 120px;
   }
 }

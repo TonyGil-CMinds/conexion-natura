@@ -1,0 +1,16 @@
+.root {
+  position: relative;
+  width: 100%;
+  /* Decorativo: no intercepta el puntero. La repulsión se calcula desde la
+     posición del puntero en la ventana, no desde eventos sobre las celdas. */
+  pointer-events: none;
+}
+
+.pixel {
+  position: absolute;
+  display: block;
+  background-color: var(--color-lime);
+  /* Visible por defecto a propósito: quien lo apaga antes de la entrada es el
+     hook, ya en el cliente. Si el CSS lo apagara, un fallo de JavaScript dejaría
+     el campo invisible para siempre. */
+}

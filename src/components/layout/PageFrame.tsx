@@ -27,7 +27,12 @@ export function PageFrame({ header, bottomBar, children }: Props) {
       {/* Verticales: recorren la página entera, por detrás del contenido. */}
       <div className={styles.rules} aria-hidden>
         <PageShell>
-          <div className={styles.rulesInner} />
+          <div className={styles.rulesInner}>
+            {/* Las dos verticales interiores: separan las columnas de la
+                cabecera y siguen bajando por toda la página. */}
+            <span className={styles.columnRule} data-side="start" />
+            <span className={styles.columnRule} data-side="end" />
+          </div>
         </PageShell>
       </div>
 

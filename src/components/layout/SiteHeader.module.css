@@ -19,8 +19,9 @@
 }
 
 .logoCell {
-  justify-content: center;
-  border-right: 1px solid var(--rule);
+  /* Alineado al filete, como el resto del contenido del hero. */
+  justify-content: flex-start;
+  /* Alineado al filete, sin sangría. */
 }
 
 .navCell {
@@ -28,28 +29,13 @@
 }
 
 .controlsCell {
-  justify-content: center;
+  justify-content: flex-end;
+  padding-right: 8px;
   gap: var(--space-10);
-  border-left: 1px solid var(--rule);
 }
 
-.navList {
-  display: flex;
-  align-items: center;
-  gap: 50px;
-}
-
-.navLink {
-  font-family: var(--font-mono);
-  font-size: var(--text-nav);
-  letter-spacing: var(--tracking-nav);
-  text-transform: uppercase;
-  color: var(--fg);
-  transition: color var(--duration-fast) var(--ease-out-expo);
-}
-
-.navLink:hover {
-  color: var(--accent);
+.logo {
+  display: block;
 }
 
 @media (max-width: 900px) {
@@ -58,19 +44,11 @@
     height: 72px;
   }
 
-  /* Los enlaces se ocultan: el menú compacto todavía no está diseñado. */
-  .navCell {
-    display: none;
-  }
-
   .logoCell {
-    justify-content: flex-start;
-    padding-left: var(--space-4);
-    border-right: none;
+    padding-left: 0;
   }
 
   .controlsCell {
     gap: var(--space-6);
-    padding-inline: var(--space-4);
   }
 }

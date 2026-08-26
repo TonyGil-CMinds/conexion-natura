@@ -14,7 +14,7 @@ type Theme = 'light' | 'dark';
  * que lo aplique antes del primer pintado, o la página parpadea al recargar.
  */
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>('dark');
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -30,16 +30,15 @@ export function ThemeToggle() {
       type="button"
       className={styles.root}
       onClick={toggle}
-      aria-label={theme === 'light' ? 'Activar tema oscuro' : 'Activar tema claro'}
+      aria-label={theme === 'dark' ? 'Activar tema claro' : 'Activar tema oscuro'}
       aria-pressed={theme === 'dark'}
     >
       <Image
-        // El icono no cambia de forma, solo de color, para seguir contrastando
-        // con el fondo de cada tema.
+        // El icono anuncia el tema al que se cambia, no el vigente.
         src={
-          theme === 'light'
-            ? '/icons/icon-dark-lightmode.svg'
-            : '/icons/icon-light-lightmode.svg'
+          theme === 'dark'
+            ? '/icons/icon-light-lightmode.svg'
+            : '/icons/icon-dark-lightmode.svg'
         }
         alt=""
         width={20}
