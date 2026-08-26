@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { PageFrame } from '@/components/layout/PageFrame';
-import { SiteHeader } from '@/components/layout/SiteHeader';
 import { PageCover } from '@/components/sections/PageCover';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { PAGES } from '@/config/pages';
@@ -21,7 +20,7 @@ export default function AgendaPage() {
   const { title, cover, coverSeed, empty } = PAGES.agenda;
 
   return (
-    <PageFrame header={<SiteHeader />}>
+    <PageFrame>
       <PageCover title={title} image={cover} seed={coverSeed} />
       <EmptyState label={empty} />
     </PageFrame>

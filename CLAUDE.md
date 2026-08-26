@@ -17,14 +17,21 @@ Tailwind), GSAP, Framer Motion, react-three-fiber.
 - Reparto de animación: **GSAP** para valores continuos e interpolación numérica
   (contadores, progreso, scroll); **Framer Motion** para entrada/salida de
   componentes y variantes declarativas.
-- Fuentes vía `next/font` en `src/fonts/index.ts`. Host Grotesk para texto,
-  Departure Mono solo para acentos tipo loader.
+- Fuentes vía `next/font` en `src/fonts/index.ts`. IBM Plex Mono para texto
+  corrido (`--font-body`), Departure Mono para hero, loader y rótulos
+  (`--font-mono`).
 
 ## Rutas
 
-`/` (portada), `/agenda`, `/speakers` y `/faq`. El armazón (`PageFrame` + `SiteHeader`) se compone en cada
-página, no en el layout raíz: solo la portada va envuelta en `LoaderGate`, porque
-el loader es la entrada al sitio y no un peaje en cada ruta.
+`/` (portada), `/agenda`, `/speakers` y `/faq`.
+
+La **cabecera** se compone en el layout raíz: es idéntica en todas las rutas, no
+debe animarse al navegar, y al sobrevivir al cambio de ruta su indicador puede
+animar el paso de una a otra. El **armazón** (`PageFrame`) sí va en cada página,
+porque los filetes de columna se activan por página.
+
+Solo la portada va envuelta en `LoaderGate`: el loader es la entrada al sitio, no
+un peaje en cada ruta, y se ve una sola vez por sesión de pestaña.
 
 El acento de la navegación es su propio token (`--accent-nav`, lima), distinto del
 `--accent` del resto. Los iconos que deben tomar el color del texto van como
@@ -54,6 +61,9 @@ añadir secciones, el filete que las separe va como banda, no como `border-top`.
 
 ## Transiciones
 
+Los hooks compartidos entre features viven en `src/hooks/` (p. ej.
+`useStrobeEntrance`). Si solo lo usa una feature, se queda dentro de ella.
+
 Cada transición es una feature en `src/features/transitions/`. Regla: quien
 transiciona no decide *qué* se muestra — expone `onCovered` (pantalla tapada,
 momento seguro para cambiar contenido) y `onComplete`; el orquestador decide.
@@ -73,8 +83,8 @@ Los cuerpos del hero se despejaron de las métricas reales de Departure Mono
 (avance/em 0.6364, capHeight/em 0.7273): si hay que ajustar tamaños, se calcula
 con esas proporciones, no a ojo.
 
-Host Grotesk para párrafos y textos corridos (FAQ, cuerpos de texto). Departure
-Mono para el hero, el loader, rótulos de sección y datos: son los casos puntuales.
+IBM Plex Mono para párrafos y textos corridos (FAQ, cuerpos de texto). Departure
+Mono para el hero, el loader, rótulos de sección y datos.
 
 El titular se define por **tramos**, no por líneas (`SITE.event.headline`): el
 resalte cae a mitad de línea, así que el color es decisión de diseño por tramo.
@@ -94,6 +104,11 @@ aprieta en vez de dejar crecer la página. Al añadir elementos al hero, su huec
 va como token y entra en esos escalones.
 
 ## Animaciones de entrada
+
+Si el disparo es la carga de la página, la animación va en **CSS**: en JavaScript
+hay que apagar el elemento en un efecto, después del primer pintado, y se ve un
+cuadro con el estado final antes de que arranque. Si el disparo es una señal de
+JavaScript (`useHasEntered`), va en GSAP o Framer Motion.
 
 El contenido se monta oculto detrás del loader, así que una animación que
 arranque al montar se ejecuta sin que nadie la vea. Los componentes que animan al

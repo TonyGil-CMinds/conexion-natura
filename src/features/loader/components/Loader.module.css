@@ -1,3 +1,8 @@
+/* Ya visto en esta pestaña: fuera antes del primer pintado, sin esperar a React. */
+:global(html[data-loader-played]) .root {
+  display: none;
+}
+
 .root {
   position: fixed;
   inset: 0;

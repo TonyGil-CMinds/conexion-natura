@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { PageShell } from './PageShell';
 import { SITE } from '@/config/site';
 import { LocaleSwitch } from './LocaleSwitch';
 import { PrimaryNav } from './PrimaryNav';
@@ -13,10 +14,15 @@ import styles from './SiteHeader.module.css';
  *
  * El logotipo de la cabecera es la marca corta (500): el rótulo completo vive en
  * el hero, a tamaño de titular.
+ *
+ * Trae su propia banda a sangre con el filete inferior, porque ya no la envuelve
+ * `PageFrame`: la cabecera se compone en el layout raíz.
  */
 export function SiteHeader() {
   return (
-    <header className={styles.root}>
+    <div className={styles.band}>
+      <PageShell>
+        <header className={styles.root}>
       <div className={styles.logoCell}>
         <Link href="/" aria-label={`${SITE.name} — inicio`} className={styles.logo}>
           <Image src="/brand/logo-500.svg" alt={SITE.name} width={69} height={25} priority />
@@ -27,10 +33,12 @@ export function SiteHeader() {
         <PrimaryNav />
       </div>
 
-      <div className={styles.controlsCell}>
-        <ThemeToggle />
-        <LocaleSwitch />
-      </div>
-    </header>
+          <div className={styles.controlsCell}>
+            <ThemeToggle />
+            <LocaleSwitch />
+          </div>
+        </header>
+      </PageShell>
+    </div>
   );
 }

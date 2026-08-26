@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { PixelReveal } from '@/features/transitions/pixel-reveal';
 import { RevealProvider } from '../context/reveal';
 import { Loader } from './Loader';
@@ -11,6 +11,11 @@ type Props = {
   /** Assets de la página que deben estar listos antes de revelarla. */
   preload?: readonly string[];
 };
+
+/** Marca de "ya se vio", en la sesión de la pestaña. */
+const PLAYED_KEY = 'c500-loader-played';
+/** Atributo en <html>, puesto por el script en línea antes del primer pintado. */
+const PLAYED_ATTR = 'data-loader-played';
 
 /**
  * Fases: `loading` → `covering` → `revealing` → `done`.
@@ -24,9 +29,30 @@ type Phase = 'loading' | 'covering' | 'revealing' | 'done';
 export function LoaderGate({ children, preload }: Props) {
   const [phase, setPhase] = useState<Phase>('loading');
 
+  /**
+   * El loader se ve una vez por pestaña. `sessionStorage` y no `localStorage`: al
+   * cerrar la pestaña se olvida, que es el comportamiento pedido.
+   *
+   * La fase arranca siempre en `loading` para que el árbol coincida con el del
+   * servidor; quien evita el parpadeo es el CSS, que oculta el loader y descubre el
+   * contenido en cuanto <html> lleva el atributo. Este efecto solo pone al día el
+   * estado de React.
+   */
+  useEffect(() => {
+    if (document.documentElement.hasAttribute(PLAYED_ATTR)) setPhase('done');
+  }, []);
+
   const handleLoaded = useCallback(() => setPhase('covering'), []);
   const handleCovered = useCallback(() => setPhase('revealing'), []);
-  const handleRevealed = useCallback(() => setPhase('done'), []);
+  const handleRevealed = useCallback(() => {
+    setPhase('done');
+    document.documentElement.setAttribute(PLAYED_ATTR, '1');
+    // Puede fallar en modo privado o con el almacenamiento bloqueado; no pasa nada,
+    // solo significa que el loader se volverá a ver.
+    try {
+      sessionStorage.setItem(PLAYED_KEY, '1');
+    } catch {}
+  }, []);
 
   const isLoaderMounted = phase === 'loading' || phase === 'covering';
   const isContentVisible = phase === 'revealing' || phase === 'done';

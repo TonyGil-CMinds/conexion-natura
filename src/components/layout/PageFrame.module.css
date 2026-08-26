@@ -2,7 +2,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  /* La cabecera está fuera del armazón, así que se descuenta. */
+  min-height: calc(100dvh - var(--header-height));
   /* Recorta lo que sangra a los lados (la capa de medios y la cinta miden un
      viewport) sin acotarlo al ancho del contenido, que es lo que hacía el hero.
      `clip` y no `hidden`: no crea contenedor de scroll, así que no rompería un
@@ -15,7 +16,7 @@
    Arranca bajo la cabecera: el navbar va sin verticales. */
 .rules {
   position: absolute;
-  top: var(--header-height);
+  top: 0;
   right: 0;
   bottom: 0;
   left: 0;
@@ -31,7 +32,7 @@
   position: relative;
   height: 100%;
   margin-inline: var(--container-margin);
-  border-inline: 1px solid var(--rule);
+  border-inline: 1px solid var(--rule-vertical);
 }
 
 .columnRule {
@@ -39,7 +40,7 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  background-color: var(--rule);
+  background-color: var(--rule-vertical);
 }
 
 .columnRule[data-side='start'] {

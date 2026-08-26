@@ -45,8 +45,12 @@ archivos internos de otra feature.
 
 ## Tipografía
 
-- **Host Grotesk** — títulos y párrafos. Variable CSS `--font-sans`.
-- **Departure Mono** — usos puntuales (contador del loader, datos). `--font-mono`.
+- **IBM Plex Mono** — texto corrido: preguntas y respuestas del FAQ, rótulos de
+  lista, avisos. Variable CSS `--font-body`.
+- **Departure Mono** — hero, loader, rótulos de sección y datos. `--font-mono`.
+
+Host Grotesk se retiró: al pasar los párrafos a IBM Plex Mono se quedó sin ningún
+uso, y una fuente cargada que nadie pinta es peso de descarga.
 
 `-webkit-font-smoothing: antialiased` está aplicado en `html` (globals.css) y
 reforzado en el contador del loader, para el trazo fino de la referencia.
@@ -75,10 +79,23 @@ Ajustes en `src/features/loader/config/loader.config.ts`:
 | `maxDurationMs` | Corte de seguridad (9000) |
 | `exitDurationS` | Fundido de salida (0.8) |
 
+### Una vez por pestaña
+
+El loader se ve una sola vez por sesión de pestaña: al volver a la portada desde
+otra ruta no reaparece, y al cerrar la pestaña y abrirla de nuevo sí.
+`sessionStorage`, no `localStorage`, precisamente por eso.
+
+La fase arranca siempre en `loading`, para que el árbol coincida con el del
+servidor. Quien evita el parpadeo es el **CSS**: un script en línea marca
+`data-loader-played` en `<html>` antes del primer pintado, y las hojas de estilo
+ocultan el loader y descubren el contenido con ese atributo. El efecto de React
+solo pone al día el estado. Leerlo desde React sin el script dejaba ver el loader
+durante un cuadro.
+
 Uso:
 
 ```tsx
-<LoaderGate preload={['/hero/asset-hero-whale.svg']}>
+<LoaderGate preload={['/hero/heroBird.png']}>
   <Hero />
 </LoaderGate>
 ```
@@ -318,6 +335,39 @@ El signo del control es una barra horizontal con una vertical encima que
 desaparece al abrir: el más se convierte en menos sin cambiar de icono. El texto
 de la acción va oculto pero presente, porque el signo es decorativo.
 
+## Transición entre páginas
+
+`src/features/transitions/page-transition/`. El contenido sale, se navega, y el
+contenido nuevo entra.
+
+En el App Router el árbol viejo se desmonta antes de poder animarlo, así que una
+salida de verdad exige **retrasar la navegación**. El componente intercepta el clic
+en enlaces internos (`onClickCapture` en el contenedor, así vale para cualquier
+enlace del árbol), anima la salida y solo entonces llama al router. La alternativa
+—congelar el árbol saliente— es frágil y se rompe con cada versión.
+
+Vive en el layout raíz, no en un `template`: tiene que sobrevivir al cambio de ruta.
+
+**La cabecera queda fuera del envoltorio.** Se compone en el layout raíz, no en
+cada página, por dos motivos: no debe animarse al navegar, y al sobrevivir al
+cambio de ruta su indicador de activo puede animar el paso de una ruta a otra en
+vez de aparecer ya pintado. Es la misma en todas las rutas, así que no había razón
+para repetirla.
+
+Como consecuencia, **el listener de clics va en el documento** y no en el
+contenedor: los enlaces de la cabecera son la vía principal de navegación y viven
+fuera de este árbol. Escuchando solo dentro, el navbar navegaba de golpe y sin
+animación de salida.
+
+**La navegación se dispara por temporizador, no desde el final de la animación.**
+Con `onAnimationComplete` la salida corría pero el `router.push` no llegaba nunca:
+la página quedaba en blanco sin navegar. El reloj corre en paralelo a la animación,
+con la misma duración.
+
+El interceptor deja pasar lo que no le corresponde: externos, `//`, `download`,
+`target` distinto de `_self`, clic con Ctrl/Cmd/Shift/Alt o botón secundario,
+anclas de la misma página, y `prefers-reduced-motion`.
+
 ## Páginas interiores (Agenda y Ponentes)
 
 `/agenda` compone `PageCover` + `EmptyState`; `/speakers`, `PageCover` +
@@ -355,9 +405,22 @@ nada que recomponer.
 ### Mosaico
 
 `PixelMosaic` reparte celdas: la mayoría transparentes (dejan ver la foto), unas
-en amarillo y otras del color de fondo. Va **sin JavaScript**: las celdas se emiten
-en orden y la retícula las coloca con `auto-fill`. Medir el viewport para calcular
-filas y columnas obligaría a un componente de cliente para algo decorativo.
+en el color de acento y otras del color de fondo. Va **sin JavaScript**: las celdas
+se emiten en orden y la retícula las coloca con `auto-fill`. Medir el viewport para
+calcular filas y columnas obligaría a un componente de cliente para algo decorativo.
+
+### La entrada, en tres tiempos
+
+La fotografía está desde el primer cuadro, las celdas del mosaico parpadean encima
+con retardos salteados, y el rótulo entra al final.
+
+El parpadeo es una animación **CSS**, no de JavaScript. Con JS había que apagar las
+celdas en un efecto, después del primer pintado, y eso dejaba ver el mosaico
+completo durante un cuadro antes de que desapareciera para entrar. En CSS arrancan
+apagadas sin ese salto, y encender no depende de que el JavaScript llegue.
+
+(En el hero el estroboscopio sí va en JS, porque allí el disparo es una señal de
+JavaScript —`useHasEntered`— y no la carga de la página.)
 
 Dos detalles que costaron una vuelta:
 
@@ -496,7 +559,9 @@ cortaban donde acababa el contenido y dejaban de llegar al borde del viewport.
 - **Horizontales**: viven en bandas a sangre (`.band`), de un borde del viewport
   al otro, con el contenido acotado por dentro.
 - **Verticales**: una capa (`.rules`) que recorre toda la página, por detrás del
-  contenido, así que llegan hasta el borde superior y cruzan las dos bandas.
+  contenido, así que llegan hasta el borde superior y cruzan las dos bandas. Van
+  en su propio token (`--rule-vertical`, 7 % frente al 16 % de las horizontales):
+  recorren toda la página y al mismo valor competían con el contenido.
 
 Las dos verticales interiores se pueden apagar por página
 (`hasColumnRules={false}`). En ponentes van apagadas: las fichas de la lista

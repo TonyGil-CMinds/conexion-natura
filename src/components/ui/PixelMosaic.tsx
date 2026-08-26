@@ -9,6 +9,8 @@ type Props = {
    * elemento con peso —el bloque en degradado—, o el lado se satura.
    */
   density?: number;
+  /** Recorrido de la entrada: de la primera celda a la última (s). */
+  entranceSpan?: number;
   className?: string;
 };
 
@@ -29,33 +31,53 @@ const TONES = ['transparent', 'var(--cover-accent, var(--color-yellow))', 'var(-
 const SHADE_RATIO = 0.12;
 
 /**
- * Mosaico de píxeles sobre una imagen: unas celdas en amarillo, otras del color
- * de fondo, el resto transparentes.
+ * Mosaico de píxeles sobre una imagen: unas celdas en color de acento, otras del
+ * color de fondo, el resto transparentes.
  *
- * Va sin JavaScript. Las celdas se emiten en orden y la retícula las reparte con
- * `auto-fill`, así que el patrón se recompone al cambiar el ancho — al ser
- * aleatorio, eso no se nota. La alternativa (medir el viewport y calcular filas y
- * columnas) obligaría a un componente de cliente para algo puramente decorativo.
+ * Las celdas entran parpadeando, salteadas: la portada se lee primero como
+ * fotografía y el mosaico aparece encima.
  *
- * El color sale de un PRNG con semilla y no de `Math.random()`: si no, servidor y
- * cliente generarían mosaicos distintos y React reportaría desajuste.
+ * El parpadeo es una animación **CSS** y no de JavaScript. Con JS había que
+ * apagar las celdas en un efecto, después del primer pintado, y eso dejaba ver el
+ * mosaico completo durante un cuadro antes de que desapareciera para entrar. En
+ * CSS arrancan apagadas sin ese salto, y la animación no depende de que el
+ * JavaScript llegue: es la propia hoja de estilos la que enciende.
+ *
+ * El patrón y los retardos salen de un PRNG con semilla y no de `Math.random()`:
+ * si no, servidor y cliente generarían mosaicos distintos y React reportaría
+ * desajuste.
  */
-export function PixelMosaic({ seed = 1005, density = 0.18, className }: Props) {
+export function PixelMosaic({
+  seed = 1005,
+  density = 0.18,
+  entranceSpan = 0.85,
+  className,
+}: Props) {
   const random = createRandom(seed);
   const weights = [1 - density - SHADE_RATIO, density, SHADE_RATIO];
-  const cells = Array.from({ length: CELL_COUNT }, () =>
-    weightedPick(TONES, weights, random()),
-  );
+
+  const cells = Array.from({ length: CELL_COUNT }, () => ({
+    tone: weightedPick(TONES, weights, random()),
+    /** Retardo propio: en desorden, para que no se lea como un barrido. */
+    delay: random() * entranceSpan,
+  }));
 
   return (
     <div className={[styles.root, className].filter(Boolean).join(' ')} aria-hidden>
-      {cells.map((tone, index) => (
-        <span
-          key={index}
-          className={styles.cell}
-          style={tone === 'transparent' ? undefined : { backgroundColor: tone }}
-        />
-      ))}
+      {cells.map((cell, index) =>
+        cell.tone === 'transparent' ? (
+          <span key={index} className={styles.cell} />
+        ) : (
+          <span
+            key={index}
+            className={`${styles.cell} ${styles.painted}`}
+            style={{
+              backgroundColor: cell.tone,
+              animationDelay: `${cell.delay.toFixed(3)}s`,
+            }}
+          />
+        ),
+      )}
     </div>
   );
 }

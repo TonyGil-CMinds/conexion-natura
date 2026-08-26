@@ -40,9 +40,15 @@
   --accent-nav: var(--color-lime);
   /* Líneas de retícula: el mismo tono del texto, muy rebajado. */
   --rule: color-mix(in srgb, var(--fg) 16%, transparent);
+  /**
+   * Las verticales van más tenues que las horizontales: recorren toda la página y
+   * al mismo valor competían con el contenido.
+   */
+  --rule-vertical: color-mix(in srgb, var(--fg) 7%, transparent);
 
   /* Tipografía */
-  --font-sans: var(--font-host-grotesk), system-ui, -apple-system, sans-serif;
+  /* Texto corrido. IBM Plex Mono, no una sans: es la decisión de diseño vigente. */
+  --font-body: var(--font-ibm-plex-mono), ui-monospace, monospace;
   --font-mono: var(--font-departure-mono), ui-monospace, monospace;
 
   --text-xs: 0.75rem;
@@ -191,4 +197,5 @@
   --fg: var(--color-dark);
   --accent: var(--color-green-base);
   --rule: color-mix(in srgb, var(--fg) 14%, transparent);
+  --rule-vertical: color-mix(in srgb, var(--fg) 6%, transparent);
 }

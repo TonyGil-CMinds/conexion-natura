@@ -8,3 +8,8 @@
 .content[data-visible] {
   visibility: visible;
 }
+
+/* Ya visto: el contenido se descubre de entrada, sin esperar al efecto. */
+:global(html[data-loader-played]) .content {
+  visibility: visible;
+}

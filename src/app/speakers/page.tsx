@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { PageFrame } from '@/components/layout/PageFrame';
-import { SiteHeader } from '@/components/layout/SiteHeader';
 import { PageCover } from '@/components/sections/PageCover';
 import { PageIntro } from '@/components/sections/PageIntro';
 import { SpeakerList } from '@/components/sections/SpeakerList';
@@ -28,7 +27,7 @@ export default function SpeakersPage() {
   const { title, cover, coverSeed, coverDensity, intro } = PAGES.speakers;
 
   return (
-    <PageFrame header={<SiteHeader />} hasColumnRules={false}>
+    <PageFrame hasColumnRules={false}>
       <PageCover
         title={title}
         image={cover}

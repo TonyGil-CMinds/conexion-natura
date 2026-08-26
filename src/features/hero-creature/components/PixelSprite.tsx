@@ -2,8 +2,9 @@
 
 import { useRef } from 'react';
 import { COLIBRI_SPRITE } from '../config/colibri';
+import { CREATURE_CONFIG } from '../config/creature.config';
 import { useMagneticRepulsion } from '../hooks/useMagneticRepulsion';
-import { useStrobeEntrance } from '../hooks/useStrobeEntrance';
+import { useStrobeEntrance } from '@/hooks/useStrobeEntrance';
 import styles from './PixelSprite.module.css';
 
 type Props = {
@@ -36,7 +37,11 @@ export function PixelSprite({ isActive, label, className }: Props) {
     containerRef,
     selector: `.${styles.pixel}`,
     isActive,
-    rows: SPRITE.rows,
+    delayFor: (element) => {
+      const row = Number(element.dataset.row ?? 0);
+      const depth = SPRITE.rows > 1 ? row / (SPRITE.rows - 1) : 1;
+      return (1 - depth) * CREATURE_CONFIG.strobe.span;
+    },
   });
 
   useMagneticRepulsion({

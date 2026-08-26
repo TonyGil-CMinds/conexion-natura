@@ -1,6 +1,5 @@
 import { LoaderGate } from '@/features/loader';
 import { PageFrame } from '@/components/layout/PageFrame';
-import { SiteHeader } from '@/components/layout/SiteHeader';
 import { Hero } from '@/components/sections/Hero';
 
 /**
@@ -19,7 +18,7 @@ const HERO_ASSETS = [
 export default function HomePage() {
   return (
     <LoaderGate preload={HERO_ASSETS}>
-      <PageFrame header={<SiteHeader />}>
+      <PageFrame>
         <Hero />
       </PageFrame>
     </LoaderGate>

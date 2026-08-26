@@ -16,3 +16,41 @@
 .cell {
   display: block;
 }
+
+/**
+ * Solo las celdas con color entran parpadeando; las transparentes no se ven.
+ *
+ * `steps(1)` en cada tramo: el parpadeo tiene que ser encendido o apagado, sin
+ * medias tintas. Un fundido lo convertiría en una aparición suave.
+ */
+.painted {
+  opacity: 0;
+  animation: strobe-in 0.42s steps(1) forwards;
+}
+
+@keyframes strobe-in {
+  0% {
+    opacity: 0;
+  }
+  14% {
+    opacity: 1;
+  }
+  28% {
+    opacity: 0;
+  }
+  42% {
+    opacity: 1;
+  }
+  56% {
+    opacity: 0;
+  }
+  70% {
+    opacity: 1;
+  }
+  84% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,4 @@
+.root {
+  /* Sin estilos de caja: solo es el punto donde se escuchan los clics. */
+  display: contents;
+}

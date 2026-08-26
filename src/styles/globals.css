@@ -4,7 +4,7 @@
 html {
   background-color: var(--bg);
   color: var(--fg);
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   /* Renderizado de fuente pedido por diseño: trazos finos, sin engrosado. */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -21,7 +21,7 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-weight: 500;
   line-height: 1.05;
   letter-spacing: -0.02em;

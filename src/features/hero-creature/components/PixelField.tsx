@@ -2,8 +2,9 @@
 
 import { useRef } from 'react';
 import { PIXEL_FIELD } from '../config/pixelField';
+import { CREATURE_CONFIG } from '../config/creature.config';
 import { useMagneticRepulsion } from '../hooks/useMagneticRepulsion';
-import { useStrobeEntrance } from '../hooks/useStrobeEntrance';
+import { useStrobeEntrance } from '@/hooks/useStrobeEntrance';
 import styles from './PixelField.module.css';
 
 type Props = {
@@ -33,7 +34,12 @@ export function PixelField({ isActive, className }: Props) {
     containerRef,
     selector: `.${styles.pixel}`,
     isActive,
-    rows: ROWS,
+    // Ola de abajo hacia arriba, con desorden por celda.
+    delayFor: (element) => {
+      const row = Number(element.dataset.row ?? 0);
+      const depth = ROWS > 1 ? row / (ROWS - 1) : 1;
+      return (1 - depth) * CREATURE_CONFIG.strobe.span;
+    },
   });
 
   useMagneticRepulsion({

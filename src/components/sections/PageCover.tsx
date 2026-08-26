@@ -27,6 +27,9 @@ const TONE_VARS = {
  *
  * La foto es decorativa —el rótulo ya dice de qué va la página—, así que va con
  * `alt` vacío salvo que quien la use pase uno.
+ *
+ * La entrada va en tres tiempos: la fotografía está desde el primer cuadro, las
+ * celdas del mosaico parpadean encima, y el rótulo aparece al final.
  */
 export function PageCover({
   title,
@@ -55,6 +58,10 @@ export function PageCover({
       {/* Bloque en escalera, con su degradado dentro del propio asset. */}
       {hasGradientBlock && <div className={styles.gradientBlock} aria-hidden />}
 
+      {/* El rótulo cierra la secuencia: primero la foto, luego los cuadros
+          parpadeando, y al final el panel. La entrada va en CSS, como la del
+          mosaico, para que no haga falta JavaScript ni se vea un cuadro con el
+          rótulo ya puesto. */}
       <div className={styles.panel}>
         <h1 className={styles.title}>{title}</h1>
       </div>

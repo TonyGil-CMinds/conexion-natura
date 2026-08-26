@@ -1,3 +1,11 @@
+/* Banda a sangre: el filete cruza de un borde del viewport al otro. */
+.band {
+  position: relative;
+  z-index: var(--z-header);
+  width: 100%;
+  border-bottom: 1px solid var(--rule);
+}
+
 .root {
   position: relative;
   z-index: var(--z-header);
@@ -5,10 +13,7 @@
   grid-template-columns: var(--header-side) 1fr var(--header-side);
   height: var(--header-height);
   margin-inline: var(--container-margin);
-  /* El filete inferior lo dibuja la banda de PageFrame, que va a sangre.
-     Sin fondo propio: es del mismo color que la página y solo servía para tapar
-     los filetes verticales, que tienen que llegar hasta el borde superior. Si la
-     cabecera pasa a ser fija habrá que devolvérselo y subir la capa de filetes. */
+  /* Sin fondo propio: es del mismo color que la página. */
 }
 
 .logoCell,

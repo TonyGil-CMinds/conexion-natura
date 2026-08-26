@@ -2,8 +2,6 @@ import { PageShell } from './PageShell';
 import styles from './PageFrame.module.css';
 
 type Props = {
-  /** Cabecera: queda sobre el filete horizontal superior. */
-  header: React.ReactNode;
   /** Barra inferior: queda bajo el filete horizontal inferior. */
   bottomBar?: React.ReactNode;
   /**
@@ -18,6 +16,9 @@ type Props = {
 /**
  * Armazón de página: aporta la retícula de filetes y reparte la altura.
  *
+ * La cabecera no está aquí, sino en el layout raíz: es idéntica en todas las rutas
+ * y no debe animarse al navegar.
+ *
  * Los filetes no son bordes de la cabecera ni del hero, y esa es la clave: al
  * acotar el contenido a `--content-max`, un borde se corta donde acaba su
  * elemento, y las horizontales dejaban de llegar al borde del viewport. Aquí las
@@ -27,7 +28,7 @@ type Props = {
  * La altura se reparte con flex y no con `calc(100dvh - cabecera - barra)`: así no
  * hay que mantener sincronizadas las alturas de cada banda con una fórmula.
  */
-export function PageFrame({ header, bottomBar, children, hasColumnRules = true }: Props) {
+export function PageFrame({ bottomBar, children, hasColumnRules = true }: Props) {
   return (
     <div className={styles.root}>
       {/* Verticales: recorren la página entera, por detrás del contenido. */}
@@ -44,10 +45,6 @@ export function PageFrame({ header, bottomBar, children, hasColumnRules = true }
             )}
           </div>
         </PageShell>
-      </div>
-
-      <div className={styles.band} data-rule="bottom">
-        <PageShell>{header}</PageShell>
       </div>
 
       <PageShell className={styles.main}>{children}</PageShell>

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { PageFrame } from '@/components/layout/PageFrame';
-import { SiteHeader } from '@/components/layout/SiteHeader';
 import { Faq } from '@/components/sections/Faq';
 import { SITE } from '@/config/site';
 
@@ -18,7 +17,7 @@ export const metadata: Metadata = {
  */
 export default function FaqPage() {
   return (
-    <PageFrame header={<SiteHeader />}>
+    <PageFrame>
       <Faq />
     </PageFrame>
   );
