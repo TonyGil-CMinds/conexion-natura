@@ -55,5 +55,5 @@ const SPARKLE_RATIO = 0.16;
 export function cellColor(depth: number, random: number): string {
   if (random < SPARKLE_RATIO) return 'var(--color-lime)';
   const mix = Math.round(depth * 100);
-  return `color-mix(in srgb, var(--color-lime-soft) ${mix}%, var(--color-dark))`;
+  return `color-mix(in srgb, var(--color-lime-soft) ${mix}%, var(--color-surface))`;
 }

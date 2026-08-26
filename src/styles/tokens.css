@@ -6,6 +6,12 @@
   /* Paleta de marca */
   --color-white: #fffff4;
   --color-dark: #001d09;
+  /**
+   * Fondo de la interfaz. Es un rol distinto de `--color-dark`: ese sigue siendo
+   * el tinte de los textos sobre superficies claras (rótulo del botón, respuesta
+   * abierta del FAQ, rótulo de portada), donde hace falta el máximo contraste.
+   */
+  --color-surface: #151d17;
   --color-green-base: #00b000;
   --color-green: #8fe200;
   --color-green-soft: #9de250;
@@ -23,9 +29,15 @@
   --color-lime-soft: #a2e136;
 
   /* Roles semánticos — tema oscuro */
-  --bg: var(--color-dark);
+  --bg: var(--color-surface);
   --fg: var(--color-light);
   --accent: var(--color-green);
+  /**
+   * Acento de la navegación. Es más brillante que `--accent` a propósito: el
+   * enlace activo y la llamada a la acción del menú van en lima, no en el verde
+   * del resto de la interfaz.
+   */
+  --accent-nav: var(--color-lime);
   /* Líneas de retícula: el mismo tono del texto, muy rebajado. */
   --rule: color-mix(in srgb, var(--fg) 16%, transparent);
 

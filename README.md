@@ -18,9 +18,9 @@ src/
 ├─ app/                      Rutas: `/`, `/agenda`, `/speakers`, `/faq`.
 ├─ components/
 │  ├─ layout/                PageFrame, PageShell, SiteHeader, ThemeToggle, LocaleSwitch
-│  ├─ sections/              Hero, Faq, PageCover, PageIntro
+│  ├─ sections/              Hero, Faq, PageCover, PageIntro, SpeakerList
 │  └─ ui/                    CtaButton, ScrambleText, PixelMosaic, EmptyState
-├─ config/                   site.ts, faq.ts, pages.ts: copy fuera de los componentes
+├─ config/                   site.ts, faq.ts, pages.ts, speakers.ts: copy y datos
 ├─ features/
 │  ├─ hero-creature/         Colibrí por píxeles: estroboscopio + magnetismo
 │  ├─ transitions/pixel-reveal/  PixelReveal + usePixelGrid
@@ -273,9 +273,50 @@ que la navegación pueda marcar como actual.
 
 El ítem de la ruta actual va además en color de acento, acompañando al zigzag.
 
+El acento de la navegación es su propio token (`--accent-nav`, lima #D0FF00), más
+brillante que el `--accent` del resto de la interfaz. El zigzag va como **máscara**
+y no como imagen de fondo: el archivo trae su verde fijado (#A2E136) y así toma el
+color del enlace.
+
 El color (#A2E136) viene dentro del SVG y no de un token; es un verde que no está
 en `colores.txt` (el más cercano es green-soft #9DE250). Si tiene que responder al
 tema, hay que pasar el archivo a `mask-image` y pintarlo con una variable.
+
+## Lista de ponentes
+
+`src/components/sections/SpeakerList.tsx`, datos en `src/config/speakers.ts`.
+
+**Los datos son de relleno.** Lo que importa es la forma del tipo `Speaker`:
+cuando exista el endpoint, lo único que cambia es de dónde sale el array — pasa a
+ser el resultado de un `fetch` en el componente de servidor y la lista no se
+entera. El nombre va partido en `firstName` y `lastName` porque el diseño los
+pinta con distinto peso.
+
+Acordeón de una sola ficha abierta y **ninguna al entrar**: la lista se lee de un
+vistazo y quien busca a alguien concreto despliega solo esa ficha. El cargo y la
+empresa van alineados a la derecha, contra el control de apertura.
+
+### La fila
+
+Cada ficha es **una sola retícula** de cuatro columnas (retrato, nombre, cargo,
+control) y dos filas, y el retrato abarca las dos. Con el retrato dentro de una
+cabecera aparte, su altura empujaba las sesiones muy por debajo del nombre: 150px
+de hueco vacío. Abarcando, el nombre y las sesiones quedan juntos y el retrato
+sigue a su lado.
+
+La alineación cambia con el estado: cerrada, el nombre se centra con el retrato;
+abierta, sube al borde superior.
+
+El retrato abarca las dos filas **solo cuando la ficha está abierta**. Abarcando
+también cerrada se creaba una fila implícita vacía y el nombre quedaba pegado
+arriba, con todo el hueco debajo.
+
+El fondo del retrato alterna lima y azul **por posición, no por dato**: es ritmo
+visual de la lista, no información del ponente.
+
+El signo del control es una barra horizontal con una vertical encima que
+desaparece al abrir: el más se convierte en menos sin cambiar de icono. El texto
+de la acción va oculto pero presente, porque el signo es decorativo.
 
 ## Páginas interiores (Agenda y Ponentes)
 
@@ -457,6 +498,11 @@ cortaban donde acababa el contenido y dejaban de llegar al borde del viewport.
 - **Verticales**: una capa (`.rules`) que recorre toda la página, por detrás del
   contenido, así que llegan hasta el borde superior y cruzan las dos bandas.
 
+Las dos verticales interiores se pueden apagar por página
+(`hasColumnRules={false}`). En ponentes van apagadas: las fichas de la lista
+cruzan esas columnas y las líneas atravesarían cada fila en vez de estructurar la
+página.
+
 Por eso la cabecera no tiene fondo propio: era del mismo color que la página y
 solo servía para tapar las verticales en su franja. Si pasa a ser fija habrá que
 devolvérselo y subir la capa de filetes por encima.
@@ -510,7 +556,14 @@ duplicar la definición.
 
 El tema sale de roles semánticos (`--bg`, `--fg`, `--accent`, `--rule`), y
 `ThemeToggle` solo escribe `data-theme` en `<html>`: ningún componente conoce el
-tema. Arranca en oscuro, que es el del diseño. El loader también es oscuro por sí
+tema.
+
+Hay **dos oscuros** y no conviene confundirlos:
+
+| Token | Valor | Para qué |
+|---|---|---|
+| `--color-surface` | #151D17 | Fondo de la interfaz (`--bg`), loader, extremo oscuro de la transición |
+| `--color-dark` | #001D09 | Tinte de los textos sobre superficies claras: rótulo del botón, respuesta abierta del FAQ, rótulo de portada | Arranca en oscuro, que es el del diseño. El loader también es oscuro por sí
 mismo: usa los colores de marca directamente, no los roles.
 
 ## Verificación visual
@@ -530,6 +583,11 @@ virtual solo avanza cuando la página está inactiva y aquí nunca lo está.
 
 ## Pendiente
 
+- `hero-green-pixels-2.svg` lleva el degradado con el oscuro antiguo (#001D09) en
+  su extremo, así que sus cuadros superiores quedan algo más oscuros que el fondo
+  nuevo (#151D17). Se arregla cambiando ese `stop-color` en el asset.
+- **Los ponentes son datos de relleno**, con retratos de silueta. Al llegar el
+  endpoint de base44, sustituir el array de `speakers.ts` por el `fetch`.
 - La referencia del FAQ abría con **"¿Qué es Conexión 500?"**, una pregunta que no
   está en la lista entregada, y ordenaba las demás de otra forma. Se usó la lista
   tal cual, en su orden. Si esa pregunta va, hay que añadirla a `faq.ts`.

@@ -23,17 +23,17 @@
 }
 
 .link:hover {
-  color: var(--accent);
+  color: var(--accent-nav);
 }
 
 /* Llamada a la acción dentro del menú: va en el color de acento de base. */
 .link[data-highlight] {
-  color: var(--accent);
+  color: var(--accent-nav);
 }
 
 /* La ruta actual: el color acompaña al zigzag. */
 .link[data-selected] {
-  color: var(--accent);
+  color: var(--accent-nav);
 }
 
 /**
@@ -56,10 +56,13 @@
   right: 0;
   bottom: -12px;
   height: 9px;
-  background-image: url('/selected-indicator.svg');
-  background-repeat: repeat-x;
-  background-position: left center;
-  background-size: 48px 9px;
+  /* Máscara y no imagen de fondo: el archivo trae su verde fijado (#A2E136) y el
+     activo del navbar es otro, así que el zigzag toma el color del enlace. */
+  background-color: currentColor;
+  mask-image: url('/selected-indicator.svg');
+  mask-repeat: repeat-x;
+  mask-position: left center;
+  mask-size: 48px 9px;
   /* Sin pintar: recortado del todo por la derecha. */
   clip-path: inset(0 100% 0 0);
   /* La misma transición sirve para los dos sentidos: al deseleccionar, el

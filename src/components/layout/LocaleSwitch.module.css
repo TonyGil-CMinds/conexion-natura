@@ -24,8 +24,9 @@
   transition: color var(--duration-fast) var(--ease-out-expo);
 }
 
+/* Mismo lima que el enlace activo del menú: los dos viven en la barra. */
 .button[data-active] {
-  color: var(--accent);
+  color: var(--accent-nav);
 }
 
 .button:hover:not([data-active]) {

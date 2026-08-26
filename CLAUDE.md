@@ -8,6 +8,8 @@ Tailwind), GSAP, Framer Motion, react-three-fiber.
 - Alias de importación: `@/*` → `src/*`.
 - Colores, tipografía y espaciado **solo** desde `src/styles/tokens.css`. Nada de
   hex sueltos en componentes.
+- Dos oscuros distintos: `--color-surface` (#151D17) es el fondo de la interfaz;
+  `--color-dark` (#001D09) es el tinte de los textos sobre superficies claras.
 - Cada feature vive en `src/features/<nombre>/` con `components/ hooks/ config/`
   y un `index.ts` que es su única API pública.
 - Estilos: un `.module.css` junto a su componente.
@@ -23,6 +25,10 @@ Tailwind), GSAP, Framer Motion, react-three-fiber.
 `/` (portada), `/agenda`, `/speakers` y `/faq`. El armazón (`PageFrame` + `SiteHeader`) se compone en cada
 página, no en el layout raíz: solo la portada va envuelta en `LoaderGate`, porque
 el loader es la entrada al sitio y no un peaje en cada ruta.
+
+El acento de la navegación es su propio token (`--accent-nav`, lima), distinto del
+`--accent` del resto. Los iconos que deben tomar el color del texto van como
+máscara y no como imagen: el archivo trae su relleno fijado.
 
 El indicador del navbar sale de `usePathname()`. Los enlaces con ancla
 (`/#agenda`) no pueden estar seleccionados: una ancla no es un destino.

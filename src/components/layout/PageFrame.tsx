@@ -6,6 +6,12 @@ type Props = {
   header: React.ReactNode;
   /** Barra inferior: queda bajo el filete horizontal inferior. */
   bottomBar?: React.ReactNode;
+  /**
+   * Filetes verticales interiores, los que separan las columnas de la cabecera.
+   * Se apagan en páginas cuyo contenido cruza esas columnas, donde las líneas
+   * atravesarían las filas en vez de estructurarlas.
+   */
+  hasColumnRules?: boolean;
   children: React.ReactNode;
 };
 
@@ -21,7 +27,7 @@ type Props = {
  * La altura se reparte con flex y no con `calc(100dvh - cabecera - barra)`: así no
  * hay que mantener sincronizadas las alturas de cada banda con una fórmula.
  */
-export function PageFrame({ header, bottomBar, children }: Props) {
+export function PageFrame({ header, bottomBar, children, hasColumnRules = true }: Props) {
   return (
     <div className={styles.root}>
       {/* Verticales: recorren la página entera, por detrás del contenido. */}
@@ -30,8 +36,12 @@ export function PageFrame({ header, bottomBar, children }: Props) {
           <div className={styles.rulesInner}>
             {/* Las dos verticales interiores: separan las columnas de la
                 cabecera y siguen bajando por toda la página. */}
-            <span className={styles.columnRule} data-side="start" />
-            <span className={styles.columnRule} data-side="end" />
+            {hasColumnRules && (
+              <>
+                <span className={styles.columnRule} data-side="start" />
+                <span className={styles.columnRule} data-side="end" />
+              </>
+            )}
           </div>
         </PageShell>
       </div>

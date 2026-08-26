@@ -2,7 +2,7 @@
   position: fixed;
   inset: 0;
   z-index: var(--z-loader);
-  background-color: var(--color-dark);
+  background-color: var(--color-surface);
   overflow: hidden;
 }
 

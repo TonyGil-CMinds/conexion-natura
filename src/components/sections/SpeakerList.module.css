@@ -1,0 +1,253 @@
+.root {
+  margin-inline: var(--container-margin);
+  padding-block: var(--space-12) var(--space-16);
+}
+
+.title {
+  padding-left: 24px;
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--fg);
+}
+
+.list {
+  margin-top: var(--space-8);
+}
+
+.item {
+  border-top: 1px solid var(--rule);
+}
+
+
+
+.item:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+/**
+ * La ficha es una retícula de cuatro columnas —retrato, nombre, cargo, control— y
+ * dos filas: la segunda la ocupa el panel desplegable. El retrato abarca ambas.
+ */
+.item {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) minmax(0, 1.1fr) 40px;
+  column-gap: 64px;
+  align-items: center;
+  padding: 24px 32px;
+}
+
+.item[data-open] {
+  align-items: start;
+}
+
+/* Abierto sí abarca: el nombre sube y las sesiones ocupan la segunda fila. */
+.item[data-open] .portrait {
+  grid-row: 1 / span 2;
+}
+
+/**
+ * Cerrado, el retrato ocupa solo su fila y marca la altura, así que el nombre se
+ * centra con él. Abarcando las dos filas también cerrado se creaba una fila vacía
+ * y el nombre quedaba arriba, con el hueco debajo.
+ */
+.portrait {
+  position: relative;
+  width: 110px;
+  height: 140px;
+  overflow: hidden;
+}
+
+.item[data-tone='lime'] .portrait {
+  background-color: var(--color-lime);
+}
+
+.item[data-tone='blue'] .portrait {
+  background-color: var(--color-light-blue);
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+}
+
+.name {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+/* Departure Mono tiene un solo grosor; el navegador sintetiza la negrita, que es
+   lo que el diseño usa para separar nombre de apellido. */
+.firstName {
+  font-weight: 700;
+}
+
+.lastName {
+  font-weight: 400;
+}
+
+.role {
+  max-width: none;
+  /* Alineado a la derecha de su columna, contra el control de apertura. */
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  line-height: 1.4;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 78%, transparent);
+}
+
+.organization {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Control de apertura. El texto va oculto pero presente: es lo que anuncia la
+   acción, porque el signo es decorativo. */
+.toggle {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-left: auto;
+  color: var(--accent-nav);
+}
+
+.toggleLabel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.sign,
+.sign::before {
+  content: '';
+  display: block;
+  background-color: currentColor;
+}
+
+.sign {
+  width: 14px;
+  height: 2px;
+}
+
+.sign::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 14px;
+  transform: translate(-50%, -50%);
+  transition: opacity var(--duration-fast) var(--ease-out-expo);
+}
+
+.item[data-open] .sign::before {
+  opacity: 0;
+}
+
+/* El panel se anima en alto, así que el relleno va dentro. */
+.panel {
+  /* Ocupa de la segunda columna al final: el retrato ya tiene la primera. */
+  grid-column: 2 / -1;
+  overflow: hidden;
+}
+
+.panelInner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-8);
+  padding-top: var(--space-6);
+}
+
+.sessionsLabel {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 70%, transparent);
+}
+
+.sessionList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.session {
+  /* Caja con filete, y el título recortado: los nombres de sesión son largos y en
+     la lista solo hacen de referencia. */
+  /* Se recorta al ancho disponible: en móvil, 305px se salían de la columna. */
+  max-width: min(305px, 100%);
+  padding: 10px 14px;
+  border: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.linkedin {
+  grid-column: 3;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg);
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.linkedin:hover {
+  color: var(--accent-nav);
+}
+
+.linkedinMark {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 900px) {
+  .item {
+    grid-template-columns: 92px minmax(0, 1fr) 40px;
+    column-gap: var(--space-6);
+    row-gap: var(--space-2);
+    padding: 20px var(--space-4);
+  }
+
+  .role {
+    grid-column: 2;
+  }
+
+  .portrait {
+    width: 92px;
+    height: 118px;
+    grid-row: 1 / span 3;
+  }
+
+  .panelInner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-6);
+  }
+}
