@@ -53,8 +53,10 @@
 .question {
   display: block;
   width: 100%;
-  min-height: 50px;
-  padding: 14px 32px;
+  /* El relleno vertical manda sobre el alto mínimo: las preguntas son de una
+     línea y con 14px las filas quedaban apretadas unas contra otras. */
+  min-height: 72px;
+  padding: 24px 32px;
   text-align: left;
   font-family: var(--font-body);
   font-size: var(--text-question);
