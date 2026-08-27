@@ -1,11 +1,35 @@
 'use client';
 
-import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, Component, FormEvent, type ReactNode, useEffect, useMemo, useState } from 'react';
 import Lanyard from './ReactBitsLanyard';
 import styles from './Registration.module.css';
 
 type Fields = { name: string; surname: string; email: string; organization: string; role: string; linkedin: string };
 type Errors = Partial<Record<keyof Fields | 'photo', string>>;
+
+type LanyardBoundaryProps = { children: ReactNode; frontImage: string };
+
+class LanyardBoundary extends Component<LanyardBoundaryProps, { hasError: boolean }> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidUpdate(previousProps: LanyardBoundaryProps) {
+    // Un frente nuevo permite reintentar el canvas sin recargar toda la ruta.
+    if (previousProps.frontImage !== this.props.frontImage && this.state.hasError) {
+      this.setState({ hasError: false });
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div className={styles.lanyardFallback} style={{ backgroundImage: `url(${this.props.frontImage})` }} aria-label="Vista previa de credencial" />;
+    }
+    return this.props.children;
+  }
+}
 
 const INITIAL: Fields = {
   name: 'Kathrin',
@@ -210,17 +234,19 @@ export function Registration() {
       </form>
 
       <aside className={styles.preview} data-updating={isBadgeUpdating || undefined}>
-        <Lanyard
-          position={[0, 0, 15]}
-          gravity={[0, -40, 0]}
-          fov={17}
-          verticalOffset={1.25}
-          frontImage={frontImage}
-          backImage="/img/back.png"
-          imageFit="cover"
-          lanyardImage="/lanyard/lanyard.png"
-          lanyardWidth={1}
-        />
+        <LanyardBoundary frontImage={frontImage}>
+          <Lanyard
+            position={[0, 0, 15]}
+            gravity={[0, -40, 0]}
+            fov={17}
+            verticalOffset={1.25}
+            frontImage={frontImage}
+            backImage="/img/back.png"
+            imageFit="cover"
+            lanyardImage="/lanyard/lanyard.png"
+            lanyardWidth={1}
+          />
+        </LanyardBoundary>
         {isConfirmed && (
           <div className={styles.actions}>
             <button type="button" onClick={download}>Descargar</button>
