@@ -26,7 +26,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     // El tema arranca en oscuro, que es el del diseño. Los roles semánticos de
     // tokens.css ya son los del tema oscuro, así que no hace falta atributo.
-    <html lang="es" className={`${bodyFont.variable} ${departureMono.variable}`}>
+    <html
+      lang="es"
+      className={`${bodyFont.variable} ${departureMono.variable}`}
+      suppressHydrationWarning
+    >
       <body>
         <script dangerouslySetInnerHTML={{ __html: LOADER_FLAG_SCRIPT }} />
 

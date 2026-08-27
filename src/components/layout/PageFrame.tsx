@@ -1,15 +1,16 @@
 import { PageShell } from './PageShell';
+import { SiteFooter } from './SiteFooter';
 import styles from './PageFrame.module.css';
 
 type Props = {
-  /** Barra inferior: queda bajo el filete horizontal inferior. */
-  bottomBar?: React.ReactNode;
   /**
    * Filetes verticales interiores, los que separan las columnas de la cabecera.
    * Se apagan en páginas cuyo contenido cruza esas columnas, donde las líneas
    * atravesarían las filas en vez de estructurarlas.
    */
   hasColumnRules?: boolean;
+  /** Las pantallas de flujo cerrado (registro) no continúan con el pie global. */
+  hideFooter?: boolean;
   children: React.ReactNode;
 };
 
@@ -28,7 +29,7 @@ type Props = {
  * La altura se reparte con flex y no con `calc(100dvh - cabecera - barra)`: así no
  * hay que mantener sincronizadas las alturas de cada banda con una fórmula.
  */
-export function PageFrame({ bottomBar, children, hasColumnRules = true }: Props) {
+export function PageFrame({ children, hasColumnRules = true, hideFooter = false }: Props) {
   return (
     <div className={styles.root}>
       {/* Verticales: recorren la página entera, por detrás del contenido. */}
@@ -49,11 +50,9 @@ export function PageFrame({ bottomBar, children, hasColumnRules = true }: Props)
 
       <PageShell className={styles.main}>{children}</PageShell>
 
-      {bottomBar && (
-        <div className={styles.band} data-rule="top">
-          <PageShell>{bottomBar}</PageShell>
-        </div>
-      )}
+      {/* El pie va dentro del armazón para que los filetes verticales lo
+          crucen como cruzan el resto de la página. */}
+      {!hideFooter && <SiteFooter />}
     </div>
   );
 }

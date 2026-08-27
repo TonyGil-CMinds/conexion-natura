@@ -1,0 +1,223 @@
+.root {
+  position: relative;
+  z-index: 1;
+}
+
+/**
+ * Bloque central: ocupa la columna del medio de la retícula, la misma que acota el
+ * FAQ, así que los filetes que ya dibuja `PageFrame` le sirven de marco.
+ */
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-inline: calc(var(--container-margin) + var(--header-side));
+  padding-block: var(--space-12) var(--space-16);
+}
+
+.partners {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 38px;
+}
+
+.partnerGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.partnerLabel {
+  max-width: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-caption);
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.partnerList {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/**
+ * Tamaño natural, aunque desborde la columna central: en el diseño la ballena es
+ * el elemento dominante y cruza los filetes. Se acota al ancho del contenedor
+ * para que en pantallas menores no se salga de la página.
+ */
+.image {
+  /* Sin encogerse: es un ítem flex, y con el ancho por encima del contenedor el
+     reparto por defecto lo comprimía de vuelta a la columna. */
+  flex-shrink: 0;
+  /* El reset pone `max-width: 100%` a toda imagen, y ese 100% es la columna: hay
+     que levantarlo para que la ballena pueda desbordarla. */
+  max-width: none;
+  width: min(764px, calc(100vw - 2 * var(--container-margin)));
+  height: auto;
+  margin-top: var(--space-10);
+}
+
+.farewell {
+  max-width: none;
+  margin-top: var(--space-8);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.place {
+  font-weight: 700;
+}
+
+.cta {
+  margin-top: var(--space-8);
+}
+
+/**
+ * Banda inferior. El filete va en la banda, a sangre de un borde del viewport al
+ * otro, y no como borde del contenido: es la regla del proyecto para las
+ * horizontales, porque un borde se corta donde acaba su elemento.
+ */
+.bottomBand {
+  border-top: 1px solid var(--rule);
+}
+
+/**
+ * Tres columnas, las mismas de la retícula: marca a la izquierda, textos en la
+ * columna central —entre los dos filetes interiores— y redes a la derecha. Antes
+ * los enlaces legales iban en columnas propias al final, y en pantallas anchas
+ * acababan pegados al borde del contenido en vez de dentro de la columna.
+ */
+.bottom {
+  display: grid;
+  grid-template-columns: var(--header-side) minmax(0, 1fr) var(--header-side);
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 102px;
+  /* Usa exactamente el mismo lienzo centrado que los filetes de `PageFrame`.
+     Antes esta grilla se medía contra todo el viewport: en monitores anchos sus
+     celdas laterales quedaban fuera de las líneas verticales. */
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding: var(--space-6) var(--container-margin);
+}
+
+/* Créditos y enlaces legales, repartidos dentro de la columna central. */
+.texts {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+  padding-inline: 14px;
+}
+
+.brand {
+  display: block;
+  width: 147px;
+  /* Un poco dentro de su columna, no pegada al filete. */
+  margin-left: 12px;
+}
+
+.brand img {
+  width: 100%;
+  height: auto;
+}
+
+.copyright {
+  max-width: none;
+  /* En una línea: el reparto de la columna deja hueco justo, y sin esto los ítems
+     se encogían y partían el texto en dos. */
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: var(--text-fine);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 78%, transparent);
+}
+
+.legal {
+  display: flex;
+  gap: var(--space-10);
+  white-space: nowrap;
+}
+
+.legalLink {
+  font-family: var(--font-mono);
+  font-size: var(--text-fine);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg);
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.legalLink:hover {
+  color: var(--accent-nav);
+}
+
+.social {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-6);
+  margin-right: 12px;
+}
+
+.socialLink {
+  display: grid;
+  place-items: center;
+  color: var(--fg);
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.socialLink:hover {
+  color: var(--accent-nav);
+}
+
+.socialMark {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 1100px) {
+  .main {
+    margin-inline: var(--container-margin);
+  }
+}
+
+@media (max-width: 1150px) {
+  .bottom {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: var(--space-6);
+  }
+
+  .texts {
+    flex-direction: column;
+    gap: var(--space-4);
+    padding-inline: 0;
+  }
+
+  .brand {
+    margin-left: 0;
+  }
+
+  .social {
+    justify-content: center;
+    margin-right: 0;
+  }
+
+  .legal {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-6);
+  }
+}

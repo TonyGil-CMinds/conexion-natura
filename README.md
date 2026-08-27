@@ -17,9 +17,9 @@ npm run lint
 src/
 ├─ app/                      Rutas: `/`, `/agenda`, `/speakers`, `/faq`.
 ├─ components/
-│  ├─ layout/                PageFrame, PageShell, SiteHeader, ThemeToggle, LocaleSwitch
+│  ├─ layout/                PageFrame, PageShell, SiteHeader, SiteFooter, ThemeToggle…
 │  ├─ sections/              Hero, Faq, PageCover, PageIntro, SpeakerList
-│  └─ ui/                    CtaButton, ScrambleText, PixelMosaic, EmptyState
+│  └─ ui/                    CtaButton, ScrambleText, PixelMosaic, EmptyState, social-marks
 ├─ config/                   site.ts, faq.ts, pages.ts, speakers.ts: copy y datos
 ├─ features/
 │  ├─ hero-creature/         Colibrí por píxeles: estroboscopio + magnetismo
@@ -335,6 +335,53 @@ El signo del control es una barra horizontal con una vertical encima que
 desaparece al abrir: el más se convierte en menos sin cambiar de icono. El texto
 de la acción va oculto pero presente, porque el signo es decorativo.
 
+## Pie del sitio
+
+`src/components/layout/SiteFooter.tsx`, contenido en `SITE.FOOTER`.
+
+Lo compone **`PageFrame`**, no cada página: es idéntico en todas las rutas, y
+viviendo dentro del armazón los filetes verticales lo cruzan como cruzan el resto
+de la página. (Ocupa el hueco del antiguo `bottomBar`, que se quedó sin usar al
+rediseñar el hero.)
+
+El bloque central ocupa la columna del medio de la retícula, la misma que acota el
+FAQ. La ballena va a **tamaño natural (764px) aunque desborde esa columna**, como
+en el diseño, donde es el elemento dominante y cruza los filetes.
+
+Eso costó dos correcciones que no se ven en el código a simple vista:
+
+- `flex-shrink: 0`. Es un ítem flex, y con el ancho por encima del contenedor el
+  reparto por defecto lo comprimía de vuelta a la columna.
+- `max-width: none`. El reset pone `max-width: 100%` a toda imagen, y ese 100 % es
+  la columna.
+
+El filete de la banda inferior va **en la banda**, a sangre, y no como borde del
+contenido: es la regla del proyecto para las horizontales.
+
+### Logos de socios sobre fondo oscuro
+
+Los archivos vienen pensados para fondo claro: su texto va en el verde oscuro de
+marca, que sobre el pie sería invisible. Cada logo lleva un `tone` en el config:
+
+| `tone` | Tratamiento | Para |
+|---|---|---|
+| `mono` | `filter: brightness(0) invert(1)` | Los de un solo color: IDB Lab, C Minds, Amazonía, Climate Collective |
+| `color` | `filter: invert(1) hue-rotate(180deg)` | Los que llevan bandera: Suecia y Francia — invierte la luminosidad conservando el tono de forma aproximada |
+
+Es un apaño. Lo correcto es que diseño entregue variantes en claro.
+
+### Marcas de redes
+
+`src/components/ui/social-marks.tsx`: los cuatro glifos van como componentes en
+línea y no como archivos en `public/`. Son de una sola ruta y tienen que tomar el
+color del texto (`currentColor`); un SVG servido traería su relleno fijado. La
+marca de LinkedIn se comparte con la lista de ponentes.
+
+### Botón compacto
+
+`CtaButton` admite `size="compact"` (414×65 frente a 380×90). Las medidas van en
+variables locales del componente, así que la variante no duplica reglas.
+
 ## Transición entre páginas
 
 `src/features/transitions/page-transition/`. El contenido sale, se navega, y el
@@ -648,6 +695,11 @@ virtual solo avanza cuando la página está inactiva y aquí nunca lo está.
 
 ## Pendiente
 
+- **Los logos de socios necesitan variantes en claro.** Ahora se levantan con
+  filtros CSS; los dos que llevan bandera conservan el color solo de forma
+  aproximada.
+- Los enlaces legales del pie apuntan a anclas de relleno (`#terminos`,
+  `#privacidad`) y las redes a los dominios genéricos: faltan las URL reales.
 - `hero-green-pixels-2.svg` lleva el degradado con el oscuro antiguo (#001D09) en
   su extremo, así que sus cuadros superiores quedan algo más oscuros que el fondo
   nuevo (#151D17). Se arregla cambiando ese `stop-color` en el asset.

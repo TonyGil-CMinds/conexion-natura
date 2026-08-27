@@ -3,6 +3,8 @@ import styles from './CtaButton.module.css';
 type Props = {
   label: string;
   href: string;
+  /** `compact`: más ancho y más bajo, como el del footer. */
+  size?: 'default' | 'compact';
 };
 
 /**
@@ -20,9 +22,9 @@ type Props = {
  * `:focus-visible` recibe el mismo tratamiento que `:hover` y el botón responde
  * igual con teclado, sin duplicar la definición del estado.
  */
-export function CtaButton({ label, href }: Props) {
+export function CtaButton({ label, href, size = 'default' }: Props) {
   return (
-    <span className={styles.root}>
+    <span className={styles.root} data-size={size}>
       <span className={styles.shadow} aria-hidden />
       <a href={href} className={styles.button}>
         <span className={styles.gradient} aria-hidden />

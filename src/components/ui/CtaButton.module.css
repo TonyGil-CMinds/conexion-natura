@@ -1,14 +1,29 @@
 .root {
   position: relative;
   display: block;
+  /* Medidas por variante: el footer lo quiere más ancho y más bajo. */
+  --cta-w: var(--cta-width);
+  --cta-h: 90px;
   /* Ancho fijo por diseño. Con `min(..., 100%)` el 100% se resolvía contra un
      contenedor que a su vez se ajustaba al contenido, así que ganaba el texto. */
-  width: var(--cta-width);
+  width: var(--cta-w);
   max-width: 100%;
 }
 
 /* Sombra dura: misma caja y mismo radio que el botón, justo detrás. En reposo
    queda oculta debajo; el hover la descubre al desplazar el botón. */
+.root[data-size='compact'] {
+  --cta-w: 414px;
+  --cta-h: 65px;
+}
+
+/* El CTA del pie es una pieza tipográfica rectangular en la referencia, a
+   diferencia de la llamada principal que conserva los cantos redondeados. */
+.root[data-size='compact'] .shadow,
+.root[data-size='compact'] .button {
+  border-radius: 0;
+}
+
 .shadow {
   position: absolute;
   inset: 0;
@@ -20,7 +35,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  min-height: 90px;
+  min-height: var(--cta-h);
   /* Asimétrico como en el diseño: el icono queda más cerca del borde. */
   padding-inline: 30px 36px;
   border-radius: var(--radius-cta);

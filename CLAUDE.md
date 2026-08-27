@@ -28,7 +28,8 @@ Tailwind), GSAP, Framer Motion, react-three-fiber.
 La **cabecera** se compone en el layout raíz: es idéntica en todas las rutas, no
 debe animarse al navegar, y al sobrevivir al cambio de ruta su indicador puede
 animar el paso de una a otra. El **armazón** (`PageFrame`) sí va en cada página,
-porque los filetes de columna se activan por página.
+porque los filetes de columna se activan por página. El **pie** lo compone el
+armazón: es igual en todas las rutas y así los filetes verticales lo cruzan.
 
 Solo la portada va envuelta en `LoaderGate`: el loader es la entrada al sitio, no
 un peaje en cada ruta, y se ve una sola vez por sesión de pestaña.
