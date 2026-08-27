@@ -1,7 +1,8 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
 
-import { ChangeEvent, Component, FormEvent, type PointerEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { ChangeEvent, Component, FormEvent, type PointerEvent, type ReactNode, useEffect, useRef, useState } from 'react';
+import { SITE } from '@/config/site';
 import { useAttendance } from '../context/attendance';
 import Lanyard from './ReactBitsLanyard';
 import styles from './Registration.module.css';
@@ -69,6 +70,37 @@ function normalizeText(value: string) {
   return value.trim().replace(/\s{2,}/g, ' ');
 }
 
+/** En iCalendar la coma y el punto y coma separan valores: hay que escaparlos. */
+function escapeICS(value: string) {
+  return value.replace(/([,;\\])/g, '\\$1');
+}
+
+/**
+ * Archivo `.ics` en vez de un enlace a un calendario concreto: lo abren Google,
+ * Apple y Outlook por igual, y no manda al usuario fuera del sitio.
+ */
+function eventCalendarFile() {
+  const { name, event } = SITE;
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Conexion500//registro//ES',
+    'BEGIN:VEVENT',
+    'UID:conexion500-2026-10-05@conexion500',
+    `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}`,
+    `DTSTART:${event.calendar.startUtc}`,
+    `DTEND:${event.calendar.endUtc}`,
+    `SUMMARY:${escapeICS(`${name} — ${event.headline.map((line) => line.map((segment) => segment.text).join(' ')).join(' ')}`)}`,
+    `LOCATION:${escapeICS(`${event.venue.name}, ${event.place}`)}`,
+    `DESCRIPTION:${escapeICS(`${event.schedule.label} (${event.schedule.note}).`)}`,
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ];
+  // CRLF por especificación: algunos clientes de escritorio rechazan el archivo
+  // si las líneas acaban solo en salto de línea.
+  return new Blob([`${lines.join('\r\n')}\r\n`], { type: 'text/calendar;charset=utf-8' });
+}
+
 function loadImage(source: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image();
@@ -132,6 +164,8 @@ export function Registration() {
   const [errors, setErrors] = useState<Errors>({});
   const [isSaving, setIsSaving] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
+  /** Solo cuenta ya confirmado: es el paso atrás desde el resumen al formulario. */
+  const [isEditing, setIsEditing] = useState(false);
   const [isRemovingBackground, setIsRemovingBackground] = useState(false);
   const [focusedField, setFocusedField] = useState<keyof Fields | null>(null);
   const { attendee, confirm } = useAttendance();
@@ -161,12 +195,22 @@ export function Registration() {
     };
   }, [fields, photo, crop]);
 
-  // Quien vuelve con la asistencia ya confirmada entra directo a ese estado.
+  // Quien vuelve con la asistencia ya confirmada entra directo al resumen, y con
+  // los datos que guardó: el formulario arranca con ellos por si los edita.
   useEffect(() => {
-    if (attendee) setIsConfirmed(true);
+    if (!attendee) return;
+    setIsConfirmed(true);
+    setFields((current) => ({ ...current, ...attendee }));
   }, [attendee]);
 
-  const title = useMemo(() => isConfirmed ? 'Tu perfil está listo' : 'Verifica tu información', [isConfirmed]);
+  /**
+   * El resumen es el estado de reposo de quien ya confirmó; el formulario vuelve
+   * solo si pide editar. Así la pantalla no pide revisar lo que ya está resuelto.
+   */
+  const isSummary = isConfirmed && !isEditing;
+
+  // Al volver desde el resumen ya no se verifica nada: se edita.
+  const title = isConfirmed ? 'Edita tu información' : 'Verifica tu información';
 
   function update(field: keyof Fields) {
     return (event: ChangeEvent<HTMLInputElement>) => {
@@ -217,7 +261,10 @@ export function Registration() {
       if (!fields[field].trim()) next[field] = 'Este dato es obligatorio.';
     });
     if (fields.email && !/^\S+@\S+\.\S+$/.test(fields.email)) next.email = 'Escribe un correo válido.';
-    if (!photo) next.photo = 'Sube una fotografía para generar tu credencial.';
+    // La foto solo se exige al confirmar por primera vez. Al volver a editar no
+    // está en memoria —no se guarda en el navegador—, y pedirla otra vez
+    // bloquearía una corrección de rol tras la que nadie sube una foto.
+    if (!photo && !isConfirmed) next.photo = 'Sube una fotografía para generar tu credencial.';
     return next;
   }
 
@@ -230,10 +277,29 @@ export function Registration() {
     window.setTimeout(() => {
       setIsSaving(false);
       setIsConfirmed(true);
+      // Guardar devuelve al resumen: es la vista de reposo del perfil.
+      setIsEditing(false);
       // El resto del sitio se entera por aquí: cabecera, hero y pie leen el
       // mismo estado. Sin base de datos todavía, queda en almacenamiento local.
-      confirm({ name: normalizeText(fields.name), surname: normalizeText(fields.surname) });
+      confirm({
+        name: normalizeText(fields.name),
+        surname: normalizeText(fields.surname),
+        email: fields.email.trim().toLowerCase(),
+        organization: normalizeText(fields.organization),
+        role: normalizeText(fields.role),
+        linkedin: normalizeLinkedIn(fields.linkedin),
+      });
     }, 850);
+  }
+
+  function addToCalendar() {
+    const url = URL.createObjectURL(eventCalendarFile());
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'conexion500.ics';
+    link.click();
+    // El objeto se libera tras el clic: si se revoca antes, la descarga se cae.
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   function download() {
@@ -269,6 +335,59 @@ export function Registration() {
 
   return (
     <section className={styles.root}>
+      {isSummary ? (
+        <div className={`${styles.form} ${styles.summary}`}>
+          <header className={styles.header}>
+            <p className={styles.eyebrow}>Eres uno de los 100 invitados</p>
+            <h1>Hola {fields.name}</h1>
+          </header>
+
+          <section className={styles.block}>
+            <h2 className={styles.blockTitle}>Tu información</h2>
+            {/* Los rótulos van ocultos: el dato se reconoce solo y el diseño pide
+                una lista limpia, pero sin ellos un lector de pantalla leería una
+                ristra de valores sueltos. */}
+            <dl className={styles.data}>
+              {([
+                ['Correo', fields.email],
+                ['Organización', fields.organization],
+                ['Rol', fields.role],
+              ] as const).map(([label, value]) => (
+                <div key={label}>
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+              {fields.linkedin && (
+                <div>
+                  <dt>LinkedIn</dt>
+                  <dd><a href={fields.linkedin} target="_blank" rel="noreferrer">LinkedIn</a></dd>
+                </div>
+              )}
+            </dl>
+            <button className={styles.edit} type="button" onClick={() => setIsEditing(true)}>
+              Editar mis datos
+            </button>
+          </section>
+
+          <section className={styles.block}>
+            <h2 className={styles.blockTitle}>Información del evento</h2>
+            <div className={styles.data}>
+              <p className={styles.eventDate}>{SITE.event.dateLongLabel}</p>
+              <p className={styles.eventTime}>
+                {SITE.event.schedule.label} <span>({SITE.event.schedule.note})</span>
+              </p>
+              <a className={styles.eventVenue} href={SITE.event.venue.mapsUrl} target="_blank" rel="noreferrer">
+                {SITE.event.venue.name}
+              </a>
+            </div>
+          </section>
+
+          <button className={styles.calendar} type="button" onClick={addToCalendar}>
+            Añadir a mi calendario
+          </button>
+        </div>
+      ) : (
       <form className={styles.form} onSubmit={submit} noValidate>
         <header className={styles.header}>
           <p className={styles.eyebrow}>{isConfirmed ? 'Eres uno de los 100 invitados' : 'Quedan: 5 lugares'}</p>
@@ -328,10 +447,17 @@ export function Registration() {
 
         <button className={styles.submit} type="submit" disabled={isSaving || isRemovingBackground}>
           {isSaving && <span className={styles.spinner} aria-hidden />}
-          {isSaving ? 'Guardando' : isConfirmed ? 'Editar perfil' : 'Confirmar asistencia'}
+          {isSaving ? 'Guardando' : isConfirmed ? 'Guardar cambios' : 'Confirmar asistencia'}
         </button>
-        <a className={styles.invite} href="#invitacion">¿No recibiste invitación?</a>
+        {isConfirmed ? (
+          <button className={styles.cancel} type="button" onClick={() => setIsEditing(false)}>
+            Cancelar
+          </button>
+        ) : (
+          <a className={styles.invite} href="#invitacion">¿No recibiste invitación?</a>
+        )}
       </form>
+      )}
 
       <aside className={styles.preview} data-updating={isBadgeUpdating || undefined}>
         <LanyardBoundary frontImage={frontImage}>

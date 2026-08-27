@@ -9,10 +9,20 @@ import {
   useState,
 } from 'react';
 
-/** Lo mínimo que el resto del sitio necesita saber de quien ya confirmó. */
+/**
+ * El perfil de quien ya confirmó.
+ *
+ * Guarda el formulario entero y no solo el nombre porque `/registro` muestra el
+ * resumen al volver: sin los demás campos, al recargar la página el resumen
+ * tendría que inventarse los datos. La cabecera solo usa `name`.
+ */
 export type Attendee = {
   name: string;
   surname: string;
+  email: string;
+  organization: string;
+  role: string;
+  linkedin: string;
 };
 
 type AttendanceState = {

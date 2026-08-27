@@ -12,7 +12,22 @@ export const SITE = {
     /** Fecha del evento, para la cuenta atrás. Mes en base 0 como en Date. */
     date: { year: 2026, month: 9, day: 5 },
     dateLabel: '05 octubre 2026',
+    /** Fecha en largo, para las pantallas donde el dato se lee y no se ojea. */
+    dateLongLabel: 'Lunes 5 de octubre de 2026',
     place: 'Quito, Ecuador',
+    schedule: { label: '5:00 pm — 9:00 pm', note: 'con registro desde las 4:30 pm' },
+    venue: {
+      name: 'Jardín Botánico de Quito',
+      /** Búsqueda y no coordenada: sin la dirección exacta, el buscador de Maps
+       *  resuelve mejor que un punto inventado. */
+      mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Jard%C3%ADn+Bot%C3%A1nico+de+Quito',
+    },
+    /**
+     * Para el archivo de calendario. En UTC porque Ecuador continental va a
+     * UTC-5 todo el año —no tiene horario de verano—, así que 17:00 locales son
+     * las 22:00 Z y el evento termina ya en el día siguiente en UTC.
+     */
+    calendar: { startUtc: '20261005T220000Z', endUtc: '20261006T020000Z' },
     /**
      * Titular por líneas y por tramos: el salto de línea y el resalte son
      * decisiones de diseño, no del navegador.

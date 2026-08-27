@@ -38,6 +38,40 @@
 .invite { display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 108px; border-top: 1px solid var(--rule); color: var(--fg); font-family: var(--font-mono); font-size: var(--text-note); font-weight: 700; letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; }
 .invite::before { display: block; width: 26px; height: 20px; background: url('/hero/asset-riggle-red.svg') center / contain no-repeat; content: ''; }
 .invite:hover { color: var(--accent-nav); }
+.cancel { min-height: 62px; border: 0; border-top: 1px solid var(--rule); background: transparent; color: color-mix(in srgb, var(--fg) 62%, transparent); font-family: var(--font-mono); font-size: var(--text-note); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; cursor: pointer; }
+.cancel:hover { color: var(--fg); }
+
+/**
+ * Resumen: la vista de reposo de quien ya confirmó.
+ *
+ * Ocupa la misma columna que el formulario y reutiliza su cabecera, así que al
+ * pasar de una a otra no se mueve nada más que el contenido del panel. Los datos
+ * van en recuadros de trazo discontinuo, como el cargador de imagen del
+ * formulario: es la misma familia de contenedor, uno para leer y otro para
+ * rellenar.
+ */
+.summary { padding-bottom: 0; }
+.block { padding: 34px 22px 0; }
+.blockTitle { font-family: var(--font-mono); font-size: var(--text-note); font-weight: 400; letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; color: color-mix(in srgb, var(--fg) 55%, transparent); }
+.data { display: grid; gap: 14px; margin-top: 16px; padding: 22px 16px; border: 1px dashed color-mix(in srgb, var(--fg) 34%, transparent); }
+.data dt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.data dd, .eventDate, .eventTime, .eventVenue { margin: 0; font-family: var(--font-mono); font-size: 1rem; letter-spacing: .08em; text-transform: uppercase; color: var(--fg); }
+.data dd a { color: var(--accent-nav); text-decoration: underline; text-underline-offset: 4px; }
+.eventTime { color: color-mix(in srgb, var(--fg) 82%, transparent); }
+/* La nota del registro previo es un aparte, no otro dato: baja de tamaño. */
+.eventTime span { font-size: var(--text-note); letter-spacing: var(--tracking-eyebrow); color: color-mix(in srgb, var(--fg) 55%, transparent); }
+.eventVenue { color: var(--accent-nav); }
+.eventVenue:hover { text-decoration: underline; text-underline-offset: 4px; }
+.edit { width: 100%; min-height: 66px; margin-top: 22px; border: 0; background: var(--accent-nav); color: var(--color-dark); font-family: var(--font-mono); font-size: var(--text-cta); letter-spacing: var(--tracking-cta); text-transform: uppercase; cursor: pointer; transition: background-color var(--duration-fast) var(--ease-out-expo); }
+.edit:hover { background: var(--color-green-soft); }
+/**
+ * El botón del calendario cierra la columna, como el de confirmar en el
+ * formulario: `margin-top: auto` lo empuja al fondo del panel. Va en verde
+ * apagado y no en lima porque el lima ya lo lleva «editar mis datos», y dos
+ * bloques iguales no dejarían ver cuál es la acción principal.
+ */
+.calendar { width: 100%; min-height: 91px; margin-top: auto; border: 0; border-top: 1px solid var(--rule); background: color-mix(in srgb, var(--accent-nav) 14%, transparent); color: var(--accent-nav); font-family: var(--font-mono); font-size: var(--text-cta); letter-spacing: var(--tracking-cta); text-transform: uppercase; cursor: pointer; transition: background-color var(--duration-fast) var(--ease-out-expo); }
+.calendar:hover { background: color-mix(in srgb, var(--accent-nav) 24%, transparent); }
 /**
  * Pegajoso: la credencial sigue a la vista mientras el formulario se desplaza,
  * que es lo que hace útil el desplazamiento del documento. Se ancla en 0 y no en
@@ -61,5 +95,5 @@
 .cropHeading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }.cropHeading p { max-width: none; font-family: var(--font-mono); font-size: 1.2rem; letter-spacing: .1em; text-transform: uppercase; }.cropHeading span, .cropControls label { font-family: var(--font-mono); font-size: var(--text-note); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; }.cropHeading span { display: block; margin-top: 8px; color: color-mix(in srgb, var(--fg) 62%, transparent); }.cropHeading button { border: 0; background: transparent; color: var(--fg); font-size: 2rem; line-height: 1; cursor: pointer; }
 .cropViewport { position: relative; width: min(280px, 75vw); aspect-ratio: 214 / 270; margin: 26px auto; overflow: hidden; background: #0b120d; cursor: grab; touch-action: none; }.cropViewport:active { cursor: grabbing; }.cropViewport img { position: absolute; top: 50%; left: 50%; width: 100%; height: 100%; object-fit: cover; transform-origin: center; user-select: none; pointer-events: none; }.cropFrame { position: absolute; inset: 0; border: 2px solid var(--accent-nav); box-shadow: inset 0 0 0 999px #001d0938; pointer-events: none; }
 .cropControls { display: grid; gap: 8px; padding-top: 4px; }.cropControls label { display: grid; grid-template-columns: 96px 1fr; align-items: center; gap: 14px; min-height: 42px; padding: 0 12px; border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent); background: color-mix(in srgb, var(--color-dark) 36%, transparent); }.cropControls input[type='range'] { width: 100%; height: 18px; margin: 0; appearance: none; cursor: ew-resize; background: transparent; }.cropControls input[type='range']::-webkit-slider-runnable-track { height: 4px; border: 1px solid color-mix(in srgb, var(--fg) 34%, transparent); border-radius: 0; background: linear-gradient(90deg, var(--accent-nav) 0 50%, #303831 50% 100%); }.cropControls input[type='range']::-webkit-slider-thumb { width: 14px; height: 14px; margin-top: -6px; appearance: none; border: 2px solid var(--color-dark); border-radius: 0; background: var(--accent-nav); box-shadow: 0 0 0 1px var(--accent-nav); }.cropControls input[type='range']::-moz-range-track { height: 4px; border: 1px solid color-mix(in srgb, var(--fg) 34%, transparent); border-radius: 0; background: #303831; }.cropControls input[type='range']::-moz-range-progress { height: 4px; background: var(--accent-nav); }.cropControls input[type='range']::-moz-range-thumb { width: 11px; height: 11px; border: 2px solid var(--color-dark); border-radius: 0; background: var(--accent-nav); }.cropControls input[type='range']:focus-visible { outline: 1px solid var(--accent-nav); outline-offset: 4px; }.cropConfirm { width: 100%; min-height: 58px; margin-top: 26px; border: 0; background: var(--accent-nav); color: var(--color-dark); font-family: var(--font-mono); font-size: 1rem; letter-spacing: .13em; text-transform: uppercase; cursor: pointer; }
-@media (max-width: 900px) { .root { grid-template-columns: 1fr; padding-left: 0; }.form { border-right: 0; }.preview { position: static; height: min(90dvh, 720px); border-top: 1px solid var(--rule); }.header { padding-inline: var(--container-margin); }.field { padding-inline: var(--container-margin); }.field em { right: var(--container-margin); } }
-@media (max-width: 640px) { .header { padding-inline: 24px; }.field { padding-inline: 24px; }.field em { right: 24px; }.header h1 { font-size: 1.2rem; }.actions { width: calc(100% - 32px); } }
+@media (max-width: 900px) { .root { grid-template-columns: 1fr; padding-left: 0; }.form { border-right: 0; }.preview { position: static; height: min(90dvh, 720px); border-top: 1px solid var(--rule); }.header { padding-inline: var(--container-margin); }.block { padding-inline: var(--container-margin); }.field { padding-inline: var(--container-margin); }.field em { right: var(--container-margin); } }
+@media (max-width: 640px) { .header { padding-inline: 24px; }.block { padding-inline: 24px; }.field { padding-inline: 24px; }.field em { right: 24px; }.header h1 { font-size: 1.2rem; }.actions { width: calc(100% - 32px); } }

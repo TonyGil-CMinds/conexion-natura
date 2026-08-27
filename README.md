@@ -721,6 +721,35 @@ confirmar—. La cota es `calc(60% + 16px)`: el 60% porque la credencial cuelga 
 una fracción fija del alto (el campo de visión de la escena es vertical), y los
 16px en píxeles y no en porcentaje para que el aire no crezca con la pantalla.
 
+### Resumen del perfil
+
+Quien ya confirmó no vuelve al formulario: entra al **resumen**, que es el estado
+de reposo de la pantalla. Saluda por el nombre, lista los datos guardados, y
+ofrece dos acciones — «editar mis datos», que devuelve el formulario, y el bloque
+de información del evento con el enlace a Maps y «añadir a mi calendario».
+
+El resumen ocupa la misma columna que el formulario y reutiliza su cabecera, así
+que al pasar de uno a otro no se mueve nada más que el contenido del panel. Los
+datos van en recuadros de trazo discontinuo, la misma familia de contenedor que
+el cargador de imagen: uno para leer, otro para rellenar.
+
+En el resumen el lima lo lleva «editar mis datos» y el calendario va en verde
+apagado: dos bloques iguales no dejarían ver cuál es la acción principal.
+
+Los rótulos de los datos (`dt`) van ocultos a la vista pero presentes en el
+marcado. El diseño pide una lista limpia de valores, y sin ellos un lector de
+pantalla leería una ristra de datos sin decir de qué son.
+
+**Añadir al calendario descarga un `.ics`**, no abre Google Calendar: el archivo
+lo entienden Google, Apple y Outlook por igual y no manda al usuario fuera del
+sitio. Las horas viven en `SITE.event.calendar` en UTC, porque Ecuador
+continental va a UTC-5 todo el año —no tiene horario de verano— y el evento
+termina ya en el día siguiente en hora Z.
+
+Al editar, la fotografía **no se vuelve a exigir**: no se guarda en el navegador,
+así que tras recargar no está en memoria, y pedirla de nuevo bloquearía una
+corrección de rol tras la que nadie quiere subir una foto.
+
 ### Estado de asistencia
 
 `context/attendance.tsx` expone `AttendanceProvider` y `useAttendance()`, y se
@@ -730,6 +759,10 @@ hero y pie cuelgan de ramas distintas del árbol y necesitan el mismo dato.
 Persiste en `localStorage` (`c500-attendee`) y no en `sessionStorage` como el
 loader: confirmar asistencia es un compromiso que debe sobrevivir al cierre de la
 pestaña; ver el loader otra vez, no.
+
+Guarda el formulario entero y no solo el nombre, porque el resumen tiene que
+poder mostrarlo al volver: con solo el nombre, tras recargar tendría que
+inventarse la organización y el rol. La cabecera sigue usando únicamente `name`.
 
 Se lee en un efecto tras montar y no en el estado inicial: en el servidor no hay
 `localStorage`, y devolver algo distinto en el cliente rompe la hidratación. El
@@ -748,6 +781,10 @@ vive solo en el navegador. Al llegar el backend, el punto de enganche es
 
 ## Pendiente
 
+- **La sede sale del mockup del resumen, no de una fuente confirmada.**
+  `SITE.event.venue` dice «Jardín Botánico de Quito» y el enlace es una búsqueda
+  en Maps, no un punto concreto: falta la dirección exacta. El horario del `.ics`
+  se dedujo del FAQ (17:00–21:00, UTC-5).
 - Los enlaces legales del pie apuntan a anclas de relleno (`#terminos`,
   `#privacidad`) y las redes a los dominios genéricos: faltan las URL reales.
 - `hero-green-pixels-2.svg` lleva el degradado con el oscuro antiguo (#001D09) en

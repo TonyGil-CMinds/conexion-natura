@@ -154,8 +154,17 @@ loader— y se lee en un efecto tras montar, no en el estado inicial: en el
 servidor no hay `localStorage`. Quien resuelve el rótulo es `RegistrationCta`;
 `CtaButton` sigue siendo presentacional.
 
+Quien ya confirmó ve el **resumen**, no el formulario: es el estado de reposo de
+la pantalla, y el formulario vuelve solo con «editar mis datos». Por eso el estado
+guarda el perfil entero y no solo el nombre.
+
+«Añadir a mi calendario» descarga un `.ics` generado en el cliente, no abre un
+calendario concreto. Sus horas están en `SITE.event.calendar` en UTC: Ecuador va a
+UTC-5 todo el año.
+
 No hay base de datos: el envío es un `setTimeout`. El enganche del backend es
-`confirm()` en el provider.
+`confirm()` en el provider. La fotografía no se guarda en ninguna parte, así que
+al editar no se vuelve a exigir.
 
 ## Assets
 
