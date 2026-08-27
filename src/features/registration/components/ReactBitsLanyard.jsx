@@ -34,15 +34,15 @@ export default function Lanyard({
         camera={{ position, fov }} dpr={[1, isMobile ? 1.5 : 2]} gl={{ alpha: transparent }}
         onCreated={({ gl }) => gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)}
       >
-        <ambientLight intensity={Math.PI} />
+        <ambientLight intensity={1.1} />
         <Physics gravity={gravity} timeStep={isMobile ? 1 / 30 : 1 / 60}>
           <Band {...{ isMobile, frontImage, backImage, imageFit, lanyardImage, lanyardWidth }} />
         </Physics>
         <Environment blur={0.75}>
-          <Lightformer intensity={2} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, .1, 1]} />
-          <Lightformer intensity={3} color="white" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, .1, 1]} />
-          <Lightformer intensity={3} color="white" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, .1, 1]} />
-          <Lightformer intensity={10} color="white" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]} />
+          <Lightformer intensity={.8} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, .1, 1]} />
+          <Lightformer intensity={1.2} color="white" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, .1, 1]} />
+          <Lightformer intensity={1.2} color="white" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, .1, 1]} />
+          <Lightformer intensity={3} color="white" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]} />
         </Environment>
       </Canvas>
     </div>
@@ -95,12 +95,12 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile, frontImage, backImage, im
       <RigidBody position={[2, 0, 0]} ref={card} {...segmentProps} type={dragged ? 'kinematicPosition' : 'dynamic'}>
         <CuboidCollider args={[.8, 1.125, .01]} />
         <group scale={2.25} position={[0, -1.2, -.05]} onPointerOver={() => hover(true)} onPointerOut={() => hover(false)} onPointerUp={(event) => { event.target.releasePointerCapture(event.pointerId); drag(false); }} onPointerDown={(event) => { event.target.setPointerCapture(event.pointerId); drag(new THREE.Vector3().copy(event.point).sub(vec.copy(card.current.translation()))); }}>
-          <mesh geometry={nodes.card.geometry}><meshPhysicalMaterial map={cardMap} map-anisotropy={16} clearcoat={isMobile ? 0 : 1} clearcoatRoughness={.15} roughness={.9} metalness={.8} /></mesh>
+          <mesh geometry={nodes.card.geometry}><meshPhysicalMaterial map={cardMap} map-anisotropy={16} clearcoat={isMobile ? 0 : .35} clearcoatRoughness={.3} roughness={.98} metalness={.3} /></mesh>
           <mesh geometry={nodes.clip.geometry} material={materials.metal} material-roughness={.3} />
           <mesh geometry={nodes.clamp.geometry} material={materials.metal} />
         </group>
       </RigidBody>
     </group>
-    <mesh ref={band}><meshLineGeometry /><meshLineMaterial color="white" depthTest={false} resolution={isMobile ? [1000, 2000] : [1000, 1000]} useMap map={texture} repeat={[-4, 1]} lineWidth={lanyardWidth} /></mesh>
+    <mesh ref={band}><meshLineGeometry /><meshLineMaterial color="white" depthTest={false} resolution={isMobile ? [1000, 2000] : [1000, 1000]} useMap map={texture} repeat={[-2.4, 1]} lineWidth={lanyardWidth} /></mesh>
   </>;
 }

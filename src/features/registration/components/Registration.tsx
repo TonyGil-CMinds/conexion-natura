@@ -174,13 +174,14 @@ export function Registration() {
 
       <aside className={styles.preview}>
         <Lanyard
-          position={[0, 0, 24]}
+          position={[0, 0, 15]}
           gravity={[0, -40, 0]}
+          fov={17}
           frontImage={frontImage}
           backImage="/img/back.png"
           imageFit="cover"
           lanyardImage="/img/lanyardImage.svg"
-          lanyardWidth={1}
+          lanyardWidth={2.15}
         />
         {isConfirmed && (
           <div className={styles.actions}>
