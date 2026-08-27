@@ -13,7 +13,8 @@
     "db:studio": "prisma studio",
     "db:verify": "tsx scripts/verify-prisma.ts",
     "r2:cors": "tsx scripts/r2-cors.ts",
-    "r2:verify": "tsx scripts/verify-r2.ts"
+    "r2:verify": "tsx scripts/verify-r2.ts",
+    "db:remove": "tsx scripts/remove-attendee.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1119.0",

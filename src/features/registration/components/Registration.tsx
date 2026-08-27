@@ -108,7 +108,65 @@ function loadImage(source: string) {
     const image = new Image();
     image.onload = () => resolve(image);
     image.onerror = reject;
+    /**
+     * Las imágenes de R2 vienen de otro origen. Sin `crossOrigin` el lienzo
+     * queda «contaminado» al dibujarlas y `toDataURL()` lanza un error de
+     * seguridad, así que se caerían descargar y compartir. Requiere que el
+     * bucket permita `GET` en su regla CORS.
+     */
+    if (/^https?:/i.test(source)) image.crossOrigin = 'anonymous';
     image.src = source;
+  });
+}
+
+/** Zona del retrato dentro del arte de la credencial, en puntos de diseño. */
+const PORTRAIT = { x: 108, y: 174, width: 214, height: 270 };
+
+/**
+ * Encaja el retrato en la zona verde: `cover` con el zoom y el desplazamiento
+ * elegidos. La misma cuenta sirve para pintar la credencial y para recortar el
+ * archivo que se sube, y por eso vive aparte.
+ */
+function portraitPlacement(portrait: HTMLImageElement, crop: Crop, scaleFactor = 1) {
+  const width = PORTRAIT.width * scaleFactor;
+  const height = PORTRAIT.height * scaleFactor;
+  const scale = Math.max(width / portrait.width, height / portrait.height) * crop.zoom;
+  const drawWidth = portrait.width * scale;
+  const drawHeight = portrait.height * scale;
+  return {
+    width,
+    height,
+    drawWidth,
+    drawHeight,
+    x: (width - drawWidth) / 2 + crop.x * scaleFactor,
+    y: (height - drawHeight) / 2 + crop.y * scaleFactor,
+  };
+}
+
+/**
+ * Deja el recorte **cocido** en el archivo que se sube.
+ *
+ * El encuadre se elige en el navegador y no se guarda en ninguna columna, así
+ * que si se subiera la imagen entera, al recargar la credencial se dibujaría con
+ * el encuadre por defecto y la tarjeta cambiaría de aspecto sola. Recortando
+ * antes de subir, la imagen guardada **es** lo que se ve, y además pesa menos.
+ */
+async function renderPortrait(source: string, crop: Crop): Promise<Blob> {
+  const scaleFactor = 3;
+  const portrait = await loadImage(source);
+  const place = portraitPlacement(portrait, crop, scaleFactor);
+  const canvas = document.createElement('canvas');
+  canvas.width = place.width;
+  canvas.height = place.height;
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error('No se pudo preparar la imagen.');
+  context.drawImage(portrait, place.x, place.y, place.drawWidth, place.drawHeight);
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => (blob ? resolve(blob) : reject(new Error('No se pudo preparar la imagen.'))),
+      'image/png',
+    );
   });
 }
 
@@ -124,20 +182,15 @@ async function createBadge(fields: Fields, photo: string | null, crop: Crop) {
   context.drawImage(template, 0, 0, 430, 600);
 
   if (photo) {
-    const portrait = await loadImage(photo);
     // El retrato solo puede vivir dentro del hueco central: no debe invadir los
     // escalones verdes que enmarcan la foto en el arte de la credencial.
-    const target = { x: 108, y: 174, width: 214, height: 270 };
-    // `cover` llena casi toda la zona verde aunque la foto original tenga mucho
-    // espacio vacío alrededor de la persona.
-    const scale = Math.max(target.width / portrait.width, target.height / portrait.height) * crop.zoom;
-    const width = portrait.width * scale;
-    const height = portrait.height * scale;
+    const portrait = await loadImage(photo);
+    const place = portraitPlacement(portrait, crop);
     context.save();
     context.beginPath();
-    context.rect(target.x, target.y, target.width, target.height);
+    context.rect(PORTRAIT.x, PORTRAIT.y, PORTRAIT.width, PORTRAIT.height);
     context.clip();
-    context.drawImage(portrait, target.x + (target.width - width) / 2 + crop.x, target.y + (target.height - height) / 2 + crop.y, width, height);
+    context.drawImage(portrait, PORTRAIT.x + place.x, PORTRAIT.y + place.y, place.drawWidth, place.drawHeight);
     context.restore();
   }
 
@@ -158,8 +211,6 @@ export function Registration() {
   const [fields, setFields] = useState<Fields>(INITIAL);
   /** URL local para pintar la credencial mientras se rellena el formulario. */
   const [photo, setPhoto] = useState<string | null>(null);
-  /** El archivo en sí, que es lo que se sube. Nulo si no se ha elegido ninguno. */
-  const [photoFile, setPhotoFile] = useState<Blob | null>(null);
   /** URL en R2, una vez subida. Se reutiliza si no se cambia la imagen. */
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [crop, setCrop] = useState<Crop>({ zoom: 1, x: 0, y: 0 });
@@ -221,8 +272,12 @@ export function Registration() {
       role: attendee.role,
       linkedin: attendee.linkedin ?? '',
     });
-    // La imagen ya está en R2: al editar no hay que volver a subirla.
+    // La imagen ya está en R2: se dibuja desde allí y no hay que volver a
+    // subirla. Viene con el recorte cocido, así que el encuadre por defecto la
+    // reproduce tal cual.
     setPhotoUrl(attendee.photoUrl);
+    setPhoto(attendee.photoUrl);
+    setCrop({ zoom: 1, x: 0, y: 0 });
   }, [attendee]);
 
   /**
@@ -275,7 +330,6 @@ export function Registration() {
     }
 
     function accept(image: Blob) {
-      setPhotoFile(image);
       setPhoto(URL.createObjectURL(image));
       setCrop({ zoom: 1, x: 0, y: 0 });
       setIsCropEditorOpen(true);
@@ -312,9 +366,11 @@ export function Registration() {
     setIsSaving(true);
     try {
       let uploaded = photoUrl;
-      if (photoFile && !uploaded) {
+      if (photo && !uploaded) {
         setSavingStep('Subiendo tu imagen');
-        uploaded = await uploadPhoto(photoFile);
+        // Se sube el recorte, no el original: así la imagen guardada es la que
+        // se ve en la credencial aunque el encuadre no viaje a la base.
+        uploaded = await uploadPhoto(await renderPortrait(photo, crop));
         setPhotoUrl(uploaded);
       }
 

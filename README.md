@@ -792,6 +792,26 @@ mano en el panel.
 Al añadir un dominio (producción, previews) hay que sumarlo tanto a la regla CORS
 del bucket como a `R2_CORS_ORIGINS`.
 
+### El recorte va cocido en el archivo
+
+Se sube la **zona recortada** (642×810, el hueco del retrato a 3×), no la imagen
+entera. El encuadre se elige en el navegador y no viaja a ninguna columna: con la
+imagen completa, al recargar la credencial se dibujaría con el encuadre por
+defecto y la tarjeta cambiaría de aspecto sola. Recortando antes de subir, lo
+guardado **es** lo que se ve, y pesa menos.
+
+Al volver con un perfil guardado la credencial recupera su retrato desde R2. Eso
+necesita dos cosas: `GET` en la regla CORS del bucket y `crossOrigin =
+'anonymous'` al cargar la imagen. Sin ellas el lienzo queda «contaminado» y
+`toDataURL()` lanza un error de seguridad: no es que la foto no se vea, es que
+dejan de funcionar descargar y compartir.
+
+```bash
+npm run db:remove -- correo@ejemplo.com   # borra un registro y su retrato
+```
+
+Borrar solo la fila deja el archivo huérfano en el bucket: nadie lo referencia y
+nada lo limpia después. De ahí el script.
 ### Variables
 
 Las de `.env.example`. `R2_PUBLIC_BASE_URL` es hoy el subdominio `r2.dev` del
