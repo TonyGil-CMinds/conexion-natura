@@ -40,8 +40,10 @@ async function createBadge(fields: Fields, photo: string | null) {
     const portrait = await loadImage(photo);
     // El retrato solo puede vivir dentro del hueco central: no debe invadir los
     // escalones verdes que enmarcan la foto en el arte de la credencial.
-    const target = { x: 119, y: 193, width: 190, height: 235 };
-    const scale = Math.min(target.width / portrait.width, target.height / portrait.height);
+    const target = { x: 108, y: 174, width: 214, height: 270 };
+    // `cover` llena casi toda la zona verde aunque la foto original tenga mucho
+    // espacio vacío alrededor de la persona.
+    const scale = Math.max(target.width / portrait.width, target.height / portrait.height);
     const width = portrait.width * scale;
     const height = portrait.height * scale;
     context.save();
@@ -65,28 +67,11 @@ async function createBadge(fields: Fields, photo: string | null) {
   return canvas.toDataURL('image/png');
 }
 
-async function createLanyardTexture() {
-  const image = await loadImage('/img/lanyardImage.svg');
-  const canvas = document.createElement('canvas');
-  canvas.width = 768;
-  canvas.height = 128;
-  const context = canvas.getContext('2d');
-  if (!context) return '/img/lanyardImage.svg';
-  // Se rasteriza a PNG y se recorta el centro del arte: el SVG original incluye
-  // un círculo completo, que MeshLine aplastaba como un óvalo en la cinta.
-  context.fillStyle = '#141b16';
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  for (let x = 0; x < canvas.width; x += 128) {
-    context.drawImage(image, 73, 83, 168, 146, x, 0, 128, 128);
-  }
-  return canvas.toDataURL('image/png');
-}
-
 export function Registration() {
   const [fields, setFields] = useState<Fields>(INITIAL);
   const [photo, setPhoto] = useState<string | null>(null);
   const [frontImage, setFrontImage] = useState('/img/front_placeholder.png');
-  const [lanyardTexture, setLanyardTexture] = useState('/img/lanyard.png');
+  const [isBadgeUpdating, setIsBadgeUpdating] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [isSaving, setIsSaving] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -94,13 +79,28 @@ export function Registration() {
 
   useEffect(() => {
     let active = true;
-    createBadge(fields, photo).then((image) => active && setFrontImage(image)).catch(() => active && setFrontImage('/img/front_placeholder.png'));
-    return () => { active = false; };
+    // Regenerar la textura implica recomponer el atlas del modelo 3D. Esperamos
+    // un instante tras el último cambio para que la tarjeta no parpadee mientras
+    // se escribe en un campo.
+    setIsBadgeUpdating(true);
+    const timeout = window.setTimeout(() => {
+      createBadge(fields, photo)
+        .then((image) => {
+          if (!active) return;
+          setFrontImage(image);
+          window.setTimeout(() => active && setIsBadgeUpdating(false), 240);
+        })
+        .catch(() => {
+          if (!active) return;
+          setFrontImage('/img/front_placeholder.png');
+          setIsBadgeUpdating(false);
+        });
+    }, 1200);
+    return () => {
+      active = false;
+      window.clearTimeout(timeout);
+    };
   }, [fields, photo]);
-
-  useEffect(() => {
-    createLanyardTexture().then(setLanyardTexture).catch(() => setLanyardTexture('/img/lanyard.png'));
-  }, []);
 
   const title = useMemo(() => isConfirmed ? 'Tu perfil está listo' : 'Verifica tu información', [isConfirmed]);
 
@@ -179,7 +179,12 @@ export function Registration() {
           <p className={styles.eyebrow}>{isConfirmed ? 'Eres uno de los 100 invitados' : 'Quedan: 5 lugares'}</p>
           <h1>{title}</h1>
           <label className={styles.photoUpload} data-error={errors.photo || undefined}>
-            <span>{isRemovingBackground ? 'Quitando fondo…' : photo ? 'Cambiar fotografía' : 'Sube tu fotografía'}</span>
+            <span>{isRemovingBackground ? 'Quitando fondo…' : photo ? 'Cambiar imagen' : 'Cargar una imagen'}</span>
+            {isRemovingBackground && (
+              <span className={styles.pixelLoader} aria-hidden>
+                {Array.from({ length: 9 }, (_, index) => <i key={index} />)}
+              </span>
+            )}
             <input type="file" accept="image/*" onChange={handlePhoto} />
           </label>
           {errors.photo && <p className={styles.error}>{errors.photo}</p>}
@@ -201,19 +206,20 @@ export function Registration() {
           {isSaving && <span className={styles.spinner} aria-hidden />}
           {isSaving ? 'Guardando' : isConfirmed ? 'Editar perfil' : 'Confirmar asistencia'}
         </button>
-        <a className={styles.invite} href="#invitacion">〰 ¿No recibiste invitación?</a>
+        <a className={styles.invite} href="#invitacion">¿No recibiste invitación?</a>
       </form>
 
-      <aside className={styles.preview}>
+      <aside className={styles.preview} data-updating={isBadgeUpdating || undefined}>
         <Lanyard
           position={[0, 0, 15]}
           gravity={[0, -40, 0]}
           fov={17}
+          verticalOffset={1.25}
           frontImage={frontImage}
           backImage="/img/back.png"
           imageFit="cover"
-          lanyardImage={lanyardTexture}
-          lanyardWidth={1.35}
+          lanyardImage="/lanyard/lanyard.png"
+          lanyardWidth={1}
         />
         {isConfirmed && (
           <div className={styles.actions}>

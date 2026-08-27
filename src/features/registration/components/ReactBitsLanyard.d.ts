@@ -10,6 +10,7 @@ type LanyardProps = {
   imageFit?: 'cover' | 'contain';
   lanyardImage?: string | null;
   lanyardWidth?: number;
+  verticalOffset?: number;
 };
 
 export default function Lanyard(props: LanyardProps): JSX.Element;

@@ -19,7 +19,7 @@ const BACK_UV_RECT = { x: 0.5, y: 0, w: 0.5, h: 0.757 };
 
 export default function Lanyard({
   position = [0, 0, 30], gravity = [0, -40, 0], fov = 20, transparent = true,
-  frontImage = null, backImage = null, imageFit = 'cover', lanyardImage = null, lanyardWidth = 1,
+  frontImage = null, backImage = null, imageFit = 'cover', lanyardImage = DEFAULT_LANYARD, lanyardWidth = 1, verticalOffset = 0,
 }) {
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function Lanyard({
       >
         <ambientLight intensity={1.1} />
         <Physics gravity={gravity} timeStep={isMobile ? 1 / 30 : 1 / 60}>
-          <Band {...{ isMobile, frontImage, backImage, imageFit, lanyardImage, lanyardWidth }} />
+          <Band {...{ isMobile, frontImage, backImage, imageFit, lanyardImage, lanyardWidth, verticalOffset }} />
         </Physics>
         <Environment blur={0.75}>
           <Lightformer intensity={.8} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, .1, 1]} />
@@ -49,18 +49,20 @@ export default function Lanyard({
   );
 }
 
-function Band({ maxSpeed = 50, minSpeed = 0, isMobile, frontImage, backImage, imageFit, lanyardImage, lanyardWidth }) {
+function Band({ maxSpeed = 50, minSpeed = 0, isMobile, frontImage, backImage, imageFit, lanyardImage, lanyardWidth, verticalOffset }) {
   const band = useRef(); const fixed = useRef(); const j1 = useRef(); const j2 = useRef(); const j3 = useRef(); const card = useRef();
   const vec = new THREE.Vector3(); const ang = new THREE.Vector3(); const rot = new THREE.Vector3(); const dir = new THREE.Vector3();
   const segmentProps = { type: 'dynamic', canSleep: true, colliders: false, angularDamping: 4, linearDamping: 4 };
   const { nodes, materials } = useGLTF(CARD_GLB);
-  const texture = useTexture(lanyardImage || DEFAULT_LANYARD);
+  const texture = useTexture(lanyardImage);
   const frontTex = useTexture(frontImage || BLANK_PIXEL);
   const backTex = useTexture(backImage || BLANK_PIXEL);
   const cardMap = useMemo(() => {
     const baseMap = materials.base.map;
     if (!frontImage && !backImage) return baseMap;
-    const base = baseMap.image; const canvas = document.createElement('canvas'); canvas.width = base.width; canvas.height = base.height;
+    const base = baseMap.image; const canvas = document.createElement('canvas');
+    const atlasScale = Math.max(1, 2048 / base.width);
+    canvas.width = Math.round(base.width * atlasScale); canvas.height = Math.round(base.height * atlasScale);
     const context = canvas.getContext('2d'); if (!context) return baseMap;
     context.drawImage(base, 0, 0, canvas.width, canvas.height);
     const drawFitted = (image, rect) => {
@@ -87,7 +89,7 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile, frontImage, backImage, im
   });
   curve.curveType = 'chordal'; texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
   return <>
-    <group position={[0, 4, 0]}>
+      <group position={[0, 4 + verticalOffset, 0]}>
       <RigidBody ref={fixed} {...segmentProps} type="fixed" />
       <RigidBody position={[.5, 0, 0]} ref={j1} {...segmentProps}><BallCollider args={[.1]} /></RigidBody>
       <RigidBody position={[1, 0, 0]} ref={j2} {...segmentProps}><BallCollider args={[.1]} /></RigidBody>
@@ -101,6 +103,6 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile, frontImage, backImage, im
         </group>
       </RigidBody>
     </group>
-    <mesh ref={band}><meshLineGeometry /><meshLineMaterial color="white" depthTest={false} resolution={isMobile ? [1000, 2000] : [1000, 1000]} useMap map={texture} repeat={[-6, 1]} lineWidth={lanyardWidth} /></mesh>
+    <mesh ref={band}><meshLineGeometry /><meshLineMaterial color="white" depthTest={false} resolution={isMobile ? [1000, 2000] : [1000, 1000]} useMap map={texture} repeat={[-5, 1]} lineWidth={lanyardWidth} /></mesh>
   </>;
 }
