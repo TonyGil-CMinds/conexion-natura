@@ -101,6 +101,6 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile, frontImage, backImage, im
         </group>
       </RigidBody>
     </group>
-    <mesh ref={band}><meshLineGeometry /><meshLineMaterial color="white" depthTest={false} resolution={isMobile ? [1000, 2000] : [1000, 1000]} useMap map={texture} repeat={[-2.4, 1]} lineWidth={lanyardWidth} /></mesh>
+    <mesh ref={band}><meshLineGeometry /><meshLineMaterial color="white" depthTest={false} resolution={isMobile ? [1000, 2000] : [1000, 1000]} useMap map={texture} repeat={[-6, 1]} lineWidth={lanyardWidth} /></mesh>
   </>;
 }

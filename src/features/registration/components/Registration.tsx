@@ -26,21 +26,30 @@ function loadImage(source: string) {
 }
 
 async function createBadge(fields: Fields, photo: string | null) {
+  const scaleFactor = 3;
   const canvas = document.createElement('canvas');
-  canvas.width = 430;
-  canvas.height = 600;
+  canvas.width = 430 * scaleFactor;
+  canvas.height = 600 * scaleFactor;
   const context = canvas.getContext('2d');
   if (!context) return '/img/front_placeholder.png';
-  const template = await loadImage('/img/front_placeholder.png');
-  context.drawImage(template, 0, 0, canvas.width, canvas.height);
+  context.scale(scaleFactor, scaleFactor);
+  const template = await loadImage('/img/front_placeholder-3x.png');
+  context.drawImage(template, 0, 0, 430, 600);
 
   if (photo) {
     const portrait = await loadImage(photo);
-    const target = { x: 95, y: 180, width: 242, height: 255 };
+    // El retrato solo puede vivir dentro del hueco central: no debe invadir los
+    // escalones verdes que enmarcan la foto en el arte de la credencial.
+    const target = { x: 119, y: 193, width: 190, height: 235 };
     const scale = Math.min(target.width / portrait.width, target.height / portrait.height);
     const width = portrait.width * scale;
     const height = portrait.height * scale;
+    context.save();
+    context.beginPath();
+    context.rect(target.x, target.y, target.width, target.height);
+    context.clip();
     context.drawImage(portrait, target.x + (target.width - width) / 2, target.y + target.height - height, width, height);
+    context.restore();
   }
 
   context.fillStyle = '#151d17';
@@ -56,10 +65,28 @@ async function createBadge(fields: Fields, photo: string | null) {
   return canvas.toDataURL('image/png');
 }
 
+async function createLanyardTexture() {
+  const image = await loadImage('/img/lanyardImage.svg');
+  const canvas = document.createElement('canvas');
+  canvas.width = 768;
+  canvas.height = 128;
+  const context = canvas.getContext('2d');
+  if (!context) return '/img/lanyardImage.svg';
+  // Se rasteriza a PNG y se recorta el centro del arte: el SVG original incluye
+  // un círculo completo, que MeshLine aplastaba como un óvalo en la cinta.
+  context.fillStyle = '#141b16';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  for (let x = 0; x < canvas.width; x += 128) {
+    context.drawImage(image, 73, 83, 168, 146, x, 0, 128, 128);
+  }
+  return canvas.toDataURL('image/png');
+}
+
 export function Registration() {
   const [fields, setFields] = useState<Fields>(INITIAL);
   const [photo, setPhoto] = useState<string | null>(null);
   const [frontImage, setFrontImage] = useState('/img/front_placeholder.png');
+  const [lanyardTexture, setLanyardTexture] = useState('/img/lanyard.png');
   const [errors, setErrors] = useState<Errors>({});
   const [isSaving, setIsSaving] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -70,6 +97,10 @@ export function Registration() {
     createBadge(fields, photo).then((image) => active && setFrontImage(image)).catch(() => active && setFrontImage('/img/front_placeholder.png'));
     return () => { active = false; };
   }, [fields, photo]);
+
+  useEffect(() => {
+    createLanyardTexture().then(setLanyardTexture).catch(() => setLanyardTexture('/img/lanyard.png'));
+  }, []);
 
   const title = useMemo(() => isConfirmed ? 'Tu perfil está listo' : 'Verifica tu información', [isConfirmed]);
 
@@ -170,6 +201,7 @@ export function Registration() {
           {isSaving && <span className={styles.spinner} aria-hidden />}
           {isSaving ? 'Guardando' : isConfirmed ? 'Editar perfil' : 'Confirmar asistencia'}
         </button>
+        <a className={styles.invite} href="#invitacion">〰 ¿No recibiste invitación?</a>
       </form>
 
       <aside className={styles.preview}>
@@ -180,8 +212,8 @@ export function Registration() {
           frontImage={frontImage}
           backImage="/img/back.png"
           imageFit="cover"
-          lanyardImage="/img/lanyardImage.svg"
-          lanyardWidth={2.15}
+          lanyardImage={lanyardTexture}
+          lanyardWidth={1.35}
         />
         {isConfirmed && (
           <div className={styles.actions}>
