@@ -718,6 +718,87 @@ lista cerrada, y cada invitación admite un solo registro (`invitationId @unique
 La fotografía no se guarda todavía: `Attendee.photoUrl` está listo, pero falta
 decidir dónde se sube el archivo.
 
+### Endpoint del registro
+
+`POST /api/registro` crea o actualiza **por correo**: el correo identifica a la
+persona, y quien vuelve a enviar el formulario está corrigiendo sus datos, no
+apuntándose dos veces. De ahí el `upsert` en lugar de un `create` que fallaría
+con «ya existe». `GET /api/registro?email=` devuelve un perfil; hoy nadie la
+llama —el navegador se apoya en `localStorage`— y queda como la mitad que le
+falta a ese apaño.
+
+La validación vive en `features/registration/lib/attendee-input.ts`, pura y
+aparte: el formulario valida para avisar mientras se escribe, pero eso es
+comodidad, y al endpoint se le puede llamar sin pasar por la pantalla.
+
+**`photoUrl` tiene que estar bajo `R2_PUBLIC_BASE_URL`.** Sin esa comprobación el
+endpoint sería un sitio donde colgar cualquier enlace ajeno en la credencial de
+otra persona.
+
+Respuestas: `422` con `fields` (errores por campo, que el formulario pinta donde
+están), `415` y `413` en la firma de subida, `500` con el detalle solo en el
+registro del servidor.
+
+El orden al guardar es imagen y luego datos, porque la URL forma parte del
+registro. Si la subida falla no se envía nada: mejor repetir el paso que dejar
+una fila sin retrato que nadie va a volver a completar. Al corregir sin imagen
+nueva se conserva la anterior (`photoUrl: valor ?? undefined` en el `update`).
+
+No hay invitaciones todavía: el registro está abierto y `invitationId` queda
+nulo. Cuando las haya, el código entra como requisito en este endpoint.
+
+## Imágenes en R2
+
+Los retratos de las credenciales viven en un bucket de **Cloudflare R2**; en la
+base de datos queda solo la URL (`Attendee.photoUrl`). Nunca el archivo: una
+columna con bytes de imagen encarece cada consulta que ni los mira.
+
+El navegador **sube directo a R2** con una URL firmada:
+
+1. `POST /api/uploads/photo` con `{ contentType, size }` → `{ uploadUrl, key, url }`.
+2. El navegador hace `PUT` a `uploadUrl` con el archivo.
+3. Se guarda `url` en el registro.
+
+El archivo no pasa por el servidor a propósito: ahorra una subida y esquiva el
+límite de 4,5 MB de cuerpo de las funciones en Vercel, que un PNG sin fondo roza
+sin esfuerzo. El tope propio está en 8 MB (`MAX_IMAGE_BYTES`).
+
+**La clave del objeto la decide el servidor** (`attendees/<uuid>.<ext>`), no el
+cliente: con un nombre elegido por quien sube se podría sobrescribir el retrato
+de otra persona. La firma caduca en 10 minutos — es permiso para una subida, no
+una llave del bucket.
+
+El cliente de R2 lleva `requestChecksumCalculation: 'WHEN_REQUIRED'`. Por
+defecto el SDK añade una suma CRC32 que entra en la firma pero que el navegador
+no envía, y R2 responde 403.
+
+```bash
+npm run r2:verify   # firma, sube, lee por la URL pública y borra
+npm run r2:cors     # regla CORS del bucket (necesita token de admin)
+```
+
+### CORS
+
+Sin regla CORS el `PUT` firmado muere en la comprobación previa del navegador:
+la URL está bien firmada, pero la petición no llega a salir. La regla admite solo
+`PUT` y la cabecera `content-type`; la lectura va por la URL pública y no pasa
+por CORS.
+
+`r2:cors` requiere un token de R2 con permiso **Admin Read & Write**: la política
+CORS es configuración del bucket, no un objeto. Con un token de solo objetos
+—el que usa la aplicación— responde `AccessDenied`, y hay que poner la regla a
+mano en el panel.
+
+Al añadir un dominio (producción, previews) hay que sumarlo tanto a la regla CORS
+del bucket como a `R2_CORS_ORIGINS`.
+
+### Variables
+
+Las de `.env.example`. `R2_PUBLIC_BASE_URL` es hoy el subdominio `r2.dev` del
+bucket; al pasar a un dominio propio basta cambiar esa variable, pero **las URL
+ya guardadas en la base seguirán apuntando a `r2.dev`**: si se retira, hay que
+migrarlas.
+
 ## Verificación visual
 
 ```bash

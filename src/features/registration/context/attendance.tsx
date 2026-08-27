@@ -17,12 +17,15 @@ import {
  * tendría que inventarse los datos. La cabecera solo usa `name`.
  */
 export type Attendee = {
+  id: string;
   name: string;
   surname: string;
   email: string;
   organization: string;
   role: string;
-  linkedin: string;
+  linkedin: string | null;
+  /** URL en R2. El archivo no está aquí: solo el enlace. */
+  photoUrl: string | null;
 };
 
 type AttendanceState = {

@@ -38,6 +38,8 @@
 .invite { display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 108px; border-top: 1px solid var(--rule); color: var(--fg); font-family: var(--font-mono); font-size: var(--text-note); font-weight: 700; letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; }
 .invite::before { display: block; width: 26px; height: 20px; background: url('/hero/asset-riggle-red.svg') center / contain no-repeat; content: ''; }
 .invite:hover { color: var(--accent-nav); }
+/* Fallo del envío: va bajo el botón, donde acaba de mirar quien lo pulsó. */
+.submitError { padding: 14px 22px; background: #e95d5d1f; box-shadow: inset 4px 0 #e95d5d; color: #ff9c9c; font-family: var(--font-mono); font-size: var(--text-note); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; }
 .cancel { min-height: 62px; border: 0; border-top: 1px solid var(--rule); background: transparent; color: color-mix(in srgb, var(--fg) 62%, transparent); font-family: var(--font-mono); font-size: var(--text-note); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; cursor: pointer; }
 .cancel:hover { color: var(--fg); }
 

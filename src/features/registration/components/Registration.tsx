@@ -3,7 +3,8 @@
 
 import { ChangeEvent, Component, FormEvent, type PointerEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 import { SITE } from '@/config/site';
-import { useAttendance } from '../context/attendance';
+import { type Attendee, useAttendance } from '../context/attendance';
+import { uploadPhoto } from '../lib/upload-photo';
 import Lanyard from './ReactBitsLanyard';
 import styles from './Registration.module.css';
 
@@ -155,7 +156,12 @@ async function createBadge(fields: Fields, photo: string | null, crop: Crop) {
 
 export function Registration() {
   const [fields, setFields] = useState<Fields>(INITIAL);
+  /** URL local para pintar la credencial mientras se rellena el formulario. */
   const [photo, setPhoto] = useState<string | null>(null);
+  /** El archivo en sí, que es lo que se sube. Nulo si no se ha elegido ninguno. */
+  const [photoFile, setPhotoFile] = useState<Blob | null>(null);
+  /** URL en R2, una vez subida. Se reutiliza si no se cambia la imagen. */
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [crop, setCrop] = useState<Crop>({ zoom: 1, x: 0, y: 0 });
   const [isCropEditorOpen, setIsCropEditorOpen] = useState(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number; cropX: number; cropY: number } | null>(null);
@@ -164,6 +170,10 @@ export function Registration() {
   const [isBadgeUpdating, setIsBadgeUpdating] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [isSaving, setIsSaving] = useState(false);
+  /** Qué se está haciendo ahora mismo: subir la imagen o guardar los datos. */
+  const [savingStep, setSavingStep] = useState<string | null>(null);
+  /** Fallo del envío que no pertenece a ningún campo (red, servidor). */
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
   /** Solo cuenta ya confirmado: es el paso atrás desde el resumen al formulario. */
   const [isEditing, setIsEditing] = useState(false);
@@ -201,7 +211,18 @@ export function Registration() {
   useEffect(() => {
     if (!attendee) return;
     setIsConfirmed(true);
-    setFields((current) => ({ ...current, ...attendee }));
+    // Se copian los campos uno a uno: el perfil trae además `id` y `photoUrl`,
+    // que no son campos del formulario.
+    setFields({
+      name: attendee.name,
+      surname: attendee.surname,
+      email: attendee.email,
+      organization: attendee.organization,
+      role: attendee.role,
+      linkedin: attendee.linkedin ?? '',
+    });
+    // La imagen ya está en R2: al editar no hay que volver a subirla.
+    setPhotoUrl(attendee.photoUrl);
   }, [attendee]);
 
   /**
@@ -239,20 +260,25 @@ export function Registration() {
     }
     setErrors((current) => ({ ...current, photo: undefined }));
     setIsRemovingBackground(true);
+    // Una imagen nueva invalida la que hubiera subida: hay que volver a subirla.
+    setPhotoUrl(null);
     try {
       const { removeBackground } = await import('@imgly/background-removal');
       const result = await removeBackground(file);
-      setPhoto(URL.createObjectURL(result));
-      setCrop({ zoom: 1, x: 0, y: 0 });
-      setIsCropEditorOpen(true);
+      accept(result);
     } catch {
       // Si el modelo no puede cargarse (p. ej., sin conexión), aún permitimos
       // usar la imagen local para no bloquear el registro.
-      setPhoto(URL.createObjectURL(file));
-      setCrop({ zoom: 1, x: 0, y: 0 });
-      setIsCropEditorOpen(true);
+      accept(file);
     } finally {
       setIsRemovingBackground(false);
+    }
+
+    function accept(image: Blob) {
+      setPhotoFile(image);
+      setPhoto(URL.createObjectURL(image));
+      setCrop({ zoom: 1, x: 0, y: 0 });
+      setIsCropEditorOpen(true);
     }
   }
 
@@ -265,32 +291,78 @@ export function Registration() {
     // La foto solo se exige al confirmar por primera vez. Al volver a editar no
     // está en memoria —no se guarda en el navegador—, y pedirla otra vez
     // bloquearía una corrección de rol tras la que nadie sube una foto.
-    if (!photo && !isConfirmed) next.photo = 'Sube una fotografía para generar tu credencial.';
+    if (!photo && !photoUrl && !isConfirmed) next.photo = 'Sube una fotografía para generar tu credencial.';
     return next;
   }
 
-  function submit(event: FormEvent) {
+  /**
+   * Guarda el registro: sube la imagen si hace falta y manda los datos.
+   *
+   * La imagen va primero porque su URL forma parte del registro. Si la subida
+   * falla no se envía nada: es mejor repetir el paso que dejar una fila sin
+   * retrato que nadie va a volver a completar.
+   */
+  async function submit(event: FormEvent) {
     event.preventDefault();
     const nextErrors = validate();
     setErrors(nextErrors);
+    setSubmitError(null);
     if (Object.keys(nextErrors).length) return;
+
     setIsSaving(true);
-    window.setTimeout(() => {
-      setIsSaving(false);
+    try {
+      let uploaded = photoUrl;
+      if (photoFile && !uploaded) {
+        setSavingStep('Subiendo tu imagen');
+        uploaded = await uploadPhoto(photoFile);
+        setPhotoUrl(uploaded);
+      }
+
+      setSavingStep('Guardando');
+      const response = await fetch('/api/registro', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          name: normalizeText(fields.name),
+          surname: normalizeText(fields.surname),
+          email: fields.email.trim().toLowerCase(),
+          organization: normalizeText(fields.organization),
+          role: normalizeText(fields.role),
+          linkedin: normalizeLinkedIn(fields.linkedin),
+          photoUrl: uploaded,
+        }),
+      });
+
+      const payload = (await response.json().catch(() => ({}))) as {
+        attendee?: Attendee;
+        error?: string;
+        fields?: Partial<Record<string, string>>;
+      };
+
+      if (!response.ok || !payload.attendee) {
+        // El servidor puede marcar campos concretos: se pintan donde están.
+        if (payload.fields) {
+          const known = new Set<keyof Errors>(['name', 'surname', 'email', 'organization', 'role', 'linkedin', 'photo']);
+          setErrors(Object.fromEntries(
+            Object.entries(payload.fields).filter(([field]) => known.has(field as keyof Errors)),
+          ) as Errors);
+        }
+        setSubmitError(payload.error ?? 'No se pudo guardar el registro.');
+        return;
+      }
+
       setIsConfirmed(true);
       // Guardar devuelve al resumen: es la vista de reposo del perfil.
       setIsEditing(false);
       // El resto del sitio se entera por aquí: cabecera, hero y pie leen el
-      // mismo estado. Sin base de datos todavía, queda en almacenamiento local.
-      confirm({
-        name: normalizeText(fields.name),
-        surname: normalizeText(fields.surname),
-        email: fields.email.trim().toLowerCase(),
-        organization: normalizeText(fields.organization),
-        role: normalizeText(fields.role),
-        linkedin: normalizeLinkedIn(fields.linkedin),
-      });
-    }, 850);
+      // mismo estado. La fuente de verdad es la respuesta del servidor.
+      confirm(payload.attendee);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'No se pudo guardar el registro.');
+    } finally {
+      setIsSaving(false);
+      setSavingStep(null);
+    }
   }
 
   function addToCalendar() {
@@ -448,8 +520,9 @@ export function Registration() {
 
         <button className={styles.submit} type="submit" disabled={isSaving || isRemovingBackground}>
           {isSaving && <span className={styles.spinner} aria-hidden />}
-          {isSaving ? 'Guardando' : isConfirmed ? 'Guardar cambios' : 'Confirmar asistencia'}
+          {isSaving ? savingStep ?? 'Guardando' : isConfirmed ? 'Guardar cambios' : 'Confirmar asistencia'}
         </button>
+        {submitError && <p className={styles.submitError} role="alert">{submitError}</p>}
         {isConfirmed ? (
           <button className={styles.cancel} type="button" onClick={() => setIsEditing(false)}>
             Cancelar

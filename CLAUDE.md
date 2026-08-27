@@ -162,9 +162,13 @@ guarda el perfil entero y no solo el nombre.
 calendario concreto. Sus horas están en `SITE.event.calendar` en UTC: Ecuador va a
 UTC-5 todo el año.
 
-El envío todavía es un `setTimeout`: falta el endpoint. El enganche es `confirm()`
-en el provider. La fotografía no se guarda en ninguna parte, así que al editar no
-se vuelve a exigir.
+El envío va a `POST /api/registro`, que hace `upsert` **por correo**: reenviar el
+formulario corrige, no duplica. La validación de servidor está en
+`features/registration/lib/attendee-input.ts`, pura y aparte de la del formulario.
+La respuesta del servidor es la fuente de verdad de `confirm()`.
+
+Al editar no se vuelve a exigir la foto: si ya está en R2 se reutiliza su URL, y
+una imagen nueva invalida la anterior y se sube otra vez.
 
 ## Base de datos
 
@@ -180,6 +184,19 @@ Postgres y la cadena de conexión al navegador.
 
 `DATABASE_URL` vive solo en `.env` (ignorado). El cliente generado va en
 `/generated`, tampoco versionado: lo rehace `postinstall`.
+
+## Imágenes
+
+Los retratos van a **Cloudflare R2** y en la base queda solo la URL. El navegador
+sube directo con una URL firmada por `POST /api/uploads/photo`; el archivo no pasa
+por el servidor (límite de 4,5 MB de cuerpo en Vercel). La clave del objeto la
+decide el servidor, no el cliente.
+
+`src/lib/r2.ts` es de servidor: las claves dan escritura sobre el bucket.
+
+Al añadir un dominio hay que sumarlo a la regla CORS del bucket **y** a
+`R2_CORS_ORIGINS`. La regla solo se puede poner con un token de admin de R2 o a
+mano en el panel: con el token de objetos da `AccessDenied`.
 
 ## Assets
 
