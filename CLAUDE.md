@@ -162,9 +162,24 @@ guarda el perfil entero y no solo el nombre.
 calendario concreto. Sus horas están en `SITE.event.calendar` en UTC: Ecuador va a
 UTC-5 todo el año.
 
-No hay base de datos: el envío es un `setTimeout`. El enganche del backend es
-`confirm()` en el provider. La fotografía no se guarda en ninguna parte, así que
-al editar no se vuelve a exigir.
+El envío todavía es un `setTimeout`: falta el endpoint. El enganche es `confirm()`
+en el provider. La fotografía no se guarda en ninguna parte, así que al editar no
+se vuelve a exigir.
+
+## Base de datos
+
+Prisma ORM **7.10.0** contra Prisma Postgres, fijado y no `latest`: el `latest` de
+la CLI es ya un 8.0.0-rc con otra arquitectura.
+
+Modelos en `prisma/schema.prisma` (`Invitation` 1—1 `Attendee`). El `datasource`
+no lleva `url`: la aporta `prisma.config.ts`, que también declara la semilla.
+
+El cliente es `src/lib/prisma.ts`, uno por proceso, con el adaptador `PrismaPg`.
+**Solo servidor**: importarlo desde un componente de cliente llevaría el driver de
+Postgres y la cadena de conexión al navegador.
+
+`DATABASE_URL` vive solo en `.env` (ignorado). El cliente generado va en
+`/generated`, tampoco versionado: lo rehace `postinstall`.
 
 ## Assets
 

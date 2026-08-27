@@ -2,7 +2,12 @@ node_modules
 .next
 out
 build
+# Secretos: la cadena de conexión de Prisma Postgres vive aquí.
+.env
 .env*.local
 .DS_Store
 *.tsbuildinfo
 next-env.d.ts
+
+# Cliente de Prisma: se regenera con `prisma generate` (postinstall).
+/generated

@@ -35,12 +35,13 @@ class LanyardBoundary extends Component<LanyardBoundaryProps, { hasError: boolea
   }
 }
 
+/** El formulario arranca vacío: los datos los pone quien se registra. */
 const INITIAL: Fields = {
-  name: 'Kathrin',
-  surname: 'Mendoza',
-  email: 'kathrin.mendoza@example.com',
-  organization: 'Pachamama',
-  role: 'Líder de comunidades Ashuar',
+  name: '',
+  surname: '',
+  email: '',
+  organization: '',
+  role: '',
   linkedin: '',
 };
 

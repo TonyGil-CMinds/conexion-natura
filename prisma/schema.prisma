@@ -1,0 +1,51 @@
+// Esquema de Conexión500. Primer corte: solo el registro de asistentes.
+//
+// La cadena de conexión no va aquí: en Prisma 7 la aporta `prisma.config.ts`
+// desde `DATABASE_URL`, así que el esquema no toca secretos.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Una de las 100 invitaciones. Es la llave para registrarse: el sitio dice
+/// «eres uno de los 100 invitados», así que el cupo se controla aquí y no
+/// contando filas de asistentes.
+model Invitation {
+  id        String    @id @default(cuid())
+  /// Código que llega en la invitación. Se compara en mayúsculas.
+  code      String    @unique
+  /// Correo al que se envió, cuando se conoce. No es el del registro: quien
+  /// recibe la invitación puede registrarse con otra dirección.
+  email     String?
+  createdAt DateTime  @default(now())
+  /// Nulo mientras nadie la haya usado.
+  attendee  Attendee?
+
+  @@index([email])
+}
+
+/// Quien ya confirmó asistencia. Es el contenido del formulario de `/registro`.
+model Attendee {
+  id           String   @id @default(cuid())
+  /// Identifica al asistente: un correo, un registro.
+  email        String   @unique
+  name         String
+  surname      String
+  organization String
+  role         String
+  /// Opcional en el formulario; se guarda ya normalizado a URL completa.
+  linkedin     String?
+  /// La fotografía se sube aparte: aquí solo queda su ubicación.
+  photoUrl     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  /// Cada invitación admite un solo registro, de ahí el `@unique`.
+  invitationId String?     @unique
+  invitation   Invitation? @relation(fields: [invitationId], references: [id])
+}

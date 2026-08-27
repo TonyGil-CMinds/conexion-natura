@@ -682,6 +682,42 @@ Hay **dos oscuros** y no conviene confundirlos:
 | `--color-dark` | #001D09 | Tinte de los textos sobre superficies claras: rótulo del botón, respuesta abierta del FAQ, rótulo de portada | Arranca en oscuro, que es el del diseño. El loader también es oscuro por sí
 mismo: usa los colores de marca directamente, no los roles.
 
+## Base de datos
+
+Prisma ORM 7.10 contra **Prisma Postgres**. La versión importa: el `latest` de la
+CLI es ya un 8.0.0-rc con otra arquitectura (contratos), así que las dos piezas
+están fijadas a 7.10.0 —la estable— y no a `latest`.
+
+- `prisma/schema.prisma` — modelos. El `datasource` **no lleva `url`**: en
+  Prisma 7 la aporta `prisma.config.ts`, así que el esquema no toca secretos.
+- `prisma.config.ts` — esquema, ruta de migraciones y comando de semilla. Importa
+  `dotenv/config` porque la CLI no es Next.js y por sí sola no lee el `.env`.
+- `src/lib/prisma.ts` — el cliente, uno por proceso, con el adaptador `PrismaPg`.
+- `prisma/seed.ts` — semilla idempotente (`upsert` por clave única).
+- `scripts/verify-prisma.ts` — una lectura real; imprime `✅ Connected`.
+
+```bash
+npm run db:verify   # comprueba la conexión
+npm run db:seed     # invitaciones y un asistente de ejemplo
+npm run db:studio   # explorador de datos
+```
+
+El **cliente generado no se versiona** (`/generated` en `.gitignore`): lo
+reconstruye `postinstall`, así que un despliegue limpio lo tiene sin pasos extra.
+
+`DATABASE_URL` vive solo en `.env`, que está ignorado. **El cliente es de
+servidor**: importarlo desde un componente de cliente llevaría el driver de
+Postgres —y la cadena de conexión— al navegador.
+
+### Modelos
+
+`Invitation` y `Attendee`, uno a uno. El cupo se controla en las invitaciones y
+no contando asistentes: el sitio promete «uno de los 100 invitados», que es una
+lista cerrada, y cada invitación admite un solo registro (`invitationId @unique`).
+
+La fotografía no se guarda todavía: `Attendee.photoUrl` está listo, pero falta
+decidir dónde se sube el archivo.
+
 ## Verificación visual
 
 ```bash
