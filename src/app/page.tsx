@@ -18,7 +18,9 @@ const HERO_ASSETS = [
 export default function HomePage() {
   return (
     <LoaderGate preload={HERO_ASSETS}>
-      <PageFrame>
+      {/* La portada es solo el hero: cabe en una pantalla y no continúa con el
+          pie, que se reserva para las páginas por las que se navega. */}
+      <PageFrame hideFooter>
         <Hero />
       </PageFrame>
     </LoaderGate>

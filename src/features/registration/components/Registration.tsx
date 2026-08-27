@@ -2,6 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { ChangeEvent, Component, FormEvent, type PointerEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { useAttendance } from '../context/attendance';
 import Lanyard from './ReactBitsLanyard';
 import styles from './Registration.module.css';
 
@@ -133,6 +134,7 @@ export function Registration() {
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isRemovingBackground, setIsRemovingBackground] = useState(false);
   const [focusedField, setFocusedField] = useState<keyof Fields | null>(null);
+  const { attendee, confirm } = useAttendance();
 
   useEffect(() => {
     let active = true;
@@ -158,6 +160,11 @@ export function Registration() {
       window.clearTimeout(timeout);
     };
   }, [fields, photo, crop]);
+
+  // Quien vuelve con la asistencia ya confirmada entra directo a ese estado.
+  useEffect(() => {
+    if (attendee) setIsConfirmed(true);
+  }, [attendee]);
 
   const title = useMemo(() => isConfirmed ? 'Tu perfil está listo' : 'Verifica tu información', [isConfirmed]);
 
@@ -223,6 +230,9 @@ export function Registration() {
     window.setTimeout(() => {
       setIsSaving(false);
       setIsConfirmed(true);
+      // El resto del sitio se entera por aquí: cabecera, hero y pie leen el
+      // mismo estado. Sin base de datos todavía, queda en almacenamiento local.
+      confirm({ name: normalizeText(fields.name), surname: normalizeText(fields.surname) });
     }, 850);
   }
 

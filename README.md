@@ -339,7 +339,11 @@ de la acción va oculto pero presente, porque el signo es decorativo.
 
 `src/components/layout/SiteFooter.tsx`, contenido en `SITE.FOOTER`.
 
-Lo compone **`PageFrame`**, no cada página: es idéntico en todas las rutas, y
+No sale en la **portada** ni en **registro**, que lo apagan con `hideFooter`: la
+portada cabe en una pantalla y su CTA de registro ya está en el hero, así que el
+pie solo lo repetiría; el registro es un flujo cerrado.
+
+En el resto, lo compone **`PageFrame`**, no cada página, y
 viviendo dentro del armazón los filetes verticales lo cruzan como cruzan el resto
 de la página. (Ocupa el hueco del antiguo `bottomBar`, que se quedó sin usar al
 rediseñar el hero.)
@@ -693,11 +697,57 @@ espera en tiempo real a propósito: el modo simple de Chrome
 (`--screenshot --virtual-time-budget`) no sirve para esto, porque el tiempo
 virtual solo avanza cuando la página está inactiva y aquí nunca lo está.
 
+## Registro y asistencia
+
+`src/features/registration/`. La pantalla `/registro` son dos paneles: el
+formulario a la izquierda y la credencial en 3D a la derecha.
+
+**La altura la marca el contenido, no la pantalla.** El primer montaje daba al
+lienzo exactamente una pantalla y el formulario resolvía el sobrante con scroll
+propio; en portátiles (726px de alto) eso dejaba la lista de campos en 150px —dos
+campos y medio— con el botón de registro encima. Ahora `.root` usa
+`min-height: calc(100dvh - var(--header-height))`, el formulario fluye y quien
+desplaza es el documento: el botón de confirmar se **descubre bajando**, que es lo
+que el usuario espera de una página larga.
+
+El panel de la credencial es `position: sticky; top: 0`. Se ancla en 0 y no en la
+altura de la cabecera porque la cabecera no es fija: se va con el scroll.
+
+**Descargar y compartir van encima del lienzo, en posición absoluta.** Como
+hermanos en la columna le robaban alto al canvas al aparecer y la tarjeta pegaba
+un salto, además de quedar al fondo del panel, lejos de ella. En absoluto el
+canvas ni se entera —medido: `top: 89, h: 815` idéntico antes y después de
+confirmar—. La cota es `calc(60% + 16px)`: el 60% porque la credencial cuelga a
+una fracción fija del alto (el campo de visión de la escena es vertical), y los
+16px en píxeles y no en porcentaje para que el aire no crezca con la pantalla.
+
+### Estado de asistencia
+
+`context/attendance.tsx` expone `AttendanceProvider` y `useAttendance()`, y se
+monta en el layout raíz por encima de la cabecera y de la transición: cabecera,
+hero y pie cuelgan de ramas distintas del árbol y necesitan el mismo dato.
+
+Persiste en `localStorage` (`c500-attendee`) y no en `sessionStorage` como el
+loader: confirmar asistencia es un compromiso que debe sobrevivir al cierre de la
+pestaña; ver el loader otra vez, no.
+
+Se lee en un efecto tras montar y no en el estado inicial: en el servidor no hay
+`localStorage`, y devolver algo distinto en el cliente rompe la hidratación. El
+coste es que el rótulo confirmado aparece un cuadro después, que en un botón de
+estado no se nota.
+
+Quien lo consume es `RegistrationCta`, que resuelve el rótulo
+(«Asistencia confirmada») y deja `CtaButton` presentacional; y `PrimaryNav`, que
+cambia el enlace de registro por el **nombre** del asistente —sin apellido: la
+celda del menú no da para los dos—. El destino no cambia: quien ya confirmó
+vuelve a la misma pantalla, ahora para revisar su perfil.
+
+**No hay base de datos todavía.** El envío es un `setTimeout` de 850ms y el dato
+vive solo en el navegador. Al llegar el backend, el punto de enganche es
+`confirm()` dentro del provider.
+
 ## Pendiente
 
-- **Los logos de socios necesitan variantes en claro.** Ahora se levantan con
-  filtros CSS; los dos que llevan bandera conservan el color solo de forma
-  aproximada.
 - Los enlaces legales del pie apuntan a anclas de relleno (`#terminos`,
   `#privacidad`) y las redes a los dominios genéricos: faltan las URL reales.
 - `hero-green-pixels-2.svg` lleva el degradado con el oscuro antiguo (#001D09) en

@@ -29,7 +29,9 @@ La **cabecera** se compone en el layout raíz: es idéntica en todas las rutas, 
 debe animarse al navegar, y al sobrevivir al cambio de ruta su indicador puede
 animar el paso de una a otra. El **armazón** (`PageFrame`) sí va en cada página,
 porque los filetes de columna se activan por página. El **pie** lo compone el
-armazón: es igual en todas las rutas y así los filetes verticales lo cruzan.
+armazón, y así los filetes verticales lo cruzan. No sale en la portada ni en
+registro (`hideFooter`): la portada cabe en una pantalla y el pie repetiría su
+CTA.
 
 Solo la portada va envuelta en `LoaderGate`: el loader es la entrada al sitio, no
 un peaje en cada ruta, y se ve una sola vez por sesión de pestaña.
@@ -134,6 +136,26 @@ recuento de columnas —y por tanto el patrón— no cambie entre 1280 y 1920.
 
 Al añadir una portada, elegir la semilla comprobando que ninguna celda de color
 asome junto al panel del rótulo: convierte el panel en una escalera.
+
+## Registro
+
+La altura de `/registro` la marca el contenido: desplaza el documento y el panel
+de la credencial se queda `sticky`. Nada de scroll interno en el formulario —en
+portátiles dejaba dos campos y medio a la vista.
+
+Lo que aparece sobre el lienzo de la credencial (los botones de descargar y
+compartir) va en posición absoluta: como hermano en la columna le roba alto al
+canvas y la tarjeta salta.
+
+El estado de asistencia es `useAttendance()` (`src/features/registration`),
+montado en el layout raíz porque cabecera, hero y pie cuelgan de ramas distintas.
+Vive en `localStorage` —sobrevive al cierre de la pestaña, al revés que el
+loader— y se lee en un efecto tras montar, no en el estado inicial: en el
+servidor no hay `localStorage`. Quien resuelve el rótulo es `RegistrationCta`;
+`CtaButton` sigue siendo presentacional.
+
+No hay base de datos: el envío es un `setTimeout`. El enganche del backend es
+`confirm()` en el provider.
 
 ## Assets
 

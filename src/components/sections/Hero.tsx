@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { SITE } from '@/config/site';
-import { CtaButton } from '@/components/ui/CtaButton';
+import { RegistrationCta } from '@/features/registration';
 import { HeroCountdown } from './HeroCountdown';
 import { HeroHeadline } from './HeroHeadline';
 import { HeroMedia } from './HeroMedia';
@@ -46,7 +46,7 @@ export function Hero() {
         <HeroHeadline lines={event.headline} />
 
         <div className={styles.cta}>
-          <CtaButton label={cta.label} href={cta.href} />
+          <RegistrationCta label={cta.label} href={cta.href} />
           <p className={styles.note}>{cta.note}</p>
         </div>
 

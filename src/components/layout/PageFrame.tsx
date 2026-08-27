@@ -9,7 +9,10 @@ type Props = {
    * atravesarían las filas en vez de estructurarlas.
    */
   hasColumnRules?: boolean;
-  /** Las pantallas de flujo cerrado (registro) no continúan con el pie global. */
+  /**
+   * La portada y las pantallas de flujo cerrado (registro) no continúan con el
+   * pie global: la primera cabe en una pantalla y el pie repetiría su CTA.
+   */
   hideFooter?: boolean;
   children: React.ReactNode;
 };

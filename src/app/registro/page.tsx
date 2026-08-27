@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { PageFrame } from '@/components/layout/PageFrame';
-import { Registration } from '@/features/registration/components/Registration';
+import { Registration } from '@/features/registration';
 import { SITE } from '@/config/site';
 
 export const metadata: Metadata = { title: `Registro — ${SITE.name}`, description: 'Confirma tu asistencia a Conexión500.' };

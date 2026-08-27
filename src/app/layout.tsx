@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { bodyFont, departureMono } from '@/fonts';
 import { SiteHeader } from '@/components/layout/SiteHeader';
+import { AttendanceProvider } from '@/features/registration';
 import { PageTransition } from '@/features/transitions/page-transition';
 import { SITE } from '@/config/site';
 import '@/styles/globals.css';
@@ -40,9 +41,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           sobrevivir a la navegación su indicador puede animar el paso de una ruta
           a otra en vez de aparecer ya pintado.
         */}
-        <SiteHeader />
+        {/* El estado de asistencia lo consultan la cabecera, el hero y el pie:
+            tres ramas distintas del árbol, así que vive por encima de las tres. */}
+        <AttendanceProvider>
+          <SiteHeader />
 
-        <PageTransition>{children}</PageTransition>
+          <PageTransition>{children}</PageTransition>
+        </AttendanceProvider>
       </body>
     </html>
   );

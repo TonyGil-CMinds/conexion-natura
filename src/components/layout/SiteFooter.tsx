@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { CtaButton } from '@/components/ui/CtaButton';
+import { RegistrationCta } from '@/features/registration';
 import { SOCIAL_MARKS, type SocialNetwork } from '@/components/ui/social-marks';
 import { FOOTER, PARTNER_GROUPS, SITE } from '@/config/site';
 import styles from './SiteFooter.module.css';
@@ -52,7 +52,7 @@ export function SiteFooter() {
         </p>
 
         <div className={styles.cta}>
-          <CtaButton label={cta.label} href={cta.href} size="compact" />
+          <RegistrationCta label={cta.label} href={cta.href} size="compact" />
         </div>
       </div>
 
