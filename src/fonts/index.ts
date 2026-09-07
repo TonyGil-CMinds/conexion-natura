@@ -20,3 +20,12 @@ export const departureMono = localFont({
   style: 'normal',
   variable: '--font-departure-mono',
 });
+
+/** Display face used by the full-screen mobile navigation. */
+export const cubao = localFont({
+  src: '../../public/font/Cubao_Free_Regular.otf',
+  display: 'swap',
+  weight: '400',
+  style: 'normal',
+  variable: '--font-cubao',
+});

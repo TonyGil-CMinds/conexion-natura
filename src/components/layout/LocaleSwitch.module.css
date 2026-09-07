@@ -32,3 +32,20 @@
 .button:hover:not([data-active]) {
   opacity: 0.6;
 }
+
+@media (max-width: 900px) {
+  .root {
+    font-size: var(--text-mobile-locale);
+  }
+
+  .button {
+    display: grid;
+    place-items: center;
+    min-width: 28px;
+    min-height: 44px;
+  }
+
+  .divider {
+    margin-inline: 0;
+  }
+}

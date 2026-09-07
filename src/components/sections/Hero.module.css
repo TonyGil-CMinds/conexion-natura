@@ -52,6 +52,10 @@
   opacity: 0.6;
 }
 
+.mobileDate {
+  display: none;
+}
+
 .place {
   color: var(--accent);
 }
@@ -112,3 +116,61 @@
   }
 
 }
+
+@media (max-width: 640px) {
+  .root {
+    min-height: max(590px, calc(100svh - var(--header-height) - var(--header-rule)));
+  }
+
+  .content {
+    z-index: 3;
+    padding-inline: var(--container-margin);
+    padding-bottom: var(--hero-bottom);
+  }
+
+  .when {
+    display: none;
+  }
+
+  .wordmark {
+    width: 100%;
+    margin-top: 0;
+  }
+
+  .wordmark img {
+    max-height: none;
+  }
+
+  .mobileDate {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--mobile-hero-date-gap);
+    font-family: var(--font-body);
+    font-size: var(--text-mobile-date);
+    font-weight: 400;
+    line-height: 1;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--accent-nav);
+  }
+
+  .dateMark {
+    width: 40px;
+    height: 30px;
+    background: var(--fg);
+    mask: url('/icons/icon-separator-inactive.svg') center / auto 24px no-repeat;
+  }
+
+  .cta {
+    width: 100%;
+    margin-top: var(--mobile-hero-cta-gap);
+    padding-top: 0;
+  }
+
+  .note {
+    color: color-mix(in srgb, var(--fg) 55%, transparent);
+    letter-spacing: var(--tracking-cta);
+  }
+}
+

@@ -42,7 +42,11 @@ export function PageCover({
   return (
     <div
       className={styles.root}
-      style={{ ['--cover-accent' as string]: TONE_VARS[tone] }}
+      style={{
+        ['--cover-accent' as string]: TONE_VARS[tone],
+        // Las celdas que tapan la foto van del mismo oscuro que el contenedor.
+        ['--cover-surface' as string]: 'var(--color-surface)',
+      }}
     >
       <Image
         src={image.src}

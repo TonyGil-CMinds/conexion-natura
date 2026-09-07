@@ -32,6 +32,7 @@ export function HeroHeadline({ lines }: Props) {
 
   return (
     <h1 className={styles.root} aria-label={lines.join(' ')}>
+      <span className={styles.mobileCopy} aria-hidden>{lines.join(' ')}</span>
       {lines.map((line) => {
         const delay = charOffset * CHAR_STAGGER * OVERLAP;
         charOffset += line.length;

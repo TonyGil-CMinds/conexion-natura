@@ -92,3 +92,25 @@
     height: 160px;
   }
 }
+
+@media (max-width: 640px) {
+  .layer {
+    width: calc(100% - 2 * var(--container-margin));
+  }
+
+  .birdFrame {
+    right: -46px;
+    top: 208px;
+    bottom: auto;
+    height: clamp(330px, 92vw, 460px);
+  }
+
+  .floor {
+    height: 130px;
+    mask-image: none;
+  }
+
+  .wave {
+    display: none;
+  }
+}

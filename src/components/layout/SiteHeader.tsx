@@ -6,12 +6,14 @@ import { localePath, type Dictionary, type Locale } from '@/i18n';
 import { LocaleSwitch } from './LocaleSwitch';
 import { PrimaryNav } from './PrimaryNav';
 import { ThemeToggle } from './ThemeToggle';
+import { MobileMenu } from './MobileMenu';
 import styles from './SiteHeader.module.css';
 
 type Props = {
   locale: Locale;
   nav: Dictionary['nav'];
   header: Dictionary['header'];
+  cta: { label: string; confirmedLabel: string; note: string };
 };
 
 /**
@@ -25,7 +27,7 @@ type Props = {
  * Trae su propia banda a sangre con el filete inferior, porque ya no la envuelve
  * `PageFrame`: la cabecera se compone en el layout raíz.
  */
-export function SiteHeader({ locale, nav, header }: Props) {
+export function SiteHeader({ locale, nav, header, cta }: Props) {
   return (
     // `data-site-header` es el asidero del estilo en línea del layout, que la
     // esconde mientras el loader está en pantalla.
@@ -56,6 +58,7 @@ export function SiteHeader({ locale, nav, header }: Props) {
           <div className={styles.controlsCell}>
             <ThemeToggle toLight={header.themeToLight} toDark={header.themeToDark} />
             <LocaleSwitch locale={locale} label={header.language} />
+            <MobileMenu locale={locale} labels={nav} header={header} cta={cta} />
           </div>
         </header>
       </PageShell>

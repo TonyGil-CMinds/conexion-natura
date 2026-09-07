@@ -9,3 +9,15 @@
 .root:hover {
   opacity: 0.6;
 }
+
+@media (max-width: 900px) {
+  .root {
+    width: 44px;
+    height: 44px;
+  }
+
+  .root img {
+    width: 14px;
+    height: 14px;
+  }
+}

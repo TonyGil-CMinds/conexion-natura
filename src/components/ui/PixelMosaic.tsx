@@ -22,10 +22,19 @@ type Props = {
 const CELL_COUNT = 220;
 
 /**
- * Tonos de celda. El color de acento lo pone la portada con `--cover-accent`, así
- * que el mosaico no conoce la paleta de cada página.
+ * Tonos de celda. Los dos colores los pone quien usa el mosaico —`--cover-accent`
+ * y `--cover-surface`—, así que el mosaico no conoce la paleta de cada página.
+ *
+ * El tercer tono son las celdas que **tapan** la foto, y tiene que ser el color
+ * que hay detrás de ella. Por defecto es el fondo del tema, pero la portada lo
+ * fija en oscuro: allí la foto va sobre oscuro en los dos temas, y con el fondo
+ * del tema estas celdas quedaban crema, como agujeros recortados en la foto.
  */
-const TONES = ['transparent', 'var(--cover-accent, var(--color-yellow))', 'var(--bg)'] as const;
+const TONES = [
+  'transparent',
+  'var(--cover-accent, var(--color-yellow))',
+  'var(--cover-surface, var(--bg))',
+] as const;
 
 /** Proporción de celdas del color de fondo, que tapan la foto. */
 const SHADE_RATIO = 0.12;

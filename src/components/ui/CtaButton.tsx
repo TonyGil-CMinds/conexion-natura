@@ -4,7 +4,7 @@ type Props = {
   label: string;
   href: string;
   /** `compact`: más ancho y más bajo, como el del footer. */
-  size?: 'default' | 'compact';
+  size?: 'default' | 'compact' | 'mobile' | 'hero';
 };
 
 /**

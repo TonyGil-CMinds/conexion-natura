@@ -159,3 +159,54 @@
     padding-inline: var(--space-5) 48px;
   }
 }
+
+/* Full-width rectangular action shared by the mobile hero and menu. */
+.root[data-size='mobile'] {
+  --cta-w: 100%;
+  --cta-h: 54px;
+  --radius-cta: 0;
+}
+
+.root[data-size='mobile'] .button {
+  min-height: var(--cta-h);
+  justify-content: center;
+  padding-inline: var(--space-4);
+}
+
+.root[data-size='mobile'] .label {
+  white-space: normal;
+  text-align: center;
+}
+
+.root[data-size='mobile'] .icon {
+  display: none;
+}
+
+@media (hover: none) {
+  .button:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .root[data-size='hero'] {
+    --cta-w: 100%;
+    --cta-h: 54px;
+    --radius-cta: 0;
+  }
+
+  .root[data-size='hero'] .button {
+    min-height: var(--cta-h);
+    justify-content: center;
+    padding-inline: var(--space-4);
+  }
+
+  .root[data-size='hero'] .label {
+    white-space: normal;
+    text-align: center;
+  }
+
+  .root[data-size='hero'] .icon {
+    display: none;
+  }
+}

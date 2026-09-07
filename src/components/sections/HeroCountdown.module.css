@@ -88,3 +88,14 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+@media (max-width: 640px) {
+  .label {
+    display: none;
+  }
+
+  .scale {
+    height: 54px;
+    margin-top: 0;
+  }
+}

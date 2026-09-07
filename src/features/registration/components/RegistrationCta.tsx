@@ -9,7 +9,7 @@ type Props = {
   /** Rótulo cuando ya se confirmó. Llega traducido desde el servidor. */
   confirmedLabel: string;
   href: string;
-  size?: 'default' | 'compact';
+  size?: 'default' | 'compact' | 'mobile' | 'hero';
 };
 
 /**

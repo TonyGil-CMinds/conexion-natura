@@ -55,6 +55,14 @@
   /* Texto corrido. IBM Plex Mono, no una sans: es la decisión de diseño vigente. */
   --font-body: var(--font-ibm-plex-mono), ui-monospace, monospace;
   --font-mono: var(--font-departure-mono), ui-monospace, monospace;
+  --font-menu: var(--font-cubao), sans-serif;
+  --text-mobile-menu: clamp(2.5rem, 12.8vw, 5.5rem);
+  --text-mobile-locale: 0.5625rem;
+  --text-mobile-date: clamp(1.625rem, 8.2vw, 2.5rem);
+  --mobile-menu-pad-top: clamp(3rem, 13svh, 7rem);
+  --mobile-menu-pad-bottom: clamp(1.5rem, 9svh, 4rem);
+  --mobile-hero-date-gap: clamp(2rem, 8svh, 4rem);
+  --mobile-hero-cta-gap: clamp(3rem, 10svh, 5rem);
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -213,11 +221,22 @@
   }
 }
 
-/* En pantallas estrechas el margen de la retícula se come el ancho útil. */
+@media (max-width: 900px) {
+  :root {
+    --container-margin: clamp(24px, 7.7vw, 48px);
+    --header-height: 70px;
+  }
+}
+
+/* Mobile hero has its own rhythm instead of inheriting desktop height rules. */
 @media (max-width: 640px) {
   :root {
-    --container-margin: 16px;
-    --header-height: 72px;
+    --hero-pad-top: 40px;
+    --hero-gap-headline: 20px;
+    --hero-gap-note: 16px;
+    --hero-bottom: 120px;
+    --text-subtitle: clamp(0.8125rem, 3.85vw, 1.125rem);
+    --text-note: 0.625rem;
   }
 }
 

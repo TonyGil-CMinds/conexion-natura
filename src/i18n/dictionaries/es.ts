@@ -50,6 +50,8 @@ export const es = {
     themeToLight: 'Activar tema claro',
     themeToDark: 'Activar tema oscuro',
     language: 'Idioma',
+    openMenu: 'Abrir menú',
+    closeMenu: 'Cerrar menú',
   },
 
   hero: {

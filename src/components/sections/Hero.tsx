@@ -28,6 +28,11 @@ type Props = {
  * Los filetes de la retícula los dibuja `PageFrame`.
  */
 export function Hero({ locale, copy, confirmedCta }: Props) {
+  const { year, month, day } = SITE.event.date;
+  const date = new Date(Date.UTC(year, month, day));
+  const shortMonth = new Intl.DateTimeFormat(locale, { month: 'short', timeZone: 'UTC' }).format(date).replace('.', '');
+  const yearLabel = String(year);
+
   return (
     <section className={styles.root}>
       <HeroMedia />
@@ -53,11 +58,18 @@ export function Hero({ locale, copy, confirmedCta }: Props) {
 
         <HeroHeadline lines={copy.subtitle} />
 
+        <time className={styles.mobileDate} dateTime={date.toISOString().slice(0, 10)} aria-label={copy.dateLabel}>
+          <span aria-hidden>{String(day).padStart(2, '0')}<br />{shortMonth}</span>
+          <span className={styles.dateMark} aria-hidden />
+          <span aria-hidden>{yearLabel.slice(0, 2)}<br />{yearLabel.slice(2)}</span>
+        </time>
+
         <div className={styles.cta}>
           <RegistrationCta
             label={copy.ctaLabel}
             confirmedLabel={confirmedCta}
             href={localePath(locale, SITE.cta.href)}
+            size="hero"
           />
           <p className={styles.note}>{copy.ctaNote}</p>
         </div>

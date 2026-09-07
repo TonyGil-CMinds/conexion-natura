@@ -47,6 +47,8 @@ export const en: Dictionary = {
     themeToLight: 'Switch to light theme',
     themeToDark: 'Switch to dark theme',
     language: 'Language',
+    openMenu: 'Open menu',
+    closeMenu: 'Close menu',
   },
 
   hero: {

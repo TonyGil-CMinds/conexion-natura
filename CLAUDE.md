@@ -179,6 +179,11 @@ El mosaico no mide el viewport: emite celdas y las coloca con `auto-fill` sobre
 columnas `minmax(--mosaic-cell, 1fr)`. La celda escala con el ancho para que el
 recuento de columnas —y por tanto el patrón— no cambie entre 1280 y 1920.
 
+La portada lleva **fondo oscuro fijo en los dos temas**: las fotos vienen en RGBA
+con la opacidad rebajada y sobre el crema del tema claro quedaban lavadas. Las
+celdas del mosaico que tapan la foto van de ese mismo oscuro (`--cover-surface`),
+no del fondo del tema.
+
 Al añadir una portada, elegir la semilla comprobando que ninguna celda de color
 asome junto al panel del rótulo: convierte el panel en una escalera.
 

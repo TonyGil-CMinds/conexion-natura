@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
-import { bodyFont, departureMono } from '@/fonts';
+import { bodyFont, departureMono, cubao } from '@/fonts';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { AttendanceProvider } from '@/features/registration';
 import { PageTransition } from '@/features/transitions/page-transition';
@@ -116,7 +116,7 @@ export default async function RootLayout({ children, params }: LayoutProps) {
     // tokens.css ya son los del tema oscuro, así que no hace falta atributo.
     <html
       lang={locale}
-      className={`${bodyFont.variable} ${departureMono.variable}`}
+      className={`${bodyFont.variable} ${departureMono.variable} ${cubao.variable}`}
       suppressHydrationWarning
     >
       <body>
@@ -132,7 +132,12 @@ export default async function RootLayout({ children, params }: LayoutProps) {
         {/* El estado de asistencia lo consultan la cabecera, el hero y el pie:
             tres ramas distintas del árbol, así que vive por encima de las tres. */}
         <AttendanceProvider>
-          <SiteHeader locale={locale as Locale} nav={t.nav} header={t.header} />
+          <SiteHeader
+            locale={locale as Locale}
+            nav={t.nav}
+            header={t.header}
+            cta={{ label: t.hero.ctaLabel, confirmedLabel: t.registration.confirmedCta, note: t.hero.ctaNote }}
+          />
 
           <PageTransition>{children}</PageTransition>
         </AttendanceProvider>

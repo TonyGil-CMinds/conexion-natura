@@ -473,7 +473,7 @@ anclas de la misma página, y `prefers-reduced-motion`.
 ## Páginas interiores (Agenda y Ponentes)
 
 `/agenda` compone `PageCover` + `EmptyState`; `/speakers`, `PageCover` +
-`PageIntro`. El copy de las dos está en `src/config/pages.ts`.
+`PageIntro`. El copy de las dos está en los diccionarios.
 
 La ruta de ponentes es `/speakers` y su rótulo en el menú "Ponentes": el idioma de
 la URL y el del contenido no tienen que coincidir.
@@ -493,6 +493,16 @@ de color alineado al filete de la retícula.
 
 El tono viaja como variable CSS (`--cover-accent`), así que el mosaico no conoce
 la paleta de cada página: le basta el color que le pasa la portada.
+
+**La portada lleva fondo oscuro fijo, en los dos temas.** Las fotos vienen en
+RGBA con la opacidad ya rebajada, así que lo que se ve depende de lo que haya
+detrás: sobre el crema del tema claro quedaban lavadas. En oscuro es el mismo
+color que el fondo de la interfaz, así que no cambia nada — y por eso va como una
+sola declaración y no como una regla por tema, que podría quedarse a medias.
+
+Las celdas del mosaico que **tapan** la foto van de ese mismo oscuro y no del
+fondo del tema: la portada lo pasa en `--cover-surface`. Con el fondo del tema se
+leían como agujeros crema recortados en la foto.
 
 ### Bloque en degradado (Ponentes)
 
@@ -1104,9 +1114,10 @@ vive solo en el navegador. Al llegar el backend, el punto de enganche es
   haber flujo de invitación, vuelve con su clave en los diccionarios.
 - Queda **1px** de desbordamiento vertical en la portada por redondeo
   fraccionario de la cinta de la cuenta atrás. Antes eran dos.
-- En **tema claro** la fecha del hero queda oscura sobre los cuadros oscuros del
-  campo, y el degradado del suelo funde a crema encima de la foto. El tema claro
-  sigue sin repasarse más allá de los logotipos.
+- En **tema claro** los logos de socios del pie son invisibles: son las variantes
+  de tinta clara (`*-light.svg`), pensadas para fondo oscuro, y en claro quedan
+  crema sobre crema. Hacen falta las dos variantes y un `ThemedImage`, como el
+  logotipo. El tema claro sigue sin repasarse entero.
 - Los enlaces legales del pie apuntan a anclas de relleno (`#terminos`,
   `#privacidad`) y las redes a los dominios genéricos: faltan las URL reales.
 - `hero/hero-green-pixels-2.svg` quedó sin uso al retirarse el campo del hero.

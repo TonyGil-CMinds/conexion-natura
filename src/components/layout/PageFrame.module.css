@@ -53,7 +53,15 @@
 
 @media (max-width: 900px) {
   .columnRule {
-    display: none;
+    display: block;
+  }
+
+  .columnRule[data-side='start'] {
+    left: 23%;
+  }
+
+  .columnRule[data-side='end'] {
+    right: 23%;
   }
 }
 
