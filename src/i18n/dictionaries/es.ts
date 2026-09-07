@@ -81,7 +81,102 @@ export const es = {
   },
 
   agenda: {
+    /** Sale cuando `items` está vacío: la lista puede volver a estar en obras. */
     empty: 'Agenda en construcción',
+    intro:
+      'Una tarde-noche para conocer innovaciones y a quienes las están construyendo, entender por qué las industrias verdes y azules son una oportunidad económica para América Latina y el Caribe, y tener tiempo real para encontrarse, probar, conversar y conectar.',
+    /** Rótulos de las dos funciones dentro de un momento. */
+    hostLabel: 'Presenta',
+    peopleLabel: 'Participan',
+    /**
+     * Programa preliminar, transcrito del documento de la organización. Los
+     * momentos cuyo presentador o intervención está por decidir van sin nombres:
+     * publicar una opción como si estuviera confirmada es peor que no ponerla.
+     */
+    items: [
+      {
+        id: 'recorrido',
+        time: '17:00 — 17:25',
+        title: 'Recorrido vivo',
+        description:
+          'Bebida de bienvenida, música, visuales territoriales, productos, demostraciones y primeras conexiones.',
+      },
+      {
+        id: 'apertura',
+        time: '17:30 — 17:37',
+        title: 'Apertura: por qué estamos aquí',
+        description: 'Bienvenida desde NaturaTech LAC, CEIBA y Natura500.',
+        host: {
+          name: 'Constanza Gómez Mont',
+          role: 'CEO y fundadora, C Minds; directora, NaturaTech LAC',
+        },
+      },
+      {
+        id: 'territorio',
+        time: '17:40 — 17:45',
+        title: 'La prosperidad comienza en el territorio',
+        host: { name: 'Constanza Gómez Mont' },
+        people: [
+          {
+            name: 'Juan Carlos Jintiach',
+            role: 'Secretario ejecutivo, Global Alliance of Territorial Communities',
+          },
+        ],
+      },
+      {
+        id: 'historias',
+        time: '17:47 — 18:17',
+        title: 'Historias Natura500',
+        description:
+          'Tres innovadores cuentan su historia: qué les llevó a iniciar este camino, qué sueñan lograr y cómo es su relación con la naturaleza.',
+        host: { name: 'Carlo Angeles' },
+      },
+      {
+        id: 'idea-spark-inversion',
+        time: '18:20 — 18:30',
+        title: 'Idea Spark: invertir en empresas que cambian la historia',
+        description:
+          '¿Cuál es el propósito de los nuevos modelos de negocio? ¿Qué paradigma estamos transitando y cómo se vive desde el lado del inversionista?',
+        host: { name: 'Regina Cervera' },
+        people: [
+          { name: 'Nathalie Molina Niño', role: 'Fundadora, BRAVA Investments' },
+          { name: 'Israel Pons', role: 'CEO, Angel Nest Lat' },
+        ],
+      },
+      {
+        id: 'idea-spark-industria',
+        time: '18:32 — 18:42',
+        title: 'Idea Spark: de solución a industria',
+        host: { name: 'Carolina Proaño', role: 'CEIBA' },
+        people: [
+          { name: 'Gustavo Manrique', role: 'Fundador, Premios Verdes Latam' },
+          { name: 'Salah Goss', role: 'Chief Program Officer, Skoll Foundation' },
+        ],
+      },
+      {
+        id: 'continente',
+        time: '18:45 — 18:55',
+        title: 'El continente que queremos habitar',
+        description:
+          '¿Qué pasaría si América Latina y el Caribe decidieran construir el futuro con —y no a costa de— lo que está vivo?',
+        people: [{ name: 'Pablo A. González', role: 'Cofundador, El Gato y La Caja' }],
+      },
+      {
+        id: 'brindis',
+        time: '19:00 — 21:00',
+        title: 'Brindis y cóctel de conexiones',
+      },
+      {
+        id: 'cultural',
+        time: '19:05 — 19:15',
+        title: 'Demostración cultural',
+      },
+      {
+        id: 'dj',
+        time: '19:15 — 21:00',
+        title: 'DJ set',
+      },
+    ],
   },
 
   speakers: {
@@ -90,74 +185,83 @@ export const es = {
     introNote: 'Conoce la lista de participantes y ponentes de alto nivel',
     sessionsLabel: 'Sesiones',
     /**
-     * Datos de relleno hasta que exista el endpoint, y por eso están duplicados
-     * en cada idioma: cuando llegue la API, los ponentes vendrán con su copia y
-     * este bloque desaparece de los diccionarios.
+     * Del programa de la organización. Solo entran quienes constan con cargo y
+     * organización: inventarle un título a una persona real es peor que no
+     * listarla. Cuando llegue el endpoint, este bloque sale de los diccionarios.
      */
     items: [
       {
-        id: 'regina-cervera',
-        firstName: 'Regina',
-        lastName: 'Cervera',
-        role: 'Jefa de programas de innovación',
+        id: 'constanza-gomez-mont',
+        firstName: 'Constanza',
+        lastName: 'Gómez Mont',
+        // Solo una afiliación: la ficha tiene un cargo y una organización, y
+        // metiendo las dos quedaba «NaturaTech LAC, C Minds». Su dirección de
+        // NaturaTech LAC consta en la agenda, donde el crédito sí cabe entero.
+        role: 'CEO y fundadora',
         organization: 'C Minds',
         organizationUrl: 'https://www.cminds.co',
-        linkedinUrl: 'https://www.linkedin.com',
         sessions: [
-          { id: 's1', title: 'Panel de bioregiones en la naturaleza y las economías del futuro' },
+          { id: 'apertura', title: 'Apertura: por qué estamos aquí' },
+          { id: 'territorio', title: 'La prosperidad comienza en el territorio' },
         ],
       },
       {
-        id: 'mateo-vargas',
-        firstName: 'Mateo',
-        lastName: 'Vargas',
-        role: 'Director de inversión de impacto',
-        organization: 'BID Lab',
-        organizationUrl: 'https://bidlab.org',
-        linkedinUrl: 'https://www.linkedin.com',
-        sessions: [
-          { id: 's2', title: 'Capital natural como motor de nuevas economías' },
-          { id: 's3', title: 'Conversación estratégica: financiamiento para la biodiversidad' },
-        ],
+        id: 'juan-carlos-jintiach',
+        firstName: 'Juan Carlos',
+        lastName: 'Jintiach',
+        role: 'Secretario ejecutivo',
+        organization: 'Global Alliance of Territorial Communities',
+        sessions: [{ id: 'territorio', title: 'La prosperidad comienza en el territorio' }],
       },
       {
-        id: 'lucia-ordonez',
-        firstName: 'Lucía',
-        lastName: 'Ordóñez',
-        role: 'Coordinadora de bioeconomía',
-        organization: 'Fondo Amazónico',
-        linkedinUrl: 'https://www.linkedin.com',
-        sessions: [{ id: 's4', title: 'Bioeconomía amazónica: de la parcela al mercado' }],
-      },
-      {
-        id: 'andres-quispe',
-        firstName: 'Andrés',
-        lastName: 'Quispe',
-        role: 'Líder de comunidades y territorio',
-        organization: 'Amazonía Viva',
-        linkedinUrl: 'https://www.linkedin.com',
-        sessions: [{ id: 's5', title: 'Saberes indígenas y diseño de política pública' }],
-      },
-      {
-        id: 'camila-restrepo',
-        firstName: 'Camila',
-        lastName: 'Restrepo',
+        id: 'nathalie-molina-nino',
+        firstName: 'Nathalie',
+        lastName: 'Molina Niño',
         role: 'Fundadora',
-        organization: 'Natura500',
-        organizationUrl: 'https://www.cminds.co',
-        linkedinUrl: 'https://www.linkedin.com',
+        organization: 'BRAVA Investments',
         sessions: [
-          { id: 's6', title: 'Reconocimiento a iniciativas de la economía de la naturaleza' },
+          {
+            id: 'idea-spark-inversion',
+            title: 'Idea Spark: invertir en empresas que cambian la historia',
+          },
         ],
       },
       {
-        id: 'joao-pereira',
-        firstName: 'João',
-        lastName: 'Pereira',
-        role: 'Investigador principal en clima',
-        organization: 'Climate Collective',
-        organizationUrl: 'https://climatecollective.org',
-        sessions: [{ id: 's7', title: 'Datos abiertos para medir capital natural' }],
+        id: 'israel-pons',
+        firstName: 'Israel',
+        lastName: 'Pons',
+        role: 'CEO',
+        organization: 'Angel Nest Lat',
+        sessions: [
+          {
+            id: 'idea-spark-inversion',
+            title: 'Idea Spark: invertir en empresas que cambian la historia',
+          },
+        ],
+      },
+      {
+        id: 'gustavo-manrique',
+        firstName: 'Gustavo',
+        lastName: 'Manrique',
+        role: 'Fundador',
+        organization: 'Premios Verdes Latam',
+        sessions: [{ id: 'idea-spark-industria', title: 'Idea Spark: de solución a industria' }],
+      },
+      {
+        id: 'salah-goss',
+        firstName: 'Salah',
+        lastName: 'Goss',
+        role: 'Chief Program Officer',
+        organization: 'Skoll Foundation',
+        sessions: [{ id: 'idea-spark-industria', title: 'Idea Spark: de solución a industria' }],
+      },
+      {
+        id: 'pablo-a-gonzalez',
+        firstName: 'Pablo A.',
+        lastName: 'González',
+        role: 'Cofundador',
+        organization: 'El Gato y La Caja',
+        sessions: [{ id: 'continente', title: 'El continente que queremos habitar' }],
       },
     ],
   },

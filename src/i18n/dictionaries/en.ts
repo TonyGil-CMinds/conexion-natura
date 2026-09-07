@@ -78,6 +78,94 @@ export const en: Dictionary = {
 
   agenda: {
     empty: 'Agenda in progress',
+    intro:
+      'An evening to meet the innovations and the people building them, to see why green and blue industries are an economic opportunity for Latin America and the Caribbean, and to have real time to meet, try things, talk and connect.',
+    hostLabel: 'Hosted by',
+    peopleLabel: 'With',
+    items: [
+      {
+        id: 'recorrido',
+        time: '17:00 — 17:25',
+        title: 'Living tour',
+        description:
+          'Welcome drink, music, visuals from the territories, products, demos and first connections.',
+      },
+      {
+        id: 'apertura',
+        time: '17:30 — 17:37',
+        title: 'Opening: why we are here',
+        description: 'A welcome from NaturaTech LAC, CEIBA and Natura500.',
+        host: {
+          name: 'Constanza Gómez Mont',
+          role: 'CEO and founder, C Minds; director, NaturaTech LAC',
+        },
+      },
+      {
+        id: 'territorio',
+        time: '17:40 — 17:45',
+        title: 'Prosperity begins in the territory',
+        host: { name: 'Constanza Gómez Mont' },
+        people: [
+          {
+            name: 'Juan Carlos Jintiach',
+            role: 'Executive secretary, Global Alliance of Territorial Communities',
+          },
+        ],
+      },
+      {
+        id: 'historias',
+        time: '17:47 — 18:17',
+        title: 'Natura500 stories',
+        description:
+          'Three innovators tell their story: what set them on this path, what they dream of achieving and how they relate to nature.',
+        host: { name: 'Carlo Angeles' },
+      },
+      {
+        id: 'idea-spark-inversion',
+        time: '18:20 — 18:30',
+        title: 'Idea Spark: investing in companies that change the story',
+        description:
+          'What are the new business models for? Which paradigm are we moving through, and how does it look from the investor’s side?',
+        host: { name: 'Regina Cervera' },
+        people: [
+          { name: 'Nathalie Molina Niño', role: 'Founder, BRAVA Investments' },
+          { name: 'Israel Pons', role: 'CEO, Angel Nest Lat' },
+        ],
+      },
+      {
+        id: 'idea-spark-industria',
+        time: '18:32 — 18:42',
+        title: 'Idea Spark: from solution to industry',
+        host: { name: 'Carolina Proaño', role: 'CEIBA' },
+        people: [
+          { name: 'Gustavo Manrique', role: 'Founder, Premios Verdes Latam' },
+          { name: 'Salah Goss', role: 'Chief Program Officer, Skoll Foundation' },
+        ],
+      },
+      {
+        id: 'continente',
+        time: '18:45 — 18:55',
+        title: 'The continent we want to live in',
+        description:
+          'What if Latin America and the Caribbean decided to build the future with —not at the expense of— what is alive?',
+        people: [{ name: 'Pablo A. González', role: 'Co-founder, El Gato y La Caja' }],
+      },
+      {
+        id: 'brindis',
+        time: '19:00 — 21:00',
+        title: 'Toast and connections cocktail',
+      },
+      {
+        id: 'cultural',
+        time: '19:05 — 19:15',
+        title: 'Cultural performance',
+      },
+      {
+        id: 'dj',
+        time: '19:15 — 21:00',
+        title: 'DJ set',
+      },
+    ],
   },
 
   speakers: {
@@ -87,66 +175,74 @@ export const en: Dictionary = {
     sessionsLabel: 'Sessions',
     items: [
       {
-        id: 'regina-cervera',
-        firstName: 'Regina',
-        lastName: 'Cervera',
-        role: 'Head of innovation programmes',
+        id: 'constanza-gomez-mont',
+        firstName: 'Constanza',
+        lastName: 'Gómez Mont',
+        role: 'CEO and founder',
         organization: 'C Minds',
         organizationUrl: 'https://www.cminds.co',
-        linkedinUrl: 'https://www.linkedin.com',
         sessions: [
-          { id: 's1', title: 'Bioregions panel: nature and the economies of the future' },
+          { id: 'apertura', title: 'Opening: why we are here' },
+          { id: 'territorio', title: 'Prosperity begins in the territory' },
         ],
       },
       {
-        id: 'mateo-vargas',
-        firstName: 'Mateo',
-        lastName: 'Vargas',
-        role: 'Director of impact investment',
-        organization: 'IDB Lab',
-        organizationUrl: 'https://bidlab.org',
-        linkedinUrl: 'https://www.linkedin.com',
-        sessions: [
-          { id: 's2', title: 'Natural capital as an engine for new economies' },
-          { id: 's3', title: 'Strategic conversation: financing for biodiversity' },
-        ],
+        id: 'juan-carlos-jintiach',
+        firstName: 'Juan Carlos',
+        lastName: 'Jintiach',
+        role: 'Executive secretary',
+        organization: 'Global Alliance of Territorial Communities',
+        sessions: [{ id: 'territorio', title: 'Prosperity begins in the territory' }],
       },
       {
-        id: 'lucia-ordonez',
-        firstName: 'Lucía',
-        lastName: 'Ordóñez',
-        role: 'Bioeconomy coordinator',
-        organization: 'Amazon Fund',
-        linkedinUrl: 'https://www.linkedin.com',
-        sessions: [{ id: 's4', title: 'Amazonian bioeconomy: from the plot to the market' }],
-      },
-      {
-        id: 'andres-quispe',
-        firstName: 'Andrés',
-        lastName: 'Quispe',
-        role: 'Communities and territory lead',
-        organization: 'Amazonía Viva',
-        linkedinUrl: 'https://www.linkedin.com',
-        sessions: [{ id: 's5', title: 'Indigenous knowledge and public policy design' }],
-      },
-      {
-        id: 'camila-restrepo',
-        firstName: 'Camila',
-        lastName: 'Restrepo',
+        id: 'nathalie-molina-nino',
+        firstName: 'Nathalie',
+        lastName: 'Molina Niño',
         role: 'Founder',
-        organization: 'Natura500',
-        organizationUrl: 'https://www.cminds.co',
-        linkedinUrl: 'https://www.linkedin.com',
-        sessions: [{ id: 's6', title: 'Recognising nature economy initiatives' }],
+        organization: 'BRAVA Investments',
+        sessions: [
+          {
+            id: 'idea-spark-inversion',
+            title: 'Idea Spark: investing in companies that change the story',
+          },
+        ],
       },
       {
-        id: 'joao-pereira',
-        firstName: 'João',
-        lastName: 'Pereira',
-        role: 'Lead climate researcher',
-        organization: 'Climate Collective',
-        organizationUrl: 'https://climatecollective.org',
-        sessions: [{ id: 's7', title: 'Open data for measuring natural capital' }],
+        id: 'israel-pons',
+        firstName: 'Israel',
+        lastName: 'Pons',
+        role: 'CEO',
+        organization: 'Angel Nest Lat',
+        sessions: [
+          {
+            id: 'idea-spark-inversion',
+            title: 'Idea Spark: investing in companies that change the story',
+          },
+        ],
+      },
+      {
+        id: 'gustavo-manrique',
+        firstName: 'Gustavo',
+        lastName: 'Manrique',
+        role: 'Founder',
+        organization: 'Premios Verdes Latam',
+        sessions: [{ id: 'idea-spark-industria', title: 'Idea Spark: from solution to industry' }],
+      },
+      {
+        id: 'salah-goss',
+        firstName: 'Salah',
+        lastName: 'Goss',
+        role: 'Chief Program Officer',
+        organization: 'Skoll Foundation',
+        sessions: [{ id: 'idea-spark-industria', title: 'Idea Spark: from solution to industry' }],
+      },
+      {
+        id: 'pablo-a-gonzalez',
+        firstName: 'Pablo A.',
+        lastName: 'González',
+        role: 'Co-founder',
+        organization: 'El Gato y La Caja',
+        sessions: [{ id: 'continente', title: 'The continent we want to live in' }],
       },
     ],
   },

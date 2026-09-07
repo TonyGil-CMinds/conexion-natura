@@ -515,7 +515,7 @@ anclas de la misma página, y `prefers-reduced-motion`.
 
 ## Páginas interiores (Agenda y Ponentes)
 
-`/agenda` compone `PageCover` + `EmptyState`; `/speakers`, `PageCover` +
+`/agenda` compone `PageCover` + `Schedule`; `/speakers`, `PageCover` +
 `PageIntro`. El copy de las dos está en los diccionarios.
 
 La ruta de ponentes es `/speakers` y su rótulo en el menú "Ponentes": el idioma de
@@ -546,6 +546,32 @@ sola declaración y no como una regla por tema, que podría quedarse a medias.
 Las celdas del mosaico que **tapan** la foto van de ese mismo oscuro y no del
 fondo del tema: la portada lo pasa en `--cover-surface`. Con el fondo del tema se
 leían como agujeros crema recortados en la foto.
+
+### El programa
+
+`Schedule` pinta una fila por momento con su franja horaria a la izquierda, en
+columna de ancho fijo para poder recorrer las horas sin leer los títulos. No es
+un acordeón como el FAQ: el contenido de cada fila es corto y se lee de un tirón,
+así que esconderlo detrás de un clic solo añadiría trabajo. En estrecho la hora
+pasa arriba, porque 168px de columna dejan el título sin sitio.
+
+El contenido sale del documento de la organización, transcrito a los
+diccionarios. **Lo que estaba por decidir no se publica**: los momentos con
+«Opciones:», «(tbd)» o un `xxxx` en el original van sin ese dato. Publicar una
+opción como si estuviera confirmada es peor que no ponerla.
+
+Si `items` se queda vacío vuelve el `EmptyState`, que es lo que estuvo mientras
+la agenda no estaba cerrada.
+
+### Ponentes
+
+La lista solo incluye a quienes constan **con cargo y organización**: inventarle
+un título a una persona real es peor que no listarla. Quienes presentan un
+momento pero no traen cargo aparecen en la agenda —donde el crédito es un nombre—
+y no en la lista.
+
+La ficha tiene un cargo y una organización, así que quien tiene dos afiliaciones
+lleva la principal; la otra consta en el crédito de la agenda, donde cabe entera.
 
 ### Bloque en degradado (Ponentes)
 
@@ -1174,8 +1200,19 @@ vive solo en el navegador. Al llegar el backend, el punto de enganche es
 - Los enlaces legales del pie apuntan a anclas de relleno (`#terminos`,
   `#privacidad`) y las redes a los dominios genéricos: faltan las URL reales.
 - `hero/hero-green-pixels-2.svg` quedó sin uso al retirarse el campo del hero.
-- **Los ponentes son datos de relleno**, con retratos de silueta. Al llegar el
-  endpoint de base44, sustituir el array de `speakers.ts` por el `fetch`.
+- **Faltan los retratos de los ponentes**: la lista usa la silueta de relleno.
+- **Faltan datos de tres personas del programa**: Carlo Angeles y Regina Cervera
+  constan solo con nombre, y Carolina Proaño con organización (CEIBA) pero sin
+  cargo. Presentan momentos, así que están en la agenda pero no en la lista de
+  ponentes.
+- **La premiación Natura500 no está publicada.** El documento trae dos bloques: la
+  Noche (17:00–21:00, que es este evento) y una premiación de 30 minutos en el
+  main stage con audiencia del ecosistema GET, que parece ser del GET Forum del
+  día siguiente. Solo se publicó la Noche.
+- **Sin confirmar del programa**: quién abre la Premiación (hay tres opciones de
+  gobierno e IDB), quién entrega los premios (María Fernanda Espinosa, marcada
+  «tbd»), los tres innovadores de Historias Natura500 (hay propuestas) y el grupo
+  de la demostración cultural (hay seis opciones).
 - La referencia del FAQ abría con **"¿Qué es Conexión 500?"**, una pregunta que no
   está en la lista entregada, y ordenaba las demás de otra forma. Se usó la lista
   tal cual, en su orden. Si esa pregunta va, hay que añadirla a `faq.ts`.
