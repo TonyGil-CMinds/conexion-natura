@@ -141,11 +141,21 @@
     max-height: none;
   }
 
+  /**
+   * Fecha, botón y nota se van al fondo como un bloque: en pantallas altas la
+   * holgura tiene que quedar entre el subtítulo y la fecha, no debajo de la nota.
+   * El `auto` va en el primer elemento del grupo, así que los tres bajan juntos y
+   * conservan sus huecos internos.
+   *
+   * El relleno es el hueco mínimo: cuando no sobra alto, el margen automático se
+   * anula y sin él la fecha se pegaría al subtítulo.
+   */
   .mobileDate {
     display: flex;
     align-items: center;
     gap: var(--space-4);
-    margin-top: var(--mobile-hero-date-gap);
+    margin-top: auto;
+    padding-top: var(--mobile-hero-date-gap);
     font-family: var(--font-body);
     font-size: var(--text-mobile-date);
     font-weight: 400;

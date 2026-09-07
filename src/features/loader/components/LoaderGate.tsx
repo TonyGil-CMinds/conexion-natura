@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { StairsReveal } from '@/features/transitions/stairs-reveal';
+import type { PreloadSource } from '../hooks/useImagePreloader';
 import { RevealProvider } from '../context/reveal';
 import { Loader } from './Loader';
 import styles from './LoaderGate.module.css';
@@ -9,7 +10,7 @@ import styles from './LoaderGate.module.css';
 type Props = {
   children: React.ReactNode;
   /** Assets de la página que deben estar listos antes de revelarla. */
-  preload?: readonly string[];
+  preload?: readonly PreloadSource[];
 };
 
 /** Marca de "ya se vio", en la sesión de la pestaña. */

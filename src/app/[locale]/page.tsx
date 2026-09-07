@@ -9,7 +9,10 @@ import { notFound } from 'next/navigation';
  * decodificados, para que no se revele con imágenes a medio pintar.
  */
 const HERO_ASSETS = [
-  '/hero/heroBird.png',
+  // El ave tiene un encuadre por tamaño de pantalla: solo se espera por el que
+  // se va a ver. Las consultas cubren todo el rango, sin solaparse.
+  { src: '/hero/heroBird.png', media: '(min-width: 641px)' },
+  { src: '/hero/asset-hero-colobri-mobile.png', media: '(max-width: 640px)' },
   '/brand/logo-dark-ceibaquito.svg',
   '/icons/icon-arrow-white.svg',
   '/icons/icon-logo.svg',

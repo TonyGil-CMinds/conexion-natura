@@ -207,6 +207,24 @@ estructura se mantiene: el resalte es decisión de diseño por tramo, no por lí
 
 ### La foto
 
+Hay **dos encuadres del ave**, uno por tamaño de pantalla: `heroBird.png`
+(641×628) en escritorio y `asset-hero-colobri-mobile.png` (237×301, vertical y
+con la rama) por debajo de 640px.
+
+Va como `<picture>` con un `<source media>` y no como dos `<Image>` con CSS,
+porque **el navegador descarga las imágenes aunque estén en `display: none`**:
+así solo baja la que toca, y en móvil son 92 KB en vez de 496.
+
+Sin `priority`: emitiría una precarga de la versión de escritorio también en
+móvil, que es justo lo que se quiere evitar. Queda `loading="eager"`, y el loader
+ya la calienta desde su lista.
+
+Esa lista es **por viewport**: `HERO_ASSETS` pasa `{ src, media }` y
+`useImagePreloader` descarta las que no encajan. Sin eso, en móvil el revelado
+esperaba por medio megabyte de una imagen que no se va a ver. El total sale de
+las que quedan, así que el porcentaje no se queda corto.
+
+
 El campo de cuadros verdes del fondo (`hero-green-pixels-2.svg`) se retiró: el
 ave queda sobre el fondo limpio de la interfaz. De paso arregló un problema del
 tema claro, donde la fecha quedaba oscura sobre los cuadros oscuros del campo.
@@ -216,6 +234,31 @@ La foto sangra hasta el borde derecho del viewport.
 El tamaño del ave se fija **por altura** (`clamp(480px, 68vh, 860px)`) y no por
 ancho: lo que la limita es el hueco hasta el borde inferior, y eso depende del
 alto del viewport. Midiéndola en `vw` crecía sin control en pantallas anchas.
+
+### El hero en móvil
+
+Por debajo de 640px cambian tres cosas del lado del ave:
+
+- **Fecha, botón, nota y ave van anclados al fondo.** La holgura de las pantallas
+  altas queda entre el subtítulo y la fecha, no debajo de la nota. El bloque de
+  texto lo consigue con `margin-top: auto` en el primer elemento del grupo —los
+  tres bajan juntos y conservan sus huecos— más un `padding-top` como hueco
+  mínimo, porque el margen automático se anula cuando no sobra alto.
+- El ave se ancla con `bottom: var(--mobile-hero-bird-bottom)`, calibrado para que
+  el canto de la rama quede a la altura del bajo del botón. Medido: a 390×844 y a
+  430×932 el bajo del ave coincide al píxel con el del botón, así que los dos
+  siguen juntos al cambiar el alto de la pantalla.
+- El pico queda por debajo del subtítulo y la rama cruza el extremo derecho del
+  botón, que es lo que hace el diseño.
+- **Velo del canto derecho**: oscuro pegado al borde y transparente antes de un
+  tercio. Va en una capa aparte con `z-index: 4`, por delante del contenido (3 en
+  móvil), porque tiene que oscurecer el extremo del botón. La cinta comparte el 4
+  y va después en el DOM, así que se queda por encima.
+  
+  Y se desvanece por arriba con una máscara en vez de empezar en un canto recto:
+  cortado a una altura fija, el corte se veía cruzando la cabeza del ave.
+- **Sin filetes verticales**: las celdas de la cabecera que separaban ya no
+  existen a ese ancho, así que las líneas no estructuraban nada.
 
 ### Ritmo vertical
 
@@ -1115,6 +1158,10 @@ vive solo en el navegador. Al llegar el backend, el punto de enganche es
 - El enlace **«¿No recibiste invitación?»** se retiró del hero y también del
   formulario de registro, donde además había quedado sin traducir. Si vuelve a
   haber flujo de invitación, vuelve con su clave en los diccionarios.
+- En pantallas de **640px de alto o menos** la portada desborda unos 31px: el
+  hero tiene un suelo de `min-height: 590px` y a esa altura el contenido no cabe.
+  Bajar el suelo lo apretaría o lo cortaría, así que es una decisión de diseño
+  pendiente.
 - Queda **1px** de desbordamiento vertical en la portada por redondeo
   fraccionario de la cinta de la cuenta atrás. Antes eran dos.
 - En **tema claro** los logos de socios del pie son invisibles: son las variantes

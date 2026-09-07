@@ -6,7 +6,7 @@ import {
   LOADER_SEQUENCES,
   getSequenceFrames,
 } from '../config/loader.config';
-import { useImagePreloader } from '../hooks/useImagePreloader';
+import { useImagePreloader, type PreloadSource } from '../hooks/useImagePreloader';
 import { useLoaderProgress } from '../hooks/useLoaderProgress';
 import { FrameSequence } from './FrameSequence';
 import { LoaderMark } from './LoaderMark';
@@ -15,7 +15,7 @@ import styles from './Loader.module.css';
 
 type Props = {
   /** Assets adicionales que deben estar listos antes de dejar pasar a la página. */
-  preload?: readonly string[];
+  preload?: readonly PreloadSource[];
   /** Se llama cuando el contador llegó a 100 y pasó la pausa de lectura. */
   onComplete?: () => void;
   /** Pausa en 100 % antes de avisar, para que el número se alcance a leer (ms). */

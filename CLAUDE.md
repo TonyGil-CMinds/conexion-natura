@@ -155,6 +155,16 @@ viewport: el hero tiene que caber en una pantalla, así que en portátiles se
 aprieta en vez de dejar crecer la página. Al añadir elementos al hero, su hueco
 va como token y entra en esos escalones.
 
+## Imágenes por viewport
+
+Cuando hay dos encuadres de la misma imagen, van en un `<picture>` con
+`<source media>`, **no** en dos `<Image>` con CSS: el navegador descarga las
+imágenes aunque estén en `display: none`. Y sin `priority`, que precargaría la
+que no toca.
+
+La lista de precarga del loader admite `{ src, media }` y descarta las que no
+encajan, para no esperar por una imagen que este viewport no va a ver.
+
 ## Animaciones de entrada
 
 Si el disparo es la carga de la página, la animación va en **CSS**: en JavaScript

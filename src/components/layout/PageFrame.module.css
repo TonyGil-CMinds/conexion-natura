@@ -65,6 +65,17 @@
   }
 }
 
+/**
+ * En móvil no hay filetes verticales: las celdas de la cabecera que separaban ya
+ * no existen a ese ancho, así que las líneas no estructuraban nada y competían
+ * con el contenido.
+ */
+@media (max-width: 640px) {
+  .columnRule {
+    display: none;
+  }
+}
+
 /* Bandas a sangre: el filete cruza de un borde del viewport al otro, aunque el
    contenido de dentro esté acotado. */
 .band {

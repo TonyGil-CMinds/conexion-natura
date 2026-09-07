@@ -63,6 +63,13 @@
   --mobile-menu-pad-bottom: clamp(1.5rem, 9svh, 4rem);
   --mobile-hero-date-gap: clamp(2rem, 8svh, 4rem);
   --mobile-hero-cta-gap: clamp(3rem, 10svh, 5rem);
+  /**
+   * Distancia del ave al borde inferior del hero en móvil. Deja el canto de la
+   * rama a la altura del bajo del botón, que es donde lo pone el diseño. Como el
+   * bloque de fecha y botón también está anclado abajo, los dos siguen juntos al
+   * cambiar el alto de la pantalla.
+   */
+  --mobile-hero-bird-bottom: 120px;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;

@@ -93,16 +93,61 @@
   }
 }
 
+/**
+ * Velo del lado derecho: oscuro pegado al borde y transparente hacia el centro.
+ *
+ * Su `z-index` es mayor que el del contenido (3 en móvil) a propósito: tiene que
+ * pasar por delante del botón para oscurecerle el extremo. La cinta de la cuenta
+ * atrás comparte el 4 y va después en el DOM, así que se queda por encima.
+ *
+ * Solo existe en móvil; en escritorio no hay capa que fundir.
+ */
+.veil {
+  display: none;
+  z-index: 4;
+}
+
 @media (max-width: 640px) {
-  .layer {
-    width: calc(100% - 2 * var(--container-margin));
+
+  /**
+   * Encuadre propio para móvil: el asset es vertical (237×301) y trae el ave con
+   * su rama, así que se mide por ancho —57vw contando lo que sangra— y no por
+   * alto como en escritorio.
+   */
+  .birdFrame {
+    /* Sangra un poco: la rama se sale por el canto derecho de la pantalla. */
+    right: -20px;
+    /**
+     * Anclada **por abajo**: la fecha y el botón también lo están, así que en
+     * pantallas altas los tres bajan juntos en vez de quedarse arriba con un
+     * hueco debajo. El token deja el canto de la rama a la altura del bajo del
+     * botón, que es lo que hace el diseño.
+     */
+    top: auto;
+    bottom: var(--mobile-hero-bird-bottom);
+    height: clamp(260px, 76vw, 340px);
   }
 
-  .birdFrame {
-    right: -46px;
-    top: 208px;
-    bottom: auto;
-    height: clamp(330px, 92vw, 460px);
+  .veil {
+    display: block;
+    top: 0;
+    bottom: 0;
+    /**
+     * Oscuro pegado al canto y transparente antes de la mitad: más ancho que
+     * esto se comía el ave entera y medio botón.
+     */
+    background-image: linear-gradient(
+      to left,
+      var(--bg) 0%,
+      color-mix(in srgb, var(--bg) 45%, transparent) 14%,
+      transparent 30%
+    );
+    /**
+     * Y se desvanece por arriba en vez de empezar en un canto recto: cortado a
+     * una altura fija, el corte se veía cruzando la cabeza del ave. Así entra
+     * justo por debajo del subtítulo sin dejar borde.
+     */
+    mask-image: linear-gradient(to bottom, transparent 120px, #000 240px);
   }
 
   .floor {
