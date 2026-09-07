@@ -215,6 +215,13 @@ La respuesta del servidor es la fuente de verdad de `confirm()`.
 Al editar no se vuelve a exigir la foto: si ya está en R2 se reutiliza su URL, y
 una imagen nueva invalida la anterior y se sube otra vez.
 
+El arte de la credencial es `public/img/card-front.png` y `card-back.png`. El
+código solo añade el retrato y los datos, sobre coordenadas del lienzo de
+430×600: la ventana del retrato y la banda del nombre están fijadas ahí. Si llega
+un arte nuevo, comprobar su geometría muestreando una rejilla de 43×60 —una
+casilla por unidad de diseño— antes de tocar coordenadas, y que su fondo siga
+siendo `#151d17`, que es el color de la banda opaca del nombre.
+
 ## Base de datos
 
 Prisma ORM **7.10.0** contra Prisma Postgres, fijado y no `latest`: el `latest` de

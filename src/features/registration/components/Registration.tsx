@@ -181,9 +181,11 @@ async function createBadge(fields: Fields, photo: string | null, crop: Crop, cop
   canvas.width = 430 * scaleFactor;
   canvas.height = 600 * scaleFactor;
   const context = canvas.getContext('2d');
-  if (!context) return '/img/front_placeholder.png';
+  if (!context) return '/img/card-front.png';
   context.scale(scaleFactor, scaleFactor);
-  const template = await loadImage('/img/front_placeholder-3x.png');
+  // El arte de la credencial. Trae el logotipo y la retícula de píxeles; el
+  // código solo añade el retrato y los datos.
+  const template = await loadImage('/img/card-front.png');
   context.drawImage(template, 0, 0, 430, 600);
 
   if (photo) {
@@ -228,7 +230,7 @@ export function Registration({ copy, subtitle }: Props) {
   const [isCropEditorOpen, setIsCropEditorOpen] = useState(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number; cropX: number; cropY: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [frontImage, setFrontImage] = useState('/img/front_placeholder.png');
+  const [frontImage, setFrontImage] = useState('/img/card-front.png');
   const [isBadgeUpdating, setIsBadgeUpdating] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [isSaving, setIsSaving] = useState(false);
@@ -258,7 +260,7 @@ export function Registration({ copy, subtitle }: Props) {
         })
         .catch(() => {
           if (!active) return;
-          setFrontImage('/img/front_placeholder.png');
+          setFrontImage('/img/card-front.png');
           setIsBadgeUpdating(false);
         });
     }, 1200);
@@ -607,7 +609,7 @@ export function Registration({ copy, subtitle }: Props) {
             fov={17}
             verticalOffset={1.25}
             frontImage={frontImage}
-            backImage="/img/back.png"
+            backImage="/img/card-back.png"
             imageFit="cover"
             lanyardImage="/lanyard/lanyard.png"
             lanyardWidth={1}

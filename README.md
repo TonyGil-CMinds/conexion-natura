@@ -1036,6 +1036,25 @@ Al editar, la fotografía **no se vuelve a exigir**: no se guarda en el navegado
 así que tras recargar no está en memoria, y pedirla de nuevo bloquearía una
 corrección de rol tras la que nadie quiere subir una foto.
 
+### El arte de la credencial
+
+`public/img/card-front.png` y `card-back.png`, 2162×3016 (43:60, la proporción de
+la tarjeta). El código solo añade el retrato y los datos: el logotipo, las
+escaleras y los racimos de píxeles vienen en el arte.
+
+El arte nuevo entró **sin recolocar nada** porque su geometría es la misma que la
+del provisional: se comprobó dibujando los dos en un lienzo y muestreando una
+rejilla de 43×60 —una casilla por unidad de diseño—, y las escaleras y los
+racimos caen en las mismas celdas. La ventana del retrato (108,174, 214×270)
+sigue quedando entre las dos escaleras, que asoman por sus esquinas.
+
+El fondo del arte es exactamente `#151d17`, igual que la banda opaca que el
+código pinta detrás del nombre: por eso la banda no se ve como un recuadro. Si
+llega un arte con otro oscuro, hay que igualar ese valor.
+
+Y ya no lleva texto en español dentro del PNG, así que la credencial se traduce
+entera desde los diccionarios.
+
 ### Estado de asistencia
 
 `context/attendance.tsx` expone `AttendanceProvider` y `useAttendance()`, y se
@@ -1078,10 +1097,8 @@ vive solo en el navegador. Al llegar el backend, el punto de enganche es
 - `logo-500.svg`, `logo-horizontal-blanco.svg`, `logo-horizontal-dark.svg` y
   `hero/asset-riggle-red.svg` se quedaron sin uso al entrar el logotipo de Ceiba
   y al retirarse el enlace de invitación.
-- **El arte de la credencial está en español dentro del PNG**:
-  `front_placeholder-3x.png` dice «CONEXION500» y «TU IMAGEN», y eso no se
-  traduce desde el código. Hace falta una variante del asset por idioma —o el
-  arte nuevo de Ceiba.
+- `front_placeholder.png`, `front_placeholder-3x.png` y `back.png` quedaron sin
+  uso al entrar el arte de Ceiba.
 - El enlace **«¿No recibiste invitación?»** se retiró del hero y también del
   formulario de registro, donde además había quedado sin traducir. Si vuelve a
   haber flujo de invitación, vuelve con su clave en los diccionarios.
