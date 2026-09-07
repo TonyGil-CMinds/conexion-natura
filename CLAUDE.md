@@ -164,6 +164,11 @@ fallo se anota y no rompe el registro —la fila ya está guardada—.
 Se manda una sola vez, con la marca en la columna `confirmationSentAt`. Si falla,
 la marca queda nula y `npm run mail:pending` lo recupera.
 
+Que SendGrid acepte el envío no significa que llegue **autenticado**: eso depende
+de que el dominio del remitente tenga publicados sus CNAME. `npm run mail:auth`
+lo comprueba resolviendo el DNS, porque la API de SendGrid devuelve el resultado
+de la última validación y sigue diciendo `valid: true` aunque ya no existan.
+
 El **asunto lo pone el mensaje**, no la plantilla: la plantilla no trae ninguno y
 una sola sirve a los dos idiomas. Se edita en `confirmation-email.ts`.
 
@@ -240,6 +245,18 @@ guarda el perfil entero y no solo el nombre.
 «Añadir a mi calendario» descarga un `.ics` generado en el cliente, no abre un
 calendario concreto. Sus horas están en `SITE.event.calendar` en UTC: Ecuador va a
 UTC-5 todo el año.
+
+Quien confirmó en otro navegador recupera su registro con el enlace de debajo del
+botón: un campo de correo contra `GET /api/registro?email=`. Si existe, `confirm()`
+con la respuesta del servidor y al resumen; si no, vuelve al formulario con el
+correo ya puesto y un aviso. Acceso, resumen y formulario son tres vistas de la
+misma columna, no tres pantallas. Pendiente de decidir: con solo el correo se ve el
+perfil entero, y el 404 delata quién está en la lista; el enlace de un solo uso por
+correo evitaría las dos cosas.
+
+El aviso es `components/ui/Toast.tsx`. Su temporizador depende del mensaje y no de
+la identidad de `onDismiss` —una función nueva por render reiniciaba la cuenta—, y
+centra con flex en la capa, no con `translateX(-50%)`: Framer escribe el `transform`.
 
 El envío va a `POST /api/registro`, que hace `upsert` **por correo**: reenviar el
 formulario corrige, no duplica. La validación de servidor está en

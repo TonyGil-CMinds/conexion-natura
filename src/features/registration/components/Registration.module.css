@@ -35,6 +35,24 @@
 .emailSuggestions { position: absolute; z-index: 4; top: 71px; right: 28px; left: 28px; display: grid; overflow: hidden; border: 1px solid var(--rule); background: var(--color-surface); box-shadow: 0 12px 22px #0008; }.emailSuggestions button { min-height: 28px; padding-inline: 10px; border: 0; border-bottom: 1px solid color-mix(in srgb, var(--fg) 10%, transparent); background: transparent; color: var(--fg); font-family: var(--font-mono); font-size: var(--text-fine); letter-spacing: var(--tracking-eyebrow); text-align: left; text-transform: lowercase; cursor: pointer; }.emailSuggestions button:last-child { border-bottom: 0; }.emailSuggestions button:hover { background: color-mix(in srgb, var(--accent-nav) 13%, transparent); color: var(--accent-nav); }
 .submit { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 91px; margin-top: auto; border: 0; background: var(--accent-nav); color: var(--color-dark); font-family: var(--font-mono); font-size: var(--text-cta); letter-spacing: var(--tracking-cta); text-transform: uppercase; cursor: pointer; transition: background-color var(--duration-fast) var(--ease-out-expo); }
 .submit:hover { background: var(--color-green-soft); }.submit:disabled { cursor: wait; }.spinner { width: 17px; height: 17px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .75s linear infinite; }@keyframes spin { to { transform: rotate(360deg); } }
+/**
+ * Enlace para cambiar de vista: del formulario al acceso y al revés.
+ *
+ * Es un `button` y no un `a`: no navega, cambia lo que muestra la pantalla. El
+ * zigzag va como **máscara** para que tome el color del texto; como imagen
+ * traería su relleno fijado y no seguiría al enlace en el hover.
+ */
+.switchLink { display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 108px; border: 0; border-top: 1px solid var(--rule); background: transparent; color: var(--fg); font-family: var(--font-mono); font-size: var(--text-note); font-weight: 700; letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; cursor: pointer; transition: color var(--duration-fast) var(--ease-out-expo); }
+.switchLink:hover { color: var(--accent-nav); }
+.switchMark { width: 26px; height: 20px; background-color: var(--accent-nav); mask: url('/hero/asset-riggle-green.svg') center / contain no-repeat; }
+
+/**
+ * Panel de acceso: mismo armazón que el formulario, con un solo campo. El botón
+ * se va al fondo con `margin-top: auto`, como el de confirmar.
+ */
+.lookup .field { border-top: 1px solid var(--rule); }
+.lookup .submit { margin-top: auto; }
+
 /* Fallo del envío: va bajo el botón, donde acaba de mirar quien lo pulsó. */
 .submitError { padding: 14px 22px; background: #e95d5d1f; box-shadow: inset 4px 0 #e95d5d; color: #ff9c9c; font-family: var(--font-mono); font-size: var(--text-note); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; }
 .cancel { min-height: 62px; border: 0; border-top: 1px solid var(--rule); background: transparent; color: color-mix(in srgb, var(--fg) 62%, transparent); font-family: var(--font-mono); font-size: var(--text-note); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; cursor: pointer; }

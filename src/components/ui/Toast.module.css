@@ -1,0 +1,34 @@
+/**
+ * Capa del aviso: ancho completo abajo del viewport, sin recoger clics.
+ *
+ * La capa es la que centra —con flex— y el aviso solo anima su propia entrada:
+ * si el centrado fuera un `translateX(-50%)`, la animación de Framer lo pisaría
+ * al escribir su propio `transform`.
+ */
+.layer {
+  position: fixed;
+  bottom: var(--space-6);
+  left: 0;
+  right: 0;
+  z-index: var(--z-toast);
+  display: flex;
+  justify-content: center;
+  padding-inline: var(--space-4);
+  pointer-events: none;
+}
+
+/* Cuadrado, sin radio: es el lenguaje del sitio, todo a escuadra. */
+.toast {
+  margin: 0;
+  padding: 16px 24px;
+  max-width: min(560px, 100%);
+  background-color: var(--color-red);
+  color: var(--color-white);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  text-align: center;
+  /* Se lee sobre cualquier fondo, incluida la credencial en 3D. */
+  box-shadow: 0 10px 28px #0006;
+}

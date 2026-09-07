@@ -379,6 +379,18 @@ export const es = {
     save: 'Guardar cambios',
     cancel: 'Cancelar',
     confirmedCta: 'Asistencia confirmada',
+    /** Acceso para quien ya se registró. */
+    lookupLink: '¿Ya te has registrado? Haz click aquí',
+    lookupTitle: 'Añade tu correo previamente confirmado',
+    /**
+     * El diseño decía «enviar enlace de acceso», pero no se manda ningún enlace:
+     * se consulta el correo y se muestra el registro. El rótulo dice lo que hace.
+     */
+    lookupSubmit: 'Acceder a mi registro',
+    lookupLoading: 'Buscando',
+    lookupBack: '¿Aún no te registras? Haz click aquí',
+    lookupNotFound: 'Ese correo no está registrado todavía',
+    lookupError: 'No se pudo comprobar el correo. Inténtalo de nuevo.',
     yourInformation: 'Tu información',
     edit: 'Editar mis datos',
     eventInformation: 'Información del evento',

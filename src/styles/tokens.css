@@ -188,6 +188,8 @@
   --z-header: 50;
   --z-loader: 100;
   --z-transition: 110;
+  /* El aviso pasajero va por encima de todo, incluida la transición. */
+  --z-toast: 120;
 
   /* Movimiento */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);

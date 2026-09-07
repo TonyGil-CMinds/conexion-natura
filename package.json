@@ -17,7 +17,8 @@
     "db:remove": "tsx scripts/remove-attendee.ts",
     "mail:verify": "tsx scripts/verify-sendgrid.ts",
     "mail:pending": "tsx scripts/send-pending-confirmations.ts",
-    "mail:pending:send": "tsx scripts/send-pending-confirmations.ts --send"
+    "mail:pending:send": "tsx scripts/send-pending-confirmations.ts --send",
+    "mail:auth": "tsx scripts/verify-mail-auth.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1119.0",

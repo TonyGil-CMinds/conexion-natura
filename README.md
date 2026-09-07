@@ -916,6 +916,20 @@ Al registrar el error se imprime `error.response.body` y no el mensaje: SendGrid
 manda «Maximum credits exceeded» con un **401**, cuyo mensaje suelto es solo
 «Unauthorized» y hace pensar que la clave está mal.
 
+### Autenticación del remitente
+
+Que SendGrid acepte el envío no significa que el correo llegue **autenticado**.
+Si el dominio del remitente no tiene publicados los CNAME de SendGrid, el mensaje
+no lleva firma DKIM de ese dominio ni un return-path propio, así que nada se
+alinea con el `From` y los clientes lo marcan como no autenticado — y Gmail, de
+paso, bloquea las imágenes remotas.
+
+`npm run mail:auth` lo comprueba **resolviendo el DNS de verdad**, y ahí está el
+detalle que engaña: SendGrid guarda el resultado de la última validación, así que
+su API sigue diciendo `valid: true` aunque los registros ya no existan. El script
+consulta a un resolutor público para no leer una caché local, y además avisa si
+faltan SPF y DMARC.
+
 ### El asunto lo pone el código
 
 La versión activa de la plantilla **no trae asunto**, así que el correo llegaría
@@ -1171,6 +1185,61 @@ Al editar, la fotografía **no se vuelve a exigir**: no se guarda en el navegado
 así que tras recargar no está en memoria, y pedirla de nuevo bloquearía una
 corrección de rol tras la que nadie quiere subir una foto.
 
+### Recuperar un registro hecho antes
+
+Debajo del botón de enviar hay un enlace —«¿Ya te has registrado? Haz click
+aquí»— que cambia el panel por un **acceso**: un solo campo de correo. Existe
+porque el estado de asistencia vive en `localStorage`, así que quien confirmó en
+otro navegador, en el teléfono o tras borrar los datos del sitio volvía a ver el
+formulario vacío sin manera de llegar a su credencial.
+
+El panel de acceso, el resumen y el formulario son **tres vistas de la misma
+columna** (`isLookup ? … : isSummary ? … : …`), no tres pantallas: comparten
+cabecera y credencial, así que al alternar solo cambia el contenido del panel.
+El enlace es de doble sentido —desde el acceso ofrece «¿Aún no te registras?»—
+para que nadie quede encerrado en él.
+
+El acceso consulta `GET /api/registro?email=`, el mismo endpoint que ya servía
+para leer un registro:
+
+- **Existe** → `confirm()` con lo que devolvió el servidor, y entra al resumen.
+  La respuesta es la fuente de verdad, igual que al enviar el formulario: así el
+  navegador nuevo queda con el mismo estado guardado que el original.
+- **No existe** (404) → vuelve al formulario **con el correo ya escrito** en su
+  campo, porque lo más probable es que esa persona sí quiera registrarse, y con
+  un aviso que explica por qué se movió la pantalla.
+
+El correo se normaliza al teclear (`trim`, minúsculas, sin espacios) y no al
+enviar: el `upsert` del registro es por correo, y un espacio pegado desde el
+correo de invitación bastaba para no encontrar a nadie.
+
+**Nota de privacidad, sin resolver:** con solo el correo se ve el perfil entero
+de esa persona —nombre, organización, rol, retrato—, así que cualquiera que
+acierte un correo puede leerlo, y el 404 confirma quién está y quién no en la
+lista. Lo que el propio rótulo del diseño insinuaba («enviar enlace de acceso»)
+es un enlace de un solo uso por correo, que no tiene ninguno de los dos
+problemas. Queda pendiente decidirlo.
+
+### El aviso
+
+`components/ui/Toast.tsx`: rojo, a escuadra, centrado abajo del viewport, seis
+segundos.
+
+La **capa** es la que centra, con flex, y el aviso solo anima lo suyo: con un
+`translateX(-50%)` la animación de Framer —que escribe su propio `transform`—
+lo habría pisado y el aviso saldría descentrado.
+
+Va con Framer Motion y no con CSS porque lo que se anima es la entrada **y la
+salida** de un elemento que se monta y desmonta; sin `AnimatePresence` el aviso
+se iría de golpe.
+
+El temporizador vive dentro del aviso, no en quien lo abre, para que se cierre
+solo. Y la cuenta atrás depende del mensaje, **no de la identidad de
+`onDismiss`**: quien lo usa pasa una función nueva en cada render, y con ella en
+las dependencias del efecto el temporizador se reiniciaba en cada uno —medido,
+el aviso duraba catorce segundos en vez de seis—. La referencia se guarda en un
+`ref` y el efecto solo mira el mensaje.
+
 ### El arte de la credencial
 
 `public/img/card-front.png` y `card-back.png`, 2162×3016 (43:60, la proporción de
@@ -1250,6 +1319,14 @@ vive solo en el navegador. Al llegar el backend, el punto de enganche es
 - `features/transitions/pixel-reveal/` quedó **sin usar** al entrar la transición
   de escaleras. Se dejó en su sitio por si hay que volver a ella; si no, se
   borra la carpeta.
+- **El dominio del remitente no está autenticado en el DNS.** `naturatech.org` no
+  tiene publicados los tres CNAME que SendGrid espera (`em4373`, `s1._domainkey`,
+  `s2._domainkey`), comprobado con 8.8.8.8 y 1.1.1.1, y tampoco tiene SPF ni
+  DMARC. Por eso los correos llegan marcados como no autenticados y con las
+  imágenes bloqueadas. `npm run mail:auth` imprime los registros que faltan.
+- **Las imágenes de la plantilla están en el CDN de Mailchimp**
+  (`mcusercontent.com`), de donde se copió el diseño. Cargan, pero dependen de esa
+  cuenta ajena, y **la primera pesa 2,2 MB**, que para un correo es muchísimo.
 - **Quedan tres registros sin su correo** (los que se hicieron mientras la cuenta
   no podía enviar). `npm run mail:pending` los lista y `npm run mail:pending:send`
   se lo manda; van en español, porque el idioma no se guarda por persona.

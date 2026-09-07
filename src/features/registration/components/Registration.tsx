@@ -4,6 +4,7 @@
 import { ChangeEvent, Component, FormEvent, type PointerEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 import { SITE } from '@/config/site';
 import type { Dictionary } from '@/i18n';
+import { Toast } from '@/components/ui/Toast';
 import { type Attendee, useAttendance } from '../context/attendance';
 import { uploadPhoto } from '../lib/upload-photo';
 import Lanyard from './ReactBitsLanyard';
@@ -243,6 +244,12 @@ export function Registration({ locale, copy, subtitle }: Props) {
   const [isConfirmed, setIsConfirmed] = useState(false);
   /** Solo cuenta ya confirmado: es el paso atrás desde el resumen al formulario. */
   const [isEditing, setIsEditing] = useState(false);
+  /** Pantalla de acceso para quien ya se registró. */
+  const [isLookup, setIsLookup] = useState(false);
+  const [lookupEmail, setLookupEmail] = useState('');
+  const [isLookingUp, setIsLookingUp] = useState(false);
+  /** Aviso pasajero abajo del viewport. */
+  const [toast, setToast] = useState<string | null>(null);
   const [isRemovingBackground, setIsRemovingBackground] = useState(false);
   const [focusedField, setFocusedField] = useState<keyof Fields | null>(null);
   const { attendee, confirm } = useAttendance();
@@ -300,6 +307,42 @@ export function Registration({ locale, copy, subtitle }: Props) {
    * solo si pide editar. Así la pantalla no pide revisar lo que ya está resuelto.
    */
   const isSummary = isConfirmed && !isEditing;
+
+  /**
+   * Acceso de quien ya se registró: se consulta el correo y, si existe, su
+   * registro pasa al estado compartido, con lo que la pantalla muestra el resumen
+   * sin más pasos. Si no existe, vuelve al formulario con un aviso: es la acción
+   * que le queda por hacer.
+   */
+  async function lookup(event: FormEvent) {
+    event.preventDefault();
+    const email = lookupEmail.trim().toLowerCase();
+    if (!email) return;
+
+    setIsLookingUp(true);
+    setToast(null);
+    try {
+      const response = await fetch(`/api/registro?email=${encodeURIComponent(email)}`);
+      if (response.status === 404) {
+        setIsLookup(false);
+        // El correo escrito pasa al formulario: ya lo tecleó una vez.
+        setFields((current) => ({ ...current, email }));
+        setToast(copy.lookupNotFound);
+        return;
+      }
+      const payload = (await response.json().catch(() => ({}))) as { attendee?: Attendee };
+      if (!response.ok || !payload.attendee) {
+        setToast(copy.lookupError);
+        return;
+      }
+      confirm(payload.attendee);
+      setIsLookup(false);
+    } catch {
+      setToast(copy.lookupError);
+    } finally {
+      setIsLookingUp(false);
+    }
+  }
 
   // Al volver desde el resumen ya no se verifica nada: se edita.
   const title = isConfirmed ? copy.titleEdit : copy.titleVerify;
@@ -480,7 +523,34 @@ export function Registration({ locale, copy, subtitle }: Props) {
 
   return (
     <section className={styles.root}>
-      {isSummary ? (
+      {isLookup ? (
+        <form className={`${styles.form} ${styles.lookup}`} onSubmit={lookup} noValidate>
+          <header className={styles.header}>
+            <h1>{copy.lookupTitle}</h1>
+          </header>
+
+          <label className={styles.field}>
+            <span>{copy.fields.email}</span>
+            <input
+              type="email"
+              value={lookupEmail}
+              onChange={(event) => setLookupEmail(event.target.value.replace(/\s/g, '').toLowerCase())}
+              autoComplete="email"
+              autoFocus
+            />
+          </label>
+
+          <button className={styles.submit} type="submit" disabled={isLookingUp}>
+            {isLookingUp && <span className={styles.spinner} aria-hidden />}
+            {isLookingUp ? copy.lookupLoading : copy.lookupSubmit}
+          </button>
+
+          <button className={styles.switchLink} type="button" onClick={() => setIsLookup(false)}>
+            <span className={styles.switchMark} aria-hidden />
+            {copy.lookupBack}
+          </button>
+        </form>
+      ) : isSummary ? (
         <div className={`${styles.form} ${styles.summary}`}>
           <header className={styles.header}>
             <p className={styles.eyebrow}>{copy.eyebrowConfirmed}</p>
@@ -596,9 +666,16 @@ export function Registration({ locale, copy, subtitle }: Props) {
           {isSaving ? savingStep ?? copy.submitSaving : isConfirmed ? copy.save : copy.submit}
         </button>
         {submitError && <p className={styles.submitError} role="alert">{submitError}</p>}
-        {isConfirmed && (
+        {isConfirmed ? (
           <button className={styles.cancel} type="button" onClick={() => setIsEditing(false)}>
             {copy.cancel}
+          </button>
+        ) : (
+          /* Solo para quien todavía no ha confirmado: quien ya lo hizo ve el
+             resumen, no este formulario. */
+          <button className={styles.switchLink} type="button" onClick={() => setIsLookup(true)}>
+            <span className={styles.switchMark} aria-hidden />
+            {copy.lookupLink}
           </button>
         )}
       </form>
@@ -625,6 +702,8 @@ export function Registration({ locale, copy, subtitle }: Props) {
           </div>
         )}
       </aside>
+
+      <Toast message={toast} onDismiss={() => setToast(null)} />
 
       {isCropEditorOpen && photo && (
         <div className={styles.cropModal} role="dialog" aria-modal="true" aria-label={copy.cropTitle}>
