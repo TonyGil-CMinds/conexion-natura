@@ -13,7 +13,13 @@ type Theme = 'light' | 'dark';
  * Sin persistencia todavía: guardarlo en localStorage exige un script en línea
  * que lo aplique antes del primer pintado, o la página parpadea al recargar.
  */
-export function ThemeToggle() {
+type Props = {
+  /** Rótulo cuando el tema vigente es el oscuro: anuncia a dónde se cambia. */
+  toLight: string;
+  toDark: string;
+};
+
+export function ThemeToggle({ toLight, toDark }: Props) {
   const [theme, setTheme] = useState<Theme>('dark');
 
   useEffect(() => {
@@ -30,7 +36,7 @@ export function ThemeToggle() {
       type="button"
       className={styles.root}
       onClick={toggle}
-      aria-label={theme === 'dark' ? 'Activar tema claro' : 'Activar tema oscuro'}
+      aria-label={theme === 'dark' ? toLight : toDark}
       aria-pressed={theme === 'dark'}
     >
       <Image

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import { LinkedInMark } from '@/components/ui/social-marks';
-import { SPEAKERS, SPEAKERS_TITLE, type Speaker } from '@/config/speakers';
+import type { Speaker } from '@/config/speakers';
 import { EASE_OUT_EXPO } from '@/lib/motion';
 import styles from './SpeakerList.module.css';
 
@@ -27,7 +27,13 @@ const PANEL_DURATION = 0.38;
  * El fondo del retrato alterna entre lima y azul por posición, no por dato: es
  * ritmo visual de la lista, no información del ponente.
  */
-export function SpeakerList() {
+type Props = {
+  title: string;
+  speakers: readonly Speaker[];
+  sessionsLabel: string;
+};
+
+export function SpeakerList({ title, speakers, sessionsLabel }: Props) {
   // Todas cerradas al entrar: la lista se lee de un vistazo y quien busque a
   // alguien concreto despliega solo esa ficha.
   const [openId, setOpenId] = useState<string | null>(null);
@@ -35,12 +41,13 @@ export function SpeakerList() {
   return (
     <section className={styles.root} id="ponentes" aria-labelledby="speakers-title">
       <h2 className={styles.title} id="speakers-title">
-        {SPEAKERS_TITLE}
+        {title}
       </h2>
 
       <ul className={styles.list}>
-        {SPEAKERS.map((speaker, index) => (
+        {speakers.map((speaker, index) => (
           <SpeakerRow
+            sessionsLabel={sessionsLabel}
             key={speaker.id}
             speaker={speaker}
             tone={index % 2 === 0 ? 'lime' : 'blue'}
@@ -54,13 +61,14 @@ export function SpeakerList() {
 }
 
 type RowProps = {
+  sessionsLabel: string;
   speaker: Speaker;
   tone: 'lime' | 'blue';
   isOpen: boolean;
   onToggle: () => void;
 };
 
-function SpeakerRow({ speaker, tone, isOpen, onToggle }: RowProps) {
+function SpeakerRow({ speaker, tone, isOpen, onToggle, sessionsLabel }: RowProps) {
   const panelId = `speaker-panel-${speaker.id}`;
   const buttonId = `speaker-button-${speaker.id}`;
   const fullName = `${speaker.firstName} ${speaker.lastName}`;
@@ -128,7 +136,7 @@ function SpeakerRow({ speaker, tone, isOpen, onToggle }: RowProps) {
           >
             <div className={styles.panelInner}>
               <div className={styles.sessions}>
-                <p className={styles.sessionsLabel}>Sesiones</p>
+                <p className={styles.sessionsLabel}>{sessionsLabel}</p>
                 <ul className={styles.sessionList}>
                   {speaker.sessions.map((session) => (
                     <li key={session.id} className={styles.session} title={session.title}>

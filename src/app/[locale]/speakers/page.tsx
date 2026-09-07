@@ -1,20 +1,25 @@
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { PageFrame } from '@/components/layout/PageFrame';
 import { PageCover } from '@/components/sections/PageCover';
 import { PageIntro } from '@/components/sections/PageIntro';
 import { SpeakerList } from '@/components/sections/SpeakerList';
 import { PAGES } from '@/config/pages';
-import { SITE } from '@/config/site';
+import { getDictionary, isLocale } from '@/i18n';
 
-export const metadata: Metadata = {
-  title: `${PAGES.speakers.title} — ${SITE.name}`,
-  description: PAGES.speakers.description,
-};
+type Props = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isLocale(locale)) return {};
+  const { title, description } = getDictionary(locale).meta.speakers;
+  return { title, description };
+}
 
 /**
  * Página de ponentes: portada, bloque de entrada y lista.
  *
- * La lista sale de datos de relleno (`src/config/speakers.ts`) hasta que exista el
+ * La lista sale de datos de relleno (los diccionarios) hasta que exista el
  * endpoint.
  *
  * La ruta es `/speakers` y el rótulo del menú "Ponentes": el idioma del contenido
@@ -23,21 +28,28 @@ export const metadata: Metadata = {
  * Sin filetes interiores: las fichas de la lista cruzan esas columnas, y las
  * verticales atravesarían cada fila en vez de estructurar la página.
  */
-export default function SpeakersPage() {
-  const { title, cover, coverSeed, coverDensity, intro } = PAGES.speakers;
+export default async function SpeakersPage({ params }: Props) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+  const t = getDictionary(locale);
+  const { cover, coverSeed, coverDensity, introIcon } = PAGES.speakers;
 
   return (
-    <PageFrame hasColumnRules={false}>
+    <PageFrame hasColumnRules={false} locale={locale}>
       <PageCover
-        title={title}
+        title={t.meta.speakers.title}
         image={cover}
         seed={coverSeed}
         density={coverDensity}
         tone="lime"
         hasGradientBlock
       />
-      <PageIntro headline={intro.headline} note={intro.note} icon={intro.icon} />
-      <SpeakerList />
+      <PageIntro headline={t.speakers.introHeadline} note={t.speakers.introNote} icon={introIcon} />
+      <SpeakerList
+        title={t.speakers.listTitle}
+        speakers={t.speakers.items}
+        sessionsLabel={t.speakers.sessionsLabel}
+      />
     </PageFrame>
   );
 }

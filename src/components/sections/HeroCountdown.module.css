@@ -78,6 +78,10 @@
 /* Lectura accesible del número: la regla es decorativa para un lector. */
 .readout {
   position: absolute;
+  /* Anclado: sin desplazamientos se quedaba en su sitio del flujo, dos píxeles
+     por debajo de la cinta, y esos dos píxeles daban scroll a toda la portada. */
+  top: 0;
+  left: 0;
   width: 1px;
   height: 1px;
   overflow: hidden;

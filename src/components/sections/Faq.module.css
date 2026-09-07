@@ -37,7 +37,7 @@
   background-image: linear-gradient(
     100deg,
     var(--color-green-base) 0%,
-    var(--color-lime) 100%
+    var(--accent-nav) 100%
   );
   border-bottom-color: transparent;
 }

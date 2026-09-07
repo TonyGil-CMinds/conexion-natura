@@ -1,12 +1,17 @@
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { PageFrame } from '@/components/layout/PageFrame';
 import { Faq } from '@/components/sections/Faq';
-import { SITE } from '@/config/site';
+import { getDictionary, isLocale } from '@/i18n';
 
-export const metadata: Metadata = {
-  title: `Preguntas frecuentes — ${SITE.name}`,
-  description: `Preguntas frecuentes sobre ${SITE.name}: fecha, sede, formato, aforo e idiomas.`,
-};
+type Props = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isLocale(locale)) return {};
+  const { title, description } = getDictionary(locale).meta.faq;
+  return { title, description };
+}
 
 /**
  * Página de preguntas frecuentes.
@@ -15,10 +20,14 @@ export const metadata: Metadata = {
  * Por eso el armazón se compone aquí y no en el layout raíz — solo la portada
  * necesita envolverlo en el loader.
  */
-export default function FaqPage() {
+export default async function FaqPage({ params }: Props) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+  const t = getDictionary(locale);
+
   return (
-    <PageFrame>
-      <Faq />
+    <PageFrame locale={locale}>
+      <Faq title={t.faq.title} items={t.faq.items} />
     </PageFrame>
   );
 }

@@ -27,6 +27,11 @@
      del navbar. Si entran en la paleta oficial, mover a colores.txt. */
   --color-lime: #d0ff00;
   --color-lime-soft: #a2e136;
+  /* El verde del rombo de Ceiba. Es el acento del tema claro: el lima del oscuro
+     no tiene contraste suficiente sobre fondo crema. */
+  --color-green-brand: #c0e619;
+  /* Lima de la retícula que va sobre el ave (asset-green-pixels2). */
+  --color-lime-mid: #c8f01a;
 
   /* Roles semánticos — tema oscuro */
   --bg: var(--color-surface);
@@ -92,6 +97,12 @@
 
   --tracking-nav: 0.05em;
   --tracking-display: 0;
+  /**
+   * Subtítulo del hero. Va en IBM Plex Mono, no en Departure Mono, así que no
+   * comparte cuerpo con el resto de la escala del hero: son 40 caracteres por
+   * línea y a `--text-display` no cabrían entre los filetes del contenedor.
+   */
+  --text-subtitle: clamp(1.125rem, 2.34vw, 1.875rem); /* 30px @1280 */
   --tracking-eyebrow: 0.02em;
   --tracking-cta: 0.145em;
   --tracking-caption: 0.06em;
@@ -119,11 +130,17 @@
    * pantalla, así que en portátiles se aprieta en lugar de dejar crecer la página.
    */
   --hero-pad-top: 34px;
+  /**
+   * Tope de alto del rótulo. Sin tope manda el ancho, y el rótulo nuevo es cuatro
+   * veces más alto en proporción que el anterior (1109×249 frente a 1100×117): a
+   * 720px de alto empujaba el enlace de invitación por debajo de la cinta. En
+   * pantallas altas no hace falta y se deja crecer.
+   */
+  --hero-wordmark-max: none;
   --hero-gap-wordmark: 43px;
   --hero-gap-headline: 44px;
   --hero-gap-cta: 36px;
   --hero-gap-note: 17px;
-  --hero-gap-invite: 45px;
   --hero-bottom: 110px;
 
   /* Layout */
@@ -143,6 +160,13 @@
   --container-margin: 88px;
   --container-pad: 51px;
   --header-height: 88px;
+  /**
+   * Filete bajo la cabecera. Es un valor aparte de `--header-height` porque suma
+   * al alto ocupado: quien calcula "una pantalla menos la cabecera" tiene que
+   * descontar los dos, o la portada acaba un píxel por debajo del viewport y
+   * aparece scroll.
+   */
+  --header-rule: 1px;
   /* Ancho de las celdas laterales de la cabecera (logo / idioma). */
   --header-side: 222px;
 
@@ -168,11 +192,11 @@
 @media (max-height: 860px) {
   :root {
     --hero-pad-top: 24px;
+    --hero-wordmark-max: 230px;
     --hero-gap-wordmark: 28px;
     --hero-gap-headline: 32px;
     --hero-gap-cta: 28px;
     --hero-gap-note: 14px;
-    --hero-gap-invite: 28px;
     --hero-bottom: 84px;
   }
 }
@@ -180,11 +204,11 @@
 @media (max-height: 720px) {
   :root {
     --hero-pad-top: 14px;
+    --hero-wordmark-max: 158px;
     --hero-gap-wordmark: 16px;
     --hero-gap-headline: 20px;
     --hero-gap-cta: 20px;
     --hero-gap-note: 12px;
-    --hero-gap-invite: 16px;
     --hero-bottom: 72px;
   }
 }
@@ -201,7 +225,13 @@
 [data-theme='light'] {
   --bg: var(--color-light);
   --fg: var(--color-dark);
-  --accent: var(--color-green-base);
+  /**
+   * En claro los dos acentos son el mismo verde de marca: el lima del tema
+   * oscuro se pierde sobre fondo crema, y el verde base es demasiado apagado
+   * para un botón.
+   */
+  --accent: var(--color-green-brand);
+  --accent-nav: var(--color-green-brand);
   --rule: color-mix(in srgb, var(--fg) 14%, transparent);
   --rule-vertical: color-mix(in srgb, var(--fg) 6%, transparent);
 }

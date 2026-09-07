@@ -1,10 +1,18 @@
-import Image from 'next/image';
-import { SITE } from '@/config/site';
+import { ThemedImage } from '@/components/ui/ThemedImage';
 import { RegistrationCta } from '@/features/registration';
+import { SITE } from '@/config/site';
+import { localePath, type Dictionary, type Locale } from '@/i18n';
 import { HeroCountdown } from './HeroCountdown';
 import { HeroHeadline } from './HeroHeadline';
 import { HeroMedia } from './HeroMedia';
 import styles from './Hero.module.css';
+
+type Props = {
+  locale: Locale;
+  copy: Dictionary['hero'];
+  /** Rótulo del botón cuando ya hay asistencia confirmada. */
+  confirmedCta: string;
+};
 
 /**
  * Hero de portada.
@@ -14,55 +22,48 @@ import styles from './Hero.module.css';
  * viewport y la cinta de la cuenta atrás también.
  *
  * El rótulo va como imagen y no como texto: es un logotipo, con formas propias
- * que no se pueden componer con la tipografía.
+ * que no se pueden componer con la tipografía. Tiene una variante por tema: la
+ * palabra cambia de tinta y el rombo se queda lima en las dos.
  *
  * Los filetes de la retícula los dibuja `PageFrame`.
  */
-export function Hero() {
-  const { event, cta, invite } = SITE;
-
+export function Hero({ locale, copy, confirmedCta }: Props) {
   return (
     <section className={styles.root}>
       <HeroMedia />
 
       <div className={styles.content}>
         <p className={styles.when}>
-          <span>{event.dateLabel}</span>
+          <span>{copy.dateLabel}</span>
           <span className={styles.separator} aria-hidden>
             /
           </span>
-          <span className={styles.place}>{event.place}</span>
+          <span className={styles.place}>{SITE.event.place}</span>
         </p>
 
-        <Image
-          src="/brand/logo-horizontal-blanco.svg"
+        <ThemedImage
+          dark="/brand/logo-dark-ceibaquito.svg"
+          light="/brand/logo-light-ceibaquito.svg"
           alt={SITE.name}
-          width={1100}
-          height={117}
+          width={1109}
+          height={249}
           priority
           className={styles.wordmark}
         />
 
-        <HeroHeadline lines={event.headline} />
+        <HeroHeadline lines={copy.subtitle} />
 
         <div className={styles.cta}>
-          <RegistrationCta label={cta.label} href={cta.href} />
-          <p className={styles.note}>{cta.note}</p>
-        </div>
-
-        <a className={styles.invite} href={invite.href}>
-          <Image
-            src="/hero/asset-riggle-red.svg"
-            alt=""
-            width={23}
-            height={19}
-            className={styles.inviteIcon}
+          <RegistrationCta
+            label={copy.ctaLabel}
+            confirmedLabel={confirmedCta}
+            href={localePath(locale, SITE.cta.href)}
           />
-          <span>{invite.label}</span>
-        </a>
+          <p className={styles.note}>{copy.ctaNote}</p>
+        </div>
       </div>
 
-      <HeroCountdown />
+      <HeroCountdown label={copy.countdownLabel} />
     </section>
   );
 }

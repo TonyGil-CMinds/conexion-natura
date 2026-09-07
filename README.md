@@ -15,7 +15,9 @@ npm run lint
 
 ```
 src/
-├─ app/                      Rutas: `/`, `/agenda`, `/speakers`, `/faq`.
+├─ app/[locale]/             Rutas por idioma: `/es`, `/en` y sus interiores.
+├─ app/api/                  Endpoints (fuera de `[locale]`: no tienen idioma).
+├─ i18n/                     LOCALES, getDictionary y los diccionarios es/en.
 ├─ components/
 │  ├─ layout/                PageFrame, PageShell, SiteHeader, SiteFooter, ThemeToggle…
 │  ├─ sections/              Hero, Faq, PageCover, PageIntro, SpeakerList
@@ -85,6 +87,27 @@ El loader se ve una sola vez por sesión de pestaña: al volver a la portada des
 otra ruta no reaparece, y al cerrar la pestaña y abrirla de nuevo sí.
 `sessionStorage`, no `localStorage`, precisamente por eso.
 
+### La cabecera no asoma sobre el loader
+
+La cabecera vive en el layout, **fuera** de `LoaderGate`, y va antes en el DOM.
+En los primeros ~100 ms las hojas de los módulos CSS todavía no se han aplicado:
+nada está posicionado y la cabecera se pintaba en flujo normal por encima del
+loader. El `z-index` no arregla eso, porque en esa ventana tampoco se ha
+aplicado.
+
+Así que el script en línea marca `data-loader-pending` en `<html>` —solo en la
+portada, comprobando el `pathname`, que es la única ruta con loader— y un
+`<style>` **en el propio HTML** esconde la cabecera con ese atributo. Al ir en el
+documento se aplica en el primer pintado, sin esperar ninguna descarga.
+
+Quien retira el atributo es `LoaderGate` en `onCovered`: con la malla tapando la
+pantalla, la cabecera vuelve sin que se vea aparecer y ya está en su sitio cuando
+la malla se retira. Es `visibility` y no `display` para que no cambie de tamaño ni
+se remonte.
+
+Si el JavaScript no corre, el atributo no se pone y la cabecera se ve: el mismo
+principio de siempre — quien apaga un elemento es el cliente, no el CSS.
+
 La fase arranca siempre en `loading`, para que el árbol coincida con el del
 servidor. Quien evita el parpadeo es el **CSS**: un script en línea marca
 `data-loader-played` en `<html>` antes del primer pintado, y las hojas de estilo
@@ -117,9 +140,15 @@ cortaba a la altura del contenido y dejaba el ave separada del borde de la
 pantalla. Se usa `overflow-x: clip` y no `hidden` para no crear un contenedor de
 scroll que rompería un `position: sticky` más adelante.
 
-El rótulo `CONEXION500` va como imagen (`logo-horizontal-blanco.svg`, 1100×117) y
-no como texto: es un logotipo, con formas propias que no se componen con la
-tipografía. En la cabecera solo va la X (`icon-logo.svg`).
+El rótulo `QUITO` va como imagen (`logo-*-ceibaquito.svg`, 1109×249) y no como
+texto: es un logotipo, con formas propias que no se componen con la tipografía.
+En la cabecera va el lockup de Ceiba (`icon-*-ceibaquito.svg`).
+
+Los dos tienen **variante por tema** y las pinta `ThemedImage`: se montan las dos
+y el CSS esconde la que no toca. Elegir en JavaScript enseñaría un cuadro con el
+logotipo equivocado, porque el tema se resuelve después de montar. Y no sirve una
+máscara con `currentColor` —lo que se hace con los iconos de una tinta— porque
+estos llevan dos colores: la palabra cambia y el rombo se queda lima en las dos.
 
 ### Retícula y tipografía
 
@@ -130,11 +159,29 @@ de la cabecera y siguen bajando por toda la página. Los dibuja `PageFrame`.
 El botón tiene ancho propio (`--cta-width`, 380px) y no hereda `--header-side`:
 cruza el filete de la primera columna y necesita aire para el icono del hover.
 
-El rótulo ocupa todo el ancho útil del hero, entre los dos filetes del contenedor,
-así que crece con la pantalla sin tope. No hay que reservarle sitio: **el ave pasa
-por delante** y su pico cruza el rótulo.
+El rótulo ocupa todo el ancho útil del hero, entre los dos filetes del contenedor.
+No hay que reservarle sitio: **el ave pasa por delante** y su pico cruza el rótulo.
 
-Orden de capas: campo 0 · contenido 1 · ave 2 · degradado inferior 3 · cinta 4.
+Pero no crece sin tope: `--hero-wordmark-max` lo acota **por alto**. El logotipo
+de Ceiba es cuatro veces más alto en proporción que el `CONEXION500` anterior
+(1109×249 frente a 1100×117), y a 720px de alto empujaba el enlace de invitación
+por debajo de la cinta. El tope va en la imagen y no en el contenedor: recortar la
+caja escondería parte del rótulo, mientras que `object-fit: contain` lo escala
+entero, y `object-position: left` lo deja pegado al filete al sobrar ancho.
+
+Orden de capas: contenido 1 · ave (con su retícula) 2 · degradado inferior 3 ·
+cinta 4.
+
+El ave va en una **capa propia** y no dentro de la de medios: la capa se centra
+con `transform`, y un `transform` crea contexto de apilamiento — metida con el
+fondo, ningún `z-index` del ave habría superado al del texto y el rótulo le
+pasaba por encima al pico.
+
+El degradado del suelo va con el ave, o sea **por delante del texto**, y de ahí
+su máscara horizontal: a todo el ancho velaba el botón de registro y la nota del
+cupo. La máscara lo apaga en la mitad del texto y lo deja entero sobre el ave; es
+un degradado y no un corte porque un borde vertical se notaría al cruzar los
+cuadros del campo.
 
 **El navbar no lleva filetes verticales.** La capa de filetes arranca en
 `--header-height`, y la cabecera no tiene divisores de celda propios.
@@ -144,23 +191,27 @@ capHeight/em 0.7273) despejadas contra la referencia a 1280px:
 
 | Elemento | Cuerpo | Tracking |
 |---|---|---|
-| Titular (3 líneas) | `--text-display` 38px | 0 |
+| Subtítulo (2 líneas, IBM Plex Mono) | `--text-subtitle` 30px | 0 |
 | Fecha y sede | `--text-nav` 15px | 0.05em |
 | CTA | `--text-cta` 21px | 0.145em |
 | Notas y cinta | `--text-note` 13px | 0.02em |
 
-El titular admite **tramos** con resalte (`SITE.event.headline`) porque en
+El subtítulo va en **IBM Plex Mono** y no en Departure Mono: es una frase, no un
+rótulo. Por eso tiene cuerpo propio (`--text-subtitle`) y no comparte la escala
+del hero: son 40 caracteres por línea, y a `--text-display` no cabrían entre los
+filetes del contenedor.
+
+El subtítulo admite **tramos** con resalte (`SITE.event.headline`) porque en
 versiones anteriores el color cambiaba a mitad de línea. Ahora no se usa, pero la
 estructura se mantiene: el resalte es decisión de diseño por tramo, no por línea.
 
-### Campo de píxeles y foto
+### La foto
 
-`hero-green-pixels-2.svg` va como imagen, no reconstruido celda a celda: su
-relleno es un degradado continuo que cruza toda la figura más una capa de ruido
-del propio SVG. Partirlo en celdas obligaría a recomponer las dos cosas y
-perdería el ruido.
+El campo de cuadros verdes del fondo (`hero-green-pixels-2.svg`) se retiró: el
+ave queda sobre el fondo limpio de la interfaz. De paso arregló un problema del
+tema claro, donde la fecha quedaba oscura sobre los cuadros oscuros del campo.
 
-Las dos sangran hasta el borde derecho del viewport.
+La foto sangra hasta el borde derecho del viewport.
 
 El tamaño del ave se fija **por altura** (`clamp(480px, 68vh, 860px)`) y no por
 ancho: lo que la limita es el hueco hasta el borde inferior, y eso depende del
@@ -819,6 +870,104 @@ bucket; al pasar a un dominio propio basta cambiar esa variable, pero **las URL
 ya guardadas en la base seguirán apuntando a `r2.dev`**: si se retira, hay que
 migrarlas.
 
+### Retícula sobre el ave
+
+`src/features/hero-pixel-wave/`. El asset (`_assets-src/asset-green-pixels2.svg`)
+se convierte a celdas en build y se reconstruye celda a celda, porque la
+animación es **por píxel**: como imagen solo se podría hacer parpadear el
+conjunto.
+
+Va dentro del marco del ave y medida en porcentaje de él, no del hero: así se
+queda en el mismo punto del animal cuando el alto del viewport cambia su tamaño.
+
+La onda va en **CSS**, y el componente no lleva `'use client'`: el disparo es la
+carga de la página y es un bucle ambiental, no una entrada que se pueda gastar
+detrás del loader. El retardo de cada celda es negativo y proporcional a su
+columna, así que en el primer cuadro la onda ya está a mitad de recorrido en vez
+de arrancar con la retícula apagada.
+
+El reposo está al 55 % y no apagado: la retícula es una pieza del diseño y tiene
+que leerse siempre. Con el reposo al 20 % solo se veían las cuatro columnas
+iluminadas y el asset parecía otro, más pequeño; la onda **aclara** lo que ya
+está ahí. Con `prefers-reduced-motion` se queda quieta y entera.
+
+`svg-to-pixels.js` convierte ya dos assets: la lista está en `ASSETS`, dentro del
+propio script. Los rects se exportan con órdenes de comandos distintos (`M H V H
+V Z` en uno, `M V H V H Z` en otro), así que en vez de reconocer un patrón se
+recorre el trazo y se toman los extremos.
+
+## Temas
+
+El oscuro es el del diseño y no lleva atributo: los roles de `tokens.css` ya son
+los suyos. `[data-theme="light"]` redefine solo los roles.
+
+En claro los dos acentos son **#C0E619**, el verde del rombo de Ceiba: el lima del
+tema oscuro se pierde sobre fondo crema y el verde base es demasiado apagado para
+un botón. Lo toman el botón principal, el enlace activo del menú, el texto verde
+en negrita y la pregunta abierta del FAQ.
+
+Para que eso funcione, el botón y el FAQ pasaron de `--color-lime` (paleta) a
+`--accent-nav` (rol): un token de paleta es una constante de marca y no cambia con
+el tema, así que usarlo directamente dejaba el botón en lima también en claro.
+
+
+## Idiomas y SEO
+
+Dos idiomas, cada uno con su URL: `/es` y `/en`. El layout raíz vive bajo
+`app/[locale]/` porque `<html lang>` cambia con el idioma y **solo el layout raíz
+pinta `<html>`**: con un layout por encima, el atributo se quedaría fijo.
+
+De ahí el `middleware.ts`: `/` y `/agenda` no existen como rutas, así que se
+redirigen a `/es/…`. No negocia por `Accept-Language` a propósito — el idioma
+queda en la URL, que es lo que se comparte y lo que indexa el buscador;
+adivinarlo haría que dos personas vieran cosas distintas en el mismo enlace.
+
+El conmutador de idioma son **enlaces**, no botones, y conservan la ruta: quien
+está en `/es/faq` aterriza en `/en/faq`. Con un botón, la versión en inglés no
+tendría dirección propia y no se podría compartir ni indexar.
+
+Las rutas interiores **no se traducen** (`/en/registro`, no `/en/registration`):
+el idioma del contenido y el de la URL no tienen que coincidir, y traducir slugs
+pide un mapa de rutas que hoy no aporta nada.
+
+### Los diccionarios
+
+`src/i18n/dictionaries/es.ts` es la referencia y de él sale el tipo `Dictionary`,
+así que **al añadir una clave en español el inglés deja de compilar** hasta
+traducirla. El tipo ensancha los literales del `as const` (si no, el inglés
+tendría que decir literalmente «Ponentes» para encajar) y deja las listas de solo
+lectura, para que las dos puedan tener distinto número de elementos.
+
+En los diccionarios vive **solo lo que depende del idioma**. Lo que no —fechas
+numéricas, semillas del mosaico, rutas de imagen, enlaces, horas en UTC— se queda
+en `src/config`: una fecha duplicada en dos diccionarios es una fecha que se
+puede corregir a medias. `NAV_LINKS`, `FOOTER.legal` y `PARTNER_GROUPS` guardan
+una `key` que entra en el diccionario y el `href` sin prefijo de idioma.
+
+La copia llega a los componentes **por props**, desde el componente de servidor
+que ya conoce el idioma. No hay contexto de traducción: eso obligaría a marcar
+como cliente media aplicación para leer un rótulo.
+
+Los ponentes están duplicados en los dos diccionarios porque son datos de
+relleno. Cuando llegue el endpoint vendrán con su copia y ese bloque desaparece.
+
+### Títulos
+
+El layout pone `title.template` (`%s - CEIBA Quito`) y cada página solo dice su
+nombre, así que el sufijo se escribe una vez:
+
+| Ruta | es | en |
+|---|---|---|
+| `/` | CEIBA Quito - Noche de Innovación e Inversión… | CEIBA Quito - A Night of Innovation and Investment… |
+| `/agenda` | Agenda - CEIBA Quito | Agenda - CEIBA Quito |
+| `/speakers` | Ponentes - CEIBA Quito | Speakers - CEIBA Quito |
+| `/faq` | Preguntas Frecuentes - CEIBA Quito | FAQ - CEIBA Quito |
+| `/registro` | Registro - CEIBA Quito | Registration - CEIBA Quito |
+
+`metadataBase` sale del entorno (`NEXT_PUBLIC_SITE_URL`, o el dominio que Vercel
+pone en `VERCEL_PROJECT_PRODUCTION_URL`). Sin base, `canonical` y las
+alternativas `hreflang` salen relativas y el buscador no puede resolverlas.
+
 ## Verificación visual
 
 ```bash
@@ -922,20 +1071,33 @@ vive solo en el navegador. Al llegar el backend, el punto de enganche es
   `SITE.event.venue` dice «Jardín Botánico de Quito» y el enlace es una búsqueda
   en Maps, no un punto concreto: falta la dirección exacta. El horario del `.ics`
   se dedujo del FAQ (17:00–21:00, UTC-5).
+- `public/brand/icon-darrk-ceibaquito.svg` (con la doble r) no es una copia de
+  `icon-dark-ceibaquito.svg`: es el isotipo solo, sin la palabra, y su dibujo es
+  el que está en `favicon.svg`. La cabecera usa el lockup completo. Conviene
+  renombrarlo a algo como `isotipo-ceiba.svg` o retirarlo.
+- `logo-500.svg`, `logo-horizontal-blanco.svg`, `logo-horizontal-dark.svg` y
+  `hero/asset-riggle-red.svg` se quedaron sin uso al entrar el logotipo de Ceiba
+  y al retirarse el enlace de invitación.
+- **El arte de la credencial está en español dentro del PNG**:
+  `front_placeholder-3x.png` dice «CONEXION500» y «TU IMAGEN», y eso no se
+  traduce desde el código. Hace falta una variante del asset por idioma —o el
+  arte nuevo de Ceiba.
+- El enlace **«¿No recibiste invitación?»** se retiró del hero y también del
+  formulario de registro, donde además había quedado sin traducir. Si vuelve a
+  haber flujo de invitación, vuelve con su clave en los diccionarios.
+- Queda **1px** de desbordamiento vertical en la portada por redondeo
+  fraccionario de la cinta de la cuenta atrás. Antes eran dos.
+- En **tema claro** la fecha del hero queda oscura sobre los cuadros oscuros del
+  campo, y el degradado del suelo funde a crema encima de la foto. El tema claro
+  sigue sin repasarse más allá de los logotipos.
 - Los enlaces legales del pie apuntan a anclas de relleno (`#terminos`,
   `#privacidad`) y las redes a los dominios genéricos: faltan las URL reales.
-- `hero-green-pixels-2.svg` lleva el degradado con el oscuro antiguo (#001D09) en
-  su extremo, así que sus cuadros superiores quedan algo más oscuros que el fondo
-  nuevo (#151D17). Se arregla cambiando ese `stop-color` en el asset.
+- `hero/hero-green-pixels-2.svg` quedó sin uso al retirarse el campo del hero.
 - **Los ponentes son datos de relleno**, con retratos de silueta. Al llegar el
   endpoint de base44, sustituir el array de `speakers.ts` por el `fetch`.
 - La referencia del FAQ abría con **"¿Qué es Conexión 500?"**, una pregunta que no
   está en la lista entregada, y ordenaba las demás de otra forma. Se usó la lista
   tal cual, en su orden. Si esa pregunta va, hay que añadirla a `faq.ts`.
-- **El rótulo no tiene variante clara.** `logo-horizontal-blanco.svg` se
-  actualizó a 1100×117 pero `logo-horizontal-dark.svg` sigue en 171×30, la
-  medida antigua. Con el tema claro activado el rótulo queda ilegible: hace
-  falta reexportar la variante oscura al tamaño nuevo.
 - **Estroboscopio y repulsión magnética están sin destino** (ver la sección).
   Reconstruir el campo nuevo celda a celda recuperaría el estroboscopio a costa
   del ruido del SVG; el magnetismo sobre cuadros de 148px probablemente no

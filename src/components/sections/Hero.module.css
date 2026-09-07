@@ -5,7 +5,7 @@
   /* Ocupa el hueco entre las bandas del armazón, y al menos una pantalla: con
      otra sección debajo, `flex: 1` ya no basta para garantizarlo. */
   flex: 1;
-  min-height: calc(100dvh - var(--header-height));
+  min-height: calc(100dvh - var(--header-height) - var(--header-rule));
   /* Sin recorte propio: la capa de medios y la cinta miden un viewport completo y
      aquí se cortarían al ancho del contenido. Recorta `PageFrame`. */
 }
@@ -23,6 +23,12 @@
   /* El contenido arranca en el filete de la retícula, sin sangría interior. */
   padding-left: var(--container-margin);
   padding-top: var(--hero-pad-top);
+  /**
+   * Hueco hasta la cinta. Antes lo daba de hecho el enlace de invitación con su
+   * propio margen; al quitarlo, la nota del cupo se metía debajo de la cinta.
+   * `--hero-bottom` ya existía en tokens.css para esto, pero nadie lo usaba.
+   */
+  padding-bottom: var(--hero-bottom);
 }
 
 /* Fecha y sede, centradas respecto a la página y no a la columna de texto. */
@@ -63,6 +69,17 @@
   margin-top: var(--hero-gap-wordmark);
 }
 
+/**
+ * El tope va en la imagen y no en el contenedor: recortar la caja escondería
+ * parte del rótulo, mientras que `contain` lo escala entero. `object-position`
+ * lo deja pegado al filete de la izquierda al sobrar ancho.
+ */
+.wordmark img {
+  max-height: var(--hero-wordmark-max);
+  object-fit: contain;
+  object-position: left center;
+}
+
 .cta {
   /* Empuja el bloque de registro hacia abajo, sin fijarlo a una altura. */
   margin-top: auto;
@@ -82,31 +99,6 @@
 
 /* En el flujo, no en posición absoluta: colgaba de `.content`, que no llena el
    hero, así que su distancia al borde inferior no era la del diseño. */
-.invite {
-  margin-top: var(--hero-gap-invite);
-  /* Deja libre la banda de la cuenta atrás. */
-  margin-bottom: var(--hero-bottom);
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-family: var(--font-mono);
-  font-size: var(--text-note);
-  letter-spacing: var(--tracking-eyebrow);
-  text-transform: uppercase;
-  color: var(--fg);
-  transition: color var(--duration-fast) var(--ease-out-expo);
-}
-
-.invite:hover {
-  color: var(--accent);
-}
-
-.inviteIcon {
-  flex-shrink: 0;
-  width: 23px;
-  height: 19px;
-}
-
 @media (max-width: 900px) {
 
 
@@ -119,7 +111,4 @@
     margin-top: var(--space-8);
   }
 
-  .invite {
-    margin-bottom: 120px;
-  }
 }

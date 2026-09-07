@@ -23,7 +23,23 @@ Tailwind), GSAP, Framer Motion, react-three-fiber.
 
 ## Rutas
 
-`/` (portada), `/agenda`, `/speakers` y `/faq`.
+Dos idiomas con URL propia: `/es` y `/en`, y dentro `/agenda`, `/speakers`,
+`/faq` y `/registro`. Los slugs no se traducen.
+
+El layout raíz vive en `app/[locale]/` porque solo él pinta `<html lang>`. Por
+eso `/` no existe como ruta y `middleware.ts` la redirige a `/es`. La API va
+fuera de `[locale]`: no tiene idioma.
+
+La copia está en `src/i18n/dictionaries/`; el español es la referencia y de él
+sale el tipo, así que una clave nueva rompe el inglés hasta traducirla. En
+`src/config` se queda lo que no depende del idioma (fechas, semillas, enlaces,
+medidas), con una `key` que entra en el diccionario.
+
+La copia baja **por props** desde el componente de servidor que conoce el
+idioma. No hay contexto de traducción: marcaría como cliente media aplicación.
+
+Los títulos salen de `title.template` en el layout: cada página solo dice su
+nombre.
 
 La **cabecera** se compone en el layout raíz: es idéntica en todas las rutas, no
 debe animarse al navegar, y al sobrevivir al cambio de ruta su indicador puede
@@ -62,6 +78,22 @@ bordes propios se cortan donde acaba el contenido acotado. Las horizontales van
 en bandas a sangre y las verticales en una capa que recorre toda la página. Al
 añadir secciones, el filete que las separe va como banda, no como `border-top`.
 
+Los logotipos con variante por tema van con `ThemedImage`: se montan los dos y el
+CSS esconde el que no toca. Elegir en JavaScript enseñaría un cuadro con el
+equivocado. La máscara con `currentColor` no vale aquí: llevan dos colores.
+
+El rótulo del hero se acota por alto (`--hero-wordmark-max`), no solo por ancho:
+el logotipo es alto en proporción y a 720px de viewport echaba el contenido fuera
+de la pantalla.
+
+El hero reparte sus medios en **dos capas**, una detrás del texto y otra delante:
+cada capa se centra con `transform`, que crea contexto de apilamiento, así que en
+una sola capa el ave no podía ponerse por delante del rótulo. El degradado del
+suelo viaja con el ave y lleva máscara horizontal para no velar el CTA.
+
+Al quitar un elemento del hero hay que mirar quién daba el hueco de abajo: el
+enlace de invitación lo daba de hecho, y `--hero-bottom` estaba sin usar.
+
 ## Transiciones
 
 Los hooks compartidos entre features viven en `src/hooks/` (p. ej.
@@ -74,6 +106,19 @@ momento seguro para cambiar contenido) y `onComplete`; el orquestador decide.
 Toda aleatoriedad visual usa `createRandom(seed)` de `src/lib/random.ts`, nunca
 `Math.random()`: si no, servidor y cliente difieren y React reporta desajuste
 de hidratación.
+
+La **cabecera no debe asomar sobre el loader**. Vive en el layout, fuera de la
+puerta, y en los primeros cuadros las hojas de los módulos aún no se aplican: sin
+posicionar, se pintaba encima. Lo resuelve un `<style>` en el propio HTML con
+`data-loader-pending`, que pone el script en línea y retira `LoaderGate` al tapar
+la pantalla. Un `z-index` no vale: en esa ventana tampoco está aplicado.
+
+Cuidado con los escapes en los scripts en línea: dentro de una plantilla de
+JavaScript, `/` es solo `/`, y una expresión regular llega rota al HTML.
+
+En **tema claro** los acentos son `#C0E619` (el rombo de Ceiba). Quien pinta con
+el verde tiene que usar el rol (`--accent`, `--accent-nav`), no el token de
+paleta: la paleta es constante de marca y no cambia con el tema.
 
 ## Retícula y tipografía
 

@@ -31,7 +31,7 @@ function daysUntil(target: { year: number; month: number; day: number }): number
  * que se mire, y hacerlo en el servidor lo dejaría congelado en la fecha de
  * compilación y provocaría un desajuste de hidratación.
  */
-export function HeroCountdown() {
+export function HeroCountdown({ label }: { label: string }) {
   const [remaining, setRemaining] = useState<number | null>(null);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export function HeroCountdown() {
 
   return (
     <div className={styles.root}>
-      <p className={styles.label}>{SITE.countdown.label}</p>
+      <p className={styles.label}>{label}</p>
 
       <div className={styles.scale}>
         {/* Marcas menores: ocho por día, dibujadas con un degradado repetido en

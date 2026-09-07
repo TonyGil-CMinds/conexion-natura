@@ -1,24 +1,36 @@
+/**
+ * Caja de referencia, del ancho del contenido. No lleva `transform` ni
+ * `z-index`: cualquiera de los dos crearía un contexto de apilamiento y
+ * encerraría a las capas, que es lo que dejaba al ave por detrás del rótulo.
+ */
 .root {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  /* Un viewport de ancho, centrado sobre el contenedor: el contenedor está
-     centrado, así que esto equivale al ancho de la pantalla. */
-  width: 100vw;
-  left: 50%;
-  transform: translateX(-50%);
-  /* Al fondo: el texto del hero pasa por encima. */
-  z-index: 0;
+  inset: 0;
   pointer-events: none;
 }
 
-/* Campo de píxeles: pegado al borde derecho de la pantalla. */
-.field {
+/**
+ * La capa mide un viewport de ancho y se centra sobre el contenedor: el
+ * contenedor está centrado, así que esto equivale al ancho de la pantalla.
+ *
+ * Recorta lo que sobresalga por abajo, para que la portada quepa en una pantalla.
+ * Se recorta aquí y no en la sección porque esta capa **es** la que mide un
+ * viewport: en la sección, un recorte cortaría la sangría. `clip` y no `hidden`
+ * para no crear un contenedor de scroll.
+ */
+.layer {
   position: absolute;
   top: 0;
-  right: 0;
-  width: 733px;
-  height: auto;
+  bottom: 0;
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+  overflow: clip;
+}
+
+/* Delante del texto: el ave cruza el rótulo, no al revés. */
+.front {
+  z-index: 2;
 }
 
 /**
@@ -30,8 +42,6 @@
   position: absolute;
   right: 0;
   bottom: 0;
-  /* Por delante del contenido: el ave cruza el rótulo, no al revés. */
-  z-index: 2;
   height: clamp(480px, 68vh, 860px);
 }
 
@@ -41,24 +51,39 @@
   height: 100%;
 }
 
-/* Suelo: funde el bajo de la foto con el fondo para que el corte del encuadre no
-   se vea. Va por delante del ave y a todo el ancho, porque un borde vertical se
-   notaría al cruzar los cuadros del campo. */
+/**
+ * Retícula de píxeles sobre el ave. Se mide en porcentaje del marco del ave y no
+ * del hero: así se queda en el mismo punto del animal cuando el alto del viewport
+ * cambia su tamaño.
+ */
+.wave {
+  top: 61%;
+  left: 39%;
+  width: 41.5%;
+}
+
+/**
+ * Suelo: funde el bajo de la foto con el fondo para que el corte del encuadre no
+ * se vea. Va por delante del ave, y por tanto por delante del texto.
+ *
+ * De ahí la máscara: a todo el ancho velaba el botón de registro y la nota del
+ * cupo, que viven en la esquina de abajo a la izquierda. La máscara lo apaga en
+ * la mitad del texto y lo deja entero sobre el ave. Es un degradado y no un
+ * corte porque un borde vertical se notaría al cruzar los cuadros del campo.
+ */
 .floor {
   position: absolute;
   right: 0;
   bottom: 0;
   left: 0;
+  /* Por delante del ave, dentro de la capa de delante. */
   z-index: 3;
   height: 210px;
   background-image: linear-gradient(to top, var(--bg) 0%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, transparent 45%, #000 72%);
 }
 
 @media (max-width: 900px) {
-  .field {
-    width: 90%;
-  }
-
   .birdFrame {
     height: 46vh;
   }

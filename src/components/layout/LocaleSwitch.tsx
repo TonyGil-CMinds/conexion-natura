@@ -1,32 +1,45 @@
 'use client';
 
-import { useState } from 'react';
-import { LOCALES, type LocaleCode } from '@/config/site';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { LOCALES, LOCALE_LABELS, type Locale } from '@/i18n';
 import styles from './LocaleSwitch.module.css';
+
+type Props = {
+  locale: Locale;
+  /** Rótulo accesible del grupo: los botones solo dicen «ES» y «EN». */
+  label: string;
+};
 
 /**
  * Selector de idioma.
  *
- * Solo mantiene el estado visual: todavía no hay traducciones ni enrutado por
- * idioma, así que cambiarlo no altera el contenido.
+ * Son **enlaces**, no botones: el idioma vive en la URL, así que cambiarlo es
+ * navegar. Con un botón, la versión en inglés no tendría dirección propia y no se
+ * podría compartir ni indexar.
+ *
+ * Conserva la ruta actual y solo cambia el prefijo, de modo que quien está en
+ * `/es/faq` aterriza en `/en/faq` y no en la portada.
  */
-export function LocaleSwitch() {
-  const [active, setActive] = useState<LocaleCode>('es');
+export function LocaleSwitch({ locale, label }: Props) {
+  const pathname = usePathname();
+  // `/es/faq` → `/faq`; la portada (`/es`) se queda en `/`.
+  const rest = pathname.replace(new RegExp(`^/(${LOCALES.join('|')})`), '') || '/';
 
   return (
-    <div className={styles.root}>
-      {LOCALES.map((locale, index) => (
-        <span key={locale.code} className={styles.item}>
+    <div className={styles.root} role="group" aria-label={label}>
+      {LOCALES.map((code, index) => (
+        <span key={code} className={styles.item}>
           {index > 0 && <span className={styles.divider} aria-hidden />}
-          <button
-            type="button"
+          <Link
             className={styles.button}
-            data-active={locale.code === active || undefined}
-            aria-current={locale.code === active ? 'true' : undefined}
-            onClick={() => setActive(locale.code)}
+            href={`/${code}${rest === '/' ? '' : rest}`}
+            hrefLang={code}
+            data-active={code === locale || undefined}
+            aria-current={code === locale ? 'true' : undefined}
           >
-            {locale.label}
-          </button>
+            {LOCALE_LABELS[code]}
+          </Link>
         </span>
       ))}
     </div>

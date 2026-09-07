@@ -40,7 +40,7 @@
   padding-inline: 30px 36px;
   border-radius: var(--radius-cta);
   /* Opaco: es lo que mantiene la sombra invisible en reposo. */
-  background-color: var(--color-lime);
+  background-color: var(--accent-nav);
   /* Texto oscuro: sobre el lima del degradado el claro no contrasta. */
   color: var(--color-dark);
   /* Recorta el degradado al radio. */
@@ -66,7 +66,7 @@
   background-image: linear-gradient(
     100deg,
     var(--color-green-base) 0%,
-    var(--color-lime) 50%,
+    var(--accent-nav) 50%,
     var(--color-green-base) 100%
   );
   background-size: 200% 100%;

@@ -1,21 +1,20 @@
 /**
- * Contenido del sitio. Vive fuera de los componentes para que copy y estructura
- * se editen sin tocar maquetación, y para tener un punto único cuando entre i18n.
+ * Datos del sitio que **no** dependen del idioma: fechas, enlaces, medidas y
+ * nombres propios. La copia vive en `src/i18n/dictionaries`.
+ *
+ * El reparto importa: una fecha duplicada en dos diccionarios es una fecha que se
+ * puede corregir a medias.
  */
 
-/** Un tramo de titular. `accent` lo pinta con el color de acento del tema. */
-export type HeadlineSegment = { text: string; accent?: boolean };
-
 export const SITE = {
-  name: 'Conexión500',
+  name: 'CEIBA Quito',
   event: {
     /** Fecha del evento, para la cuenta atrás. Mes en base 0 como en Date. */
     date: { year: 2026, month: 9, day: 5 },
-    dateLabel: '05 octubre 2026',
-    /** Fecha en largo, para las pantallas donde el dato se lee y no se ojea. */
-    dateLongLabel: 'Lunes 5 de octubre de 2026',
+    /** Igual en los dos idiomas. */
     place: 'Quito, Ecuador',
-    schedule: { label: '5:00 pm — 9:00 pm', note: 'con registro desde las 4:30 pm' },
+    /** Las horas se escriben igual; la nota del registro previo va traducida. */
+    scheduleLabel: '5:00 pm — 9:00 pm',
     venue: {
       name: 'Jardín Botánico de Quito',
       /** Búsqueda y no coordenada: sin la dirección exacta, el buscador de Maps
@@ -28,40 +27,32 @@ export const SITE = {
      * las 22:00 Z y el evento termina ya en el día siguiente en UTC.
      */
     calendar: { startUtc: '20261005T220000Z', endUtc: '20261006T020000Z' },
-    /**
-     * Titular por líneas y por tramos: el salto de línea y el resalte son
-     * decisiones de diseño, no del navegador.
-     */
-    headline: [
-      [{ text: 'Noche por la' }],
-      [{ text: 'biodiversidad' }],
-      [{ text: 'y el futuro' }],
-    ] as HeadlineSegment[][],
   },
-  cta: {
-    label: 'Registro abierto',
-    href: '/registro',
-    note: 'Cupo limitado*',
-  },
-  invite: {
-    label: '¿No recibiste invitación?',
-    href: '#invitacion',
-  },
-  countdown: {
-    label: 'Días para Conexión500',
-  },
+  /** Destino del botón principal. El rótulo sale del diccionario. */
+  cta: { href: '/registro' },
 } as const;
 
+/**
+ * Menú. `key` entra en `dictionary.nav` y `href` es la ruta sin prefijo de
+ * idioma: quien pinta el enlace le añade el suyo.
+ *
+ * `highlight` pinta el enlace con el color de acento: es una llamada a la acción
+ * dentro del menú, no un estado de selección.
+ */
+export const NAV_LINKS = [
+  { key: 'agenda', href: '/agenda' },
+  { key: 'speakers', href: '/speakers' },
+  { key: 'faq', href: '/faq' },
+  { key: 'register', href: '/registro', highlight: true },
+] as const;
 
-/** Contenido del pie. */
+/** Estructura del pie. Los rótulos salen del diccionario. */
 export const FOOTER = {
   image: { src: '/img/footer-image.png', width: 764, height: 356 },
-  farewell: { lead: 'Nos vemos en', place: 'Quito, Ecuador' },
-  cta: { label: 'Regístrate ahora', href: '/registro' },
-  copyright: 'Todos los derechos reservados.',
+  cta: { href: '/registro' },
   legal: [
-    { label: 'Términos y condiciones', href: '#terminos' },
-    { label: 'Aviso de privacidad', href: '#privacidad' },
+    { key: 'terms', href: '#terminos' },
+    { key: 'privacy', href: '#privacidad' },
   ],
   /** El orden es el del diseño. `network` selecciona la marca del glifo. */
   social: [
@@ -72,24 +63,9 @@ export const FOOTER = {
   ],
 } as const;
 
-/** `highlight` pinta el enlace con el color de acento: es una llamada a la acción
- *  dentro del menú, no un estado de selección. */
-export const NAV_LINKS = [
-  { label: 'Agenda', href: '/agenda' },
-  { label: 'Ponentes', href: '/speakers' },
-  { label: 'FAQ', href: '/faq' },
-  { label: 'Regístrate', href: '/registro', highlight: true },
-] as const;
-
-export const LOCALES = [
-  { code: 'es', label: 'ES' },
-  { code: 'en', label: 'EN' },
-] as const;
-
-export type LocaleCode = (typeof LOCALES)[number]['code'];
-
 /**
  * Logos de socios, agrupados como en el diseño. Tamaños = tamaño natural del SVG.
+ * `key` entra en `dictionary.footer.partners`.
  *
  * Se usan las variantes en claro que genera
  * `node scripts/partner-logos-light.js`: los originales llevan la tinta en el
@@ -98,14 +74,14 @@ export type LocaleCode = (typeof LOCALES)[number]['code'];
  */
 export const PARTNER_GROUPS = [
   {
-    label: 'Initiative led by',
+    key: 'led',
     logos: [
       { src: '/partners/logo-socios-bid-light.svg', alt: 'IDB Lab', width: 123, height: 25 },
       { src: '/partners/logo-socios-cminds-light.svg', alt: 'C Minds', width: 118, height: 28 },
     ],
   },
   {
-    label: 'Funding partners',
+    key: 'funding',
     logos: [
       { src: '/partners/logo-socios-suecia-light.svg', alt: 'Sweden Sverige', width: 62, height: 19 },
       { src: '/partners/logo-socios-francia-light.svg', alt: 'Gouvernement français', width: 57, height: 30 },

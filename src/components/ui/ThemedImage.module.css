@@ -1,0 +1,23 @@
+.root {
+  display: block;
+}
+
+.dark,
+.light {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* El tema oscuro es el de por defecto: no lleva atributo. */
+.light {
+  display: none;
+}
+
+:global([data-theme='light']) .dark {
+  display: none;
+}
+
+:global([data-theme='light']) .light {
+  display: block;
+}

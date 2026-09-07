@@ -16,6 +16,12 @@ type Props = {
 const PLAYED_KEY = 'c500-loader-played';
 /** Atributo en <html>, puesto por el script en línea antes del primer pintado. */
 const PLAYED_ATTR = 'data-loader-played';
+/**
+ * Mientras está puesto, el estilo en línea del layout esconde la cabecera: vive
+ * fuera de esta puerta y, sin esto, asomaba sobre el loader en los primeros
+ * cuadros, antes de que se aplicaran las hojas de los módulos.
+ */
+const PENDING_ATTR = 'data-loader-pending';
 
 /**
  * Fases: `loading` → `covering` → `revealing` → `done`.
@@ -39,11 +45,21 @@ export function LoaderGate({ children, preload }: Props) {
    * estado de React.
    */
   useEffect(() => {
-    if (document.documentElement.hasAttribute(PLAYED_ATTR)) setPhase('done');
+    if (document.documentElement.hasAttribute(PLAYED_ATTR)) {
+      setPhase('done');
+      // Por si el script en línea no llegó a leer el almacenamiento: la cabecera
+      // no debe quedarse escondida cuando no hay loader que la tape.
+      document.documentElement.removeAttribute(PENDING_ATTR);
+    }
   }, []);
 
   const handleLoaded = useCallback(() => setPhase('covering'), []);
-  const handleCovered = useCallback(() => setPhase('revealing'), []);
+  const handleCovered = useCallback(() => {
+    setPhase('revealing');
+    // La malla ya tapa la pantalla: la cabecera puede volver sin que se vea
+    // aparecer, y así está en su sitio cuando la malla se retire.
+    document.documentElement.removeAttribute(PENDING_ATTR);
+  }, []);
   const handleRevealed = useCallback(() => {
     setPhase('done');
     document.documentElement.setAttribute(PLAYED_ATTR, '1');

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FAQ_ITEMS, FAQ_TITLE } from '@/config/faq';
+import type { FaqItem } from '@/config/faq';
 import { EASE_OUT_EXPO } from '@/lib/motion';
 import styles from './Faq.module.css';
 
@@ -21,18 +21,23 @@ const PANEL_DURATION = 0.42;
  * de pantalla. Los encabezados envuelven al botón para que el índice de la página
  * siga teniendo sentido.
  */
-export function Faq() {
-  const [openId, setOpenId] = useState<string | null>(FAQ_ITEMS[0]?.id ?? null);
+type Props = {
+  title: string;
+  items: readonly FaqItem[];
+};
+
+export function Faq({ title, items }: Props) {
+  const [openId, setOpenId] = useState<string | null>(items[0]?.id ?? null);
 
   return (
     <section className={styles.root} id="faq" aria-labelledby="faq-title">
       <div className={styles.inner}>
         <h2 className={styles.title} id="faq-title">
-          {FAQ_TITLE}
+          {title}
         </h2>
 
         <ul className={styles.list}>
-          {FAQ_ITEMS.map((item) => {
+          {items.map((item) => {
             const isOpen = item.id === openId;
             const panelId = `faq-panel-${item.id}`;
             const buttonId = `faq-button-${item.id}`;

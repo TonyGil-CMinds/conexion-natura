@@ -1,0 +1,51 @@
+.root {
+  position: absolute;
+  /* La celda mide en porcentaje de esta caja, así que la caja tiene que
+     conservar la proporción del asset: la pone `aspect-ratio` desde el sprite. */
+  pointer-events: none;
+}
+
+.cell {
+  position: absolute;
+  width: var(--cell-width);
+  height: var(--cell-height);
+  /* El origen en el centro: al encogerse, el cuadro no se va hacia una esquina. */
+  transform-origin: center;
+  /**
+   * `steps` y no una curva continua: el resto del sitio pulsa a saltos (el
+   * cargador de imagen, el estroboscopio del colibrí) y un desvanecido suave
+   * aquí se leería como otro material.
+   */
+  animation: pixel-wave var(--wave-cycle) steps(4, end) infinite;
+}
+
+/**
+ * El reposo no puede ser oscuro: la retícula es una pieza del diseño y tiene que
+ * leerse siempre. Con el reposo al 20 % solo se veían las cuatro columnas que la
+ * onda estaba iluminando y el asset parecía otro, más pequeño. Así que la onda
+ * **aclara** lo que ya está ahí en vez de encenderlo desde apagado.
+ */
+@keyframes pixel-wave {
+  0% {
+    opacity: .55;
+    transform: scale(.86);
+  }
+  16% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  44%,
+  100% {
+    opacity: .55;
+    transform: scale(.86);
+  }
+}
+
+/* Quien pide menos movimiento se queda la retícula quieta y entera. */
+@media (prefers-reduced-motion: reduce) {
+  .cell {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

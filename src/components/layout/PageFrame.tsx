@@ -1,4 +1,5 @@
 import { PageShell } from './PageShell';
+import type { Locale } from '@/i18n';
 import { SiteFooter } from './SiteFooter';
 import styles from './PageFrame.module.css';
 
@@ -14,6 +15,8 @@ type Props = {
    * pie global: la primera cabe en una pantalla y el pie repetiría su CTA.
    */
   hideFooter?: boolean;
+  /** Idioma de la ruta: el pie lo necesita para su copia y sus enlaces. */
+  locale: Locale;
   children: React.ReactNode;
 };
 
@@ -32,7 +35,7 @@ type Props = {
  * La altura se reparte con flex y no con `calc(100dvh - cabecera - barra)`: así no
  * hay que mantener sincronizadas las alturas de cada banda con una fórmula.
  */
-export function PageFrame({ children, hasColumnRules = true, hideFooter = false }: Props) {
+export function PageFrame({ children, locale, hasColumnRules = true, hideFooter = false }: Props) {
   return (
     <div className={styles.root}>
       {/* Verticales: recorren la página entera, por detrás del contenido. */}
@@ -55,7 +58,7 @@ export function PageFrame({ children, hasColumnRules = true, hideFooter = false 
 
       {/* El pie va dentro del armazón para que los filetes verticales lo
           crucen como cruzan el resto de la página. */}
-      {!hideFooter && <SiteFooter />}
+      {!hideFooter && <SiteFooter locale={locale} />}
     </div>
   );
 }

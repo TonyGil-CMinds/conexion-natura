@@ -3,6 +3,7 @@
 
 import { ChangeEvent, Component, FormEvent, type PointerEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 import { SITE } from '@/config/site';
+import type { Dictionary } from '@/i18n';
 import { type Attendee, useAttendance } from '../context/attendance';
 import { uploadPhoto } from '../lib/upload-photo';
 import Lanyard from './ReactBitsLanyard';
@@ -12,7 +13,9 @@ type Fields = { name: string; surname: string; email: string; organization: stri
 type Errors = Partial<Record<keyof Fields | 'photo', string>>;
 type Crop = { zoom: number; x: number; y: number };
 
-type LanyardBoundaryProps = { children: ReactNode; frontImage: string };
+type Copy = Dictionary['registration'];
+
+type LanyardBoundaryProps = { children: ReactNode; frontImage: string; label: string };
 
 class LanyardBoundary extends Component<LanyardBoundaryProps, { hasError: boolean }> {
   state = { hasError: false };
@@ -30,7 +33,7 @@ class LanyardBoundary extends Component<LanyardBoundaryProps, { hasError: boolea
 
   render() {
     if (this.state.hasError) {
-      return <div className={styles.lanyardFallback} style={{ backgroundImage: `url(${this.props.frontImage})` }} aria-label="Vista previa de credencial" />;
+      return <div className={styles.lanyardFallback} style={{ backgroundImage: `url(${this.props.frontImage})` }} aria-label={this.props.label} />;
     }
     return this.props.children;
   }
@@ -81,20 +84,22 @@ function escapeICS(value: string) {
  * Archivo `.ics` en vez de un enlace a un calendario concreto: lo abren Google,
  * Apple y Outlook por igual, y no manda al usuario fuera del sitio.
  */
-function eventCalendarFile() {
+function eventCalendarFile(copy: Copy, subtitle: readonly string[]) {
   const { name, event } = SITE;
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
     'PRODID:-//Conexion500//registro//ES',
     'BEGIN:VEVENT',
+    // El identificador no cambia aunque cambie la marca: es lo que reconoce el
+    // calendario de quien ya añadió el evento, y otro crearía un duplicado.
     'UID:conexion500-2026-10-05@conexion500',
     `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}`,
     `DTSTART:${event.calendar.startUtc}`,
     `DTEND:${event.calendar.endUtc}`,
-    `SUMMARY:${escapeICS(`${name} — ${event.headline.map((line) => line.map((segment) => segment.text).join(' ')).join(' ')}`)}`,
+    `SUMMARY:${escapeICS(`${name} — ${subtitle.join(' ')}`)}`,
     `LOCATION:${escapeICS(`${event.venue.name}, ${event.place}`)}`,
-    `DESCRIPTION:${escapeICS(`${event.schedule.label} (${event.schedule.note}).`)}`,
+    `DESCRIPTION:${escapeICS(`${event.scheduleLabel} (${copy.scheduleNote}).`)}`,
     'END:VEVENT',
     'END:VCALENDAR',
   ];
@@ -151,7 +156,7 @@ function portraitPlacement(portrait: HTMLImageElement, crop: Crop, scaleFactor =
  * el encuadre por defecto y la tarjeta cambiaría de aspecto sola. Recortando
  * antes de subir, la imagen guardada **es** lo que se ve, y además pesa menos.
  */
-async function renderPortrait(source: string, crop: Crop): Promise<Blob> {
+async function renderPortrait(source: string, crop: Crop, prepareError: string): Promise<Blob> {
   const scaleFactor = 3;
   const portrait = await loadImage(source);
   const place = portraitPlacement(portrait, crop, scaleFactor);
@@ -159,18 +164,18 @@ async function renderPortrait(source: string, crop: Crop): Promise<Blob> {
   canvas.width = place.width;
   canvas.height = place.height;
   const context = canvas.getContext('2d');
-  if (!context) throw new Error('No se pudo preparar la imagen.');
+  if (!context) throw new Error(prepareError);
   context.drawImage(portrait, place.x, place.y, place.drawWidth, place.drawHeight);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(
-      (blob) => (blob ? resolve(blob) : reject(new Error('No se pudo preparar la imagen.'))),
+      (blob) => (blob ? resolve(blob) : reject(new Error(prepareError))),
       'image/png',
     );
   });
 }
 
-async function createBadge(fields: Fields, photo: string | null, crop: Crop) {
+async function createBadge(fields: Fields, photo: string | null, crop: Crop, copy: Copy) {
   const scaleFactor = 3;
   const canvas = document.createElement('canvas');
   canvas.width = 430 * scaleFactor;
@@ -198,16 +203,22 @@ async function createBadge(fields: Fields, photo: string | null, crop: Crop) {
   context.fillRect(32, 482, 310, 62);
   context.fillStyle = '#f7ffd2';
   context.font = '600 15px ui-monospace, monospace';
-  context.fillText(`${fields.name || 'TU NOMBRE'} ${fields.surname || 'APELLIDO'}`.toUpperCase(), 32, 508);
+  context.fillText(`${fields.name || copy.badgeName} ${fields.surname || copy.badgeSurname}`.toUpperCase(), 32, 508);
   context.fillStyle = '#f7ffd2';
   context.font = '10px ui-monospace, monospace';
   const icon = await loadImage('/icons/icon-logo.svg');
   context.drawImage(icon, 32, 520, 13, 13);
-  context.fillText((fields.organization || 'TU ORGANIZACIÓN').toUpperCase(), 55, 532);
+  context.fillText((fields.organization || copy.badgeOrganization).toUpperCase(), 55, 532);
   return canvas.toDataURL('image/png');
 }
 
-export function Registration() {
+type Props = {
+  copy: Copy;
+  /** El subtítulo del hero entra en el resumen del `.ics`. */
+  subtitle: readonly string[];
+};
+
+export function Registration({ copy, subtitle }: Props) {
   const [fields, setFields] = useState<Fields>(INITIAL);
   /** URL local para pintar la credencial mientras se rellena el formulario. */
   const [photo, setPhoto] = useState<string | null>(null);
@@ -239,7 +250,7 @@ export function Registration() {
     // se escribe en un campo.
     setIsBadgeUpdating(true);
     const timeout = window.setTimeout(() => {
-      createBadge(fields, photo, crop)
+      createBadge(fields, photo, crop, copy)
         .then((image) => {
           if (!active) return;
           setFrontImage(image);
@@ -255,7 +266,7 @@ export function Registration() {
       active = false;
       window.clearTimeout(timeout);
     };
-  }, [fields, photo, crop]);
+  }, [fields, photo, crop, copy]);
 
   // Quien vuelve con la asistencia ya confirmada entra directo al resumen, y con
   // los datos que guardó: el formulario arranca con ellos por si los edita.
@@ -287,7 +298,7 @@ export function Registration() {
   const isSummary = isConfirmed && !isEditing;
 
   // Al volver desde el resumen ya no se verifica nada: se edita.
-  const title = isConfirmed ? 'Edita tu información' : 'Verifica tu información';
+  const title = isConfirmed ? copy.titleEdit : copy.titleVerify;
 
   function update(field: keyof Fields) {
     return (event: ChangeEvent<HTMLInputElement>) => {
@@ -310,7 +321,7 @@ export function Registration() {
     const file = event.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      setErrors((current) => ({ ...current, photo: 'Elige un archivo de imagen.' }));
+      setErrors((current) => ({ ...current, photo: copy.errors.photoType }));
       return;
     }
     setErrors((current) => ({ ...current, photo: undefined }));
@@ -339,13 +350,13 @@ export function Registration() {
   function validate() {
     const next: Errors = {};
     (['name', 'surname', 'email', 'organization', 'role'] as const).forEach((field) => {
-      if (!fields[field].trim()) next[field] = 'Este dato es obligatorio.';
+      if (!fields[field].trim()) next[field] = copy.errors.required;
     });
-    if (fields.email && !/^\S+@\S+\.\S+$/.test(fields.email)) next.email = 'Escribe un correo válido.';
+    if (fields.email && !/^\S+@\S+\.\S+$/.test(fields.email)) next.email = copy.errors.email;
     // La foto solo se exige al confirmar por primera vez. Al volver a editar no
     // está en memoria —no se guarda en el navegador—, y pedirla otra vez
     // bloquearía una corrección de rol tras la que nadie sube una foto.
-    if (!photo && !photoUrl && !isConfirmed) next.photo = 'Sube una fotografía para generar tu credencial.';
+    if (!photo && !photoUrl && !isConfirmed) next.photo = copy.errors.photo;
     return next;
   }
 
@@ -367,14 +378,14 @@ export function Registration() {
     try {
       let uploaded = photoUrl;
       if (photo && !uploaded) {
-        setSavingStep('Subiendo tu imagen');
+        setSavingStep(copy.submitUploading);
         // Se sube el recorte, no el original: así la imagen guardada es la que
         // se ve en la credencial aunque el encuadre no viaje a la base.
-        uploaded = await uploadPhoto(await renderPortrait(photo, crop));
+        uploaded = await uploadPhoto(await renderPortrait(photo, crop, copy.errors.photoPrepare));
         setPhotoUrl(uploaded);
       }
 
-      setSavingStep('Guardando');
+      setSavingStep(copy.submitSaving);
       const response = await fetch('/api/registro', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -403,7 +414,7 @@ export function Registration() {
             Object.entries(payload.fields).filter(([field]) => known.has(field as keyof Errors)),
           ) as Errors);
         }
-        setSubmitError(payload.error ?? 'No se pudo guardar el registro.');
+        setSubmitError(payload.error ?? copy.errors.save);
         return;
       }
 
@@ -414,7 +425,7 @@ export function Registration() {
       // mismo estado. La fuente de verdad es la respuesta del servidor.
       confirm(payload.attendee);
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : 'No se pudo guardar el registro.');
+      setSubmitError(error instanceof Error ? error.message : copy.errors.save);
     } finally {
       setIsSaving(false);
       setSavingStep(null);
@@ -422,7 +433,7 @@ export function Registration() {
   }
 
   function addToCalendar() {
-    const url = URL.createObjectURL(eventCalendarFile());
+    const url = URL.createObjectURL(eventCalendarFile(copy, subtitle));
     const link = document.createElement('a');
     link.href = url;
     link.download = 'conexion500.ics';
@@ -442,7 +453,7 @@ export function Registration() {
     const blob = await (await fetch(frontImage)).blob();
     const file = new File([blob], 'mi-credencial-conexion500.png', { type: 'image/png' });
     if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
-      await navigator.share({ title: 'Mi credencial Conexión500', text: 'Nos vemos en Quito, Ecuador.', files: [file] });
+      await navigator.share({ title: copy.shareTitle, text: copy.shareText, files: [file] });
     } else {
       await navigator.clipboard?.writeText(window.location.href);
     }
@@ -467,20 +478,20 @@ export function Registration() {
       {isSummary ? (
         <div className={`${styles.form} ${styles.summary}`}>
           <header className={styles.header}>
-            <p className={styles.eyebrow}>Eres uno de los 100 invitados</p>
-            <h1>Hola {fields.name}</h1>
+            <p className={styles.eyebrow}>{copy.eyebrowConfirmed}</p>
+            <h1>{copy.greeting} {fields.name}</h1>
           </header>
 
           <section className={styles.block}>
-            <h2 className={styles.blockTitle}>Tu información</h2>
+            <h2 className={styles.blockTitle}>{copy.yourInformation}</h2>
             {/* Los rótulos van ocultos: el dato se reconoce solo y el diseño pide
                 una lista limpia, pero sin ellos un lector de pantalla leería una
                 ristra de valores sueltos. */}
             <dl className={styles.data}>
               {([
-                ['Correo', fields.email],
-                ['Organización', fields.organization],
-                ['Rol', fields.role],
+                [copy.fields.email, fields.email],
+                [copy.fields.organization, fields.organization],
+                [copy.fields.role, fields.role],
               ] as const).map(([label, value]) => (
                 <div key={label}>
                   <dt>{label}</dt>
@@ -495,16 +506,16 @@ export function Registration() {
               )}
             </dl>
             <button className={styles.edit} type="button" onClick={() => setIsEditing(true)}>
-              Editar mis datos
+              {copy.edit}
             </button>
           </section>
 
           <section className={styles.block}>
-            <h2 className={styles.blockTitle}>Información del evento</h2>
+            <h2 className={styles.blockTitle}>{copy.eventInformation}</h2>
             <div className={styles.data}>
-              <p className={styles.eventDate}>{SITE.event.dateLongLabel}</p>
+              <p className={styles.eventDate}>{copy.dateLongLabel}</p>
               <p className={styles.eventTime}>
-                {SITE.event.schedule.label} <span>({SITE.event.schedule.note})</span>
+                {SITE.event.scheduleLabel} <span>({copy.scheduleNote})</span>
               </p>
               <a className={styles.eventVenue} href={SITE.event.venue.mapsUrl} target="_blank" rel="noreferrer">
                 {SITE.event.venue.name}
@@ -513,13 +524,13 @@ export function Registration() {
           </section>
 
           <button className={styles.calendar} type="button" onClick={addToCalendar}>
-            Añadir a mi calendario
+            {copy.addToCalendar}
           </button>
         </div>
       ) : (
       <form className={styles.form} onSubmit={submit} noValidate>
         <header className={styles.header}>
-          <p className={styles.eyebrow}>{isConfirmed ? 'Eres uno de los 100 invitados' : 'Quedan: 5 lugares'}</p>
+          <p className={styles.eyebrow}>{isConfirmed ? copy.eyebrowConfirmed : copy.eyebrowOpen}</p>
           <h1>{title}</h1>
           <div className={styles.photoActions}>
             <button
@@ -529,7 +540,7 @@ export function Registration() {
               disabled={isRemovingBackground}
               onClick={() => fileInputRef.current?.click()}
             >
-              <span>{isRemovingBackground ? 'Quitando fondo…' : photo ? 'Cambiar imagen' : 'Cargar una imagen'}</span>
+              <span>{isRemovingBackground ? copy.photoRemoving : photo ? copy.photoChange : copy.photoUpload}</span>
               {isRemovingBackground && (
                 <span className={styles.pixelLoader} aria-hidden>
                   {Array.from({ length: 9 }, (_, index) => <i key={index} />)}
@@ -537,7 +548,7 @@ export function Registration() {
               )}
             </button>
             {photo && (
-              <button className={styles.cropTrigger} type="button" onClick={() => setIsCropEditorOpen(true)} aria-label="Ajustar encuadre de la fotografía">
+              <button className={styles.cropTrigger} type="button" onClick={() => setIsCropEditorOpen(true)} aria-label={copy.cropAdjust}>
                 <span className={styles.cropIcon} aria-hidden />
               </button>
             )}
@@ -548,7 +559,8 @@ export function Registration() {
 
         <fieldset className={styles.fields} disabled={isRemovingBackground} aria-busy={isRemovingBackground}>
           {([
-            ['name', 'Nombre'], ['surname', 'Apellido'], ['email', 'Correo'], ['organization', 'Organización'], ['role', 'Rol'], ['linkedin', 'LinkedIn (opcional)'],
+            ['name', copy.fields.name], ['surname', copy.fields.surname], ['email', copy.fields.email],
+            ['organization', copy.fields.organization], ['role', copy.fields.role], ['linkedin', copy.fields.linkedin],
           ] as const).map(([field, label]) => (
             <label className={styles.field} data-error={errors[field] || undefined} data-suggestions={field === 'email' && focusedField === 'email' && emailSuggestions(fields.email).length ? '' : undefined} key={field}>
               <span>{label}</span>
@@ -561,7 +573,7 @@ export function Registration() {
                 aria-autocomplete={field === 'email' ? 'list' : undefined}
               />
               {field === 'email' && focusedField === 'email' && emailSuggestions(fields.email).length > 0 && (
-                <span className={styles.emailSuggestions} role="listbox" aria-label="Sugerencias de correo">
+                <span className={styles.emailSuggestions} role="listbox" aria-label={copy.emailSuggestions}>
                   {emailSuggestions(fields.email).map((suggestion) => (
                     <button key={suggestion} type="button" role="option" aria-selected={false} onMouseDown={(event) => event.preventDefault()} onClick={() => { setFields((current) => ({ ...current, email: suggestion })); setFocusedField(null); }}>
                       {suggestion}
@@ -576,21 +588,19 @@ export function Registration() {
 
         <button className={styles.submit} type="submit" disabled={isSaving || isRemovingBackground}>
           {isSaving && <span className={styles.spinner} aria-hidden />}
-          {isSaving ? savingStep ?? 'Guardando' : isConfirmed ? 'Guardar cambios' : 'Confirmar asistencia'}
+          {isSaving ? savingStep ?? copy.submitSaving : isConfirmed ? copy.save : copy.submit}
         </button>
         {submitError && <p className={styles.submitError} role="alert">{submitError}</p>}
-        {isConfirmed ? (
+        {isConfirmed && (
           <button className={styles.cancel} type="button" onClick={() => setIsEditing(false)}>
-            Cancelar
+            {copy.cancel}
           </button>
-        ) : (
-          <a className={styles.invite} href="#invitacion">¿No recibiste invitación?</a>
         )}
       </form>
       )}
 
       <aside className={styles.preview} data-updating={isBadgeUpdating || undefined}>
-        <LanyardBoundary frontImage={frontImage}>
+        <LanyardBoundary frontImage={frontImage} label={copy.badgePreview}>
           <Lanyard
             position={[0, 0, 15]}
             gravity={[0, -40, 0]}
@@ -605,18 +615,18 @@ export function Registration() {
         </LanyardBoundary>
         {isConfirmed && (
           <div className={styles.actions}>
-            <button type="button" onClick={download}>Descargar</button>
-            <button type="button" onClick={share} aria-label="Compartir credencial">↗</button>
+            <button type="button" onClick={download}>{copy.download}</button>
+            <button type="button" onClick={share} aria-label={copy.share}>↗</button>
           </div>
         )}
       </aside>
 
       {isCropEditorOpen && photo && (
-        <div className={styles.cropModal} role="dialog" aria-modal="true" aria-label="Ajustar fotografía">
+        <div className={styles.cropModal} role="dialog" aria-modal="true" aria-label={copy.cropTitle}>
           <div className={styles.cropDialog}>
             <div className={styles.cropHeading}>
-              <div><p>Ajusta tu fotografía</p><span>Arrastra para encuadrar la imagen</span></div>
-              <button type="button" onClick={() => setIsCropEditorOpen(false)} aria-label="Cerrar editor">×</button>
+              <div><p>{copy.cropTitle}</p><span>{copy.cropHint}</span></div>
+              <button type="button" onClick={() => setIsCropEditorOpen(false)} aria-label={copy.cropClose}>×</button>
             </div>
             <div
               className={styles.cropViewport}
@@ -634,11 +644,11 @@ export function Registration() {
               <span className={styles.cropFrame} aria-hidden />
             </div>
             <div className={styles.cropControls}>
-              <label>Zoom<input type="range" min="0.8" max="2.8" step="0.05" value={crop.zoom} onChange={(event) => setCrop((current) => ({ ...current, zoom: Number(event.target.value) }))} /></label>
-              <label>Horizontal<input type="range" min="-70" max="70" value={crop.x} onChange={(event) => setCrop((current) => ({ ...current, x: Number(event.target.value) }))} /></label>
-              <label>Vertical<input type="range" min="-90" max="90" value={crop.y} onChange={(event) => setCrop((current) => ({ ...current, y: Number(event.target.value) }))} /></label>
+              <label>{copy.cropZoom}<input type="range" min="0.8" max="2.8" step="0.05" value={crop.zoom} onChange={(event) => setCrop((current) => ({ ...current, zoom: Number(event.target.value) }))} /></label>
+              <label>{copy.cropHorizontal}<input type="range" min="-70" max="70" value={crop.x} onChange={(event) => setCrop((current) => ({ ...current, x: Number(event.target.value) }))} /></label>
+              <label>{copy.cropVertical}<input type="range" min="-90" max="90" value={crop.y} onChange={(event) => setCrop((current) => ({ ...current, y: Number(event.target.value) }))} /></label>
             </div>
-            <button className={styles.cropConfirm} type="button" onClick={() => setIsCropEditorOpen(false)}>Usar este encuadre</button>
+            <button className={styles.cropConfirm} type="button" onClick={() => setIsCropEditorOpen(false)}>{copy.cropConfirm}</button>
           </div>
         </div>
       )}

@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   /* La cabecera está fuera del armazón, así que se descuenta. */
-  min-height: calc(100dvh - var(--header-height));
+  min-height: calc(100dvh - var(--header-height) - var(--header-rule));
   /* Recorta lo que sangra a los lados (la capa de medios y la cinta miden un
      viewport) sin acotarlo al ancho del contenido, que es lo que hacía el hero.
      `clip` y no `hidden`: no crea contenedor de scroll, así que no rompería un
