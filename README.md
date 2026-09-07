@@ -25,7 +25,7 @@ src/
 ├─ config/                   site.ts, faq.ts, pages.ts, speakers.ts: copy y datos
 ├─ features/
 │  ├─ hero-creature/         Colibrí por píxeles: estroboscopio + magnetismo
-│  ├─ transitions/pixel-reveal/  PixelReveal + usePixelGrid
+│  ├─ transitions/stairs-reveal/ StairsReveal: columnas escalonadas
 │  └─ loader/                Feature autocontenida
 │     ├─ components/         Loader, LoaderGate, LoaderMark, FrameSequence, ProgressCounter
 │     ├─ hooks/              useImagePreloader, useLoaderProgress, useFrameSequence
@@ -612,47 +612,50 @@ Cada pregunta es un `<button>` con `aria-expanded`, enlazado a su panel por
 `<h3>` envuelven al botón en vez de sustituirlo, así que el índice de la página
 sigue teniendo sentido y el acordeón se maneja con teclado.
 
-## Transición de píxeles
+## Transición de escaleras
 
-`src/features/transitions/pixel-reveal/` — malla de cuadros que tapa la pantalla
-y la vuelve a destapar, en dos fases:
+`src/features/transitions/stairs-reveal/` — columnas que tapan la pantalla y la
+vuelven a destapar, en dos fases:
 
-1. **Cubrir**: cada píxel escala 0 → 1 en una ola que sube de abajo hacia arriba.
-2. **Revelar**: la misma ola, ahora 1 → 0, dejando ver el hero.
+1. **Cubrir**: cada columna crece desde los bordes hacia el centro, con un
+   desfase de izquierda a derecha.
+2. **Revelar**: la misma ola, ahora encogiendo, dejando ver el hero.
 
 Claves de la implementación:
 
 - El corte de loader → página ocurre **con la pantalla tapada** (`onCovered`).
   Por eso `LoaderGate` tiene fases separadas `covering` y `revealing`: si el
-  loader se desmontara al llegar a 100, el salto se vería por los huecos.
-- El desfase aleatorio por celda (`jitter`) es lo que evita que se lea como una
-  persiana. Sin él la ola es una línea recta.
-- Los colores se reparten por altura: verde en toda la pantalla, azul y crema
-  solo en la zona baja (`paletteWeights`), como en la referencia.
-- Solo se anima `scale`, sin `will-change`: son cientos de nodos y promoverlos
-  todos a capa propia agota memoria de GPU.
-- La malla habla el lenguaje del campo de píxeles del hero: cuadros grandes y
-  contiguos (media celda del asset, 74.25px) en lugar de la malla fina con huecos
-  de versiones anteriores, que venía del colibrí de píxeles y ya no está en la
-  página. A celda completa salen 54 cuadros en pantalla y la ola no tiene
-  resolución para leerse; a la mitad, unas 216.
-- El color reproduce el degradado del campo: verde oscuro arriba, lima abajo, con
-  un 16 % de celdas en lima como las brillantes del campo. Que la fila superior
-  sea casi del color del fondo no impide tapar el cambio de contenido —las celdas
-  siguen siendo opacas— y a cambio la malla se lee como el campo materializándose.
-- La aleatoriedad va con semilla (`src/lib/random.ts`) para que servidor y
-  cliente generen la misma malla y no haya desajuste de hidratación.
-- `prefers-reduced-motion`: se conserva el corte, pero sin ola ni desorden.
+  loader se desmontara al llegar a 100, el salto se vería entre las columnas.
+- **El desfase es el efecto.** En cualquier instante los cantos de las columnas
+  forman una diagonal escalonada; sin desfase es una persiana.
+- Cada columna son **dos paneles**, uno anclado arriba y otro abajo, que se
+  encuentran en el centro. Con uno solo la pantalla se cubriría desde un borde;
+  con dos, el movimiento entra por los dos cantos y el escalón se lee en
+  simetría.
+- Se anima `scaleY`, **no `height`**: la altura recalcula la maqueta en cada
+  cuadro y la escala se queda en el compositor. Son veinte nodos, así que aquí sí
+  llevan `will-change`.
+- El degradado se reparte entre los dos paneles —verde oscuro arriba, lima
+  abajo—, así que con la pantalla cubierta se lee como una sola superficie y no
+  como dos bandas. Cada panel lleva un píxel de más en alto y ancho para cerrar
+  las costuras de subpíxel.
+- El recuento de columnas se mide **al montar**, no en cada `resize`: cambiarlo a
+  mitad de la animación dejaría columnas nuevas en escala 0 y destaparía franjas.
+- Va con **GSAP y no con Framer Motion** —aunque el efecto venga de un ejemplo en
+  Framer— porque `onCovered` tiene que dispararse en el instante exacto en que no
+  queda hueco, y una línea de tiempo lo dice sin depender de qué elemento termina
+  último.
+- `prefers-reduced-motion`: se conserva el corte, pero sin escalera.
 
-Ajustes en `config/pixelReveal.config.ts`:
+Ajustes en `config/stairsReveal.config.ts`:
 
 | Campo | Qué hace |
 |---|---|
-| `pitch` / `cellSize` | Paso 37.04 y cuadro 30.5 (de ahí los huecos) |
-| `cellDuration` | Escalado de un píxel (0.2 s) |
-| `coverSpan` / `revealSpan` | Recorrido de la ola (0.45 / 0.5 s) |
-| `jitter` | Desorden dentro de cada fila (0.12 s) |
+| `columns` / `mobileColumns` | 10 y 6: a 10 columnas en móvil el escalón no se lee |
+| `panelDuration` | Recorrido de una columna (0.5 s) |
+| `columnStagger` | Desfase entre columnas (0.05 s) |
 | `holdS` | Pausa con la pantalla cubierta (0.06 s) |
+| `ease` | `power1.inOut`, el equivalente de la curva del efecto original |
 
 ## Ancho de página y retícula
 
@@ -1118,6 +1121,9 @@ vive solo en el navegador. Al llegar el backend, el punto de enganche es
   de tinta clara (`*-light.svg`), pensadas para fondo oscuro, y en claro quedan
   crema sobre crema. Hacen falta las dos variantes y un `ThemedImage`, como el
   logotipo. El tema claro sigue sin repasarse entero.
+- `features/transitions/pixel-reveal/` quedó **sin usar** al entrar la transición
+  de escaleras. Se dejó en su sitio por si hay que volver a ella; si no, se
+  borra la carpeta.
 - Los enlaces legales del pie apuntan a anclas de relleno (`#terminos`,
   `#privacidad`) y las redes a los dominios genéricos: faltan las URL reales.
 - `hero/hero-green-pixels-2.svg` quedó sin uso al retirarse el campo del hero.

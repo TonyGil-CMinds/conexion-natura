@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { PixelReveal } from '@/features/transitions/pixel-reveal';
+import { StairsReveal } from '@/features/transitions/stairs-reveal';
 import { RevealProvider } from '../context/reveal';
 import { Loader } from './Loader';
 import styles from './LoaderGate.module.css';
@@ -28,7 +28,7 @@ const PENDING_ATTR = 'data-loader-pending';
  *
  * `covering` y `revealing` existen por separado porque el cambio de loader a
  * página tiene que ocurrir con la pantalla tapada. Si se desmontara el loader al
- * llegar a 100 se vería el salto por los huecos de la malla.
+ * llegar a 100 se vería el salto entre las columnas.
  */
 type Phase = 'loading' | 'covering' | 'revealing' | 'done';
 
@@ -56,8 +56,8 @@ export function LoaderGate({ children, preload }: Props) {
   const handleLoaded = useCallback(() => setPhase('covering'), []);
   const handleCovered = useCallback(() => {
     setPhase('revealing');
-    // La malla ya tapa la pantalla: la cabecera puede volver sin que se vea
-    // aparecer, y así está en su sitio cuando la malla se retire.
+    // Las columnas ya tapan la pantalla: la cabecera puede volver sin que se vea
+    // aparecer, y así está en su sitio cuando se retiren.
     document.documentElement.removeAttribute(PENDING_ATTR);
   }, []);
   const handleRevealed = useCallback(() => {
@@ -89,7 +89,7 @@ export function LoaderGate({ children, preload }: Props) {
       {isLoaderMounted && <Loader preload={preload} onComplete={handleLoaded} />}
 
       {phase !== 'done' && (
-        <PixelReveal
+        <StairsReveal
           isActive={phase !== 'loading'}
           onCovered={handleCovered}
           onComplete={handleRevealed}

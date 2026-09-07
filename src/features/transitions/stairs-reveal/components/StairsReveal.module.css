@@ -1,0 +1,64 @@
+/**
+ * Capa de la transición. Por encima del loader y de la cabecera, y sin recoger
+ * clics: mientras se mueve, la página de debajo ya es interactiva.
+ */
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-transition);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/**
+ * Una columna por escalón. El píxel de más en el ancho cierra la costura de
+ * subpíxel entre columnas: sin él, al cubrir se ven rayas del fondo. Lo que
+ * sobresale de la última lo recorta la capa.
+ */
+.column {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--index) * 100% / var(--columns));
+  width: calc(100% / var(--columns) + 1px);
+}
+
+/**
+ * Los dos paneles de la columna. Arrancan en escala 0 —apagados por el cliente,
+ * que es quien los enciende— y crecen desde su canto hacia el centro.
+ *
+ * El píxel de más en el alto evita la costura donde se encuentran.
+ */
+.panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: calc(50% + 1px);
+  transform: scaleY(0);
+  will-change: transform;
+}
+
+.top {
+  top: 0;
+  transform-origin: top;
+  /**
+   * El degradado reproduce el del campo del hero —verde oscuro arriba, lima
+   * abajo— repartido entre los dos paneles, así que con la pantalla cubierta se
+   * lee como una sola superficie y no como dos bandas.
+   */
+  background-image: linear-gradient(
+    to bottom,
+    var(--color-surface) 0%,
+    color-mix(in srgb, var(--color-lime-soft) 50%, var(--color-surface)) 100%
+  );
+}
+
+.bottom {
+  bottom: 0;
+  transform-origin: bottom;
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-lime-soft) 50%, var(--color-surface)) 0%,
+    var(--color-lime-soft) 100%
+  );
+}

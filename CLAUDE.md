@@ -99,6 +99,10 @@ enlace de invitación lo daba de hecho, y `--hero-bottom` estaba sin usar.
 Los hooks compartidos entre features viven en `src/hooks/` (p. ej.
 `useStrobeEntrance`). Si solo lo usa una feature, se queda dentro de ella.
 
+La del loader al hero es `stairs-reveal`: columnas que crecen desde los dos
+cantos hacia el centro con desfase de izquierda a derecha —el desfase es lo que
+dibuja la escalera—. Se anima `scaleY`, no `height`.
+
 Cada transición es una feature en `src/features/transitions/`. Regla: quien
 transiciona no decide *qué* se muestra — expone `onCovered` (pantalla tapada,
 momento seguro para cambiar contenido) y `onComplete`; el orquestador decide.
