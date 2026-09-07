@@ -582,7 +582,8 @@ encuentre el momento aunque las dos palabras no vayan seguidas. Busca en todo el
 texto de la fila, créditos y hora incluidos. Sin resultados sale un aviso entre
 los mismos dos filetes que ocupaba la lista, para que la página no salte.
 
-El texto no llega a tocar los filetes: `.inner` declara un `--gutter` que gasta
+El texto no llega a tocar los filetes: `.inner` declara un `--schedule-gutter`
+que gasta
 cada bloque por su cuenta —la entradilla, la barra, cada fila—, y **no** como
 `padding` de `.inner`. Puesto ahí, los filetes horizontales de las filas se
 quedaban cortos por los dos lados en vez de cruzar de vertical a vertical. El
@@ -632,6 +633,28 @@ columna—.
 
 ### Ponentes
 
+**Sin acordeón.** La ficha entera está a la vista: retrato, nombre, cargo,
+enlace y sesiones, en tres columnas. Antes había un control de apertura —un
+signo `+`— que escondía el enlace y las sesiones, y como solo podía haber una
+ficha abierta a la vez, comparar dos ponentes pedía abrir, cerrar y volver a
+abrir. Todo el contenido de una fila es corto y cabe sin desplegarse, así que la
+retícula es la misma siempre y nada se recoloca al interactuar.
+
+Lo único que se abre es la **sesión**, porque su título va recortado a una línea
+en la fila: al pulsarla sale entero y **con su hora**. La hora no se copia a la
+ficha del ponente —una hora duplicada es una hora que se corrige a medias—: las
+sesiones llevan el mismo `id` que el momento de la agenda, así que la página
+cruza los dos y le pasa a la lista un mapa de `id` a franja horaria.
+
+Una sesión abierta por ficha: son dos como máximo, y con las dos abiertas —el
+título ocupa varias líneas— la fila se estiraba de más.
+
+Las cajas de sesión se estiran a su columna (`align-items: stretch`). Con el eje
+transversal al principio, cada una se encogía a su texto —el `width: 100%` del
+botón se medía contra un elemento de lista ya ajustado al contenido— y quedaban
+de anchos distintos. En móvil las sesiones pasan debajo, a todo el ancho: el
+título de una sesión no cabe en media columna a ese ancho.
+
 La lista solo incluye a quienes constan **con cargo y organización**: inventarle
 un título a una persona real es peor que no listarla. Quienes presentan un
 momento pero no traen cargo aparecen en la agenda —donde el crédito es un nombre—
@@ -641,6 +664,18 @@ La ficha tiene un cargo y una organización, así que quien tiene dos afiliacion
 lleva la principal; la otra consta en el crédito de la agenda, donde cabe entera.
 
 ### Bloque en degradado (Ponentes)
+
+El asset (`asset-escalera.svg`) es casi cuadrado, 429×435, y ahí estaba la
+trampa: medido por el **alto** de la portada —`background-size: auto 100%`— su
+ancho salía igual al alto. A 390×844 la portada mide 439px de alto, así que la
+escalera pedía 433px de ancho sobre una pantalla de 390: **tapaba la foto
+entera**. En tablet se comía dos tercios.
+
+Ahora el bloque tiene un tope de ancho (40% de la portada) y el dibujo va con
+`background-size: contain`, que respeta la proporción y se ajusta al lado que
+primero se agota: en escritorio se agota el alto y la escalera queda exactamente
+igual que antes (410×416 a 1280), y en estrecho se agota el ancho y baja de
+tamaño en vez de invadir la foto (156px a 390).
 
 `asset-escalera.svg` (429×435), apoyado en la esquina inferior derecha de la
 portada con `background-size: auto 100%`: se ajusta a la altura y el ancho lo pone
@@ -1188,6 +1223,29 @@ nombre, así que el sufijo se escribe una vez:
 `metadataBase` sale del entorno (`NEXT_PUBLIC_SITE_URL`, o el dominio que Vercel
 pone en `VERCEL_PROJECT_PRODUCTION_URL`). Sin base, `canonical` y las
 alternativas `hreflang` salen relativas y el buscador no puede resolverlas.
+
+## Desbordes que no se ven
+
+`PageFrame` recorta con `overflow-x: clip`, y eso tiene una consecuencia
+incómoda: **lo que se sale no produce barra de scroll**, simplemente aparece
+cortado. Dos casos encontrados así, midiendo cajas y no mirando la pantalla:
+
+- **El CTA del pie**, 414px de botón sobre pantallas de 360-390: se salía 27px
+  por la izquierda. La causa no era el botón —su `max-width: 100%` ya lo
+  encogía— sino su envoltorio, que como elemento flex ajustado al contenido se
+  quedaba con los 414px que el botón *pide*, aunque el botón ya midiera 305. El
+  arreglo es darle un ancho definido (`align-self: stretch` y centrar dentro).
+  Corolario: un `max-width: 100%` solo acota si su padre tiene ancho definido,
+  porque al medir el contenido ese 100% todavía no está resuelto.
+- **El hero a 360×640**: el `min-height: max(590px, …)` forzaba 590px de hero, y
+  con la cabecera son 661 sobre 640 de pantalla. La página se iba 21px por
+  debajo del viewport con la cinta de la cuenta atrás cortada. El suelo no hacía
+  falta: es un mínimo, no un máximo, así que si el contenido pidiera más, la caja
+  crece sola.
+
+Lo que **sí** se sale a propósito y por eso no cuenta: la cinta de la cuenta
+atrás, que mide más que el viewport, y la rama del ave en móvil, que sangra 20px
+por el canto derecho.
 
 ## Verificación visual
 

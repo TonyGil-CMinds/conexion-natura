@@ -76,7 +76,18 @@
   font-weight: 700;
 }
 
+/**
+ * Se estira a la columna y centra el botón dentro.
+ *
+ * El estirón es lo que arregla el corte en móvil: como elemento flex ajustado al
+ * contenido, el envoltorio se quedaba con los 414px que pide el botón —aunque el
+ * botón ya se hubiera encogido— y se salía 27px por la izquierda a 360px de
+ * ancho. Con un ancho definido, el `max-width: 100%` del botón sí acota.
+ */
 .cta {
+  align-self: stretch;
+  display: flex;
+  justify-content: center;
   margin-top: var(--space-8);
 }
 

@@ -33,6 +33,12 @@ export default async function SpeakersPage({ params }: Props) {
   if (!isLocale(locale)) notFound();
   const t = getDictionary(locale);
   const { cover, coverSeed, coverDensity, introIcon } = PAGES.speakers;
+  /**
+   * La hora de cada sesión sale de la agenda, no de la ficha del ponente: las
+   * sesiones llevan el mismo id que el momento, así que basta cruzarlas. Copiar
+   * la hora a los ponentes daría dos sitios donde corregirla.
+   */
+  const sessionTimes = Object.fromEntries(t.agenda.items.map((item) => [item.id, item.time]));
 
   return (
     <PageFrame hasColumnRules={false} locale={locale}>
@@ -49,6 +55,7 @@ export default async function SpeakersPage({ params }: Props) {
         title={t.speakers.listTitle}
         speakers={t.speakers.items}
         sessionsLabel={t.speakers.sessionsLabel}
+        sessionTimes={sessionTimes}
       />
     </PageFrame>
   );

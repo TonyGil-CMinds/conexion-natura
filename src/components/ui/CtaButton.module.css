@@ -7,6 +7,14 @@
   /* Ancho fijo por diseño. Con `min(..., 100%)` el 100% se resolvía contra un
      contenedor que a su vez se ajustaba al contenido, así que ganaba el texto. */
   width: var(--cta-w);
+  /**
+   * El tope es del contenedor, y por eso **quien lo use tiene que darle un ancho
+   * definido**: un `max-width: 100%` colgado de un padre que se ajusta al
+   * contenido no acota nada, porque al medir el contenido el 100% no está
+   * resuelto todavía. Le pasaba al CTA del pie —414px de botón sobre una pantalla
+   * de 360, cortado y en silencio, porque `PageFrame` recorta y no aparece barra
+   * de scroll—.
+   */
   max-width: 100%;
 }
 

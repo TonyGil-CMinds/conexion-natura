@@ -119,7 +119,14 @@
 
 @media (max-width: 640px) {
   .root {
-    min-height: max(590px, calc(100svh - var(--header-height) - var(--header-rule)));
+    /**
+     * Una pantalla justa, sin suelo en píxeles. El `max(590px, …)` que había
+     * aquí forzaba 590px de hero en pantallas bajas —a 360×640, 590 + 71 de
+     * cabecera son 661 y la página se iba 21px por debajo del viewport, con la
+     * cinta de la cuenta atrás cortada—. Y no hacía falta: esto es un mínimo, no
+     * un máximo, así que si algún día el contenido pide más, la caja crece sola.
+     */
+    min-height: calc(100svh - var(--header-height) - var(--header-rule));
   }
 
   .content {

@@ -153,6 +153,19 @@ de la cadena al pintar.
 El titular se define por **tramos**, no por líneas (`SITE.event.headline`): el
 resalte cae a mitad de línea, así que el color es decisión de diseño por tramo.
 
+## Desbordes
+
+`PageFrame` recorta con `overflow-x: clip`: lo que se sale no saca barra de
+scroll, sale cortado y en silencio. Hay que medir cajas, no mirar la pantalla. Un
+`max-width: 100%` solo acota si su padre tiene ancho definido —al medir el
+contenido ese 100% no está resuelto—, y esto ya cortó el CTA del pie en móvil.
+
+En la ficha de ponente no hay acordeón: todo está a la vista y solo se abre la
+sesión, que saca su hora de la agenda cruzando el `id` (no se copia la hora).
+
+El bloque en escalera de la portada se mide con tope de ancho y `contain`: por
+alto, al ser el asset casi cuadrado, tapaba la foto entera en móvil.
+
 ## Verificación visual
 
 `node scripts/capture.js <url> <dir> <ms,ms,...> [WxH]` captura la página en

@@ -63,10 +63,26 @@
  */
 .gradientBlock {
   position: absolute;
-  inset: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  /**
+   * Nunca más de un 40% del ancho de la portada.
+   *
+   * El asset es casi cuadrado (429×435), así que midiéndolo por el alto de la
+   * portada —`background-size: auto 100%`, como estaba— su ancho salía igual al
+   * alto: a 390×844 la portada mide 439px de alto, la escalera pedía 433px de
+   * ancho sobre una pantalla de 390 y **tapaba la foto entera**. En tablet se
+   * comía dos tercios.
+   */
+  width: 40%;
   background-image: url('/img/asset-escalera.svg');
-  /* A la altura de la portada; el ancho lo pone la proporción del asset. */
-  background-size: auto 100%;
+  /**
+   * `contain` respeta la proporción y se ajusta al lado que primero se agota: en
+   * escritorio se agota el alto y la escalera queda igual que antes; en estrecho
+   * se agota el ancho y baja de tamaño en vez de invadir la foto.
+   */
+  background-size: contain;
   background-position: bottom right;
   background-repeat: no-repeat;
 }

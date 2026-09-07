@@ -1,10 +1,16 @@
 .root {
   margin-inline: var(--container-margin);
   padding-block: var(--space-12) var(--space-16);
+  /**
+   * Aire entre el texto y los filetes verticales, gastado por cada bloque y no
+   * como relleno del contenedor: así los filetes horizontales de las fichas
+   * siguen cruzando de vertical a vertical. Mismo criterio que en la agenda.
+   */
+  --speaker-gutter: var(--space-8);
 }
 
 .title {
-  padding-left: 24px;
+  padding-inline: var(--speaker-gutter);
   font-family: var(--font-body);
   font-size: 1.125rem;
   font-weight: 600;
@@ -16,42 +22,24 @@
   margin-top: var(--space-8);
 }
 
+/**
+ * Tres columnas: retrato, identidad y sesiones. Sin filas de más ni control de
+ * apertura —la ficha entera está a la vista—, así que la retícula es la misma
+ * abierta o cerrada y nada se recoloca al interactuar.
+ */
 .item {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) minmax(0, 1.15fr);
+  column-gap: var(--space-16);
+  align-items: start;
+  padding: var(--space-8) var(--speaker-gutter);
   border-top: 1px solid var(--rule);
 }
-
-
 
 .item:last-child {
   border-bottom: 1px solid var(--rule);
 }
 
-/**
- * La ficha es una retícula de cuatro columnas —retrato, nombre, cargo, control— y
- * dos filas: la segunda la ocupa el panel desplegable. El retrato abarca ambas.
- */
-.item {
-  display: grid;
-  grid-template-columns: 110px minmax(0, 1fr) minmax(0, 1.1fr) 40px;
-  column-gap: 64px;
-  align-items: center;
-  padding: 24px 32px;
-}
-
-.item[data-open] {
-  align-items: start;
-}
-
-/* Abierto sí abarca: el nombre sube y las sesiones ocupan la segunda fila. */
-.item[data-open] .portrait {
-  grid-row: 1 / span 2;
-}
-
-/**
- * Cerrado, el retrato ocupa solo su fila y marca la altura, así que el nombre se
- * centra con él. Abarcando las dos filas también cerrado se creaba una fila vacía
- * y el nombre quedaba arriba, con el hueco debajo.
- */
 .portrait {
   position: relative;
   width: 110px;
@@ -74,7 +62,15 @@
   object-position: center bottom;
 }
 
+/* Nombre, cargo y enlace en una columna: es un solo bloque de identidad. */
+.identity {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+
 .name {
+  margin: 0;
   font-family: var(--font-mono);
   font-size: var(--text-meta);
   line-height: 1.2;
@@ -93,13 +89,17 @@
   font-weight: 400;
 }
 
+/**
+ * El cargo va debajo del nombre y alineado a la izquierda con él. Antes vivía en
+ * su propia columna alineado a la derecha, contra el control de apertura: sin ese
+ * control, el texto a la derecha quedaba flotando lejos de la persona.
+ */
 .role {
-  max-width: none;
-  /* Alineado a la derecha de su columna, contra el control de apertura. */
-  text-align: right;
+  max-width: 34ch;
+  margin: 0;
   font-family: var(--font-mono);
   font-size: var(--text-note);
-  line-height: 1.4;
+  line-height: 1.5;
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
   color: color-mix(in srgb, var(--fg) 78%, transparent);
@@ -111,102 +111,7 @@
   text-underline-offset: 3px;
 }
 
-/* Control de apertura. El texto va oculto pero presente: es lo que anuncia la
-   acción, porque el signo es decorativo. */
-.toggle {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  margin-left: auto;
-  color: var(--accent-nav);
-}
-
-.toggleLabel {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-.sign,
-.sign::before {
-  content: '';
-  display: block;
-  background-color: currentColor;
-}
-
-.sign {
-  width: 14px;
-  height: 2px;
-}
-
-.sign::before {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 2px;
-  height: 14px;
-  transform: translate(-50%, -50%);
-  transition: opacity var(--duration-fast) var(--ease-out-expo);
-}
-
-.item[data-open] .sign::before {
-  opacity: 0;
-}
-
-/* El panel se anima en alto, así que el relleno va dentro. */
-.panel {
-  /* Ocupa de la segunda columna al final: el retrato ya tiene la primera. */
-  grid-column: 2 / -1;
-  overflow: hidden;
-}
-
-.panelInner {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-8);
-  padding-top: var(--space-6);
-}
-
-.sessionsLabel {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: var(--tracking-nav);
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--fg) 70%, transparent);
-}
-
-.sessionList {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  margin-top: var(--space-3);
-}
-
-.session {
-  /* Caja con filete, y el título recortado: los nombres de sesión son largos y en
-     la lista solo hacen de referencia. */
-  /* Se recorta al ancho disponible: en móvil, 305px se salían de la columna. */
-  max-width: min(305px, 100%);
-  padding: 10px 14px;
-  border: 1px solid var(--rule);
-  font-family: var(--font-mono);
-  font-size: var(--text-note);
-  letter-spacing: var(--tracking-eyebrow);
-  text-transform: uppercase;
-  color: var(--fg);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .linkedin {
-  grid-column: 3;
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -227,27 +132,123 @@
   height: 18px;
 }
 
+.sessionsLabel {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 70%, transparent);
+}
+
+/**
+ * `stretch` y no `flex-start`: con el eje transversal alineado al principio, cada
+ * sesión se encogía a su texto —el `width: 100%` del botón se medía contra un
+ * elemento de lista ya ajustado al contenido— y las cajas quedaban de anchos
+ * distintos. Estiradas, todas llegan al borde de su columna.
+ */
+.sessionList {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/**
+ * La sesión es un botón: al pulsarla sale el título entero con su hora.
+ *
+ * Cerrada recorta el título en una línea, porque los nombres de sesión son largos
+ * y en la lista solo hacen de referencia. Abierta deja de recortar y el texto
+ * ocupa las líneas que necesite.
+ */
+.session {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  padding: 10px 14px;
+  border: 1px solid var(--rule);
+  background-color: color-mix(in srgb, var(--fg) 4%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--fg);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-expo),
+    background-color var(--duration-fast) var(--ease-out-expo);
+}
+
+.session:hover {
+  border-color: color-mix(in srgb, var(--fg) 34%, transparent);
+}
+
+.session[data-open] {
+  border-color: var(--accent-nav);
+  background-color: color-mix(in srgb, var(--fg) 7%, transparent);
+}
+
+.sessionTitle {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.session[data-open] .sessionTitle {
+  white-space: normal;
+  overflow: visible;
+  line-height: 1.45;
+}
+
+/* La hora manda sobre el título cuando la sesión está abierta: es el dato que se
+   viene a buscar. En lima, como las horas de la agenda antes de bajarlas a gris. */
+.sessionTime {
+  display: block;
+  overflow: hidden;
+  color: var(--accent-nav);
+}
+
+.session[data-open] .sessionTime {
+  margin-bottom: 6px;
+}
+
 @media (max-width: 900px) {
-  .item {
-    grid-template-columns: 92px minmax(0, 1fr) 40px;
-    column-gap: var(--space-6);
-    row-gap: var(--space-2);
-    padding: 20px var(--space-4);
+  .root {
+    --speaker-gutter: var(--space-4);
   }
 
-  .role {
-    grid-column: 2;
+  /**
+   * Retrato e identidad arriba, sesiones debajo a todo el ancho: el título de una
+   * sesión no cabe en media columna a este ancho.
+   */
+  .item {
+    grid-template-columns: 92px minmax(0, 1fr);
+    column-gap: var(--space-6);
+    row-gap: var(--space-6);
+    padding: var(--space-6) var(--speaker-gutter);
   }
 
   .portrait {
     width: 92px;
     height: 118px;
-    grid-row: 1 / span 3;
   }
 
-  .panelInner {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-6);
+  .sessions {
+    grid-column: 1 / -1;
+  }
+
+  .session {
+    max-width: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .root {
+    --speaker-gutter: 0px;
   }
 }
