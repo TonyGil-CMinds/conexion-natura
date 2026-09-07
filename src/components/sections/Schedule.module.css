@@ -15,13 +15,23 @@
  */
 .inner {
   margin-inline: var(--container-margin);
+  /**
+   * Aire entre el texto y los filetes verticales. Nombre propio y no `--gutter`:
+   * ese es un token global de los bloques a pantalla completa. Se gasta en cada
+   * bloque —no como `padding` de `.inner`— para que los filetes horizontales de
+   * las filas sigan cruzando de vertical a vertical: con el relleno en `.inner`,
+   * las líneas se quedaban cortas por los dos lados.
+   */
+  --schedule-gutter: var(--space-8);
 }
 
 .intro {
-  max-width: 62ch;
+  /* En ch, así que la medida de lectura sigue al tamaño de la letra. */
+  max-width: 56ch;
   margin-bottom: var(--space-10);
+  padding-inline: var(--schedule-gutter);
   font-family: var(--font-body);
-  font-size: var(--text-answer);
+  font-size: var(--text-schedule-intro);
   line-height: 1.55;
   color: color-mix(in srgb, var(--fg) 78%, transparent);
 }
@@ -39,6 +49,7 @@
   justify-content: space-between;
   gap: var(--space-4);
   margin-bottom: var(--space-8);
+  padding-inline: var(--schedule-gutter);
 }
 
 /* Distintivo de la fecha: contorno y no relleno, para no competir con el CTA. */
@@ -63,9 +74,11 @@
 }
 
 .search {
+  --search-width: 305px;
   position: relative;
   display: flex;
   align-items: center;
+  width: min(var(--search-width), 100%);
 }
 
 /* El rótulo lo pide el lector de pantalla; a la vista basta el marcador. */
@@ -80,7 +93,7 @@
 }
 
 .searchInput {
-  width: min(305px, 100%);
+  width: 100%;
   padding: 10px 14px;
   border: 1px solid var(--rule);
   border-radius: 0;
@@ -101,10 +114,29 @@
   outline-offset: 1px;
 }
 
+/**
+ * Al escribir, el campo se ensancha un 10%: cabe una consulta más larga sin que
+ * el rótulo del sitio pierda su sitio en reposo.
+ *
+ * Solo de 641px arriba. En móvil el campo ya ocupa todo el ancho, y como
+ * `:focus` gana en especificidad a la clase, sin acotarlo por ancho esta regla
+ * le habría quitado el 100% justo al tocarlo.
+ */
+@media (min-width: 641px) {
+  .search {
+    transition: width 0.24s var(--ease-out-expo);
+  }
+
+  /* Crece el rótulo, que es quien tiene el ancho; el campo lo sigue al 100%. */
+  .search:focus-within {
+    width: min(calc(var(--search-width) * 1.1), 100%);
+  }
+}
+
 /* Ocupa el sitio de la lista para que la página no salte al filtrar. */
 .searchEmpty {
   margin: 0;
-  padding-block: var(--space-10);
+  padding: var(--space-10) var(--schedule-gutter);
   border-top: 1px solid var(--rule);
   border-bottom: 1px solid var(--rule);
   font-family: var(--font-mono);
@@ -129,7 +161,7 @@
   display: grid;
   grid-template-columns: 168px minmax(0, 1fr);
   gap: var(--space-6);
-  padding-block: var(--space-6);
+  padding: var(--space-10) var(--schedule-gutter);
   border-top: 1px solid var(--rule);
 }
 
@@ -155,7 +187,7 @@
 .title {
   margin: 0;
   font-family: var(--font-mono);
-  font-size: var(--text-question);
+  font-size: var(--text-schedule-title);
   font-weight: 400;
   line-height: 1.2;
   letter-spacing: 0;
@@ -179,8 +211,9 @@
 .credits {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--space-4) var(--space-8);
-  margin-top: var(--space-2);
+  gap: var(--space-6) var(--space-8);
+  /* El crédito es otro nivel de lectura, no la línea siguiente del párrafo. */
+  margin-top: var(--space-5);
 }
 
 /**
@@ -270,16 +303,17 @@
   color: color-mix(in srgb, var(--fg) 62%, transparent);
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 900px) {
   .inner {
-    margin-inline: var(--space-8);
+    --schedule-gutter: var(--space-4);
   }
 }
 
 /* En estrecho la hora pasa arriba: 168px de columna dejan el título sin sitio. */
 @media (max-width: 640px) {
+  /* Sin filetes verticales que esquivar, el aire lateral sobra. */
   .inner {
-    margin-inline: 24px;
+    --schedule-gutter: 0px;
   }
 
   /* El buscador a todo el ancho: escribir es lo que se hace aquí. */

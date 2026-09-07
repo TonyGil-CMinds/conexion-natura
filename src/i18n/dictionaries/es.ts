@@ -126,10 +126,7 @@ export const es = {
         title: 'La prosperidad comienza en el territorio',
         host: { name: 'Constanza Gómez Mont' },
         people: [
-          {
-            name: 'Juan Carlos Jintiach',
-            role: 'Secretario ejecutivo, Global Alliance of Territorial Communities',
-          },
+          { name: 'Juan Carlos Jintiach', organization: 'Global Alliance of Territorial Communities' },
         ],
       },
       {
@@ -148,8 +145,8 @@ export const es = {
           '¿Cuál es el propósito de los nuevos modelos de negocio? ¿Qué paradigma estamos transitando y cómo se vive desde el lado del inversionista?',
         host: { name: 'Regina Cervera' },
         people: [
-          { name: 'Nathalie Molina Niño', role: 'Fundadora, BRAVA Investments' },
-          { name: 'Israel Pons', role: 'CEO, Angel Nest Lat' },
+          { name: 'Nathalie Molina Niño', organization: 'BRAVA Investments' },
+          { name: 'Israel Pons', organization: 'Angel Nest Lat' },
         ],
       },
       {
@@ -158,8 +155,8 @@ export const es = {
         title: 'Idea Spark: de solución a industria',
         host: { name: 'Carolina Proaño', role: 'CEIBA' },
         people: [
-          { name: 'Gustavo Manrique', role: 'Fundador, Premios Verdes Latam' },
-          { name: 'Salah Goss', role: 'Chief Program Officer, Skoll Foundation' },
+          { name: 'Gustavo Manrique', organization: 'Premios Verdes Latam' },
+          { name: 'Salah Goss', organization: 'Skoll Foundation' },
         ],
       },
       {
@@ -168,7 +165,7 @@ export const es = {
         title: 'El continente que queremos habitar',
         description:
           '¿Qué pasaría si América Latina y el Caribe decidieran construir el futuro con —y no a costa de— lo que está vivo?',
-        people: [{ name: 'Pablo A. González', role: 'Cofundador, El Gato y La Caja' }],
+        people: [{ name: 'Pablo A. González', organization: 'El Gato y La Caja' }],
       },
       {
         id: 'brindis',

@@ -30,7 +30,11 @@ function normalize(value: string) {
 
 /** Todo el texto de un momento en una sola cadena, para buscar dentro. */
 function haystack(item: AgendaItem) {
-  const people = (item.people ?? []).flatMap((person) => [person.name, person.role]);
+  const people = (item.people ?? []).flatMap((person) => [
+    person.name,
+    person.role,
+    person.organization,
+  ]);
   return normalize(
     [item.time, item.title, item.description, item.host?.name, item.host?.role, ...people]
       .filter(Boolean)
@@ -133,7 +137,9 @@ export function Schedule({
                                 <span className={styles.swatch} data-role="people" aria-hidden />
                                 <span className={styles.who}>
                                   <span className={styles.name}>{person.name}</span>
-                                  {person.role && <span className={styles.role}>{person.role}</span>}
+                                  {person.organization && (
+                                    <span className={styles.role}>{person.organization}</span>
+                                  )}
                                 </span>
                               </li>
                             ))}

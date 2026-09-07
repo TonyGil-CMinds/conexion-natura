@@ -138,12 +138,17 @@ con esas proporciones, no a ojo.
 IBM Plex Mono para párrafos y textos corridos (FAQ, cuerpos de texto). Departure
 Mono para el hero, el loader, rótulos de sección y datos.
 
+En móvil no hay filetes verticales en ninguna ruta: los apaga PageFrame, los dos
+interiores y los dos del contenedor.
+
 La agenda es la única página interior que usa el ancho entero entre los filetes
 exteriores: por eso va con `hasColumnRules={false}`, porque los interiores
 cruzarían cada fila por la mitad. `Schedule` es de cliente solo por el buscador,
 que filtra sin acentos y palabra por palabra la lista que ya vino del servidor.
 Los cuadros de color de los créditos son roles (`--credit-host`,
-`--credit-people`), no paleta suelta.
+`--credit-people`), no paleta suelta. Quien presenta lleva cargo; quienes
+intervienen, solo organización: son dos campos de `AgendaPerson`, no un recorte
+de la cadena al pintar.
 
 El titular se define por **tramos**, no por líneas (`SITE.event.headline`): el
 resalte cae a mitad de línea, así que el color es decisión de diseño por tramo.

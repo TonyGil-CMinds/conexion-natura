@@ -108,6 +108,17 @@
   --text-section: clamp(2.5rem, 6.72vw, 5.375rem); /* 86px @1280 */
   /* Acordeón: pregunta y respuesta van en Host Grotesk. */
   --text-question: 1rem; /* 16px */
+  /**
+   * Título de un momento de la agenda. Más que la pregunta del FAQ porque en la
+   * agenda es el primer nivel de lectura de la fila: se recorre la lista por los
+   * títulos, no por las descripciones.
+   */
+  --text-schedule-title: clamp(1.125rem, 1.72vw, 1.375rem); /* 22px @1280, 18px de suelo */
+  /**
+   * Entradilla de la agenda. Es el único párrafo largo de la página y lo primero
+   * que se lee, así que va por encima del cuerpo de las filas.
+   */
+  --text-schedule-intro: clamp(0.9375rem, 1.41vw, 1.125rem); /* 18px @1280 */
   --text-answer: 0.8125rem; /* 13px */
   --text-caption: 0.5625rem; /* 9px */
   /**

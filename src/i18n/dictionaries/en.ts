@@ -110,10 +110,7 @@ export const en: Dictionary = {
         title: 'Prosperity begins in the territory',
         host: { name: 'Constanza Gómez Mont' },
         people: [
-          {
-            name: 'Juan Carlos Jintiach',
-            role: 'Executive secretary, Global Alliance of Territorial Communities',
-          },
+          { name: 'Juan Carlos Jintiach', organization: 'Global Alliance of Territorial Communities' },
         ],
       },
       {
@@ -132,8 +129,8 @@ export const en: Dictionary = {
           'What are the new business models for? Which paradigm are we moving through, and how does it look from the investor’s side?',
         host: { name: 'Regina Cervera' },
         people: [
-          { name: 'Nathalie Molina Niño', role: 'Founder, BRAVA Investments' },
-          { name: 'Israel Pons', role: 'CEO, Angel Nest Lat' },
+          { name: 'Nathalie Molina Niño', organization: 'BRAVA Investments' },
+          { name: 'Israel Pons', organization: 'Angel Nest Lat' },
         ],
       },
       {
@@ -142,8 +139,8 @@ export const en: Dictionary = {
         title: 'Idea Spark: from solution to industry',
         host: { name: 'Carolina Proaño', role: 'CEIBA' },
         people: [
-          { name: 'Gustavo Manrique', role: 'Founder, Premios Verdes Latam' },
-          { name: 'Salah Goss', role: 'Chief Program Officer, Skoll Foundation' },
+          { name: 'Gustavo Manrique', organization: 'Premios Verdes Latam' },
+          { name: 'Salah Goss', organization: 'Skoll Foundation' },
         ],
       },
       {
@@ -152,7 +149,7 @@ export const en: Dictionary = {
         title: 'The continent we want to live in',
         description:
           'What if Latin America and the Caribbean decided to build the future with —not at the expense of— what is alive?',
-        people: [{ name: 'Pablo A. González', role: 'Co-founder, El Gato y La Caja' }],
+        people: [{ name: 'Pablo A. González', organization: 'El Gato y La Caja' }],
       },
       {
         id: 'brindis',

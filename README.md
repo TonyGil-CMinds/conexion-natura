@@ -582,10 +582,49 @@ encuentre el momento aunque las dos palabras no vayan seguidas. Busca en todo el
 texto de la fila, créditos y hora incluidos. Sin resultados sale un aviso entre
 los mismos dos filetes que ocupaba la lista, para que la página no salte.
 
+El texto no llega a tocar los filetes: `.inner` declara un `--gutter` que gasta
+cada bloque por su cuenta —la entradilla, la barra, cada fila—, y **no** como
+`padding` de `.inner`. Puesto ahí, los filetes horizontales de las filas se
+quedaban cortos por los dos lados en vez de cruzar de vertical a vertical. El
+aire se recorta con el ancho (32px, 16px por debajo de 900 y ninguno en móvil,
+donde ya no hay verticales que esquivar).
+
+`.inner` no tiene escalones propios de margen: va siempre a
+`--container-margin`, que es lo que mantiene las horizontales alineadas con las
+verticales del contenedor —y ese token ya se encoge por debajo de 900px—.
+
+El título del momento tiene su propio tamaño (`--text-schedule-title`, 22px a
+1280 con suelo de 18): en la agenda es el primer nivel de lectura de la fila,
+porque la lista se recorre por los títulos y no por las descripciones. El suelo
+del `clamp` importa: sin él, a 1024px el término en `vw` lo devolvía a los 17px
+del acordeón.
+
+La entradilla tiene su propio tamaño (`--text-schedule-intro`, 18px a 1280): es
+el único párrafo largo de la página y lo primero que se lee. Su medida va en
+`ch`, así que la línea de lectura sigue al tamaño de la letra en vez de
+quedarse fija en píxeles.
+
+El buscador **crece un 10% al recibir el foco**. El ancho lo lleva el rótulo y
+no el campo, y ahí estaba un fallo que venía de antes: con `width: min(305px,
+100%)` en el campo, ese `100%` se medía contra un rótulo que se ajusta a su
+contenido —o sea, contra el propio campo—, la referencia era circular y ganaba
+siempre el ancho intrínseco del `input`, 194px. Los 305 no se aplicaban nunca.
+Ahora el ancho está en el rótulo, el campo va al `100%` de él, y el foco
+ensancha al rótulo. Solo de 641px arriba: en móvil el campo ya ocupa todo el
+ancho, y como `:focus-within` gana en especificidad a la clase, sin acotarlo por
+ancho la regla le habría quitado el 100% justo al tocarlo.
+
 Los créditos van **en dos columnas**, quien presenta y quienes participan, con un
 cuadro de color por función (`--credit-host`, `--credit-people`) que los
 distingue sin volver a leer el rótulo; el cuadro es decorativo y va
-`aria-hidden`, que el rótulo ya lo dice. En rejilla y no en fila: con un cargo
+`aria-hidden`, que el rótulo ya lo dice.
+
+Quien **presenta** se acredita con su cargo; quienes **intervienen**, solo con su
+organización: en un panel importa de dónde viene cada voz, y el cargo alargaba la
+fila sin añadir nada. Son dos campos distintos de `AgendaPerson` (`role` y
+`organization`) y no un recorte de la cadena al pintar: partirla por la primera
+coma fallaría con «CEIBA», que ya es solo la organización, y con los cargos que
+llevan comas dentro. En rejilla y no en fila: con un cargo
 largo, el crédito empujaba al otro debajo aunque hubiera sitio de sobra. Y el
 nombre y el cargo son **un** bloque de texto, no dos elementos flex hermanos del
 cuadro —así el nombre rompía en dos líneas mientras el cargo se iba a su propia
@@ -763,6 +802,11 @@ propósito, porque van a pantalla completa: acotar la transición dejaría los
 laterales sin cubrir justo cuando tiene que tapar el cambio de contenido.
 
 ### La retícula de filetes
+
+**En móvil no hay ninguna vertical**, ni las dos interiores ni las dos del
+contenedor: a ese ancho las celdas de la cabecera que separaban ya no existen,
+así que las líneas no estructuran nada y compiten con el contenido. Se apagan en
+el armazón, así que vale para todas las rutas.
 
 `PageFrame` es dueño de los filetes; ni la cabecera ni el hero los dibujan. La
 razón es el ancho acotado: como bordes de un elemento, las horizontales se

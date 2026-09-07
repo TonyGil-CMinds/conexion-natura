@@ -66,13 +66,17 @@
 }
 
 /**
- * En móvil no hay filetes verticales: las celdas de la cabecera que separaban ya
- * no existen a ese ancho, así que las líneas no estructuraban nada y competían
- * con el contenido.
+ * En móvil no hay filetes verticales, ni los interiores ni los dos del
+ * contenedor: las celdas de la cabecera que separaban ya no existen a ese ancho,
+ * así que las líneas no estructuraban nada y competían con el contenido.
  */
 @media (max-width: 640px) {
   .columnRule {
     display: none;
+  }
+
+  .rulesInner {
+    border-inline: 0;
   }
 }
 
