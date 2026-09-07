@@ -155,6 +155,18 @@ viewport: el hero tiene que caber en una pantalla, así que en portátiles se
 aprieta en vez de dejar crecer la página. Al añadir elementos al hero, su hueco
 va como token y entra en esos escalones.
 
+## Correo
+
+El registro dispara una plantilla dinámica de SendGrid. `src/lib/sendgrid.ts` es
+de servidor. El envío va en `after()`: la respuesta no espera al correo, y un
+fallo se anota y no rompe el registro —la fila ya está guardada—.
+
+Se manda una sola vez, con la marca en la columna `confirmationSentAt`. Si falla,
+la marca queda nula y `npm run mail:pending` lo recupera.
+
+Al depurar SendGrid hay que mirar `error.response.body`: manda «Maximum credits
+exceeded» con un 401, cuyo mensaje suelto es «Unauthorized».
+
 ## Imágenes por viewport
 
 Cuando hay dos encuadres de la misma imagen, van en un `<picture>` con

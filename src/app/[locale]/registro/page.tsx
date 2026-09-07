@@ -20,7 +20,7 @@ export default async function RegistrationPage({ params }: Props) {
 
   return (
     <PageFrame hasColumnRules={false} hideFooter locale={locale}>
-      <Registration copy={t.registration} subtitle={t.hero.subtitle} />
+      <Registration locale={locale} copy={t.registration} subtitle={t.hero.subtitle} />
     </PageFrame>
   );
 }

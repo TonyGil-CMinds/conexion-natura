@@ -880,6 +880,46 @@ nueva se conserva la anterior (`photoUrl: valor ?? undefined` en el `update`).
 No hay invitaciones todavía: el registro está abierto y `invitationId` queda
 nulo. Cuando las haya, el código entra como requisito en este endpoint.
 
+## Correo de confirmación
+
+Al registrarse sale un correo con la plantilla dinámica de SendGrid (Twilio).
+El contenido vive en SendGrid; el sitio solo manda las variables.
+
+- `src/lib/sendgrid.ts` — transporte. **Solo servidor**: la clave permite enviar
+  correo en nombre del dominio. La configuración se lee al enviar y no al
+  importar, así una variable que falte rompe el envío —recuperable— y no el
+  arranque.
+- `features/registration/lib/confirmation-email.ts` — las variables, sacadas de
+  `SITE.event` y no de literales, para que corregir la hora del evento no deje el
+  correo diciendo otra cosa. Los nombres de las claves los fija la plantilla.
+- `scripts/verify-sendgrid.ts` (`npm run mail:verify`) — valida clave, remitente,
+  plantilla y variables **sin entregar nada**, con el modo de prueba de SendGrid.
+- `scripts/send-pending-confirmations.ts` (`npm run mail:pending`) — lista a quién
+  le falta el correo; con `-- --send` lo envía.
+
+### Se envía una sola vez
+
+La marca es la columna `Attendee.confirmationSentAt`, no una variable en memoria:
+reenviar el formulario corrige los datos y no debe repetir el correo, y si el
+envío falla la marca se queda nula, así que `mail:pending` puede recuperarlo.
+
+### Un fallo del correo no rompe el registro
+
+La fila ya está guardada cuando se intenta el envío, y el correo es un efecto
+secundario: se anota en el registro del servidor y la respuesta sale igual. Va
+con `after()` de `next/server`, así que el formulario no espera al correo para
+decir que la asistencia quedó confirmada.
+
+Al registrar el error se imprime `error.response.body` y no el mensaje: SendGrid
+manda «Maximum credits exceeded» con un **401**, cuyo mensaje suelto es solo
+«Unauthorized» y hace pensar que la clave está mal.
+
+### Idioma
+
+El formulario manda su `locale` para que los enlaces del correo apunten a la
+versión correcta. La fecha se escribe en dos formatos porque la plantilla pide
+`dia` y `event_date` por separado.
+
 ## Imágenes en R2
 
 Los retratos de las credenciales viven en un bucket de **Cloudflare R2**; en la
@@ -1197,6 +1237,12 @@ vive solo en el navegador. Al llegar el backend, el punto de enganche es
 - `features/transitions/pixel-reveal/` quedó **sin usar** al entrar la transición
   de escaleras. Se dejó en su sitio por si hay que volver a ella; si no, se
   borra la carpeta.
+- **La cuenta de SendGrid no tiene créditos**: es plan `free` con límite duro y
+  `remain: 0`, sin próximo reinicio, así que hoy no puede enviar ni un correo.
+  El código está verificado hasta donde la API lo permite; falta activar el plan.
+  Después, `npm run mail:pending -- --send` recupera a quien ya se registró.
+- **El remitente es `no-reply@cminds.co`**, el único verificado en la cuenta. Si
+  se quiere uno propio del evento hay que verificarlo en SendGrid primero.
 - Los enlaces legales del pie apuntan a anclas de relleno (`#terminos`,
   `#privacidad`) y las redes a los dominios genéricos: faltan las URL reales.
 - `hero/hero-green-pixels-2.svg` quedó sin uso al retirarse el campo del hero.

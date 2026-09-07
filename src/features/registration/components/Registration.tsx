@@ -215,12 +215,14 @@ async function createBadge(fields: Fields, photo: string | null, crop: Crop, cop
 }
 
 type Props = {
+  /** Idioma de la ruta: viaja al servidor para que el correo enlace a su versión. */
+  locale: string;
   copy: Copy;
   /** El subtítulo del hero entra en el resumen del `.ics`. */
   subtitle: readonly string[];
 };
 
-export function Registration({ copy, subtitle }: Props) {
+export function Registration({ locale, copy, subtitle }: Props) {
   const [fields, setFields] = useState<Fields>(INITIAL);
   /** URL local para pintar la credencial mientras se rellena el formulario. */
   const [photo, setPhoto] = useState<string | null>(null);
@@ -399,6 +401,7 @@ export function Registration({ copy, subtitle }: Props) {
           role: normalizeText(fields.role),
           linkedin: normalizeLinkedIn(fields.linkedin),
           photoUrl: uploaded,
+          locale,
         }),
       });
 

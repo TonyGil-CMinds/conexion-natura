@@ -5,18 +5,8 @@ import { SiteHeader } from '@/components/layout/SiteHeader';
 import { AttendanceProvider } from '@/features/registration';
 import { PageTransition } from '@/features/transitions/page-transition';
 import { LOCALES, getDictionary, isLocale, type Locale } from '@/i18n';
+import { SITE_URL } from '@/config/urls';
 import '@/styles/globals.css';
-
-/**
- * Dominio del sitio. Vercel lo pone en el entorno; en local se queda en
- * localhost, que no se indexa, así que no hay que configurar nada para
- * desarrollar.
- */
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : 'http://localhost:3000');
 
 type LayoutProps = {
   children: React.ReactNode;

@@ -45,6 +45,11 @@ model Attendee {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  /// Cuándo se envió el correo de confirmación. Nulo mientras no se haya
+  /// enviado: reenviar el formulario corrige los datos y no debe repetir el
+  /// correo, y si el envío falla la fila queda marcada para reintentarlo.
+  confirmationSentAt DateTime?
+
   /// Cada invitación admite un solo registro, de ahí el `@unique`.
   invitationId String?     @unique
   invitation   Invitation? @relation(fields: [invitationId], references: [id])
