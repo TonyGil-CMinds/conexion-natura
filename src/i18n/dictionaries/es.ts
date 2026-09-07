@@ -89,6 +89,15 @@ export const es = {
     hostLabel: 'Presenta',
     peopleLabel: 'Participan',
     /**
+     * Distintivo de la fecha, sobre la lista. Es copia y no dato: la fecha vive
+     * en `SITE.event.date`, pero cómo se abrevia un mes cambia con el idioma.
+     */
+    dateLabel: '5 oct',
+    /** Buscador del programa. */
+    searchLabel: 'Buscar en la agenda',
+    searchPlaceholder: 'Buscar...',
+    searchEmpty: 'Ningún momento coincide con la búsqueda',
+    /**
      * Programa preliminar, transcrito del documento de la organización. Los
      * momentos cuyo presentador o intervención está por decidir van sin nombres:
      * publicar una opción como si estuviera confirmada es peor que no ponerla.

@@ -563,6 +563,34 @@ opción como si estuviera confirmada es peor que no ponerla.
 Si `items` se queda vacío vuelve el `EmptyState`, que es lo que estuvo mientras
 la agenda no estaba cerrada.
 
+**El programa usa el ancho entero**, de filete exterior a filete exterior, y no
+la columna central como el FAQ: cada fila lleva hora, título, descripción y
+créditos, y acotada a la columna central los créditos se apilaban. Por eso la
+página apaga los filetes interiores (`hasColumnRules={false}`): ahí dentro no
+estructuran nada, cruzan cada fila por la mitad.
+
+Sobre la lista hay una barra con el **distintivo de la fecha** a la izquierda y
+el **buscador** a la derecha. El distintivo va de contorno para no competir con
+el CTA; en tema claro se rellena, porque el acento del tema claro como texto
+sobre el crema del fondo apenas se distinguía.
+
+`Schedule` es de cliente **por el buscador y solo por eso**: filtra la lista que
+ya vino pintada del servidor, así que la agenda entera está en el HTML y se lee
+sin JavaScript. La comparación va sin acentos ni mayúsculas —quien busca «Gómez»
+puede escribir «gomez»— y palabra por palabra, para que «apertura ceiba»
+encuentre el momento aunque las dos palabras no vayan seguidas. Busca en todo el
+texto de la fila, créditos y hora incluidos. Sin resultados sale un aviso entre
+los mismos dos filetes que ocupaba la lista, para que la página no salte.
+
+Los créditos van **en dos columnas**, quien presenta y quienes participan, con un
+cuadro de color por función (`--credit-host`, `--credit-people`) que los
+distingue sin volver a leer el rótulo; el cuadro es decorativo y va
+`aria-hidden`, que el rótulo ya lo dice. En rejilla y no en fila: con un cargo
+largo, el crédito empujaba al otro debajo aunque hubiera sitio de sobra. Y el
+nombre y el cargo son **un** bloque de texto, no dos elementos flex hermanos del
+cuadro —así el nombre rompía en dos líneas mientras el cargo se iba a su propia
+columna—.
+
 ### Ponentes
 
 La lista solo incluye a quienes constan **con cargo y organización**: inventarle

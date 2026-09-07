@@ -22,6 +22,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  * Si el programa se queda sin momentos vuelve el estado vacío, que es el que
  * estuvo mientras la agenda no estaba cerrada.
  *
+ * Va sin filetes interiores: el programa usa el ancho entero entre los filetes
+ * exteriores, y los interiores cruzarían cada fila por la mitad.
+ *
  * Sin `LoaderGate`, como el resto de las rutas: el loader es la entrada al sitio.
  */
 export default async function AgendaPage({ params }: Props) {
@@ -29,14 +32,24 @@ export default async function AgendaPage({ params }: Props) {
   if (!isLocale(locale)) notFound();
   const t = getDictionary(locale);
   const { cover, coverSeed } = PAGES.agenda;
-  const { items, intro, hostLabel, peopleLabel, empty } = t.agenda;
+  const { items, intro, hostLabel, peopleLabel, empty, dateLabel, searchLabel, searchPlaceholder, searchEmpty } =
+    t.agenda;
 
   return (
-    <PageFrame locale={locale}>
+    <PageFrame locale={locale} hasColumnRules={false}>
       <PageCover title={t.meta.agenda.title} image={cover} seed={coverSeed} />
 
       {items.length > 0 ? (
-        <Schedule items={items} intro={intro} hostLabel={hostLabel} peopleLabel={peopleLabel} />
+        <Schedule
+          items={items}
+          intro={intro}
+          hostLabel={hostLabel}
+          peopleLabel={peopleLabel}
+          dateLabel={dateLabel}
+          searchLabel={searchLabel}
+          searchPlaceholder={searchPlaceholder}
+          searchEmpty={searchEmpty}
+        />
       ) : (
         <EmptyState label={empty} />
       )}

@@ -5,11 +5,16 @@
 }
 
 /**
- * Ocupa exactamente la columna central de la retícula, como el FAQ: desde el
- * filete interior de la izquierda hasta el de la derecha.
+ * De filete exterior a filete exterior, todo el ancho del contenedor.
+ *
+ * A diferencia del FAQ, el programa **no** se acota a la columna central: las
+ * filas llevan hora, título, descripción y créditos en la misma línea, y en la
+ * columna central los créditos se apilaban. Por eso la página apaga los filetes
+ * interiores (`hasColumnRules={false}`): si siguieran ahí, cruzarían las filas
+ * por la mitad en vez de estructurarlas.
  */
 .inner {
-  margin-inline: calc(var(--container-margin) + var(--header-side));
+  margin-inline: var(--container-margin);
 }
 
 .intro {
@@ -19,6 +24,94 @@
   font-size: var(--text-answer);
   line-height: 1.55;
   color: color-mix(in srgb, var(--fg) 78%, transparent);
+}
+
+/**
+ * Fecha a la izquierda, buscador a la derecha.
+ *
+ * `flex-wrap` y no una rejilla de dos columnas: en estrecho el buscador pasa
+ * debajo del distintivo y ocupa el ancho, que es lo que necesita para escribir.
+ */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+/* Distintivo de la fecha: contorno y no relleno, para no competir con el CTA. */
+.badge {
+  margin: 0;
+  padding: 8px 14px;
+  border: 1px solid var(--accent-nav);
+  font-family: var(--font-mono);
+  font-size: var(--text-answer);
+  line-height: 1.2;
+  color: var(--accent-nav);
+}
+
+/**
+ * En claro se rellena. El acento del tema claro es el verde de marca, y como
+ * texto sobre el crema del fondo apenas se distinguía: mismo color, pero de
+ * fondo y con la tinta oscura encima, que es como se comporta el botón.
+ */
+:global([data-theme='light']) .badge {
+  background-color: var(--accent-nav);
+  color: var(--color-dark);
+}
+
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* El rótulo lo pide el lector de pantalla; a la vista basta el marcador. */
+.searchLabel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.searchInput {
+  width: min(305px, 100%);
+  padding: 10px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  background-color: color-mix(in srgb, var(--fg) 4%, transparent);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: var(--text-note);
+  /* Safari le pone su propia apariencia a `type="search"`. */
+  appearance: none;
+}
+
+.searchInput::placeholder {
+  color: color-mix(in srgb, var(--fg) 45%, transparent);
+}
+
+.searchInput:focus-visible {
+  outline: 1px solid var(--accent-nav);
+  outline-offset: 1px;
+}
+
+/* Ocupa el sitio de la lista para que la página no salte al filtrar. */
+.searchEmpty {
+  margin: 0;
+  padding-block: var(--space-10);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 55%, transparent);
 }
 
 .list {
@@ -49,7 +142,7 @@
   font-size: var(--text-note);
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
-  color: var(--accent-nav);
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
   /* Alinea con la primera línea del título, que es más alta. */
   padding-top: 4px;
 }
@@ -80,6 +173,17 @@
 }
 
 /**
+ * Las dos funciones, una al lado de la otra: quien presenta y quienes
+ * participan se leen como dos columnas del mismo momento.
+ */
+.credits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-4) var(--space-8);
+  margin-top: var(--space-2);
+}
+
+/**
  * Crédito: el rótulo de la función y luego los nombres.
  *
  * En flujo y no en rejilla: el cargo va detrás del nombre en la misma línea, y
@@ -88,6 +192,45 @@
  */
 .credit {
   margin: 0;
+}
+
+/**
+ * Nombre con su cuadro de color delante.
+ *
+ * `align-items: baseline` no vale: el cuadro no tiene texto, así que su línea
+ * base es su borde inferior y quedaba montado sobre el nombre.
+ */
+.person {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+/**
+ * Nombre y cargo son **un** bloque de texto: como hermanos del cuadro eran dos
+ * elementos flex, y con un cargo largo el nombre rompía en dos líneas mientras
+ * el cargo se iba a su propia columna.
+ */
+.who {
+  min-width: 0;
+}
+
+/**
+ * El cuadro distingue de un vistazo las dos funciones sin volver a leer el
+ * rótulo. Es decorativo —el rótulo ya lo dice— y por eso va `aria-hidden`.
+ */
+.swatch {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  /* Cuadra con la altura de la primera línea del nombre. */
+  margin-top: 2px;
+  background-color: var(--credit-people);
+}
+
+.swatch[data-role='host'] {
+  background-color: var(--credit-host);
 }
 
 .creditLabel {
@@ -102,7 +245,7 @@
 
 .people {
   display: grid;
-  gap: 2px;
+  gap: var(--space-2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -129,7 +272,7 @@
 
 @media (max-width: 1100px) {
   .inner {
-    margin-inline: var(--container-margin);
+    margin-inline: var(--space-8);
   }
 }
 
@@ -137,6 +280,15 @@
 @media (max-width: 640px) {
   .inner {
     margin-inline: 24px;
+  }
+
+  /* El buscador a todo el ancho: escribir es lo que se hace aquí. */
+  .search {
+    width: 100%;
+  }
+
+  .searchInput {
+    width: 100%;
   }
 
   .item {

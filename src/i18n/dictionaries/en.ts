@@ -82,6 +82,10 @@ export const en: Dictionary = {
       'An evening to meet the innovations and the people building them, to see why green and blue industries are an economic opportunity for Latin America and the Caribbean, and to have real time to meet, try things, talk and connect.',
     hostLabel: 'Hosted by',
     peopleLabel: 'With',
+    dateLabel: 'Oct 5',
+    searchLabel: 'Search the agenda',
+    searchPlaceholder: 'Search...',
+    searchEmpty: 'No moment matches your search',
     items: [
       {
         id: 'recorrido',

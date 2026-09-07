@@ -43,6 +43,13 @@
    * del resto de la interfaz.
    */
   --accent-nav: var(--color-lime);
+  /**
+   * Cuadros de color de los créditos de la agenda: uno por función —quien
+   * presenta y quienes participan—. Son un código de dos colores, así que van
+   * como rol y no como paleta suelta: el componente no elige el verde.
+   */
+  --credit-host: var(--color-lime-soft);
+  --credit-people: var(--color-light-blue);
   /* Líneas de retícula: el mismo tono del texto, muy rebajado. */
   --rule: color-mix(in srgb, var(--fg) 16%, transparent);
   /**
@@ -260,6 +267,8 @@
    */
   --accent: var(--color-green-brand);
   --accent-nav: var(--color-green-brand);
+  /* El lima apagado se pierde sobre el crema; el azul se lee igual en los dos. */
+  --credit-host: var(--color-green-brand);
   --rule: color-mix(in srgb, var(--fg) 14%, transparent);
   --rule-vertical: color-mix(in srgb, var(--fg) 6%, transparent);
 }
