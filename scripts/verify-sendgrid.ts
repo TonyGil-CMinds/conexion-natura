@@ -1,27 +1,36 @@
 /**
- * Comprueba el correo de confirmación **sin entregarlo**.
+ * Comprueba el correo de confirmación.
  *
- *   npx tsx scripts/verify-sendgrid.ts [correo]
+ *   npx tsx scripts/verify-sendgrid.ts [correo]           # no entrega nada
+ *   npx tsx scripts/verify-sendgrid.ts correo@x.com --send  # envía de verdad
  *
- * Va en modo de prueba de SendGrid: valida la clave, el remitente, la plantilla
- * y las variables, y responde sin escribirle a nadie. Imprime los datos que
- * recibiría la plantilla, que es donde se ven los errores de contenido.
+ * Sin `--send` va en modo de prueba de SendGrid: valida la clave, el remitente,
+ * la plantilla y las variables, y responde sin escribirle a nadie. Imprime los
+ * datos que recibiría la plantilla, que es donde se ven los errores de contenido.
+ *
+ * Con `--send` manda un correo de verdad a **una** dirección, para poder mirar
+ * cómo queda la plantilla antes de escribirle a la lista entera.
  */
 import 'dotenv/config';
-import { confirmationTemplateData } from '../src/features/registration/lib/confirmation-email';
+import { confirmationSubject, confirmationTemplateData } from '../src/features/registration/lib/confirmation-email';
 import { sendTemplate } from '../src/lib/sendgrid';
 
-process.env.SENDGRID_SANDBOX = '1';
+const shouldSend = process.argv.includes('--send');
+if (!shouldSend) process.env.SENDGRID_SANDBOX = '1';
 
-const to = process.argv[2] ?? 'prueba@example.com';
+const to = process.argv.find((arg) => arg.includes('@')) ?? 'prueba@example.com';
 
 async function main() {
   const data = confirmationTemplateData({ name: 'Antonio', surname: 'Gil', locale: 'es' });
   console.log('variables de la plantilla:');
   for (const [key, value] of Object.entries(data)) console.log(`  ${key}: ${value}`);
 
-  await sendTemplate({ to, data });
-  console.log(`\n✅ SendGrid aceptó el envío (modo de prueba: no se entregó nada a ${to}).`);
+  await sendTemplate({ to, data, subject: confirmationSubject('es') });
+  console.log(
+    shouldSend
+      ? `\n✅ Enviado de verdad a ${to}.`
+      : `\n✅ SendGrid aceptó el envío (modo de prueba: no se entregó nada a ${to}).`,
+  );
 }
 
 main().catch((error) => {

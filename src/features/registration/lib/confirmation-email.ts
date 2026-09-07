@@ -40,12 +40,19 @@ const FORMATS = {
   es: {
     dia: '5 DE OCTUBRE DE 2026',
     eventDate: '5 OCTUBRE, 2026',
+    subject: 'Tu registro a CEIBA Quito está confirmado',
   },
   en: {
     dia: 'OCTOBER 5, 2026',
     eventDate: 'OCTOBER 5, 2026',
+    subject: 'Your CEIBA Quito registration is confirmed',
   },
 } as const;
+
+/** Asunto del correo, por idioma. La plantilla no trae ninguno. */
+export function confirmationSubject(locale: Locale = DEFAULT_LOCALE): string {
+  return FORMATS[locale].subject;
+}
 
 /** «5:00 pm — 9:00 pm» → las dos horas por separado, en mayúsculas. */
 function scheduleParts() {

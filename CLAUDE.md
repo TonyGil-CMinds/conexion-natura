@@ -164,6 +164,9 @@ fallo se anota y no rompe el registro —la fila ya está guardada—.
 Se manda una sola vez, con la marca en la columna `confirmationSentAt`. Si falla,
 la marca queda nula y `npm run mail:pending` lo recupera.
 
+El **asunto lo pone el mensaje**, no la plantilla: la plantilla no trae ninguno y
+una sola sirve a los dos idiomas. Se edita en `confirmation-email.ts`.
+
 Al depurar SendGrid hay que mirar `error.response.body`: manda «Maximum credits
 exceeded» con un 401, cuyo mensaje suelto es «Unauthorized».
 

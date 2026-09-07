@@ -894,8 +894,10 @@ El contenido vive en SendGrid; el sitio solo manda las variables.
   correo diciendo otra cosa. Los nombres de las claves los fija la plantilla.
 - `scripts/verify-sendgrid.ts` (`npm run mail:verify`) — valida clave, remitente,
   plantilla y variables **sin entregar nada**, con el modo de prueba de SendGrid.
-- `scripts/send-pending-confirmations.ts` (`npm run mail:pending`) — lista a quién
-  le falta el correo; con `-- --send` lo envía.
+- `scripts/send-pending-confirmations.ts` — `npm run mail:pending` lista a quién le
+  falta el correo y `npm run mail:pending:send` lo envía. Son **dos scripts** y no
+  un argumento porque npm 11 se come el `-- --send`: lo trata como una config suya
+  («Unknown cli config») y no lo reenvía.
 
 ### Se envía una sola vez
 
@@ -913,6 +915,17 @@ decir que la asistencia quedó confirmada.
 Al registrar el error se imprime `error.response.body` y no el mensaje: SendGrid
 manda «Maximum credits exceeded» con un **401**, cuyo mensaje suelto es solo
 «Unauthorized» y hace pensar que la clave está mal.
+
+### El asunto lo pone el código
+
+La versión activa de la plantilla **no trae asunto**, así que el correo llegaría
+sin línea de asunto —media carpeta de spam—. Se manda a nivel de mensaje desde
+`confirmationSubject(locale)`, que además resuelve el otro problema: una sola
+plantilla sirve a los dos idiomas, y el asunto no puede ser una variable de
+plantilla.
+
+Consecuencia: si algún día se escribe un asunto en la plantilla, no se usará.
+El asunto se edita en `confirmation-email.ts`.
 
 ### Idioma
 
@@ -1237,12 +1250,19 @@ vive solo en el navegador. Al llegar el backend, el punto de enganche es
 - `features/transitions/pixel-reveal/` quedó **sin usar** al entrar la transición
   de escaleras. Se dejó en su sitio por si hay que volver a ella; si no, se
   borra la carpeta.
-- **La cuenta de SendGrid no tiene créditos**: es plan `free` con límite duro y
-  `remain: 0`, sin próximo reinicio, así que hoy no puede enviar ni un correo.
-  El código está verificado hasta donde la API lo permite; falta activar el plan.
-  Después, `npm run mail:pending -- --send` recupera a quien ya se registró.
-- **El remitente es `no-reply@cminds.co`**, el único verificado en la cuenta. Si
-  se quiere uno propio del evento hay que verificarlo en SendGrid primero.
+- **Quedan tres registros sin su correo** (los que se hicieron mientras la cuenta
+  no podía enviar). `npm run mail:pending` los lista y `npm run mail:pending:send`
+  se lo manda; van en español, porque el idioma no se guarda por persona.
+- Un fallo del correo **solo se ve en el registro del servidor** (en Vercel, en los
+  logs de la función `/api/registro`). La línea es
+  `[api/registro] no se pudo enviar la confirmación` seguida del cuerpo de SendGrid,
+  que distingue entre falta de créditos y una variable de entorno sin poner.
+- **El remitente es `no-reply@naturatech.org`**, el único verificado en la cuenta
+  (con el dominio `naturatech.org` autenticado). Si se quiere otro hay que
+  verificarlo en SendGrid primero, o el envío se rechaza.
+- **El idioma no se guarda por asistente.** El correo del registro sí sale en el
+  idioma de la ruta, pero un reenvío posterior (`mail:pending:send`) va en español.
+  Si hace falta, es una columna más en `Attendee`.
 - Los enlaces legales del pie apuntan a anclas de relleno (`#terminos`,
   `#privacidad`) y las redes a los dominios genéricos: faltan las URL reales.
 - `hero/hero-green-pixels-2.svg` quedó sin uso al retirarse el campo del hero.

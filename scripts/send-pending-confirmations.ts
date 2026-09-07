@@ -1,8 +1,11 @@
 /**
  * Manda la confirmación a quien se registró y no la recibió.
  *
- *   npm run mail:pending           # solo lista a quién le tocaría
- *   npm run mail:pending -- --send # envía de verdad
+ *   npm run mail:pending        # solo lista a quién le tocaría
+ *   npm run mail:pending:send   # envía de verdad
+ *
+ * Son dos scripts y no un argumento porque npm 11 se come el `-- --send`: lo
+ * trata como una config suya («Unknown cli config») y no lo reenvía.
  *
  * Hace falta porque el correo puede fallar por causas ajenas al registro —la
  * cuenta de SendGrid sin créditos, por ejemplo— y esas filas quedan con
@@ -15,7 +18,7 @@
 import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../generated/prisma/client';
-import { confirmationTemplateData } from '../src/features/registration/lib/confirmation-email';
+import { confirmationSubject, confirmationTemplateData } from '../src/features/registration/lib/confirmation-email';
 import { sendTemplate } from '../src/lib/sendgrid';
 
 const shouldSend = process.argv.includes('--send');
@@ -51,6 +54,9 @@ async function main() {
     try {
       await sendTemplate({
         to: person.email,
+        // Sin idioma guardado por persona, se manda en español, que es el
+        // idioma por defecto del sitio.
+        subject: confirmationSubject(),
         data: confirmationTemplateData({ name: person.name, surname: person.surname }),
       });
       await prisma.attendee.update({

@@ -1,6 +1,6 @@
 import { NextResponse, after } from 'next/server';
 import { parseAttendeeInput } from '@/features/registration/lib/attendee-input';
-import { confirmationTemplateData } from '@/features/registration/lib/confirmation-email';
+import { confirmationSubject, confirmationTemplateData } from '@/features/registration/lib/confirmation-email';
 import { isLocale, DEFAULT_LOCALE, type Locale } from '@/i18n/config';
 import { prisma } from '@/lib/prisma';
 import { sendTemplate } from '@/lib/sendgrid';
@@ -55,6 +55,7 @@ async function sendConfirmation({
   try {
     await sendTemplate({
       to: email,
+      subject: confirmationSubject(locale),
       data: confirmationTemplateData({ name, surname, locale }),
     });
     await prisma.attendee.update({

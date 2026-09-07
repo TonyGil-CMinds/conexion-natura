@@ -51,9 +51,17 @@ function config(): Config {
 export async function sendTemplate({
   to,
   data,
+  subject,
 }: {
   to: string;
   data: Record<string, string>;
+  /**
+   * Asunto. Lo pone el mensaje y no la plantilla por dos razones: la versión de
+   * la plantilla no trae ninguno —el correo llegaría sin asunto, que es media
+   * carpeta de spam— y una sola plantilla sirve a los dos idiomas, así que el
+   * asunto tiene que venir traducido de fuera.
+   */
+  subject?: string;
 }): Promise<void> {
   const { apiKey, templateId, fromEmail, fromName } = config();
   sgMail.setApiKey(apiKey);
@@ -70,6 +78,7 @@ export async function sendTemplate({
     from: { email: fromEmail, name: fromName },
     templateId,
     dynamicTemplateData: data,
+    ...(subject ? { subject } : {}),
     ...(sandbox ? { mailSettings: { sandboxMode: { enable: true } } } : {}),
   });
 }
