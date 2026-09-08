@@ -12,6 +12,13 @@ type Props = {
   onCovered?: () => void;
   /** Las columnas ya se retiraron por completo. */
   onComplete?: () => void;
+  /**
+   * Tinta de las columnas. `brand` es el degradado del loader —verde a lima—, y
+   * `theme` pinta un fondo plano que quien lo usa elige con `surface`.
+   */
+  tone?: 'brand' | 'theme';
+  /** Con `tone="theme"`: el tema cuyo fondo pintan las columnas. */
+  surface?: 'light' | 'dark';
 };
 
 const prefersReducedMotion = () =>
@@ -39,11 +46,31 @@ const prefersReducedMotion = () =>
  * Framer: `onCovered` tiene que dispararse en el instante exacto en que no queda
  * hueco, y una línea de tiempo con etiquetas lo dice sin depender de qué elemento
  * termina último.
+ *
+ * Se puede **repetir**: la usa una vez el paso del loader al hero y otra cada vez
+ * que se cambia de tema. Cada arranque devuelve los paneles a escala 0.
  */
-export function StairsReveal({ isActive, onCovered, onComplete }: Props) {
+export function StairsReveal({
+  isActive,
+  onCovered,
+  onComplete,
+  tone = 'brand',
+  surface,
+}: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const hasPlayed = useRef(false);
   const [columns, setColumns] = useState<number>(STAIRS_REVEAL_CONFIG.columns);
+
+  /**
+   * Las llamadas van por referencia y fuera de las dependencias: si entraran,
+   * una función nueva en cada render de quien la usa reiniciaría la animación a
+   * mitad de camino.
+   */
+  const coveredRef = useRef(onCovered);
+  const completeRef = useRef(onComplete);
+  useEffect(() => {
+    coveredRef.current = onCovered;
+    completeRef.current = onComplete;
+  }, [onCovered, onComplete]);
 
   // El recuento se mide al montar, no en cada `resize`: a mitad de la animación,
   // cambiarlo dejaría columnas nuevas en escala 0 y destaparía franjas.
@@ -53,8 +80,7 @@ export function StairsReveal({ isActive, onCovered, onComplete }: Props) {
   }, []);
 
   useEffect(() => {
-    if (!isActive || hasPlayed.current) return;
-    hasPlayed.current = true;
+    if (!isActive) return;
 
     const root = rootRef.current;
     if (!root) return;
@@ -70,10 +96,14 @@ export function StairsReveal({ isActive, onCovered, onComplete }: Props) {
     const delayFor = (_index: number, el: Element) =>
       Number((el as HTMLElement).dataset.column ?? 0) * stagger;
 
+    // Estado de partida en cada pasada: la capa a la vista y los paneles plegados.
+    gsap.set(root, { display: 'block' });
+    gsap.set(panels, { scaleY: 0 });
+
     const timeline = gsap.timeline({
       onComplete: () => {
         gsap.set(root, { display: 'none' });
-        onComplete?.();
+        completeRef.current?.();
       },
     });
 
@@ -81,20 +111,24 @@ export function StairsReveal({ isActive, onCovered, onComplete }: Props) {
       .to(panels, { scaleY: 1, duration, ease, delay: delayFor })
       // GSAP absorbe el retardo máximo en la duración del tween, así que el final
       // de este paso es exactamente el instante en que la pantalla está cubierta.
-      .add(() => onCovered?.())
+      .add(() => coveredRef.current?.())
       .to(panels, { scaleY: 0, duration, ease, delay: delayFor }, `+=${holdS}`);
 
     return () => {
       timeline.kill();
     };
-  }, [isActive, onCovered, onComplete]);
+  }, [isActive]);
 
   return (
     <div
       ref={rootRef}
       className={styles.root}
       aria-hidden
-      style={{ ['--columns' as string]: columns }}
+      data-tone={tone}
+      style={{
+        ['--columns' as string]: columns,
+        ...(surface ? { ['--stairs-surface' as string]: `var(--theme-surface-${surface})` } : null),
+      }}
     >
       {Array.from({ length: columns }, (_, index) => (
         <div key={index} className={styles.column} style={{ ['--index' as string]: index }}>

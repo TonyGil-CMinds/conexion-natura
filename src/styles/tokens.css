@@ -50,6 +50,15 @@
    */
   --credit-host: var(--color-lime-soft);
   --credit-people: var(--color-light-blue);
+  /**
+   * Fondo de cada tema, nombrado aparte de `--bg`.
+   *
+   * `--bg` solo sabe del tema vigente, y la transición del cambio de tema
+   * necesita el color **al que se va** mientras el vigente sigue puesto. Los dos
+   * conviven aquí para que la escalera no tenga que elegir de la paleta.
+   */
+  --theme-surface-dark: var(--color-surface);
+  --theme-surface-light: var(--color-light);
   /* Líneas de retícula: el mismo tono del texto, muy rebajado. */
   --rule: color-mix(in srgb, var(--fg) 16%, transparent);
   /**

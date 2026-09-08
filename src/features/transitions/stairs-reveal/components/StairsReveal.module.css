@@ -62,3 +62,14 @@
     var(--color-lime-soft) 100%
   );
 }
+
+/**
+ * Tinta del cambio de tema: un plano del color **al que se va**, en vez del
+ * degradado de marca. Así la escalera se lee como el tema nuevo entrando, y al
+ * retirarse deja la página ya cambiada debajo.
+ */
+.root[data-tone='theme'] .top,
+.root[data-tone='theme'] .bottom {
+  background-image: none;
+  background-color: var(--stairs-surface);
+}
