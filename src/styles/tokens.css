@@ -61,7 +61,9 @@
   /* Tipografía */
   /* Texto corrido. IBM Plex Mono, no una sans: es la decisión de diseño vigente. */
   --font-body: var(--font-ibm-plex-mono), ui-monospace, monospace;
-  --font-mono: var(--font-departure-mono), ui-monospace, monospace;
+  /* Misma familia que el cuerpo: el sitio va entero en IBM Plex Mono. Los dos
+     roles se mantienen porque distinguen texto corrido de rótulo y dato. */
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
   --font-menu: var(--font-cubao), sans-serif;
   --text-mobile-menu: clamp(2.5rem, 12.8vw, 5.5rem);
   --text-mobile-locale: 0.5625rem;

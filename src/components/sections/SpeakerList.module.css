@@ -79,8 +79,7 @@
   color: var(--fg);
 }
 
-/* Departure Mono tiene un solo grosor; el navegador sintetiza la negrita, que es
-   lo que el diseño usa para separar nombre de apellido. */
+/* El diseño separa nombre de apellido por el grosor. */
 .firstName {
   font-weight: 700;
 }

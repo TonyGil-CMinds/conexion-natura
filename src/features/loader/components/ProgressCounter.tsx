@@ -5,7 +5,7 @@ type Props = {
   value: number;
 };
 
-/** Contador del loader en la tipografía de acento (Departure Mono). */
+/** Contador del loader, en la tipografía de rótulos. */
 export function ProgressCounter({ value }: Props) {
   return (
     <p className={styles.root} aria-live="polite" aria-atomic>

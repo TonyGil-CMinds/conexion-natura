@@ -7,18 +7,10 @@ import { IBM_Plex_Mono } from 'next/font/google';
  */
 export const bodyFont = IBM_Plex_Mono({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
+  /* El 700 lo pide la negrita real de los nombres, antes sintetizada. */
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
   variable: '--font-ibm-plex-mono',
-});
-
-/** Tipografía de acento: hero, loader, rótulos de sección, datos. */
-export const departureMono = localFont({
-  src: './DepartureMono-Regular.otf',
-  display: 'block',
-  weight: '400',
-  style: 'normal',
-  variable: '--font-departure-mono',
 });
 
 /** Display face used by the full-screen mobile navigation. */

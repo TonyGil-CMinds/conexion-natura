@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
-import { bodyFont, departureMono, cubao } from '@/fonts';
+import { bodyFont, cubao } from '@/fonts';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { AttendanceProvider } from '@/features/registration';
 import { PageTransition } from '@/features/transitions/page-transition';
@@ -106,7 +106,7 @@ export default async function RootLayout({ children, params }: LayoutProps) {
     // tokens.css ya son los del tema oscuro, así que no hace falta atributo.
     <html
       lang={locale}
-      className={`${bodyFont.variable} ${departureMono.variable} ${cubao.variable}`}
+      className={`${bodyFont.variable} ${cubao.variable}`}
       suppressHydrationWarning
     >
       <body>
