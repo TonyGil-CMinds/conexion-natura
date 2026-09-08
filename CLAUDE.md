@@ -162,6 +162,11 @@ resalte cae a mitad de línea, así que el color es decisión de diseño por tra
 
 ## Desbordes
 
+El ancho del CTA es un mínimo y la caja crece con el rótulo: con uno largo
+(«Asistencia confirmada») se metía debajo del icono, que va fuera del flujo y no
+pide sitio —el relleno derecho se lo reserva—. Y entre `min-width` y `max-width`
+gana el mínimo, así que ese mínimo va topado contra el viewport, no con un 100%.
+
 `PageFrame` recorta con `overflow-x: clip`: lo que se sale no saca barra de
 scroll, sale cortado y en silencio. Hay que medir cajas, no mirar la pantalla. Un
 `max-width: 100%` solo acota si su padre tiene ancho definido —al medir el

@@ -4,17 +4,28 @@
   /* Medidas por variante: el footer lo quiere más ancho y más bajo. */
   --cta-w: var(--cta-width);
   --cta-h: 90px;
-  /* Ancho fijo por diseño. Con `min(..., 100%)` el 100% se resolvía contra un
-     contenedor que a su vez se ajustaba al contenido, así que ganaba el texto. */
-  width: var(--cta-w);
   /**
-   * El tope es del contenedor, y por eso **quien lo use tiene que darle un ancho
-   * definido**: un `max-width: 100%` colgado de un padre que se ajusta al
-   * contenido no acota nada, porque al medir el contenido el 100% no está
-   * resuelto todavía. Le pasaba al CTA del pie —414px de botón sobre una pantalla
-   * de 360, cortado y en silencio, porque `PageFrame` recorta y no aparece barra
-   * de scroll—.
+   * El ancho de diseño es un **mínimo**, no un tope: la caja crece con el rótulo.
+   *
+   * Como ancho fijo, un rótulo largo no tenía a dónde ir —el rótulo va en una
+   * línea— y se metía por debajo del icono: con «Asistencia confirmada» en el
+   * hero, 50px de solape a 1280 (34 en inglés) y 30 fuera del propio relleno del
+   * botón. Ahora la caja se ensancha y el texto nunca llega al icono.
    */
+  width: fit-content;
+  /**
+   * El mínimo va topado por el contenedor, y no basta con un `max-width`: entre
+   * los dos **gana siempre `min-width`**. Con `min-width: 414px` a secas, el CTA
+   * del pie volvía a medir 414 sobre una pantalla de 390.
+   *
+   * El tope se mide **contra el viewport** y no con un `100%`: colgado de un
+   * padre que se ajusta al contenido —el envoltorio del CTA en el hero—, un
+   * porcentaje no resuelve y el mínimo se venía abajo del todo; el botón se
+   * quedaba en 350px a 1024, por debajo de los 380 del diseño.
+   *
+   * En escritorio no llega a morder nunca: gana el primer término.
+   */
+  min-width: min(var(--cta-w), calc(100vw - 2 * var(--container-margin)));
   max-width: 100%;
 }
 
@@ -44,8 +55,14 @@
   display: flex;
   align-items: center;
   min-height: var(--cta-h);
-  /* Asimétrico como en el diseño: el icono queda más cerca del borde. */
-  padding-inline: 30px 36px;
+  /**
+   * Asimétrico como en el diseño: el icono queda más cerca del borde. El relleno
+   * de la derecha **reserva el sitio del icono** —que está fuera del flujo y no
+   * lo pide—: ocupa de 28 a 48px del canto, así que 68 dejan su hueco y 20 de
+   * aire. Se reserva aunque el icono esté oculto, para que el botón no cambie de
+   * tamaño al pasar el ratón.
+   */
+  padding-inline: 30px 68px;
   border-radius: var(--radius-cta);
   /* Opaco: es lo que mantiene la sombra invisible en reposo. */
   background-color: var(--accent-nav);
@@ -102,7 +119,7 @@
 
 .label {
   position: relative;
-  /* El rótulo va en una línea: el diseño da el ancho justo para eso. */
+  /* El rótulo va en una línea, y es la caja la que se adapta a él. */
   white-space: nowrap;
   font-family: var(--font-mono);
   font-size: var(--text-cta);
@@ -161,10 +178,29 @@
   transform: translate(0, 0);
 }
 
+/**
+ * En teléfono la caja está topada por el ancho del viewport y no puede crecer,
+ * así que el rótulo se parte en dos líneas en vez de meterse debajo del icono. Y
+ * el icono se va: es la señal del hover, y en una pantalla táctil no hay hover
+ * —el bloque `@media (hover: none)` ya anula el desplazamiento—.
+ *
+ * Es lo que ya hacían las variantes `mobile` y `hero`; aquí se extiende a las
+ * demás, que en teléfono solo aparecen en el pie.
+ */
 @media (max-width: 640px) {
   .button {
     min-height: 84px;
-    padding-inline: var(--space-5) 48px;
+    justify-content: center;
+    padding-inline: var(--space-5);
+  }
+
+  .label {
+    white-space: normal;
+    text-align: center;
+  }
+
+  .icon {
+    display: none;
   }
 }
 

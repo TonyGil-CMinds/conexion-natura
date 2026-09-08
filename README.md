@@ -894,6 +894,33 @@ fórmulas que mantener sincronizadas con la altura de cada banda.
 
 ### Botón principal
 
+**El ancho de diseño es un mínimo, no un tope.** El rótulo va en una línea, así
+que con uno largo —«Asistencia confirmada», el estado de quien ya se registró—
+no tenía a dónde ir y se metía por debajo del icono: 50px de solape en el hero a
+1280 y 30 fuera del propio relleno del botón. Ahora la caja crece con el rótulo
+(`width: fit-content`) y en reposo se queda exactamente en la medida del diseño:
+380px el del hero, 414 el del pie.
+
+El relleno de la derecha **reserva el sitio del icono**, que está fuera del flujo
+y no lo pide: ocupa de 28 a 48px del canto, así que 68 dejan su hueco y 20 de
+aire. Se reserva aunque el icono esté oculto, para que el botón no cambie de
+tamaño al pasar el ratón.
+
+Dos trampas del CSS, las dos aprendidas midiendo:
+
+- Entre `min-width` y `max-width` **gana siempre el mínimo**. Con
+  `min-width: 414px` a secas, el CTA del pie volvía a medir 414 sobre una
+  pantalla de 390.
+- El tope del mínimo se mide contra el **viewport**, no con un `100%`: colgado de
+  un padre que se ajusta al contenido —el envoltorio del CTA en el hero— un
+  porcentaje no resuelve, y el mínimo se venía abajo del todo; el botón se
+  quedaba en 350px a 1024, por debajo de los 380 del diseño.
+
+En teléfono la caja está topada por el ancho de la pantalla y no puede crecer,
+así que el rótulo se parte en dos líneas y el icono se va: es la señal del hover,
+y una pantalla táctil no lo tiene. Era lo que ya hacían las variantes `mobile` y
+`hero`, extendido a las demás.
+
 `src/components/ui/CtaButton.tsx` — dos estados:
 
 | | Fondo | Icono | Sombra |
