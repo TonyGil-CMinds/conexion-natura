@@ -92,6 +92,17 @@
   overscroll-behavior: contain;
 }
 
+/**
+ * Selector de idioma, centrado sobre los enlaces. No entra en la animación de
+ * los rótulos: esos suben en escalera desde su máscara, y el idioma no es un
+ * destino más de la lista.
+ */
+.locales {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-10);
+}
+
 .links {
   display: flex;
   flex-direction: column;

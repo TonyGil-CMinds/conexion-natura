@@ -50,6 +50,14 @@ export const es = {
     themeToLight: 'Activar tema claro',
     themeToDark: 'Activar tema oscuro',
     language: 'Idioma',
+    /**
+     * Nombres largos de los idiomas, para el selector del menú móvil. En la
+     * cabecera de escritorio siguen siendo las siglas: ahí no hay sitio.
+     */
+    localeNames: {
+      es: 'Español',
+      en: 'Inglés',
+    },
     openMenu: 'Abrir menú',
     closeMenu: 'Cerrar menú',
   },

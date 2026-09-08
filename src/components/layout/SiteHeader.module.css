@@ -62,4 +62,13 @@
     padding-right: 0;
     margin-right: -11px;
   }
+
+  /**
+   * El selector de idioma sale de la cabecera: en móvil vive **dentro del menú**,
+   * con los nombres largos y centrado. Aquí competía con el botón del menú y el
+   * del tema en una fila de 3 controles diminutos.
+   */
+  .controlsCell > [role='group'] {
+    display: none;
+  }
 }

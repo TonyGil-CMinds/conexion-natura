@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { ThemedImage } from '@/components/ui/ThemedImage';
 import { RegistrationCta } from '@/features/registration';
 import { NAV_LINKS, SITE } from '@/config/site';
+import { LocaleSwitch } from './LocaleSwitch';
 import { localePath, type Dictionary, type Locale } from '@/i18n';
 import { gsap } from '@/lib/gsap';
 import styles from './MobileMenu.module.css';
@@ -131,6 +132,16 @@ export function MobileMenu({ locale, labels, header, cta }: Props) {
           </button>
         </div>
         <div className={styles.content}>
+          {/* El idioma va arriba y centrado: en móvil no está en la cabecera. */}
+          <div className={styles.locales}>
+            <LocaleSwitch
+              locale={locale}
+              label={header.language}
+              names={header.localeNames}
+              variant="menu"
+            />
+          </div>
+
           <nav aria-label={labels.ariaLabel}>
             <ul className={styles.links}>
               {NAV_LINKS.filter((link) => link.key !== 'register').map((link) => {

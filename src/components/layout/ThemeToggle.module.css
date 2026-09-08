@@ -10,6 +10,11 @@
   opacity: 0.6;
 }
 
+/**
+ * En móvil el área táctil es de 44px y el icono, de 24: a 14px se quedaba más
+ * pequeño que en escritorio, donde mide 20, y era el control más difícil de ver
+ * de la cabecera.
+ */
 @media (max-width: 900px) {
   .root {
     width: 44px;
@@ -17,7 +22,7 @@
   }
 
   .root img {
-    width: 14px;
-    height: 14px;
+    width: 24px;
+    height: 24px;
   }
 }

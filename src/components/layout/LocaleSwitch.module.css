@@ -49,3 +49,27 @@
     margin-inline: 0;
   }
 }
+
+/**
+ * Dentro del menú móvil: nombres largos y tamaño de lectura.
+ *
+ * Va **después** del bloque de móvil a propósito: ahí la letra baja a 9px para
+ * que las siglas quepan entre los controles de la cabecera, y en el menú no hay
+ * esa estrechez —hay una pantalla entera—.
+ */
+.root[data-variant='menu'] {
+  font-size: var(--text-nav);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.root[data-variant='menu'] .button {
+  min-width: 0;
+  min-height: 44px;
+  padding-inline: var(--space-2);
+}
+
+.root[data-variant='menu'] .divider {
+  height: 1em;
+  margin-inline: var(--space-2);
+}

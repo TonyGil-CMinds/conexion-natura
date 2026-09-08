@@ -32,6 +32,10 @@
   position: relative;
   height: 100%;
   margin-inline: var(--container-margin);
+}
+
+/* Los dos filetes del contenedor. Se apagan por página con `hasEdgeRules`. */
+.rulesInner[data-edges] {
   border-inline: 1px solid var(--rule-vertical);
 }
 
@@ -75,7 +79,7 @@
     display: none;
   }
 
-  .rulesInner {
+  .rulesInner[data-edges] {
     border-inline: 0;
   }
 }

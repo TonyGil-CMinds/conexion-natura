@@ -15,6 +15,12 @@ type Props = {
    * pie global: la primera cabe en una pantalla y el pie repetiría su CTA.
    */
   hideFooter?: boolean;
+  /**
+   * Los dos filetes del contenedor, los que enmarcan la página a izquierda y
+   * derecha. Se apagan donde la retícula no aporta —el registro es un formulario
+   * y una credencial, no una composición reticulada—.
+   */
+  hasEdgeRules?: boolean;
   /** Idioma de la ruta: el pie lo necesita para su copia y sus enlaces. */
   locale: Locale;
   children: React.ReactNode;
@@ -35,24 +41,34 @@ type Props = {
  * La altura se reparte con flex y no con `calc(100dvh - cabecera - barra)`: así no
  * hay que mantener sincronizadas las alturas de cada banda con una fórmula.
  */
-export function PageFrame({ children, locale, hasColumnRules = true, hideFooter = false }: Props) {
+export function PageFrame({
+  children,
+  locale,
+  hasColumnRules = true,
+  hasEdgeRules = true,
+  hideFooter = false,
+}: Props) {
+  // Sin filetes de ninguna clase no hace falta ni la capa que los sostiene.
+  const hasRules = hasColumnRules || hasEdgeRules;
   return (
     <div className={styles.root}>
       {/* Verticales: recorren la página entera, por detrás del contenido. */}
-      <div className={styles.rules} aria-hidden>
-        <PageShell>
-          <div className={styles.rulesInner}>
+      {hasRules && (
+        <div className={styles.rules} aria-hidden>
+          <PageShell>
+            <div className={styles.rulesInner} data-edges={hasEdgeRules || undefined}>
             {/* Las dos verticales interiores: separan las columnas de la
                 cabecera y siguen bajando por toda la página. */}
-            {hasColumnRules && (
-              <>
-                <span className={styles.columnRule} data-side="start" />
-                <span className={styles.columnRule} data-side="end" />
-              </>
-            )}
-          </div>
-        </PageShell>
-      </div>
+              {hasColumnRules && (
+                <>
+                  <span className={styles.columnRule} data-side="start" />
+                  <span className={styles.columnRule} data-side="end" />
+                </>
+              )}
+            </div>
+          </PageShell>
+        </div>
+      )}
 
       <PageShell className={styles.main}>{children}</PageShell>
 

@@ -358,6 +358,21 @@ es la clave de que las entradas se vean:
 Con `isVisible` las entradas se ejecutaban detrás de la cortina de píxeles y el
 usuario no veía ni el revuelto ni el estroboscopio.
 
+### El idioma en móvil
+
+En móvil el selector de idioma **no está en la cabecera**: ahí competía con el
+botón del menú y el del tema en una fila de tres controles diminutos, con las
+siglas a 9px. Su sitio es el menú, arriba y centrado sobre los enlaces, con los
+nombres largos —«ESPAÑOL | INGLÉS»— a 15px y 44px de área táctil.
+
+Es el mismo componente con `variant="menu"`, no una copia: los nombres largos
+entran por props (`header.localeNames`) y las reglas del menú van **después** del
+bloque de móvil en la hoja, porque es ahí donde la letra baja a 9px para caber en
+la cabecera.
+
+De paso, el icono del tema pasa a 24px en móvil: a 14 era más pequeño que en
+escritorio, donde mide 20, y era el control más difícil de ver de la barra.
+
 ### Indicador del navbar
 
 `src/components/layout/PrimaryNav.tsx`. El zigzag
@@ -620,6 +635,12 @@ cuadro de color por función (`--credit-host`, `--credit-people`) que los
 distingue sin volver a leer el rótulo; el cuadro es decorativo y va
 `aria-hidden`, que el rótulo ya lo dice.
 
+En **tema claro** la sesión abierta se rellena del verde de marca con la tinta
+oscura encima. El relleno del tema oscuro es el color del texto al 7%, que sobre
+el crema apenas se distingue del cerrado, y la hora en verde sobre crema tampoco
+contrastaba: invertir relleno y tinta resuelve las dos cosas de una vez, con la
+misma pareja de colores que usa el botón.
+
 Quien **presenta** se acredita con su cargo; quienes **intervienen**, solo con su
 organización: en un panel importa de dónde viene cada voz, y el cargo alargaba la
 fila sin añadir nada. Son dos campos distintos de `AgendaPerson` (`role` y
@@ -837,6 +858,11 @@ propósito, porque van a pantalla completa: acotar la transición dejaría los
 laterales sin cubrir justo cuando tiene que tapar el cambio de contenido.
 
 ### La retícula de filetes
+
+Se apaga por partes desde cada página: `hasColumnRules={false}` quita las dos
+verticales interiores y `hasEdgeRules={false}` las dos del contenedor. Sin
+ninguna de las dos, `PageFrame` no monta ni la capa que las sostiene. El registro
+va sin ninguna: es un formulario y una credencial, no una composición reticulada.
 
 **En móvil no hay ninguna vertical**, ni las dos interiores ni las dos del
 contenedor: a ese ancho las celdas de la cabecera que separaban ya no existen,
@@ -1369,6 +1395,18 @@ solo. Y la cuenta atrás depende del mensaje, **no de la identidad de
 las dependencias del efecto el temporizador se reiniciaba en cada uno —medido,
 el aviso duraba catorce segundos en vez de seis—. La referencia se guarda en un
 `ref` y el efecto solo mira el mensaje.
+
+### Responsividad
+
+La pantalla pasa a **una sola columna en 1100px**, no en 900. El formulario
+mantiene sus 560px fijos, así que la credencial se quedaba con lo que sobraba: a
+1024 eran 376px de ancho, **más estrecha que en un teléfono**. Apilada recupera el
+ancho entero, y de 1180 arriba la columna de la credencial no baja de 530.
+
+En teléfono los campos bajan de 100px de alto a 76. A 100, seis campos son 600px
+de formulario y el hueco bajo cada rótulo se ve vacío; a 76 caben el rótulo, la
+línea de texto y su aire sin apretar el área táctil. El formulario pasa de 1052px
+a 884 y la página de 1843 a 1675.
 
 ### El arte de la credencial
 

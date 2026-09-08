@@ -52,6 +52,13 @@ CTA.
 Solo la portada va envuelta en `LoaderGate`: el loader es la entrada al sitio, no
 un peaje en cada ruta, y se ve una sola vez por sesión de pestaña.
 
+En móvil el selector de idioma no va en la cabecera sino dentro del menú, arriba
+y centrado, con los nombres largos (`header.localeNames`): es el mismo componente
+con `variant="menu"`.
+
+Los filetes se apagan por página: `hasColumnRules` los interiores y
+`hasEdgeRules` los del contenedor. El registro va sin ninguno.
+
 El acento de la navegación es su propio token (`--accent-nav`, lima), distinto del
 `--accent` del resto. Los iconos que deben tomar el color del texto van como
 máscara y no como imagen: el archivo trae su relleno fijado.

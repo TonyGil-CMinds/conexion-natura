@@ -192,6 +192,24 @@
   background-color: color-mix(in srgb, var(--fg) 7%, transparent);
 }
 
+/**
+ * En claro la sesión abierta se rellena de verde con la tinta oscura encima.
+ *
+ * El relleno del tema oscuro es el color del texto al 7%, que sobre el crema del
+ * fondo claro apenas se distingue del cerrado, y la hora en verde de marca sobre
+ * crema tampoco tenía contraste. Relleno y tinta invertidos lo resuelven de una
+ * vez: es la misma pareja de colores que usa el botón.
+ */
+:global([data-theme='light']) .session[data-open] {
+  background-color: var(--accent-nav);
+  color: var(--color-dark);
+}
+
+/* La hora hereda la tinta oscura: en verde sobre verde no se vería. */
+:global([data-theme='light']) .session[data-open] .sessionTime {
+  color: inherit;
+}
+
 .sessionTitle {
   display: block;
   white-space: nowrap;

@@ -19,7 +19,7 @@ export default async function RegistrationPage({ params }: Props) {
   const t = getDictionary(locale);
 
   return (
-    <PageFrame hasColumnRules={false} hideFooter locale={locale}>
+    <PageFrame hasColumnRules={false} hasEdgeRules={false} hideFooter locale={locale}>
       <Registration locale={locale} copy={t.registration} subtitle={t.hero.subtitle} />
     </PageFrame>
   );
