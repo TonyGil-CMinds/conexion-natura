@@ -1,9 +1,8 @@
-import { NextResponse, after } from 'next/server';
+import { NextResponse } from 'next/server';
 import { parseAttendeeInput } from '@/features/registration/lib/attendee-input';
-import { confirmationSubject, confirmationTemplateData } from '@/features/registration/lib/confirmation-email';
-import { isLocale, DEFAULT_LOCALE, type Locale } from '@/i18n/config';
+import { confirmationTemplateData } from '@/features/registration/lib/confirmation-email';
 import { prisma } from '@/lib/prisma';
-import { sendTemplate } from '@/lib/sendgrid';
+import { sendTemplate } from '@/lib/resend';
 
 /**
  * Registro de asistentes.
@@ -29,6 +28,9 @@ const SELECT = {
   photoUrl: true,
 } as const;
 
+/** Tope de espera del correo. Pasado esto, el registro responde igual. */
+const EMAIL_TIMEOUT_MS = 8000;
+
 /**
  * Manda el correo de confirmación **una sola vez** por persona.
  *
@@ -36,41 +38,50 @@ const SELECT = {
  * formulario corrige los datos y no debe repetir el correo, y si el envío falla
  * la marca se queda nula, así que un intento posterior lo vuelve a probar.
  *
- * Un fallo de SendGrid **no** rompe el registro: la fila ya está guardada y el
- * correo es un efecto secundario. Se anota en el registro del servidor y se sigue.
+ * **Nunca lanza.** Devuelve qué pasó y ya. En este proyecto hubo un fallo caro
+ * justo por lo contrario: el registro se guardaba, el correo fallaba, el cliente
+ * lo leía como error y la gente se iba creyendo que no se había inscrito.
+ *
+ * Y **se omite si falta cualquier dato del evento**. Resend acepta y entrega un
+ * envío con variables ausentes —queda un hueco vacío en el texto, sin error—, así
+ * que esta puerta es lo único que impide anunciar el evento sin fecha.
  */
 async function sendConfirmation({
   id,
   email,
   name,
   surname,
-  locale,
 }: {
   id: string;
   email: string;
   name: string;
   surname: string;
-  locale: Locale;
-}) {
-  try {
-    await sendTemplate({
-      to: email,
-      subject: confirmationSubject(locale),
-      data: confirmationTemplateData({ name, surname, locale }),
-    });
-    await prisma.attendee.update({
-      where: { id },
-      data: { confirmationSentAt: new Date() },
-    });
-  } catch (error) {
-    /**
-     * El cuerpo de la respuesta es lo que dice el motivo real: SendGrid manda
-     * «Maximum credits exceeded» con un 401, cuyo mensaje suelto es solo
-     * «Unauthorized» y hace pensar en la clave.
-     */
-    const body = (error as { response?: { body?: unknown } })?.response?.body;
-    console.error('[api/registro] no se pudo enviar la confirmación', body ?? error);
+}): Promise<{ status: 'sent' | 'skipped' | 'failed'; reason?: string }> {
+  const { data, missing } = confirmationTemplateData({ name, surname });
+
+  if (missing.length) {
+    console.error(
+      `[api/registro] correo omitido: faltan datos del evento (${missing.join(', ')})`,
+    );
+    return { status: 'skipped', reason: 'missingEventDetails' };
   }
+
+  const result = await sendTemplate({ to: email, data });
+
+  if (result.status !== 'sent') {
+    const reason = 'missing' in result ? `${result.reason}: ${result.missing.join(', ')}` : result.reason;
+    console.error(`[api/registro] no se pudo enviar la confirmación — ${reason}`);
+    return { status: result.status, reason: result.reason };
+  }
+
+  try {
+    await prisma.attendee.update({ where: { id }, data: { confirmationSentAt: new Date() } });
+  } catch (error) {
+    // El correo salió; solo se perdió la marca, y eso se arregla reenviando
+    // pendientes. No es motivo para decir que el envío falló.
+    console.error('[api/registro] correo enviado pero no se pudo marcar', error);
+  }
+  return { status: 'sent' };
 }
 
 export async function POST(request: Request) {
@@ -93,10 +104,6 @@ export async function POST(request: Request) {
   }
 
   const { email, ...rest } = parsed.data;
-  // El idioma solo decide a qué versión del sitio apuntan los enlaces del correo.
-  const rawLocale = (body as { locale?: unknown }).locale;
-  const locale = typeof rawLocale === 'string' && isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
-
   try {
     const attendee = await prisma.attendee.upsert({
       where: { email },
@@ -106,14 +113,40 @@ export async function POST(request: Request) {
       select: { ...SELECT, confirmationSentAt: true },
     });
 
+    /**
+     * El correo **se espera**, pero con tope.
+     *
+     * Sin esperarlo no hay garantía de que salga: en serverless la instancia se
+     * congela en cuanto se devuelve la respuesta, y una promesa suelta se queda a
+     * medias. Y con tope porque el registro no puede depender de lo que tarde un
+     * tercero: pasados los 8s se responde igual y la marca se queda nula, así que
+     * `npm run mail:pending` lo recupera.
+     */
+    let emailed: { status: 'sent' | 'skipped' | 'failed'; reason?: string } = {
+      status: 'skipped',
+      reason: 'alreadySent',
+    };
     if (!attendee.confirmationSentAt) {
-      // `after` lo deja para cuando la respuesta ya salió: el formulario no tiene
-      // que esperar al correo para decir que quedó confirmado.
-      after(() => sendConfirmation({ id: attendee.id, email, name: attendee.name, surname: attendee.surname, locale }));
+      emailed = await Promise.race([
+        sendConfirmation({
+          id: attendee.id,
+          email,
+          name: attendee.name,
+          surname: attendee.surname,
+        }),
+        new Promise<{ status: 'failed'; reason: string }>((resolve) =>
+          setTimeout(() => resolve({ status: 'failed', reason: 'timeout' }), EMAIL_TIMEOUT_MS),
+        ),
+      ]);
     }
 
     const { confirmationSentAt: _sent, ...payload } = attendee;
-    return NextResponse.json({ attendee: payload });
+    /**
+     * `emailed` es **diagnóstico**, no resultado del registro: el 201 dice que la
+     * fila está guardada, y eso ya no depende del correo. El cliente no debe
+     * leerlo como fallo ni enseñar un error por él.
+     */
+    return NextResponse.json({ attendee: payload, emailed }, { status: 201 });
   } catch (error) {
     console.error('[api/registro] no se pudo guardar', error);
     return NextResponse.json({ error: 'No se pudo guardar el registro.' }, { status: 500 });

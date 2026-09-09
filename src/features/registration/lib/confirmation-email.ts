@@ -1,99 +1,51 @@
-import { SITE } from '@/config/site';
-import { DEFAULT_LOCALE, type Locale } from '@/i18n/config';
-import { SITE_URL } from '@/config/urls';
+import {
+  eventEmailDetails,
+  type EventEmailDetails,
+  type EventEmailField,
+} from './event-email-details';
 
 /**
  * Variables de la plantilla de confirmación.
  *
- * Los nombres los fija la plantilla en SendGrid, así que se escriben tal cual
- * —en minúsculas y con guion bajo— aunque no sea el estilo del resto del código.
+ * Los nombres los fija la plantilla en Resend, así que se escriben tal cual —en
+ * minúsculas y con guion bajo— aunque no sea el estilo del resto del código.
  *
- * Van en mayúsculas porque la plantilla los pinta tal como llegan.
+ * El **nombre** viene del formulario; el resto son datos del evento y viven en
+ * `event-email-details.ts`, que es quien puede decir que falta alguno.
  */
-export type ConfirmationTemplateData = {
+export type ConfirmationTemplateData = EventEmailDetails & {
   username: string;
-  lugar: string;
-  dia: string;
-  hora_ecuador: string;
-  event_date: string;
-  event_start_time: string;
-  event_end_time: string;
-  venue_name: string;
-  venue_city: string;
-  venue_country: string;
-  agenda_url: string;
-  sitio_web_url: string;
-  n500_url: string;
 };
 
-/** Convocatoria hermana. Es un dominio propio, no una ruta de este sitio. */
-const N500_URL = 'https://500.naturatech.org';
-
 /**
- * Fechas y horas del correo.
+ * Datos para el correo de confirmación de una persona, y qué falta para poder
+ * mandarlo.
  *
- * Salen de `SITE.event` y no de literales, para que corregir la hora del evento
- * no deje el correo diciendo otra cosa. Cada plantilla pide su propio formato, de
- * ahí que la misma fecha aparezca escrita de dos maneras.
- */
-const FORMATS = {
-  es: {
-    dia: '5 DE OCTUBRE DE 2026',
-    eventDate: '5 OCTUBRE, 2026',
-    subject: 'Tu registro a CEIBA Quito está confirmado',
-  },
-  en: {
-    dia: 'OCTOBER 5, 2026',
-    eventDate: 'OCTOBER 5, 2026',
-    subject: 'Your CEIBA Quito registration is confirmed',
-  },
-} as const;
-
-/** Asunto del correo, por idioma. La plantilla no trae ninguno. */
-export function confirmationSubject(locale: Locale = DEFAULT_LOCALE): string {
-  return FORMATS[locale].subject;
-}
-
-/** «5:00 pm — 9:00 pm» → las dos horas por separado, en mayúsculas. */
-function scheduleParts() {
-  const [start = '', end = ''] = SITE.event.scheduleLabel.split('—').map((part) => part.trim());
-  return { start: start.toUpperCase(), end: end.toUpperCase() };
-}
-
-/**
- * Datos para el correo de confirmación de una persona.
+ * `missing` no es informativo: mientras tenga algo, **no se manda el correo**.
+ * Resend acepta y **entrega** un envío al que le falten variables —queda un
+ * hueco vacío en el texto, sin error y sin marcas que lo delaten—, así que este
+ * es el único sitio donde se puede detener un correo que anunciaría el evento
+ * sin fecha.
  *
- * El nombre va en mayúsculas como en el ejemplo de la plantilla; los enlaces
- * llevan el prefijo de idioma para que quien se registró en inglés no aterrice
- * en la versión en español.
+ * El nombre va en mayúsculas como en el ejemplo de la plantilla.
  */
 export function confirmationTemplateData({
   name,
   surname,
-  locale = DEFAULT_LOCALE,
 }: {
   name: string;
   surname: string;
-  locale?: Locale;
-}): ConfirmationTemplateData {
-  const { venue, place } = SITE.event;
-  const { start, end } = scheduleParts();
-  const formats = FORMATS[locale];
+}): {
+  data: ConfirmationTemplateData;
+  missing: readonly EventEmailField[];
+} {
+  const { details, missing } = eventEmailDetails();
 
   return {
-    username: `${name} ${surname}`.trim().toUpperCase(),
-    lugar: place.toUpperCase(),
-    dia: formats.dia,
-    hora_ecuador: start,
-    event_date: formats.eventDate,
-    event_start_time: start,
-    event_end_time: end,
-    venue_name: venue.name.toUpperCase(),
-    // La sede está en Quito, Ecuador; `place` trae las dos separadas por coma.
-    venue_city: place.split(',')[0]!.trim().toUpperCase(),
-    venue_country: (place.split(',')[1] ?? '').trim().toUpperCase(),
-    agenda_url: `${SITE_URL}/${locale}/agenda`,
-    sitio_web_url: `${SITE_URL}/${locale}`,
-    n500_url: N500_URL,
+    data: {
+      username: `${name} ${surname}`.trim().toUpperCase(),
+      ...details,
+    },
+    missing,
   };
 }

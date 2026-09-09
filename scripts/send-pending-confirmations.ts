@@ -18,8 +18,8 @@
 import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../generated/prisma/client';
-import { confirmationSubject, confirmationTemplateData } from '../src/features/registration/lib/confirmation-email';
-import { sendTemplate } from '../src/lib/sendgrid';
+import { confirmationTemplateData } from '../src/features/registration/lib/confirmation-email';
+import { sendTemplate } from '../src/lib/resend';
 
 const shouldSend = process.argv.includes('--send');
 
@@ -51,24 +51,33 @@ async function main() {
 
   let enviadas = 0;
   for (const person of pending) {
-    try {
-      await sendTemplate({
-        to: person.email,
-        // Sin idioma guardado por persona, se manda en español, que es el
-        // idioma por defecto del sitio.
-        subject: confirmationSubject(),
-        data: confirmationTemplateData({ name: person.name, surname: person.surname }),
-      });
-      await prisma.attendee.update({
-        where: { id: person.id },
-        data: { confirmationSentAt: new Date() },
-      });
-      enviadas += 1;
-      console.log(`· enviada a ${person.email}`);
-    } catch (error) {
-      const body = (error as { response?: { body?: unknown } })?.response?.body;
-      console.error(`· falló ${person.email}:`, body ?? error);
+    // Sin idioma guardado por persona se manda en español, el del sitio.
+    const { data, missing } = confirmationTemplateData({
+      name: person.name,
+      surname: person.surname,
+    });
+
+    // La misma puerta que la ruta: Resend entregaría el correo con el hueco de la
+    // fecha en blanco, así que aquí se para.
+    if (missing.length) {
+      console.error(`· omitida ${person.email}: faltan datos del evento (${missing.join(', ')})`);
+      continue;
     }
+
+    const result = await sendTemplate({ to: person.email, data });
+    if (result.status !== 'sent') {
+      const detalle =
+        'missing' in result ? `${result.reason}: ${result.missing.join(', ')}` : result.reason;
+      console.error(`· falló ${person.email}: ${detalle}`);
+      continue;
+    }
+
+    await prisma.attendee.update({
+      where: { id: person.id },
+      data: { confirmationSentAt: new Date() },
+    });
+    enviadas += 1;
+    console.log(`· enviada a ${person.email}`);
   }
   console.log(`\n${enviadas} de ${pending.length} enviadas.`);
 }
