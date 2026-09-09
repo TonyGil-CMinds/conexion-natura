@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { PageFrame } from '@/components/layout/PageFrame';
-import { Registration } from '@/features/registration';
+import { RegistrationFlow } from '@/features/registration';
 import { getDictionary, isLocale } from '@/i18n';
 
 type Props = { params: Promise<{ locale: string }> };
@@ -20,7 +20,7 @@ export default async function RegistrationPage({ params }: Props) {
 
   return (
     <PageFrame hasColumnRules={false} hasEdgeRules={false} hideFooter locale={locale}>
-      <Registration locale={locale} copy={t.registration} subtitle={t.hero.subtitle} />
+      <RegistrationFlow locale={locale} copy={t.registration} />
     </PageFrame>
   );
 }

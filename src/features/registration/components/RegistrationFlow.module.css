@@ -1,0 +1,7 @@
+/**
+ * Contenedor del flujo. No pinta nada: solo existe para que las pantallas y la
+ * capa de la escalera compartan un mismo hueco.
+ */
+.root {
+  display: contents;
+}

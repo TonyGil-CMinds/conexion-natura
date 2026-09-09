@@ -369,6 +369,145 @@ export const es = {
   },
 
   registration: {
+    /**
+     * Primera pantalla del registro: el titular grande y la captura del correo.
+     *
+     * El titular va en dos líneas porque el salto es decisión de diseño. Los
+     * iconos sustituyen a las letras «o» en el orden en que aparecen, así que
+     * al traducir basta con que la frase tenga alguna.
+     */
+    join: {
+      headlineLine1: 'Acompáñanos',
+      headlineLine2: 'en natura500 night',
+      /** Tramo de la segunda línea que va en lima. Debe aparecer tal cual en ella. */
+      headlineAccent: 'natura500',
+      emailLabel: 'Tu correo electrónico',
+      submit: 'Continuar',
+      saving: 'Espera un momento...',
+      note: 'Cupo limitado',
+      invalid: 'Escribe un correo válido',
+    },
+
+    /**
+     * Segundo paso: a cuál de los dos actos del día se asiste. La elección es
+     * múltiple, y el titular lo dice —«uno o los dos»— porque unas tarjetas con
+     * marca de verificación se leen igual de bien como si fueran excluyentes.
+     */
+    choice: {
+      step: 'Paso 1/3',
+      headlineLine1: 'Asiste a uno',
+      headlineLine2: 'o a los dos',
+      marquee: 'Océanos que nos conectan',
+      awardNote:
+        'Si participas en GET Forum te invitamos a celebrar a los ganadores del Premio NaturaTech LAC 2026.',
+      submit: 'Continuar',
+      needOne: 'Elige al menos uno para continuar',
+      selected: 'Seleccionado',
+      events: {
+        night: 'Natura500 Night',
+        award: 'Premio NaturaTech LAC 2026',
+      },
+    },
+
+    /**
+     * Tercer paso: los datos de quien se registra y, si viene acompañado, los de
+     * su acompañante en una segunda pasada por la misma pantalla. De ahí que
+     * haya dos juegos de rótulos: los mismos campos, pero hablando de otra
+     * persona.
+     */
+    details: {
+      step: 'Paso 2/3',
+      stepCompanion: 'Paso 2/3',
+      headlineLine1: 'Garantiza',
+      headlineLine2: 'tu lugar',
+      companionHeadlineLine1: 'Y los datos',
+      companionHeadlineLine2: 'de tu acompañante',
+      marquee: 'La tierra que habitamos',
+      fields: {
+        name: 'Tu nombre',
+        surname: 'Tu apellido',
+        organization: 'Tu organización',
+        role: 'Tu rol',
+        linkedin: 'LinkedIn',
+      },
+      companionFields: {
+        name: 'Su nombre',
+        surname: 'Su apellido',
+        organization: 'Su organización',
+        role: 'Su rol',
+        linkedin: 'LinkedIn',
+      },
+      withCompanion: 'Asistiré con acompañante',
+      submit: 'Continuar',
+      back: 'Volver',
+      required: 'Completa los datos que faltan',
+    },
+
+    /** Último paso: la fotografía de la credencial y la confirmación. */
+    photo: {
+      step: 'Paso 3/3',
+      headlineLine1: 'Ya casi',
+      headlineLine2: 'terminamos',
+      marquee: 'Conexiones que creamos',
+      intro: 'Sube una fotografía de tu preferencia para crear tu tarjeta virtual.',
+      upload: 'Subir imagen',
+      change: 'Cambiar imagen',
+      /** Mientras el modelo recorta la silueta. Es lo más lento del paso. */
+      removing: 'Quitando fondo',
+      adjust: 'Ajustar encuadre',
+      /** Editor de encuadre, que se abre solo al elegir la imagen. */
+      cropTitle: 'Ajusta tu fotografía',
+      cropHint: 'Arrastra para encuadrar la imagen',
+      cropClose: 'Cerrar editor',
+      cropConfirm: 'Usar este encuadre',
+      cropZoom: 'Zoom',
+      cropHorizontal: 'Horizontal',
+      cropVertical: 'Vertical',
+      submit: 'Confirmar asistencia',
+      sending: 'Confirmando',
+      back: 'Volver',
+      tooBig: 'La imagen pesa más de 8 MB. Elige otra o hazla más pequeña.',
+      notImage: 'Ese archivo no es una imagen.',
+      failed: 'No se pudo confirmar. Inténtalo de nuevo.',
+    },
+
+    /**
+     * Pantalla final: el registro ya está guardado.
+     *
+     * Es también la vista de reposo de `/registro` —quien vuelve más tarde llega
+     * aquí—, así que la copia no habla de «acabas de registrarte» sino del
+     * evento: la fecha, el sitio y la tarjeta.
+     */
+    welcome: {
+      greeting: 'Hola',
+      invitedLead: 'Eres uno de los',
+      invitedCount: '100',
+      invitedTail: 'invitados',
+      soon: '¡Nos vemos pronto!',
+      /** Para lectores de pantalla: la fecha grande va en bloques sin sentido. */
+      dateLabel: '5 de octubre de 2026',
+      addToCalendar: 'Añadir a mi calendario',
+      calendarLabel: 'Elige tu calendario',
+      calendars: {
+        google: 'Google Calendar',
+        outlook: 'Outlook',
+        ics: 'Apple u otro (.ics)',
+      },
+      /** Lo que se escribe en el evento del calendario. */
+      calendarTitle: 'CEIBA Quito — Natura500 Night',
+      calendarDescription:
+        'Noche de Innovación e Inversión para la Biodiversidad y las Economías del Futuro.',
+      share: 'Compartir',
+      cardTitle: 'Tu tarjeta',
+      cardFlip: 'Haz clic para girarla',
+      preparing: 'Creando tu tarjeta',
+      shareCard: 'Compartir',
+      download: 'Descargar',
+      close: 'Cerrar',
+      shareTitle: 'Mi credencial CEIBA Quito',
+      shareText: 'Nos vemos en Quito, Ecuador.',
+      copied: 'Enlace copiado al portapapeles',
+    },
     eyebrowOpen: 'Quedan: 5 lugares',
     eyebrowConfirmed: 'Eres uno de los 100 invitados',
     titleVerify: 'Verifica tu información',

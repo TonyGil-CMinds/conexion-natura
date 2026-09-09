@@ -1,0 +1,273 @@
+/**
+ * Segundo paso del registro: titular a la izquierda, tarjetas a la derecha.
+ *
+ * Dos columnas y no una centrada como el paso anterior: aquí hay que comparar
+ * dos tarjetas, y con el titular encima quedarían por debajo del pliegue.
+ */
+.root {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 507px);
+  gap: var(--space-16);
+  align-items: start;
+  min-height: calc(100dvh - var(--header-height) - var(--header-rule));
+  padding: clamp(2.5rem, 11dvh, 6rem) var(--container-margin) var(--space-16);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(2rem, 7dvh, 4rem);
+}
+
+.headline {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-choice);
+  /* El peso mayor que trae IBM Plex Mono: en el diseño el titular va en negra. */
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+/**
+ * Marca circular. Gira entera: el texto ya viene curvado en el asset, así que
+ * rotarlo es lo que produce la marquesina, sin recomponer nada.
+ */
+.marquee {
+  width: clamp(110px, 11vw, 140px);
+  height: auto;
+  animation: marquee-spin var(--spin) linear infinite;
+}
+
+@keyframes marquee-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Quieta si se pide menos movimiento: gira sin parar y no aporta información. */
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    animation: none;
+  }
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.step {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 55%, transparent);
+}
+
+.slot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Filete que separa los dos actos, como en el diseño. */
+.slot + .slot {
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--rule);
+}
+
+/**
+ * Tarjeta de selección. Es una etiqueta con su casilla dentro —oculta a la
+ * vista— así que el clic, el teclado y el estado los da el navegador y no hay
+ * que reinventarlos.
+ *
+ * El filete de dos píxeles está siempre, transparente cuando no se ha elegido:
+ * si apareciera al marcar, la tarjeta cambiaría de tamaño al pulsarla.
+ */
+.card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 220px;
+  padding: var(--space-6);
+  /**
+   * Cuatro píxeles, del grosor del diseño, y presentes siempre en transparente:
+   * si el filete apareciera al marcar, la tarjeta cambiaría de tamaño al
+   * pulsarla y las dos dejarían de estar alineadas.
+   */
+  border: 4px solid transparent;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-expo),
+    filter var(--duration-fast) var(--ease-out-expo);
+}
+
+.card[data-chosen] {
+  border-color: var(--accent-nav);
+}
+
+.card:hover:not([data-chosen]) {
+  border-color: color-mix(in srgb, var(--fg) 30%, transparent);
+}
+
+.card:focus-within {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+/* La noche va sobre el oscuro de la interfaz; la premiación, sobre su crema. */
+.card[data-event='night'] {
+  background-color: var(--color-surface);
+}
+
+.card[data-event='award'] {
+  background-color: var(--color-light);
+}
+
+.logo {
+  position: relative;
+  z-index: 1;
+  width: auto;
+  height: clamp(58px, 5.6vw, 76px);
+}
+
+/**
+ * El arte va pegado al canto derecho, a la altura de la tarjeta. Entero y no
+ * sangrado: en las dos piezas el dibujo es una figura cerrada —la trama en rombo
+ * y el trofeo—, y recortarla se leía como un descuadre.
+ */
+.art {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: auto;
+  height: 100%;
+  transform: translateY(-50%);
+}
+
+/* Marca de elegido, en la esquina de arriba a la derecha. */
+.check {
+  position: absolute;
+  z-index: 2;
+  top: var(--space-4);
+  right: var(--space-4);
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  background-color: var(--accent-nav);
+  color: var(--color-dark);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+/* Mismo degradado que el botón del paso anterior: es la misma acción de avance. */
+.submit {
+  width: 200px;
+  min-height: 52px;
+  border: 0;
+  background-image: linear-gradient(100deg, var(--color-green-base) 0%, var(--accent-nav) 100%);
+  color: var(--color-dark);
+  font-family: var(--font-mono);
+  font-size: var(--text-cta);
+  letter-spacing: var(--tracking-cta);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: filter var(--duration-fast) var(--ease-out-expo);
+}
+
+.submit:hover {
+  filter: brightness(1.12);
+}
+
+.submit:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+.note {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  line-height: 1.5;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+}
+
+.error {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-red);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* En una columna: a este ancho las tarjetas se quedan sin sitio para el arte. */
+@media (max-width: 1100px) {
+  .root {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2.5rem, 7dvh, 4rem);
+  }
+
+  .intro {
+    /* El titular y la marca, uno al lado del otro: apilados empujaban las
+       tarjetas fuera de la pantalla. */
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: var(--space-8);
+  }
+
+  .panel {
+    max-width: 560px;
+  }
+}
+
+@media (max-width: 640px) {
+  .root {
+    padding-inline: 24px;
+  }
+
+  .intro {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .card {
+    min-height: 160px;
+    padding: var(--space-4);
+  }
+
+  .submit {
+    width: 100%;
+  }
+}

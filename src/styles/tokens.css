@@ -117,6 +117,14 @@
   --text-cover: clamp(2.25rem, 4.84vw, 3.875rem); /* 62px @1280 */
   /* Rótulo de sección (FAQ). */
   --text-section: clamp(2.5rem, 6.72vw, 5.375rem); /* 86px @1280 */
+  /**
+   * Titular de la primera pantalla del registro, en Cubao. Manda el ancho: son
+   * dos líneas largas en una sola línea cada una, y lo que las limita es el
+   * contenedor, no el alto.
+   */
+  --text-join: clamp(2rem, 7.6vw, 6.25rem); /* 97px @1280 */
+  /** Titular del paso de elección de eventos, en la mono del sitio. */
+  --text-choice: clamp(1.75rem, 4.85vw, 3.875rem); /* 62px @1280 */
   /* Acordeón: pregunta y respuesta van en Host Grotesk. */
   --text-question: 1rem; /* 16px */
   /**

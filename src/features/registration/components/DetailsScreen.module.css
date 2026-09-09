@@ -1,0 +1,313 @@
+/**
+ * Paso de datos. Misma retícula que el paso de elección —titular a la izquierda,
+ * panel a la derecha— para que al pasar de uno a otro no se mueva la página.
+ */
+.root {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 507px);
+  gap: var(--space-16);
+  align-items: start;
+  min-height: calc(100dvh - var(--header-height) - var(--header-rule));
+  padding: clamp(2.5rem, 11dvh, 6rem) var(--container-margin) var(--space-16);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(2rem, 7dvh, 4rem);
+}
+
+/* Volver y titular, como un solo bloque. */
+.heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.headline {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-choice);
+  font-weight: 700;
+  line-height: 1.12;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+/**
+ * Moneda de dos caras. `preserve-3d` es lo que deja a las caras en el espacio
+ * del contenedor: sin él las dos se aplanarían y el giro no enseñaría la de
+ * atrás.
+ */
+.coin {
+  position: relative;
+  width: clamp(110px, 11vw, 140px);
+  aspect-ratio: 1;
+  transform-style: preserve-3d;
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* La cara que mira hacia atrás no se pinta: es lo que hace creíble el giro. */
+  backface-visibility: hidden;
+}
+
+/* La de atrás llega ya volteada, así que acaba derecha al terminar la vuelta. */
+.faceBack {
+  transform: rotateY(180deg);
+}
+
+/**
+ * Volver al paso anterior. Va **encima del titular** y no junto a «continuar»:
+ * es navegación, no una acción del formulario, y ahí se lee antes de empezar a
+ * escribir en vez de después.
+ */
+.back {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.back:hover {
+  color: var(--fg);
+}
+
+.back:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 4px;
+}
+
+/* Máscara y no imagen: la flecha toma la tinta del rótulo, que cambia al pasar
+   el ratón. Se voltea, porque el asset apunta a la derecha. */
+.backIcon {
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  mask-image: url('/icons/icon-arrow-white.svg');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  transform: scaleX(-1);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  /* Un punto más de aire que el resto de los paneles: son cinco cajas seguidas
+     y a 16px se leían como un bloque. */
+  gap: var(--space-5);
+}
+
+.step {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 55%, transparent);
+}
+
+/* Cada campo es una caja con su filete, como el correo del primer paso. */
+.field {
+  display: flex;
+  align-items: center;
+  min-height: 62px;
+  padding-inline: 18px;
+  border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
+  background-color: color-mix(in srgb, var(--fg) 4%, transparent);
+  transition: border-color var(--duration-fast) var(--ease-out-expo);
+}
+
+.field:focus-within {
+  border-color: color-mix(in srgb, var(--accent-nav) 60%, transparent);
+}
+
+/* Lo que falta se marca en el filete, no con un texto por campo: son cinco. */
+.field[data-missing] {
+  border-color: var(--color-red);
+}
+
+.input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: var(--text-cta);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.input::placeholder {
+  color: color-mix(in srgb, var(--fg) 45%, transparent);
+  text-transform: uppercase;
+}
+
+/**
+ * Autorrelleno del navegador, igual que en el paso del correo: Chrome ignora
+ * `background-color` en un campo autorrellenado y pinta el suyo.
+ */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--fg);
+  -webkit-box-shadow: inset 0 0 0 1000px color-mix(in srgb, var(--fg) 4%, var(--bg));
+  caret-color: var(--fg);
+  transition: background-color 600000s 0s;
+}
+
+/* Casilla del acompañante: etiqueta y casilla de verdad, dibujada aparte. */
+.companion {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+  cursor: pointer;
+}
+
+.box {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid color-mix(in srgb, var(--fg) 40%, transparent);
+  color: transparent;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-expo),
+    background-color var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-out-expo);
+}
+
+/* Marcada: se rellena de verde y aparece la marca en la tinta oscura. */
+.companion input:checked + .box {
+  border-color: var(--accent-nav);
+  background-color: var(--accent-nav);
+  color: var(--color-dark);
+}
+
+.companion input:focus-visible + .box {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+.companionLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.submit {
+  width: 200px;
+  min-height: 52px;
+  border: 0;
+  background-image: linear-gradient(100deg, var(--color-green-base) 0%, var(--accent-nav) 100%);
+  color: var(--color-dark);
+  font-family: var(--font-mono);
+  font-size: var(--text-cta);
+  letter-spacing: var(--tracking-cta);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: filter var(--duration-fast) var(--ease-out-expo);
+}
+
+.submit:hover {
+  filter: brightness(1.12);
+}
+
+.submit:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+.error {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-red);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+  .root {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2.5rem, 7dvh, 4rem);
+  }
+
+  .intro {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: var(--space-8);
+  }
+
+  .panel {
+    max-width: 560px;
+  }
+}
+
+@media (max-width: 640px) {
+  .root {
+    padding-inline: 24px;
+  }
+
+  .intro {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .field {
+    min-height: 56px;
+    padding-inline: 12px;
+  }
+
+  .input {
+    font-size: var(--text-note);
+  }
+
+  .submit {
+    width: 100%;
+  }
+}

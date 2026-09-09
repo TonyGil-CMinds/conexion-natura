@@ -1,0 +1,686 @@
+/**
+ * Último paso: la fotografía de la credencial.
+ *
+ * Comparte la retícula y las piezas del paso de datos —titular a la izquierda,
+ * panel a la derecha, moneda, botón de volver— para que el salto entre los dos
+ * no mueva nada.
+ */
+.root {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 507px);
+  gap: var(--space-16);
+  align-items: start;
+  min-height: calc(100dvh - var(--header-height) - var(--header-rule));
+  padding: clamp(2.5rem, 11dvh, 6rem) var(--container-margin) var(--space-16);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(2rem, 7dvh, 4rem);
+}
+
+/* Volver y titular, como un solo bloque. */
+.heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.headline {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-choice);
+  font-weight: 700;
+  line-height: 1.12;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+/**
+ * Moneda de dos caras. `preserve-3d` es lo que deja a las caras en el espacio
+ * del contenedor: sin él las dos se aplanarían y el giro no enseñaría la de
+ * atrás.
+ */
+.coin {
+  position: relative;
+  width: clamp(110px, 11vw, 140px);
+  aspect-ratio: 1;
+  transform-style: preserve-3d;
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* La cara que mira hacia atrás no se pinta: es lo que hace creíble el giro. */
+  backface-visibility: hidden;
+}
+
+/* La de atrás llega ya volteada, así que acaba derecha al terminar la vuelta. */
+.faceBack {
+  transform: rotateY(180deg);
+}
+
+/**
+ * Volver al paso anterior. Va **encima del titular** y no junto a «continuar»:
+ * es navegación, no una acción del formulario, y ahí se lee antes de empezar a
+ * escribir en vez de después.
+ */
+.back {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.back:hover {
+  color: var(--fg);
+}
+
+.back:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 4px;
+}
+
+/* Máscara y no imagen: la flecha toma la tinta del rótulo, que cambia al pasar
+   el ratón. Se voltea, porque el asset apunta a la derecha. */
+.backIcon {
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  mask-image: url('/icons/icon-arrow-white.svg');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  transform: scaleX(-1);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  /* Un punto más de aire que el resto de los paneles: son cinco cajas seguidas
+     y a 16px se leían como un bloque. */
+  gap: var(--space-5);
+}
+
+.step {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 55%, transparent);
+}
+
+/* Cada campo es una caja con su filete, como el correo del primer paso. */
+.field {
+  display: flex;
+  align-items: center;
+  min-height: 62px;
+  padding-inline: 18px;
+  border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
+  background-color: color-mix(in srgb, var(--fg) 4%, transparent);
+  transition: border-color var(--duration-fast) var(--ease-out-expo);
+}
+
+.field:focus-within {
+  border-color: color-mix(in srgb, var(--accent-nav) 60%, transparent);
+}
+
+/* Lo que falta se marca en el filete, no con un texto por campo: son cinco. */
+.field[data-missing] {
+  border-color: var(--color-red);
+}
+
+.input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: var(--text-cta);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.input::placeholder {
+  color: color-mix(in srgb, var(--fg) 45%, transparent);
+  text-transform: uppercase;
+}
+
+/**
+ * Autorrelleno del navegador, igual que en el paso del correo: Chrome ignora
+ * `background-color` en un campo autorrellenado y pinta el suyo.
+ */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--fg);
+  -webkit-box-shadow: inset 0 0 0 1000px color-mix(in srgb, var(--fg) 4%, var(--bg));
+  caret-color: var(--fg);
+  transition: background-color 600000s 0s;
+}
+
+/* Casilla del acompañante: etiqueta y casilla de verdad, dibujada aparte. */
+.companion {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+  cursor: pointer;
+}
+
+.box {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid color-mix(in srgb, var(--fg) 40%, transparent);
+  color: transparent;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-expo),
+    background-color var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-out-expo);
+}
+
+/* Marcada: se rellena de verde y aparece la marca en la tinta oscura. */
+.companion input:checked + .box {
+  border-color: var(--accent-nav);
+  background-color: var(--accent-nav);
+  color: var(--color-dark);
+}
+
+.companion input:focus-visible + .box {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+.companionLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.submit {
+  width: 200px;
+  min-height: 52px;
+  border: 0;
+  background-image: linear-gradient(100deg, var(--color-green-base) 0%, var(--accent-nav) 100%);
+  color: var(--color-dark);
+  font-family: var(--font-mono);
+  font-size: var(--text-cta);
+  letter-spacing: var(--tracking-cta);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: filter var(--duration-fast) var(--ease-out-expo);
+}
+
+.submit:hover {
+  filter: brightness(1.12);
+}
+
+.submit:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+.error {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-red);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+  .root {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2.5rem, 7dvh, 4rem);
+  }
+
+  .intro {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: var(--space-8);
+  }
+
+  .panel {
+    max-width: 560px;
+  }
+}
+
+@media (max-width: 640px) {
+  .root {
+    padding-inline: 24px;
+  }
+
+  .intro {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .field {
+    min-height: 56px;
+    padding-inline: 12px;
+  }
+
+  .input {
+    font-size: var(--text-note);
+  }
+
+  .submit {
+    width: 100%;
+  }
+}
+
+/* ——— Propio del paso de la fotografía ——— */
+
+/* Cara delantera: la del paso anterior, que es la que gira para irse. */
+.faceFront {
+  transform: rotateY(0deg);
+}
+
+.copy {
+  max-width: 42ch;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  line-height: 1.6;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 78%, transparent);
+}
+
+/**
+ * Caja de la imagen. Filete discontinuo, como el cargador del formulario
+ * anterior: dice «aquí falta algo» sin parecer un campo de texto.
+ */
+.drop {
+  display: grid;
+  place-items: center;
+  min-height: 96px;
+  padding: var(--space-4);
+  border: 1px dashed color-mix(in srgb, var(--fg) 34%, transparent);
+  background-color: color-mix(in srgb, var(--fg) 3%, transparent);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-expo),
+    background-color var(--duration-fast) var(--ease-out-expo);
+}
+
+.drop:hover {
+  border-color: color-mix(in srgb, var(--accent-nav) 60%, transparent);
+}
+
+/* Con imagen elegida el filete se cierra: ya no falta nada. */
+.drop[data-filled] {
+  border-style: solid;
+  border-color: var(--accent-nav);
+}
+
+.drop:focus-within {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+.dropLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-cta);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent-nav);
+}
+
+.previewRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+/**
+ * Ventana de la vista previa: la proporción es la del hueco del retrato en el
+ * arte (214×270), no un cuadrado. Así lo que se ve aquí es lo que acaba en la
+ * credencial, con el mismo encuadre.
+ */
+.previewFrame {
+  position: relative;
+  flex: none;
+  width: 58px;
+  aspect-ratio: 214 / 270;
+  overflow: hidden;
+  background-color: color-mix(in srgb, var(--color-dark) 60%, transparent);
+  outline: 1px solid color-mix(in srgb, var(--accent-nav) 50%, transparent);
+}
+
+.previewFrame img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Volver al encuadre. Enlace y no botón macizo: es un ajuste, no una acción
+   principal, y el botón de confirmar ya está debajo. */
+.adjust {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.adjust:hover {
+  color: var(--accent-nav);
+}
+
+.adjust:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 4px;
+}
+
+.adjustIcon {
+  width: 14px;
+  height: 14px;
+  background-color: currentColor;
+  mask-image: url('/icons/icon-green-rombo.svg');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+/* ——— Editor de encuadre ——— */
+
+.editor {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-transition) + 1);
+  display: grid;
+  place-items: center;
+  padding: var(--space-6);
+  background-color: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  backdrop-filter: blur(14px);
+}
+
+.dialog {
+  width: min(520px, 100%);
+  padding: var(--space-6);
+  border: 1px solid var(--rule);
+  background-color: var(--bg);
+  box-shadow: 0 30px 80px rgb(0 0 0 / 0.66);
+}
+
+.dialogHeading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.dialogHeading p {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-cta);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.dialogHeading span {
+  display: block;
+  margin-top: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+}
+
+.dialogHeading button {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.closeIcon {
+  width: 18px;
+  height: 18px;
+  background-color: var(--fg);
+  mask-image: url('/icons/icon-close.svg');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+/* La ventana tiene la proporción del hueco del arte: lo que se ve es lo que se
+   sube. `touch-action: none` deja arrastrar en el móvil sin mover la página. */
+.viewport {
+  position: relative;
+  width: min(280px, 75vw);
+  aspect-ratio: 214 / 270;
+  margin: var(--space-6) auto;
+  overflow: hidden;
+  background-color: color-mix(in srgb, var(--color-dark) 70%, transparent);
+  cursor: grab;
+  touch-action: none;
+}
+
+.viewport:active {
+  cursor: grabbing;
+}
+
+.viewport img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center;
+  user-select: none;
+  pointer-events: none;
+}
+
+.viewportFrame {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--accent-nav);
+  pointer-events: none;
+}
+
+.controls {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.controls label {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 42px;
+  padding-inline: var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent);
+  background-color: color-mix(in srgb, var(--fg) 4%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+/* Mandos cuadrados, sin radio: la interfaz es de píxeles. */
+.controls input[type='range'] {
+  width: 100%;
+  height: 18px;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  cursor: ew-resize;
+}
+
+.controls input[type='range']::-webkit-slider-runnable-track {
+  height: 4px;
+  border: 1px solid color-mix(in srgb, var(--fg) 34%, transparent);
+  background-image: linear-gradient(
+    90deg,
+    var(--accent-nav) 0 50%,
+    color-mix(in srgb, var(--fg) 20%, transparent) 50% 100%
+  );
+}
+
+.controls input[type='range']::-webkit-slider-thumb {
+  width: 14px;
+  height: 14px;
+  margin-top: -6px;
+  appearance: none;
+  border: 2px solid var(--color-dark);
+  background-color: var(--accent-nav);
+  box-shadow: 0 0 0 1px var(--accent-nav);
+}
+
+.controls input[type='range']::-moz-range-track {
+  height: 4px;
+  border: 1px solid color-mix(in srgb, var(--fg) 34%, transparent);
+  background-color: color-mix(in srgb, var(--fg) 20%, transparent);
+}
+
+.controls input[type='range']::-moz-range-progress {
+  height: 4px;
+  background-color: var(--accent-nav);
+}
+
+.controls input[type='range']::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border: 2px solid var(--color-dark);
+  border-radius: 0;
+  background-color: var(--accent-nav);
+}
+
+.controls input[type='range']:focus-visible {
+  outline: 1px solid var(--accent-nav);
+  outline-offset: 4px;
+}
+
+.cropConfirm {
+  width: 100%;
+  min-height: 56px;
+  margin-top: var(--space-6);
+  border: 0;
+  background-color: var(--accent-nav);
+  color: var(--color-dark);
+  font-family: var(--font-mono);
+  font-size: var(--text-nav);
+  letter-spacing: var(--tracking-cta);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: filter var(--duration-fast) var(--ease-out-expo);
+}
+
+.cropConfirm:hover {
+  filter: brightness(1.1);
+}
+
+/* El botón crece: es la confirmación final, no un paso más. */
+.submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.submit:disabled {
+  cursor: wait;
+}
+
+/* Cargador de píxeles, el mismo del primer paso. */
+.loader {
+  display: grid;
+  grid-template-columns: repeat(3, 5px);
+  gap: 3px;
+}
+
+.loader span {
+  width: 5px;
+  height: 5px;
+  background-color: currentColor;
+  opacity: 0.25;
+  animation: pixel-wave 1.1s linear infinite;
+  animation-delay: calc(var(--cell) * 0.09s);
+}
+
+@keyframes pixel-wave {
+  0%,
+  70%,
+  100% {
+    opacity: 0.25;
+  }
+  35% {
+    opacity: 1;
+  }
+}

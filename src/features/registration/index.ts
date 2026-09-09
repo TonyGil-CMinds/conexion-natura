@@ -1,4 +1,12 @@
+export { RegistrationFlow } from './components/RegistrationFlow';
+export { JoinScreen } from './components/JoinScreen';
+export { EventChoiceScreen } from './components/EventChoiceScreen';
+export { DetailsScreen } from './components/DetailsScreen';
+export { PhotoScreen } from './components/PhotoScreen';
+export { WelcomeScreen } from './components/WelcomeScreen';
 export { Registration } from './components/Registration';
 export { RegistrationCta } from './components/RegistrationCta';
 export { AttendanceProvider, useAttendance } from './context/attendance';
 export type { Attendee } from './context/attendance';
+export { readJoinDraft, saveJoinDraft, clearJoinDraft } from './lib/join-draft';
+export type { JoinDraft, PersonDraft } from './lib/join-draft';

@@ -1,0 +1,120 @@
+/**
+ * Credencial con relieve. El puntero escribe la inclinación en `--tilt-*` y la
+ * posición del brillo en `--shine-*`; aquí solo se aplican.
+ */
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* La perspectiva vive en el contenedor: si estuviera en la tarjeta, el punto de
+   fuga se movería con ella y el giro se vería plano. */
+/**
+ * Los valores de reposo viven **aquí**, que es el elemento donde el puntero los
+ * escribe. Declararlos en la tarjeta los dejaba fijos: una declaración propia
+ * gana a la heredada, así que la inclinación se calculaba y no se veía.
+ */
+.scene {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --shine-x: 50%;
+  --shine-y: 50%;
+
+  perspective: 1200px;
+  width: min(340px, 76vw);
+}
+
+.card {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 430 / 600;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transform-style: preserve-3d;
+  /* El suavizado del seguimiento. Corto: más largo se siente como retardo. */
+  transition: transform 220ms var(--ease-out-expo);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--accent-nav);
+  outline-offset: 8px;
+}
+
+/**
+ * El volteo va en una capa propia y no en la tarjeta: la tarjeta ya lleva la
+ * inclinación del puntero, y sumar los dos giros en la misma transformación
+ * dejaría la cara trasera mirando a un sitio distinto según dónde estuviera el
+ * ratón al pulsar.
+ */
+.faces {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 700ms var(--ease-out-expo);
+}
+
+.card[data-flipped] .faces {
+  transform: rotateY(180deg);
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* La cara que mira hacia atrás no se pinta: es lo que hace creíble el giro. */
+  backface-visibility: hidden;
+  filter: drop-shadow(0 26px 50px rgb(0 0 0 / 0.45));
+}
+
+/* La de atrás llega ya volteada, así que acaba derecha al terminar la vuelta. */
+.faceBack {
+  transform: rotateY(180deg);
+}
+
+/**
+ * Brillo. Va sobre la tarjeta pero **fuera** de la capa que voltea, así que
+ * acompaña a la inclinación y no gira con las caras: un reflejo pertenece a la
+ * luz de la sala, no a la cara que se está mirando.
+ */
+.shine {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      120px 120px at var(--shine-x) var(--shine-y),
+      color-mix(in srgb, var(--accent-nav) 26%, transparent) 0%,
+      transparent 70%
+    );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-fast) var(--ease-out-expo);
+}
+
+.scene:hover .shine {
+  opacity: 1;
+}
+
+.hint {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 45%, transparent);
+}
+
+/* Sin movimiento: la tarjeta se queda quieta y el volteo es instantáneo. */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .faces {
+    transition: none;
+  }
+}

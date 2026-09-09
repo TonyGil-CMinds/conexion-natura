@@ -93,8 +93,17 @@ export function StairsReveal({
     // cambio de contenido— pero sin escalera: todo entra y sale a la vez.
     const duration = reduced ? 0.18 : panelDuration;
     const stagger = reduced ? 0 : columnStagger;
-    const delayFor = (_index: number, el: Element) =>
-      Number((el as HTMLElement).dataset.column ?? 0) * stagger;
+
+    /**
+     * Los dos paneles de cada columna, agrupados: se mueven juntos, así que el
+     * desfase es por columna y no por panel.
+     */
+    const byColumn = new Map<number, HTMLElement[]>();
+    for (const panel of panels) {
+      const column = Number(panel.dataset.column ?? 0);
+      byColumn.set(column, [...(byColumn.get(column) ?? []), panel]);
+    }
+    const lastColumn = Math.max(0, ...byColumn.keys());
 
     // Estado de partida en cada pasada: la capa a la vista y los paneles plegados.
     gsap.set(root, { display: 'block' });
@@ -107,12 +116,24 @@ export function StairsReveal({
       },
     });
 
-    timeline
-      .to(panels, { scaleY: 1, duration, ease, delay: delayFor })
-      // GSAP absorbe el retardo máximo en la duración del tween, así que el final
-      // de este paso es exactamente el instante en que la pantalla está cubierta.
-      .add(() => coveredRef.current?.())
-      .to(panels, { scaleY: 0, duration, ease, delay: delayFor }, `+=${holdS}`);
+    /**
+     * Cada columna entra en su **posición** de la línea de tiempo, no con un
+     * `delay` calculado por función.
+     *
+     * Con el retardo como función, la duración total de la línea de tiempo queda
+     * indeterminada y `onComplete` no llegaba a dispararse en la segunda pasada:
+     * la capa se quedaba montada y el flujo no avanzaba. Con posiciones
+     * explícitas, el final es una suma que se puede calcular aquí mismo.
+     */
+    const coveredAt = duration + lastColumn * stagger;
+    for (const [column, group] of byColumn) {
+      timeline.to(group, { scaleY: 1, duration, ease }, column * stagger);
+    }
+    // Justo cuando no queda hueco: es el momento seguro para cambiar contenido.
+    timeline.add(() => coveredRef.current?.(), coveredAt);
+    for (const [column, group] of byColumn) {
+      timeline.to(group, { scaleY: 0, duration, ease }, coveredAt + holdS + column * stagger);
+    }
 
     return () => {
       timeline.kill();

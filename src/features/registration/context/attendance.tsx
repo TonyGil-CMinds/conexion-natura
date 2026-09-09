@@ -36,7 +36,25 @@ type AttendanceState = {
 };
 
 /** Clave de almacenamiento. Provisional: sustituir al montar la base de datos. */
-const STORAGE_KEY = 'c500-attendee';
+const STORAGE_KEY = 'c500-attendee-v3';
+
+/**
+ * Claves de flujos anteriores, que se borran al montar.
+ *
+ * El registro se rehízo y el formulario que escribía `c500-attendee` ya no
+ * existe, así que quien lo probó se quedaba con una confirmación fantasma: la
+ * cabecera enseñaba su nombre y el hero decía «asistencia confirmada» mientras
+ * `/registro` volvía a pedirle el correo. Y no había manera de limpiarlo desde la
+ * interfaz, porque el resumen que traía el botón de editar tampoco está.
+ *
+ * Versionar la clave lo resuelve de una vez y para todos, en vez de pedirle a
+ * cada uno que vacíe el almacenamiento a mano.
+ *
+ * En la lista entra también el borrador del registro (`c500-join`): el paso de
+ * la fotografía cambió —ahora quita el fondo y encuadra— y un borrador a medias
+ * de la versión anterior arrancaría el flujo con datos que ya no encajan.
+ */
+const LEGACY_KEYS = ['c500-attendee', 'c500-attendee-v2', 'c500-join'];
 
 const AttendanceContext = createContext<AttendanceState>({
   attendee: null,
@@ -64,6 +82,7 @@ export function AttendanceProvider({ children }: { children: React.ReactNode }) 
   // `localStorage`, y devolver algo distinto en cliente rompería la hidratación.
   useEffect(() => {
     try {
+      for (const key of LEGACY_KEYS) window.localStorage.removeItem(key);
       const stored = window.localStorage.getItem(STORAGE_KEY);
       if (stored) setAttendee(JSON.parse(stored) as Attendee);
     } catch {

@@ -1,0 +1,303 @@
+/**
+ * Primera pantalla del registro. Todo centrado en una sola columna: no hay más
+ * que el titular, un campo y una nota, así que la retícula del sitio no aporta.
+ */
+.root {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Ocupa el hueco entre la cabecera y el borde: la pantalla es toda ella. */
+  min-height: calc(100dvh - var(--header-height) - var(--header-rule));
+  padding: clamp(3rem, 18dvh, 11rem) var(--container-margin) var(--space-16);
+  text-align: center;
+}
+
+/**
+ * Titular en Cubao. Es la tipografía de display del sitio —la del menú móvil— y
+ * aquí va al tamaño mayor de la página.
+ */
+.headline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.06em;
+  margin: 0;
+  font-family: var(--font-menu);
+  font-size: var(--text-join);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.line {
+  display: block;
+  /* Sin partir: el salto de línea es el del diseño, no el del navegador. */
+  white-space: nowrap;
+}
+
+/* El tramo de marca, en el acento del tema. */
+.accent {
+  color: var(--accent-nav);
+}
+
+/**
+ * Icono que sustituye a una «o».
+ *
+ * Se mide en `em` para que siga al cuerpo del titular en cualquier ancho, y se
+ * baja un poco: el círculo del icono es más alto que la «o» de la fuente, así que
+ * alineado a la línea base sobresalía por arriba.
+ */
+.oIcon {
+  display: inline-block;
+  width: 0.86em;
+  height: 0.86em;
+  margin-inline: 0.02em;
+  vertical-align: -0.09em;
+}
+
+/**
+ * Caja del correo: un campo y el botón dentro del mismo recuadro.
+ *
+ * El ancho va en `min(...)` mientras no se anima; al enviar, el componente le
+ * pasa un ancho en píxeles y desde ahí se contrae. `overflow: hidden` es lo que
+ * recorta el campo mientras la caja encoge.
+ */
+.box {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: min(600px, 100%);
+  margin-top: clamp(2rem, 9dvh, 5rem);
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
+  background-color: color-mix(in srgb, var(--fg) 4%, transparent);
+  overflow: hidden;
+}
+
+.field {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  transition: opacity var(--duration-fast) var(--ease-out-expo);
+}
+
+/* Al contraerse, el campo se apaga antes de que la caja lo alcance. */
+.field[data-hidden] {
+  opacity: 0;
+}
+
+/**
+ * Sin hueco entre campo y botón mientras se contrae. El `gap` sobrevivía al
+ * final y quedaba a la izquierda del botón, que es lo que lo descentraba: la
+ * caja pequeña mide justo el botón más el relleno, así que cualquier hueco de
+ * más lo empuja a un lado.
+ */
+.box[data-saving] {
+  gap: 0;
+}
+
+.input {
+  width: 100%;
+  min-width: 0;
+  padding-inline: 18px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: var(--text-cta);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.input::placeholder {
+  color: color-mix(in srgb, var(--fg) 45%, transparent);
+  text-transform: uppercase;
+}
+
+.input:focus-visible {
+  outline: 0;
+}
+
+/**
+ * Autorrelleno del navegador.
+ *
+ * Chrome ignora `background-color` en un campo autorrellenado y pinta el suyo
+ * —azul claro con tinta oscura—, que aquí rompía la caja. Dos remedios juntos,
+ * porque ninguno basta solo en todas las versiones:
+ *
+ * 1. Un retardo absurdo en la transición del fondo: Chrome no llega nunca a
+ *    aplicar el suyo.
+ * 2. Una sombra interior del color que **ya** se ve en la caja —el texto al 4%
+ *    sobre el fondo del tema—, así que si el primer remedio falla, lo que se
+ *    pinta es indistinguible del fondo real.
+ *
+ * La tinta va por `-webkit-text-fill-color`, que es lo único que Chrome respeta
+ * para el texto autorrellenado.
+ */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--fg);
+  -webkit-box-shadow: inset 0 0 0 1000px color-mix(in srgb, var(--fg) 4%, var(--bg));
+  caret-color: var(--fg);
+  transition: background-color 600000s 0s;
+}
+
+/* El foco se marca en la caja entera, no en el campo: el recuadro es el control. */
+.box:focus-within {
+  border-color: color-mix(in srgb, var(--accent-nav) 60%, transparent);
+}
+
+/**
+ * Botón de envío. El degradado es el mismo del CTA principal —verde base a
+ * lima—, aquí en reposo y no solo en el hover: es la única pieza de color de la
+ * pantalla.
+ */
+.submit {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 108px;
+  min-height: 48px;
+  border: 0;
+  border-radius: 8px;
+  background-image: linear-gradient(
+    100deg,
+    var(--color-green-base) 0%,
+    var(--accent-nav) 100%
+  );
+  color: var(--color-dark);
+  cursor: pointer;
+  transition: filter var(--duration-fast) var(--ease-out-expo);
+}
+
+.submit:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+
+.submit:disabled {
+  cursor: default;
+}
+
+.submit:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+/* A escuadra mientras carga: es el lenguaje del sitio y lo pide el diseño. */
+.box[data-saving] .submit {
+  border-radius: 0;
+}
+
+/* Máscara y no imagen: así el icono toma la tinta oscura del botón. */
+.icon {
+  width: 22px;
+  height: 22px;
+  background-color: currentColor;
+  mask-image: url('/icons/icon-arrow-white.svg');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+/**
+ * Cargador de píxeles: tres por tres, encendiéndose en ola.
+ *
+ * Va en CSS y no en JavaScript porque el disparo es que el elemento aparezca:
+ * en un efecto habría un cuadro con la rejilla ya encendida antes de arrancar.
+ */
+.loader {
+  display: grid;
+  grid-template-columns: repeat(3, 5px);
+  gap: 3px;
+}
+
+.loader span {
+  width: 5px;
+  height: 5px;
+  background-color: currentColor;
+  opacity: 0.25;
+  animation: pixel-wave 1.1s linear infinite;
+  /* El retardo sale de la celda, así que la ola recorre la rejilla en diagonal. */
+  animation-delay: calc(var(--cell) * 0.09s);
+}
+
+@keyframes pixel-wave {
+  0%,
+  70%,
+  100% {
+    opacity: 0.25;
+  }
+  35% {
+    opacity: 1;
+  }
+}
+
+/* Alto fijo: el pie cambia de texto y sin reserva la caja daba un salto. */
+.noteLayer {
+  display: grid;
+  place-items: center;
+  min-height: 2.4em;
+  margin-top: var(--space-6);
+}
+
+.note {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 55%, transparent);
+}
+
+.note[data-error] {
+  color: var(--color-red);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .box {
+    gap: var(--space-3);
+    padding: 10px;
+  }
+
+  .submit {
+    width: 88px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 640px) {
+  .root {
+    padding-inline: 24px;
+  }
+
+  /**
+   * En estrecho el titular sí parte: a una línea por frase, «en natura500 night»
+   * pide más ancho del que hay y se saldría de la pantalla.
+   */
+  .line {
+    white-space: normal;
+  }
+
+  .input {
+    padding-inline: 12px;
+    font-size: var(--text-note);
+  }
+}

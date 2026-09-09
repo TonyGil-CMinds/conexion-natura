@@ -29,6 +29,13 @@ model Invitation {
   @@index([email])
 }
 
+/// A cuál de los dos eventos asiste. Son los dos actos del mismo día: la noche
+/// de Natura500 y la premiación de la mañana en GET Forum.
+enum EventChoice {
+  NIGHT
+  AWARD
+}
+
 /// Quien ya confirmó asistencia. Es el contenido del formulario de `/registro`.
 model Attendee {
   id           String   @id @default(cuid())
@@ -48,9 +55,36 @@ model Attendee {
   /// Cuándo se envió el correo de confirmación. Nulo mientras no se haya
   /// enviado: reenviar el formulario corrige los datos y no debe repetir el
   /// correo, y si el envío falla la fila queda marcada para reintentarlo.
+  /// Eventos elegidos. Es una lista porque la elección es múltiple: se puede
+  /// asistir a los dos. Vacía mientras el registro no haya llegado a ese paso.
+  events EventChoice[]
+
+  /// Si viene con acompañante. Se guarda aparte de la fila del acompañante
+  /// porque se responde antes de tener sus datos, y porque un `false` explícito
+  /// dice algo distinto de una fila que falta.
+  bringsCompanion Boolean @default(false)
+  companion       Companion?
+
   confirmationSentAt DateTime?
 
   /// Cada invitación admite un solo registro, de ahí el `@unique`.
   invitationId String?     @unique
   invitation   Invitation? @relation(fields: [invitationId], references: [id])
+}
+
+/// Quien acompaña a un asistente. Mismos datos que la persona titular menos el
+/// correo: el formulario no lo pide, porque la confirmación va a quien registra.
+/// Uno por asistente, de ahí el `@unique`.
+model Companion {
+  id           String   @id @default(cuid())
+  name         String
+  surname      String
+  organization String
+  role         String
+  linkedin     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  attendeeId String   @unique
+  attendee   Attendee @relation(fields: [attendeeId], references: [id], onDelete: Cascade)
 }

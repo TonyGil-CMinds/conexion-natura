@@ -103,13 +103,34 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Revisa los datos marcados.', fields: parsed.errors }, { status: 422 });
   }
 
-  const { email, ...rest } = parsed.data;
+  const { email, companion, ...rest } = parsed.data;
+  /**
+   * El acompañante va **anidado en la misma operación** que el asistente cuando
+   * viene: son un solo hecho —«vengo con alguien»— y con dos llamadas una podría
+   * quedarse sin la otra. `upsert` porque al corregir el registro puede que ya
+   * exista la fila.
+   *
+   * Quitarlo, en cambio, va aparte: la relación es 1—1 y ahí Prisma no admite
+   * `deleteMany` anidado, y un `delete` anidado falla si no había fila. Se
+   * resuelve después con un `deleteMany` de primer nivel, que no se queja cuando
+   * no encuentra nada.
+   */
+  const companionWrite = companion
+    ? { upsert: { create: companion, update: companion } }
+    : undefined;
   try {
     const attendee = await prisma.attendee.upsert({
       where: { email },
       // Al corregir no se borra la foto anterior si esta vez no viene ninguna.
-      update: { ...rest, photoUrl: rest.photoUrl ?? undefined },
-      create: { email, ...rest },
+      // Una lista vacía no borra lo ya elegido: el formulario puede reenviarse
+      // desde un paso que no pregunta por los eventos.
+      update: {
+        ...rest,
+        photoUrl: rest.photoUrl ?? undefined,
+        events: rest.events.length ? rest.events : undefined,
+        ...(companionWrite ? { companion: companionWrite } : {}),
+      },
+      create: { email, ...rest, ...(companion ? { companion: { create: companion } } : {}) },
       select: { ...SELECT, confirmationSentAt: true },
     });
 
@@ -138,6 +159,15 @@ export async function POST(request: Request) {
           setTimeout(() => resolve({ status: 'failed', reason: 'timeout' }), EMAIL_TIMEOUT_MS),
         ),
       ]);
+    }
+
+    /**
+   * Si dijo que no trae acompañante, se borra el que hubiera. Va tras el
+   * `upsert` porque hasta entonces no se conoce el id, y `deleteMany` en vez de
+   * `delete` para que no falle cuando no había ninguno.
+   */
+    if (!companion && !rest.bringsCompanion) {
+      await prisma.companion.deleteMany({ where: { attendeeId: attendee.id } });
     }
 
     const { confirmationSentAt: _sent, ...payload } = attendee;
