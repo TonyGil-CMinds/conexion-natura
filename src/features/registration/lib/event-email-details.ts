@@ -29,6 +29,8 @@ export const EVENT_EMAIL = {
   venue_name: 'Museo de Bonsái, Jardín Botánico',
   venue_city: 'Quito',
   venue_country: 'Ecuador',
+  /** Enlace al mapa de la sede. */
+  venue_url: 'https://share.google/wt2Ayao7q2ObvggbQ',
   agenda_url: 'https://ceiba.naturatech.org/es/agenda',
   sitio_web_url: 'https://ceiba.naturatech.org',
   /** Convocatoria hermana. Es un dominio propio, no una ruta de este sitio. */
