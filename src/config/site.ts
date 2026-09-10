@@ -22,11 +22,24 @@ export const SITE = {
       mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Jard%C3%ADn+Bot%C3%A1nico+de+Quito',
     },
     /**
-     * Para el archivo de calendario. En UTC porque Ecuador continental va a
-     * UTC-5 todo el año —no tiene horario de verano—, así que 17:00 locales son
-     * las 22:00 Z y el evento termina ya en el día siguiente en UTC.
+     * Para el calendario: **hora local de Quito**, con su zona al lado.
+     *
+     * Antes iba en UTC, que es el mismo instante pero no la misma lectura: cada
+     * calendario lo traducía a la zona de quien lo abría, y a alguien en Ciudad
+     * de México la invitación le decía «4:00 pm». Correcto y confuso a la vez.
+     * Con la zona explícita, la entrada dice 5:00 pm de Quito para todo el
+     * mundo, que es la hora a la que hay que estar en la puerta.
+     *
+     * Ecuador continental no tiene horario de verano, así que el desplazamiento
+     * es -05:00 todo el año y no hace falta calcular nada por fecha.
      */
-    calendar: { kind: 'time', startUtc: '20261005T220000Z', endUtc: '20261006T020000Z' },
+    calendar: {
+      kind: 'time',
+      start: '20261005T170000',
+      end: '20261005T210000',
+      timeZone: 'America/Guayaquil',
+      offset: '-0500',
+    },
   },
   /**
    * El otro acto del día: la premiación del Premio NaturaTech LAC 2026.

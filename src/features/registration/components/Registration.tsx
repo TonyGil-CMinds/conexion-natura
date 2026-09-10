@@ -96,8 +96,11 @@ function eventCalendarFile(copy: Copy, subtitle: readonly string[]) {
     // calendario de quien ya añadió el evento, y otro crearía un duplicado.
     'UID:conexion500-2026-10-05@conexion500',
     `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}`,
-    `DTSTART:${event.calendar.startUtc}`,
-    `DTEND:${event.calendar.endUtc}`,
+    // Hora local de Quito con su zona, igual que en `lib/calendar.ts`. Este
+    // componente ya no se usa —lo sustituyó el flujo nuevo— y solo se mantiene
+    // compilando: lo que se envía de verdad sale de ese módulo.
+    `DTSTART;TZID=${event.calendar.timeZone}:${event.calendar.start}`,
+    `DTEND;TZID=${event.calendar.timeZone}:${event.calendar.end}`,
     `SUMMARY:${escapeICS(`${name} — ${subtitle.join(' ')}`)}`,
     `LOCATION:${escapeICS(`${event.venue.name}, ${event.place}`)}`,
     `DESCRIPTION:${escapeICS(`${event.scheduleLabel} (${copy.scheduleNote}).`)}`,
