@@ -360,6 +360,11 @@
   border-color: var(--accent-nav);
 }
 
+/* Y si se intentó continuar sin ella, el filete lo dice. */
+.drop[data-missing] {
+  border-color: var(--color-red);
+}
+
 .drop:focus-within {
   outline: 2px solid var(--fg);
   outline-offset: 3px;

@@ -34,6 +34,14 @@ export const es = {
       title: 'Registro',
       description: 'Confirma tu asistencia a CEIBA Quito.',
     },
+    terms: {
+      title: 'Términos y condiciones',
+      description: 'Condiciones de uso del sitio y del registro a CEIBA Quito.',
+    },
+    privacy: {
+      title: 'Aviso de privacidad',
+      description: 'Qué datos pedimos para registrarte en CEIBA Quito y qué hacemos con ellos.',
+    },
   },
 
   nav: {
@@ -473,6 +481,8 @@ export const es = {
       submit: 'Confirmar asistencia',
       sending: 'Confirmando',
       back: 'Volver',
+      /** La fotografía es obligatoria: es la cara de la credencial. */
+      required: 'Sube una fotografía para continuar',
       tooBig: 'La imagen pesa más de 8 MB. Elige otra o hazla más pequeña.',
       notImage: 'Ese archivo no es una imagen.',
       failed: 'No se pudo confirmar. Inténtalo de nuevo.',
@@ -588,6 +598,252 @@ export const es = {
       photoType: 'Elige un archivo de imagen.',
       photoPrepare: 'No se pudo preparar la imagen.',
       save: 'No se pudo guardar el registro.',
+    },
+  },
+
+  /**
+   * Páginas legales. Redacción de partida, hecha con lo que el sitio hace de
+   * verdad: los datos que pide el registro, dónde acaban y con qué proveedores.
+   * Lo que no se puede saber leyendo el código —razón social, correo de
+   * contacto, jurisdicción— vive vacío en `src/config/legal.ts` y sale marcado
+   * en la página. **Falta que lo revise asesoría legal antes de publicar.**
+   */
+  legal: {
+    /** Rótulos que comparten los dos documentos. */
+    common: {
+      updated: 'Última revisión:',
+      contactTitle: 'Contacto',
+      controllerLabel: 'Responsable del tratamiento',
+      emailLabel: 'Correo de contacto',
+      jurisdictionLabel: 'Ley aplicable',
+      /** Sale donde falta un dato por definir. */
+      pending: 'Por definir',
+    },
+
+    privacy: {
+      title: 'Aviso de privacidad',
+      intro:
+        'Este aviso explica qué datos personales pedimos para registrarte en CEIBA Quito, para qué los usamos, dónde se guardan y qué puedes pedirnos que hagamos con ellos. Está escrito para que se entienda sin ser abogado.',
+      contact:
+        'Para ejercer cualquiera de tus derechos, o si algo de este aviso no queda claro, escríbenos. Contestamos a la misma dirección desde la que nos escribas.',
+      sections: [
+        {
+          id: 'datos',
+          title: 'Qué datos te pedimos',
+          body: ['Al registrarte recogemos únicamente lo necesario para emitir tu credencial y organizar el aforo:'],
+          list: [
+            'Nombre y apellido.',
+            'Correo electrónico.',
+            'Organización y rol.',
+            'Perfil de LinkedIn, si decides añadirlo.',
+            'Una fotografía tuya, que va en la credencial.',
+            'A qué acto o actos del día asistirás.',
+            'Si vienes acompañado, los mismos datos de tu acompañante.',
+          ],
+        },
+        {
+          id: 'usos',
+          title: 'Para qué los usamos',
+          body: ['Solo para el evento. Concretamente:'],
+          list: [
+            'Gestionar tu registro y el aforo, que es limitado.',
+            'Emitir tu credencial digital con tu nombre, tu organización y tu fotografía.',
+            'Enviarte la confirmación de asistencia y la información práctica del acto.',
+            'Identificarte en el acceso el día del evento.',
+            'Avisarte si algo del programa o de la sede cambia.',
+          ],
+        },
+        {
+          id: 'base',
+          title: 'Con qué base los tratamos',
+          body: [
+            'Con tu consentimiento, que das al completar el registro. El registro es voluntario: puedes no darlo, y puedes retirarlo después pidiéndonos que eliminemos tus datos, aunque en ese caso no podremos emitir tu credencial ni darte acceso al acto.',
+          ],
+          list: [],
+        },
+        {
+          id: 'fotografia',
+          title: 'Tu fotografía',
+          body: [
+            'La fotografía se procesa en tu propio navegador: ahí se le quita el fondo y se recorta al encuadre que elijas. Solo se guarda la versión recortada, y se usa únicamente para tu credencial.',
+            'No aplicamos reconocimiento facial ni ningún otro análisis biométrico sobre ella.',
+          ],
+          list: [],
+        },
+        {
+          id: 'proveedores',
+          title: 'Dónde se guardan y quién nos ayuda a tratarlos',
+          body: [
+            'No tenemos servidores propios: usamos proveedores que tratan los datos por encargo nuestro y solo para lo que se describe aquí.',
+          ],
+          list: [
+            'La base de datos del registro está en Prisma Postgres.',
+            'Las fotografías están en Cloudflare R2.',
+            'Los correos de confirmación salen por Resend.',
+            'El sitio se sirve desde Vercel.',
+            'Sus servidores están fuera de Ecuador, así que tus datos se transfieren internacionalmente para poder prestarte el servicio.',
+          ],
+        },
+        {
+          id: 'plazo',
+          title: 'Cuánto tiempo los conservamos',
+          body: [
+            'Hasta doce meses después del evento, para poder atender consultas posteriores y rendir cuentas de la convocatoria. Pasado ese plazo se eliminan. Si nos pides antes que los borremos, los borramos antes.',
+          ],
+          list: [],
+        },
+        {
+          id: 'terceros',
+          title: 'Con quién los compartimos',
+          body: [
+            'Con nadie más allá de los proveedores citados. No vendemos, alquilamos ni cedemos tus datos para publicidad, ni los compartimos con otros asistentes, patrocinadores o socios del evento.',
+            'Solo los entregaríamos a una autoridad si una norma nos obligara a hacerlo.',
+          ],
+          list: [],
+        },
+        {
+          id: 'acompanante',
+          title: 'Los datos de tu acompañante',
+          body: [
+            'Si registras a un acompañante, nos estás diciendo que cuentas con su permiso para darnos sus datos y que le has explicado este aviso. Tratamos sus datos igual que los tuyos y por el mismo tiempo, y esa persona tiene exactamente los mismos derechos.',
+          ],
+          list: [],
+        },
+        {
+          id: 'derechos',
+          title: 'Qué puedes pedirnos',
+          body: ['En cualquier momento, escribiendo a la dirección del final de esta página:'],
+          list: [
+            'Acceder a los datos que tenemos sobre ti.',
+            'Corregir lo que esté mal o incompleto.',
+            'Eliminar tu registro, con su fotografía.',
+            'Retirar tu consentimiento.',
+            'Oponerte a un uso concreto de tus datos.',
+          ],
+        },
+        {
+          id: 'navegador',
+          title: 'Qué guarda el sitio en tu navegador',
+          body: [
+            'No usamos cookies de publicidad, de seguimiento ni de terceros, y no medimos tu navegación con herramientas de analítica.',
+            'Lo único que queda en tu navegador es lo que hace falta para que el sitio funcione: tu confirmación de asistencia, el borrador del registro mientras lo completas y tu preferencia de tema claro u oscuro. Nada de eso sale de tu equipo, y se borra vaciando los datos del sitio.',
+          ],
+          list: [],
+        },
+        {
+          id: 'cambios',
+          title: 'Cambios en este aviso',
+          body: [
+            'Si cambiamos algo, actualizamos la fecha de revisión que aparece arriba. Si el cambio afecta a para qué usamos tus datos, te avisaremos al correo con el que te registraste.',
+          ],
+          list: [],
+        },
+      ],
+    },
+
+    terms: {
+      title: 'Términos y condiciones',
+      intro:
+        'Estas condiciones rigen el uso de este sitio y el registro al evento CEIBA Quito del 5 de octubre de 2026. Al registrarte las aceptas.',
+      contact:
+        'Si tienes dudas sobre estas condiciones, o necesitas algo del equipo organizador, escríbenos.',
+      sections: [
+        {
+          id: 'registro',
+          title: 'El registro',
+          body: [
+            'El aforo es limitado y el registro se atiende por orden de llegada. Completar el formulario no garantiza tu lugar hasta que recibas la confirmación.',
+            'Los datos que nos das tienen que ser tuyos y ser ciertos. Un registro con datos falsos o con la identidad de otra persona puede anularse sin aviso.',
+            'Un registro es una persona. Si vienes acompañado, tienes que registrar también a tu acompañante con sus propios datos.',
+          ],
+          list: [],
+        },
+        {
+          id: 'credencial',
+          title: 'Tu credencial',
+          body: [
+            'La credencial que genera el sitio es personal e intransferible: sirve para identificarte en el acceso y no puede cederse ni compartirse.',
+            'El día del evento podremos pedirte un documento de identidad para comprobar que coincide con la credencial.',
+          ],
+          list: [],
+        },
+        {
+          id: 'acceso',
+          title: 'El acceso al evento',
+          body: [
+            'La entrada es gratuita y por invitación. El equipo organizador puede negar o retirar el acceso a quien no pueda acreditar su registro, a quien acuda con una credencial ajena o a quien tenga un comportamiento que ponga en riesgo o incomode al resto de asistentes, al personal o a la sede.',
+            'Dentro del recinto se siguen las normas de la sede y las indicaciones del personal.',
+          ],
+          list: [],
+        },
+        {
+          id: 'programa',
+          title: 'El programa puede cambiar',
+          body: [
+            'La agenda publicada es preliminar: los horarios, las intervenciones y las personas que participan pueden variar hasta el mismo día. El horario y la sala de la premiación del Premio NaturaTech LAC 2026 están por confirmar.',
+            'Si el evento tuviera que cambiar de fecha, de sede o de formato, te avisaremos al correo con el que te registraste.',
+          ],
+          list: [],
+        },
+        {
+          id: 'imagenes',
+          title: 'Fotografía y grabación del acto',
+          body: [
+            'Durante el evento puede haber fotografía y grabación de vídeo con fines informativos y de difusión de la convocatoria. Al asistir es posible que aparezcas en esas imágenes.',
+            'Si no quieres aparecer, dínoslo por escrito antes del evento o al llegar, y lo tendremos en cuenta.',
+          ],
+          list: [],
+        },
+        {
+          id: 'propiedad',
+          title: 'Contenidos del sitio',
+          body: [
+            'Los textos, las imágenes, los logotipos y el diseño de este sitio pertenecen a quienes organizan el evento o a quienes se los han cedido. Puedes compartir los enlaces y tu propia credencial libremente; para cualquier otro uso —reproducir contenidos, usar las marcas— hace falta permiso por escrito.',
+          ],
+          list: [],
+        },
+        {
+          id: 'enlaces',
+          title: 'Enlaces a otros sitios',
+          body: [
+            'El sitio enlaza a páginas de terceros —perfiles de LinkedIn, mapas, calendarios, sitios de las organizaciones participantes—. No controlamos su contenido ni sus condiciones, así que la responsabilidad de lo que allí ocurra es suya.',
+          ],
+          list: [],
+        },
+        {
+          id: 'responsabilidad',
+          title: 'Disponibilidad y responsabilidad',
+          body: [
+            'Ponemos cuidado en que el sitio funcione y en que la información esté al día, pero no podemos garantizar que esté disponible sin interrupciones ni que no contenga errores. Si detectas uno, agradecemos el aviso.',
+            'No respondemos de los daños derivados de un uso del sitio distinto del previsto, ni de fallos ajenos a nosotros como los de tu conexión o tu equipo.',
+          ],
+          list: [],
+        },
+        {
+          id: 'datos',
+          title: 'Tus datos personales',
+          body: [
+            'Cómo tratamos los datos del registro se explica en el aviso de privacidad, que forma parte de estas condiciones.',
+          ],
+          list: [],
+        },
+        {
+          id: 'ley',
+          title: 'Ley aplicable',
+          body: [
+            'Estas condiciones se rigen por la legislación que se indica al final de esta página, y cualquier controversia se someterá a sus tribunales.',
+          ],
+          list: [],
+        },
+        {
+          id: 'cambios',
+          title: 'Cambios en estas condiciones',
+          body: [
+            'Podemos actualizarlas; la fecha de revisión de arriba dice cuándo se hizo la última vez. Si el cambio es de fondo y te afecta como persona registrada, te avisaremos por correo.',
+          ],
+          list: [],
+        },
+      ],
     },
   },
 } as const;

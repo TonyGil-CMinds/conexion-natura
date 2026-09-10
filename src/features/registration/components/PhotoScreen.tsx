@@ -58,9 +58,8 @@ const DRAG_RATIO = 0.76;
 /**
  * Último paso: la fotografía de la credencial y la confirmación.
  *
- * La imagen es **opcional**. La credencial tiene su propio marcador cuando falta,
- * y bloquear aquí la confirmación por una foto dejaría fuera a quien se registra
- * desde un ordenador donde no tiene ninguna a mano.
+ * La imagen es **obligatoria**: sin ella la credencial sale con el hueco del
+ * retrato vacío, y la credencial es lo que se enseña en la puerta.
  *
  * Al elegirla se le **quita el fondo** y se abre el editor de encuadre: la
  * ventana del retrato en la credencial es vertical y estrecha, así que sin
@@ -115,11 +114,19 @@ export function PhotoScreen({ copy, onConfirm, onBack }: Props) {
 
   async function confirm() {
     if (isSending || isRemoving) return;
+
+    // Sin fotografía no se sigue. Se dice aquí en vez de dejar el botón muerto:
+    // un botón apagado no explica qué falta.
+    if (!preview) {
+      setError(copy.required);
+      return;
+    }
+
     setError(null);
     setIsSending(true);
     try {
       // El recorte se cuece aquí: lo que se sube es lo que se ha visto.
-      const portrait = preview ? await renderPortrait(preview, crop) : null;
+      const portrait = await renderPortrait(preview, crop);
       await onConfirm?.(portrait);
     } catch {
       setError(copy.failed);
@@ -228,6 +235,9 @@ export function PhotoScreen({ copy, onConfirm, onBack }: Props) {
         <motion.label
           className={styles.drop}
           data-filled={preview ? true : undefined}
+          /* Lo que falta se marca en la caja, no solo en el texto de abajo: el
+             aviso está al pie del botón y la caja es lo que hay que tocar. */
+          data-missing={!preview && error === copy.required ? true : undefined}
           variants={ITEM}
         >
           <input

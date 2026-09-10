@@ -63,9 +63,10 @@ export const NAV_LINKS = [
 export const FOOTER = {
   image: { src: '/img/footer-image.png', width: 764, height: 356 },
   cta: { href: '/registro' },
+  /** Rutas de verdad, sin prefijo de idioma: quien pinta el enlace le añade el suyo. */
   legal: [
-    { key: 'terms', href: '#terminos' },
-    { key: 'privacy', href: '#privacidad' },
+    { key: 'terms', href: '/terminos' },
+    { key: 'privacy', href: '/privacidad' },
   ],
   /** El orden es el del diseño. `network` selecciona la marca del glifo. */
   social: [

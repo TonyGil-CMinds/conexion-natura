@@ -89,9 +89,10 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           <ul className={styles.legal}>
             {legal.map((item) => (
               <li key={item.href}>
-                <a className={styles.legalLink} href={item.href}>
+                {/* Con el idioma delante: son rutas del sitio, no anclas. */}
+                <Link className={styles.legalLink} href={localePath(locale, item.href)}>
                   {copy.legal[item.key]}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

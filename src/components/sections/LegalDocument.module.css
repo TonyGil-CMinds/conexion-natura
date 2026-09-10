@@ -1,0 +1,168 @@
+/**
+ * Documento legal. Columna estrecha y de cuerpo generoso: es lo único de este
+ * sitio que se lee de arriba abajo, así que manda la medida de lectura y no la
+ * retícula ancha del resto.
+ */
+.root {
+  padding: clamp(2.5rem, 9dvh, 5rem) var(--container-margin) clamp(4rem, 10dvh, 7rem);
+}
+
+.header {
+  max-width: 70ch;
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--rule);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-cover);
+  font-weight: 700;
+  line-height: 1.08;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.updated {
+  margin: var(--space-5) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent-nav);
+}
+
+.intro {
+  max-width: 62ch;
+  margin: var(--space-6) 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-schedule-intro);
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--fg) 82%, transparent);
+}
+
+/* La numeración la pinta el propio apartado, así que la lista no la repite. */
+.sections {
+  max-width: 70ch;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.section {
+  padding: var(--space-10) 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  margin: 0 0 var(--space-5);
+  font-family: var(--font-mono);
+  font-size: var(--text-schedule-title);
+  font-weight: 700;
+  line-height: 1.25;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+/* El número va en el acento y sin flujo propio: ordena sin competir. */
+.number {
+  flex: none;
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--accent-nav);
+}
+
+/* Cuerpo de lectura, no de dato: el tamaño de los párrafos del sitio y no el de
+   las respuestas del FAQ, que a 13px cansa en un documento de esta longitud. */
+.paragraph {
+  max-width: 62ch;
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--text-schedule-intro);
+  line-height: 1.75;
+  color: color-mix(in srgb, var(--fg) 80%, transparent);
+}
+
+.paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.list {
+  max-width: 62ch;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Viñeta cuadrada, dibujada aquí: la del navegador es redonda y este sitio no. */
+.list li {
+  position: relative;
+  padding-left: var(--space-6);
+  margin-bottom: var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-schedule-intro);
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--fg) 80%, transparent);
+}
+
+.list li::before {
+  content: '';
+  position: absolute;
+  top: 0.62em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  background-color: var(--accent-nav);
+}
+
+.contact {
+  max-width: 70ch;
+  padding-top: var(--space-10);
+}
+
+.data {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: var(--space-6) 0 0;
+}
+
+.data dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 55%, transparent);
+}
+
+.data dd {
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--fg);
+}
+
+.data a {
+  color: var(--accent-nav);
+}
+
+/* Lo que falta por rellenar. En rojo y en cursiva: tiene que cantar. */
+.pending {
+  color: var(--color-red);
+  font-style: italic;
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .root {
+    padding-inline: 24px;
+  }
+
+  .section {
+    padding: var(--space-8) 0;
+  }
+}

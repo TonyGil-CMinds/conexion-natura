@@ -32,6 +32,14 @@ export const en: Dictionary = {
       title: 'Registration',
       description: 'Confirm your attendance at CEIBA Quito.',
     },
+    terms: {
+      title: 'Terms and conditions',
+      description: 'Terms for using this site and registering for CEIBA Quito.',
+    },
+    privacy: {
+      title: 'Privacy notice',
+      description: 'What data we ask for to register you for CEIBA Quito, and what we do with it.',
+    },
   },
 
   nav: {
@@ -421,6 +429,7 @@ export const en: Dictionary = {
       submit: 'Confirm attendance',
       sending: 'Confirming',
       back: 'Back',
+      required: 'Upload a photo to continue',
       tooBig: 'That image is over 8 MB. Pick another or make it smaller.',
       notImage: 'That file is not an image.',
       failed: 'We could not confirm. Please try again.',
@@ -518,6 +527,243 @@ export const en: Dictionary = {
       photoType: 'Choose an image file.',
       photoPrepare: 'The image could not be prepared.',
       save: 'The registration could not be saved.',
+    },
+  },
+
+  legal: {
+    common: {
+      updated: 'Last reviewed:',
+      contactTitle: 'Contact',
+      controllerLabel: 'Data controller',
+      emailLabel: 'Contact email',
+      jurisdictionLabel: 'Governing law',
+      pending: 'To be defined',
+    },
+
+    privacy: {
+      title: 'Privacy notice',
+      intro:
+        'This notice explains what personal data we ask for when you register for CEIBA Quito, what we use it for, where it is stored and what you can ask us to do with it. It is written to be understood without a law degree.',
+      contact:
+        'To exercise any of your rights, or if anything here is unclear, write to us. We reply to the address you write from.',
+      sections: [
+        {
+          id: 'datos',
+          title: 'What we ask for',
+          body: ['When you register we collect only what we need to issue your badge and manage capacity:'],
+          list: [
+            'First name and surname.',
+            'Email address.',
+            'Organization and role.',
+            'LinkedIn profile, if you choose to add it.',
+            'A photo of you, which goes on the badge.',
+            'Which of the day’s events you will attend.',
+            'If you bring a companion, the same details for them.',
+          ],
+        },
+        {
+          id: 'usos',
+          title: 'What we use it for',
+          body: ['For the event only. Specifically:'],
+          list: [
+            'Managing your registration and the capacity, which is limited.',
+            'Issuing your digital badge with your name, organization and photo.',
+            'Sending you the attendance confirmation and the practical details.',
+            'Identifying you at the door on the day.',
+            'Telling you if anything about the programme or the venue changes.',
+          ],
+        },
+        {
+          id: 'base',
+          title: 'On what basis',
+          body: [
+            'On your consent, which you give by completing the registration. Registering is voluntary: you may withhold consent, and you may withdraw it later by asking us to delete your data — though in that case we cannot issue your badge or let you in.',
+          ],
+          list: [],
+        },
+        {
+          id: 'fotografia',
+          title: 'Your photo',
+          body: [
+            'The photo is processed in your own browser: that is where the background is removed and the image is cropped to the framing you pick. Only the cropped version is stored, and it is used solely for your badge.',
+            'We do not run facial recognition or any other biometric analysis on it.',
+          ],
+          list: [],
+        },
+        {
+          id: 'proveedores',
+          title: 'Where it is stored and who helps us process it',
+          body: [
+            'We run no servers of our own: we use providers that process the data on our instructions and only for what is described here.',
+          ],
+          list: [
+            'The registration database is on Prisma Postgres.',
+            'Photos are stored on Cloudflare R2.',
+            'Confirmation emails are sent through Resend.',
+            'The site is served from Vercel.',
+            'Their servers are outside Ecuador, so your data is transferred internationally in order to provide the service.',
+          ],
+        },
+        {
+          id: 'plazo',
+          title: 'How long we keep it',
+          body: [
+            'Up to twelve months after the event, so we can answer later questions and account for the convening. After that it is deleted. If you ask us to delete it sooner, we do.',
+          ],
+          list: [],
+        },
+        {
+          id: 'terceros',
+          title: 'Who we share it with',
+          body: [
+            'Nobody beyond the providers listed above. We do not sell, rent or pass on your data for advertising, and we do not share it with other attendees, sponsors or event partners.',
+            'We would hand it to an authority only where a rule obliges us to.',
+          ],
+          list: [],
+        },
+        {
+          id: 'acompanante',
+          title: 'Your companion’s data',
+          body: [
+            'If you register a companion, you are telling us you have their permission to give us their details and that you have shown them this notice. We treat their data exactly as we treat yours, for the same period, and they have exactly the same rights.',
+          ],
+          list: [],
+        },
+        {
+          id: 'derechos',
+          title: 'What you can ask of us',
+          body: ['At any time, by writing to the address at the end of this page:'],
+          list: [
+            'Access the data we hold about you.',
+            'Correct anything wrong or incomplete.',
+            'Delete your registration, photo included.',
+            'Withdraw your consent.',
+            'Object to a particular use of your data.',
+          ],
+        },
+        {
+          id: 'navegador',
+          title: 'What the site stores in your browser',
+          body: [
+            'We use no advertising, tracking or third-party cookies, and we do not measure your browsing with analytics tools.',
+            'All that stays in your browser is what the site needs to work: your attendance confirmation, the draft of your registration while you complete it, and your light or dark theme preference. None of it leaves your device, and clearing the site data removes it.',
+          ],
+          list: [],
+        },
+        {
+          id: 'cambios',
+          title: 'Changes to this notice',
+          body: [
+            'If we change anything, we update the review date shown above. If the change affects what we use your data for, we will tell you at the address you registered with.',
+          ],
+          list: [],
+        },
+      ],
+    },
+
+    terms: {
+      title: 'Terms and conditions',
+      intro:
+        'These terms govern the use of this site and registration for CEIBA Quito on October 5, 2026. By registering, you accept them.',
+      contact:
+        'If you have questions about these terms, or need anything from the organizing team, write to us.',
+      sections: [
+        {
+          id: 'registro',
+          title: 'Registration',
+          body: [
+            'Capacity is limited and registrations are handled in the order they arrive. Completing the form does not secure your place until you receive the confirmation.',
+            'The details you give us must be yours and must be true. A registration with false details, or under someone else’s identity, may be cancelled without notice.',
+            'One registration is one person. If you bring a companion, you must register them too, with their own details.',
+          ],
+          list: [],
+        },
+        {
+          id: 'credencial',
+          title: 'Your badge',
+          body: [
+            'The badge the site generates is personal and non-transferable: it identifies you at the door and may not be passed on or shared.',
+            'On the day we may ask for photo ID to check that it matches the badge.',
+          ],
+          list: [],
+        },
+        {
+          id: 'acceso',
+          title: 'Access to the event',
+          body: [
+            'Entry is free and by invitation. The organizing team may refuse or withdraw access to anyone who cannot evidence their registration, who arrives with someone else’s badge, or whose behaviour puts at risk or disturbs other attendees, the staff or the venue.',
+            'Inside the venue, its rules and the staff’s instructions apply.',
+          ],
+          list: [],
+        },
+        {
+          id: 'programa',
+          title: 'The programme may change',
+          body: [
+            'The published agenda is preliminary: times, sessions and the people taking part may change up to the day itself. The time and room for the NaturaTech LAC 2026 Award ceremony are still to be confirmed.',
+            'If the event has to change date, venue or format, we will tell you at the address you registered with.',
+          ],
+          list: [],
+        },
+        {
+          id: 'imagenes',
+          title: 'Photography and recording at the event',
+          body: [
+            'The event may be photographed and filmed for reporting and for promoting the convening. By attending, you may appear in those images.',
+            'If you would rather not appear, tell us in writing before the event or on arrival and we will take it into account.',
+          ],
+          list: [],
+        },
+        {
+          id: 'propiedad',
+          title: 'Site content',
+          body: [
+            'The text, images, logos and design of this site belong to the event organizers or to those who licensed them to us. You are free to share the links and your own badge; any other use — reproducing content, using the marks — needs written permission.',
+          ],
+          list: [],
+        },
+        {
+          id: 'enlaces',
+          title: 'Links to other sites',
+          body: [
+            'The site links out to third-party pages — LinkedIn profiles, maps, calendars, the sites of participating organizations. We do not control their content or their terms, so what happens there is their responsibility.',
+          ],
+          list: [],
+        },
+        {
+          id: 'responsabilidad',
+          title: 'Availability and liability',
+          body: [
+            'We take care to keep the site working and the information current, but we cannot guarantee uninterrupted availability or freedom from errors. If you spot one, we appreciate the heads-up.',
+            'We are not liable for damage arising from using the site other than as intended, or from failures outside our control such as your connection or your device.',
+          ],
+          list: [],
+        },
+        {
+          id: 'datos',
+          title: 'Your personal data',
+          body: [
+            'How we handle registration data is set out in the privacy notice, which forms part of these terms.',
+          ],
+          list: [],
+        },
+        {
+          id: 'ley',
+          title: 'Governing law',
+          body: [
+            'These terms are governed by the law stated at the end of this page, and any dispute will be submitted to its courts.',
+          ],
+          list: [],
+        },
+        {
+          id: 'cambios',
+          title: 'Changes to these terms',
+          body: [
+            'We may update them; the review date above says when we last did. If a change is substantive and affects you as a registered attendee, we will tell you by email.',
+          ],
+          list: [],
+        },
+      ],
     },
   },
 };
