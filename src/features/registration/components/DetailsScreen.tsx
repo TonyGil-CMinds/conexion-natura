@@ -6,22 +6,29 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { EASE_OUT_EXPO } from '@/lib/motion';
 import type { Dictionary } from '@/i18n';
 import { CHOICE_MARQUEE, DETAILS_MARQUEE } from '../config/event-options';
-import type { PersonDraft } from '../lib/join-draft';
+import type { GuestDraft, PersonDraft } from '../lib/join-draft';
 import { normalizeLinkedIn } from '../lib/linkedin';
 import styles from './DetailsScreen.module.css';
 
 type Props = {
   copy: Dictionary['registration']['details'];
   /**
-   * `self` son los datos de quien se registra; `companion`, los de su
-   * acompañante en una segunda pasada por la misma pantalla. Cambia los rótulos,
-   * el paso y quita la casilla —a un acompañante no se le pregunta si trae otro—.
+   * `self` son los datos de quien se registra; `guest`, la segunda pasada por la
+   * misma pantalla para invitar a alguien.
+   *
+   * En `guest` solo se piden **dos** campos —nombre y correo— porque el resto lo
+   * rellenará esa persona desde el enlace que recibe: nadie sabe mejor que ella
+   * cuál es su cargo. Y no lleva casilla: a un invitado no se le pregunta si
+   * trae a otro.
    */
-  mode?: 'self' | 'companion';
+  mode?: 'self' | 'guest';
   initial?: Partial<PersonDraft>;
+  initialGuest?: Partial<GuestDraft>;
   /** Valor de partida de la casilla. Marcada por omisión: se espera compañía. */
-  initialCompanion?: boolean;
-  onContinue?: (person: PersonDraft, bringsCompanion: boolean) => void;
+  initialBringsGuest?: boolean;
+  onContinue?: (person: PersonDraft, bringsGuest: boolean) => void;
+  /** Se llama en la pasada del invitado, con sus dos datos. */
+  onGuest?: (guest: GuestDraft) => void;
   /** Vuelve al paso anterior. Sin él, el botón no se pinta. */
   onBack?: () => void;
 };
@@ -30,6 +37,13 @@ type Props = {
 const FIELDS = ['name', 'surname', 'organization', 'role', 'linkedin'] as const;
 type Field = (typeof FIELDS)[number];
 
+/** Del invitado, solo lo que quien invita puede saber de memoria. */
+const GUEST_FIELDS = ['name', 'email'] as const;
+type GuestField = (typeof GUEST_FIELDS)[number];
+
+/** Lo mínimo para no mandar una invitación a una dirección imposible. */
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
 /**
  * Qué le pide cada campo al navegador.
  *
@@ -37,26 +51,18 @@ type Field = (typeof FIELDS)[number];
  * toca en cada casilla —el nombre en el nombre, el cargo en el rol— y no el
  * primer texto que tenga guardado.
  *
- * En la pasada del **acompañante** van todos en `off` a propósito: los datos
- * guardados en el navegador son los de quien está sentado delante, así que
- * ofrecerlos ahí sugeriría rellenar al acompañante con su propia identidad.
+ * En la pasada del **invitado** van en `off` a propósito: los datos guardados en
+ * el navegador son los de quien está sentado delante, así que ofrecerlos ahí
+ * sugeriría invitarse a uno mismo —y con el correo eso además fallaría, porque
+ * un correo es un registro—.
  */
 const AUTOCOMPLETE = {
-  self: {
-    name: 'given-name',
-    surname: 'family-name',
-    organization: 'organization',
-    role: 'organization-title',
-    linkedin: 'url',
-  },
-  companion: {
-    name: 'off',
-    surname: 'off',
-    organization: 'off',
-    role: 'off',
-    linkedin: 'off',
-  },
-} as const satisfies Record<'self' | 'companion', Record<Field, string>>;
+  name: 'given-name',
+  surname: 'family-name',
+  organization: 'organization',
+  role: 'organization-title',
+  linkedin: 'url',
+} as const satisfies Record<Field, string>;
 
 const EMPTY: PersonDraft = { name: '', surname: '', organization: '', role: '', linkedin: '' };
 
@@ -98,19 +104,49 @@ export function DetailsScreen({
   copy,
   mode = 'self',
   initial,
-  initialCompanion = true,
+  initialGuest,
+  initialBringsGuest = true,
   onContinue,
+  onGuest,
   onBack,
 }: Props) {
   const [person, setPerson] = useState<PersonDraft>({ ...EMPTY, ...initial });
-  const [bringsCompanion, setBringsCompanion] = useState(initialCompanion);
-  const [missing, setMissing] = useState<readonly Field[]>([]);
+  const [guest, setGuest] = useState<GuestDraft>({ name: '', email: '', ...initialGuest });
+  const [bringsGuest, setBringsGuest] = useState(initialBringsGuest);
+  const [missing, setMissing] = useState<readonly string[]>([]);
 
-  const isCompanion = mode === 'companion';
-  const labels = isCompanion ? copy.companionFields : copy.fields;
+  const isGuest = mode === 'guest';
+  /** Los campos de esta pasada. Cinco para uno mismo, dos para el invitado. */
+  const fields: readonly string[] = isGuest ? GUEST_FIELDS : FIELDS;
+  const labels = isGuest ? copy.guestFields : copy.fields;
+  const values: Record<string, string> = isGuest ? guest : person;
+
+  function change(field: string, value: string) {
+    if (isGuest) setGuest((current) => ({ ...current, [field]: value }));
+    else setPerson((current) => ({ ...current, [field]: value }));
+    if (missing.includes(field)) setMissing((m) => m.filter((f) => f !== field));
+  }
 
   function submit(event: FormEvent) {
     event.preventDefault();
+
+    if (isGuest) {
+      /**
+       * El correo del invitado se comprueba aquí y no solo en el servidor: si
+       * está mal escrito, la invitación se manda a una dirección que no existe y
+       * nadie se enteraría —el rebote no llega a esta pantalla—.
+       */
+      const empty = GUEST_FIELDS.filter((field) => !guest[field].trim());
+      const badEmail = !empty.includes('email') && !EMAIL.test(guest.email.trim());
+      if (empty.length || badEmail) {
+        setMissing(badEmail ? [...empty, 'email'] : empty);
+        return;
+      }
+      setMissing([]);
+      onGuest?.({ name: guest.name.trim(), email: guest.email.trim().toLowerCase() });
+      return;
+    }
+
     // El enlace no es obligatorio; el resto sí.
     const empty = FIELDS.filter((field) => field !== 'linkedin' && !person[field].trim());
     if (empty.length) {
@@ -122,7 +158,7 @@ export function DetailsScreen({
       FIELDS.map((field) => [field, person[field].trim()]),
     ) as PersonDraft;
     trimmed.linkedin = normalizeLinkedIn(trimmed.linkedin);
-    onContinue?.(trimmed, isCompanion ? false : bringsCompanion);
+    onContinue?.(trimmed, bringsGuest);
   }
 
   return (
@@ -147,8 +183,8 @@ export function DetailsScreen({
           )}
 
           <h1 className={styles.headline}>
-            <span>{isCompanion ? copy.companionHeadlineLine1 : copy.headlineLine1}</span>
-            <span>{isCompanion ? copy.companionHeadlineLine2 : copy.headlineLine2}</span>
+            <span>{isGuest ? copy.guestHeadlineLine1 : copy.headlineLine1}</span>
+            <span>{isGuest ? copy.guestHeadlineLine2 : copy.headlineLine2}</span>
           </h1>
         </div>
 
@@ -188,24 +224,34 @@ export function DetailsScreen({
       </div>
 
       <motion.form className={styles.panel} onSubmit={submit} noValidate variants={PANEL}>
-        <p className={styles.step}>{isCompanion ? copy.stepCompanion : copy.step}</p>
+        <p className={styles.step}>{isGuest ? copy.stepGuest : copy.step}</p>
 
-        {FIELDS.map((field) => (
+        {/* La nota solo en la pasada del invitado: explica por qué se le piden
+            dos datos y no los cinco. Sin ella parece un formulario a medias. */}
+        {isGuest && (
+          <motion.p className={styles.note} variants={ITEM}>
+            {copy.guestNote}
+          </motion.p>
+        )}
+
+        {fields.map((field) => (
           <motion.label
             key={field}
             className={styles.field}
             data-missing={missing.includes(field) || undefined}
             variants={ITEM}
           >
-            <span className={styles.srOnly}>{labels[field]}</span>
+            <span className={styles.srOnly}>{labels[field as keyof typeof labels]}</span>
             <input
-              type="text"
+              /**
+               * El correo va como `email` para que el móvil saque el teclado con
+               * arroba, pero sin la validación del navegador —que la hace el
+               * componente— para que el aviso sea el del diseño.
+               */
+              type={field === 'email' ? 'email' : 'text'}
               name={field}
-              value={person[field]}
-              onChange={(event) => {
-                setPerson((current) => ({ ...current, [field]: event.target.value }));
-                if (missing.includes(field)) setMissing((m) => m.filter((f) => f !== field));
-              }}
+              value={values[field] ?? ''}
+              onChange={(event) => change(field, event.target.value)}
               onBlur={
                 field === 'linkedin'
                   ? () =>
@@ -215,8 +261,12 @@ export function DetailsScreen({
                       }))
                   : undefined
               }
-              placeholder={labels[field]}
-              autoComplete={AUTOCOMPLETE[isCompanion ? 'companion' : 'self'][field]}
+              placeholder={labels[field as keyof typeof labels]}
+              /**
+               * En la pasada del invitado no se propone nada: lo guardado en el
+               * navegador es de quien está delante, no de a quien invita.
+               */
+              autoComplete={isGuest ? 'off' : AUTOCOMPLETE[field as Field]}
               /**
                * Teclado de URL sin `type="url"`: con ese tipo, «antoniogil» —que es
                * lo que la gente escribe— quedaba marcado como inválido por el
@@ -228,13 +278,13 @@ export function DetailsScreen({
           </motion.label>
         ))}
 
-        {!isCompanion && (
+        {!isGuest && (
           <motion.label className={styles.companion} variants={ITEM}>
             <input
               type="checkbox"
               className={styles.srOnly}
-              checked={bringsCompanion}
-              onChange={(event) => setBringsCompanion(event.target.checked)}
+              checked={bringsGuest}
+              onChange={(event) => setBringsGuest(event.target.checked)}
             />
             <span className={styles.box} aria-hidden>
               <svg viewBox="0 0 16 16" width="16" height="16" focusable="false">

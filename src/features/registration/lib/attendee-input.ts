@@ -28,21 +28,23 @@ export type AttendeeInput = {
    */
   events: EventChoice[];
   /** Si dijo que viene acompañado. */
-  bringsCompanion: boolean;
+  bringsGuest: boolean;
   /**
-   * Datos del acompañante. `null` si no trae, y también si dijo que sí pero no
-   * llegó a rellenarlos: una fila a medias vale menos que ninguna.
+   * El invitado. `null` si no trae, y también si dijo que sí pero no llegó a
+   * darlo: media invitación vale menos que ninguna.
    */
-  companion: CompanionInput | null;
+  guest: GuestInput | null;
 };
 
-/** El acompañante lleva los mismos datos menos el correo, que no se le pide. */
-export type CompanionInput = {
+/**
+ * Del invitado solo se piden **dos datos**, y son los dos que quien invita
+ * puede saber de memoria: cómo se llama y dónde escribirle. Lo demás —su
+ * organización, su cargo, su fotografía, a qué actos va— lo pone él mismo desde
+ * el enlace que recibe, que es quien lo sabe de verdad.
+ */
+export type GuestInput = {
   name: string;
-  surname: string;
-  organization: string;
-  role: string;
-  linkedin: string | null;
+  email: string;
 };
 
 export type FieldErrors = Partial<Record<keyof AttendeeInput, string>>;
@@ -117,25 +119,24 @@ export function parseAttendeeInput(
   }
 
   /**
-   * El acompañante se acepta solo **completo**: nombre, apellido, organización y
-   * rol. Si falta alguno se descarta en silencio en vez de tirar el registro,
-   * porque el dato principal —quien se inscribe— ya es válido y perderlo por el
-   * acompañante sería peor.
+   * El invitado se acepta solo **completo**: nombre y correo válido. Si falta
+   * uno se descarta en silencio en vez de tirar el registro, porque el dato
+   * principal —quien se inscribe— ya es válido y perderlo por el invitado sería
+   * peor.
+   *
+   * Y su correo **no puede ser el de quien invita**: un correo es un registro,
+   * así que invitarse a uno mismo dejaría la fila propia en pendiente y borraría
+   * los datos que se acaban de escribir.
    */
-  const rawCompanion = (raw.companion ?? {}) as Record<string, unknown>;
-  const companionFields = {
-    name: text(rawCompanion.name),
-    surname: text(rawCompanion.surname),
-    organization: text(rawCompanion.organization),
-    role: text(rawCompanion.role),
-  };
-  const companionLinkedin = text(rawCompanion.linkedin);
-  const companionComplete = Object.values(companionFields).every(
-    (value) => value && value.length <= MAX_LENGTH,
-  );
-  const companion: CompanionInput | null = companionComplete
-    ? { ...companionFields, linkedin: companionLinkedin || null }
-    : null;
+  const rawGuest = (raw.guest ?? {}) as Record<string, unknown>;
+  const guestName = text(rawGuest.name);
+  const guestEmail = typeof rawGuest.email === 'string' ? rawGuest.email.trim().toLowerCase() : '';
+  const guestValid =
+    Boolean(guestName) &&
+    guestName.length <= MAX_LENGTH &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(guestEmail) &&
+    guestEmail !== email;
+  const guest: GuestInput | null = guestValid ? { name: guestName, email: guestEmail } : null;
 
   if (Object.keys(errors).length) return { errors };
 
@@ -150,8 +151,8 @@ export function parseAttendeeInput(
       linkedin: linkedin || null,
       photoUrl: photoUrl || null,
       events,
-      bringsCompanion: raw.bringsCompanion === true,
-      companion,
+      bringsGuest: raw.bringsGuest === true,
+      guest,
     },
   };
 }

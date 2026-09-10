@@ -20,6 +20,7 @@
  */
 import 'dotenv/config';
 import { confirmationTemplateData } from '../src/features/registration/lib/confirmation-email';
+import { inviteTemplateData } from '../src/features/registration/lib/invite-email';
 import { sendTemplate } from '../src/lib/resend';
 
 const API = 'https://api.resend.com';
@@ -57,9 +58,11 @@ function templateVariables(html: string): readonly string[] {
 async function main() {
   const to = process.argv.find((arg) => arg.includes('@'));
   const templateId = process.env.CEIBA_EMAIL_TEMPLATE_ID;
+  const inviteTemplateId = process.env.CEIBA_EMAIL_INVITE_TEMPLATE_ID;
 
   console.log(`remitente: ${process.env.CEIBA_EMAIL_FROM ?? '(sin CEIBA_EMAIL_FROM)'}`);
-  console.log(`plantilla: ${templateId ?? '(sin CEIBA_EMAIL_TEMPLATE_ID)'}`);
+  console.log(`plantilla de confirmación: ${templateId ?? '(sin CEIBA_EMAIL_TEMPLATE_ID)'}`);
+  console.log(`plantilla de invitación:   ${inviteTemplateId ?? '(sin CEIBA_EMAIL_INVITE_TEMPLATE_ID)'}`);
 
   // Con los dos actos: así se listan todas las variables que la plantilla puede
   // llegar a pedir, y no solo las del acto principal.
@@ -67,6 +70,13 @@ async function main() {
     name: 'Antonio',
     surname: 'Gil',
     events: ['NIGHT', 'AWARD'],
+  });
+
+  // Un invitado de muestra, para listar las variables de la otra plantilla.
+  const { data: inviteDatos, missing: inviteFaltan } = inviteTemplateData({
+    host: 'Antonio Gil',
+    guest: 'Ana Ruiz',
+    token: 'muestra-de-testigo',
   });
 
   // 1. Datos del evento que faltan en el entorno.
@@ -78,21 +88,38 @@ async function main() {
     console.log(`\n⚠️  Faltan ${missing.length}: el correo se OMITE hasta que estén.`);
   }
 
-  // 2. Nombres de las variables, contra el HTML de la plantilla.
-  if (templateId) {
+  /**
+   * 2. Nombres de las variables, contra el HTML de cada plantilla.
+   *
+   * Son **dos**: la confirmación y la invitación. Cruzar solo una dejaba a la
+   * otra sin red, y es justo donde el fallo no se ve: Resend entrega el correo
+   * con el hueco en blanco.
+   */
+  const plantillas = [
+    { nombre: 'confirmación', id: templateId, envia: Object.keys(data) },
+    { nombre: 'invitación', id: inviteTemplateId, envia: Object.keys(inviteDatos) },
+  ] as const;
+
+  for (const plantilla of plantillas) {
+    if (!plantilla.id) {
+      console.log(`\n⚠️  sin id de la plantilla de ${plantilla.nombre}: no se puede cruzar.`);
+      continue;
+    }
     try {
-      const template = await api<{ html?: string }>(`/templates/${templateId}`);
+      const template = await api<{ html?: string }>(`/templates/${plantilla.id}`);
       const usadas = templateVariables(template.html ?? '');
-      const enviadas = Object.keys(data).sort();
+      const enviadas = [...plantilla.envia].sort();
       const sinDato = usadas.filter((name) => !enviadas.includes(name));
       const deMas = enviadas.filter((name) => !usadas.includes(name));
 
-      console.log(`\nvariables que usa la plantilla (${usadas.length}): ${usadas.join(', ')}`);
+      console.log(`\nplantilla de ${plantilla.nombre} — variables que usa (${usadas.length}): ${usadas.join(', ')}`);
       if (sinDato.length) console.log(`❌ la plantilla espera y no mandamos: ${sinDato.join(', ')}`);
       if (deMas.length) console.log(`⚠️  mandamos y la plantilla no usa: ${deMas.join(', ')}`);
       if (!sinDato.length && !deMas.length) console.log('✅ los nombres coinciden exactamente.');
     } catch (error) {
-      console.log(`\n⚠️  no se pudo leer la plantilla: ${error instanceof Error ? error.message : error}`);
+      console.log(
+        `\n⚠️  no se pudo leer la plantilla de ${plantilla.nombre}: ${error instanceof Error ? error.message : error}`,
+      );
     }
   }
 

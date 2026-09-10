@@ -24,6 +24,21 @@ export type SendResult =
   | { status: 'skipped'; reason: 'missingConfig'; missing: readonly string[] }
   | { status: 'failed'; reason: string };
 
+/**
+ * Las plantillas del sitio, con la variable de entorno de cada una.
+ *
+ * Son dos correos distintos y por eso son dos plantillas: la **confirmación**
+ * la recibe quien acaba su registro, y la **invitación** quien ha sido apuntado
+ * por otra persona y todavía tiene que completarlo. Quien envía elige por
+ * nombre, no por id: los ids viven en el entorno y no en el código.
+ */
+export const TEMPLATES = {
+  confirmation: 'CEIBA_EMAIL_TEMPLATE_ID',
+  invite: 'CEIBA_EMAIL_INVITE_TEMPLATE_ID',
+} as const;
+
+export type TemplateName = keyof typeof TEMPLATES;
+
 type Config = {
   apiKey: string;
   templateId: string;
@@ -31,10 +46,17 @@ type Config = {
   from: string;
 };
 
-function readConfig(): { config: Config } | { missing: readonly string[] } {
-  const values = {
+/**
+ * Lee lo que hace falta para **esta** plantilla.
+ *
+ * Solo se pide el id de la que se va a enviar: sin la de invitación configurada,
+ * las confirmaciones tienen que seguir saliendo.
+ */
+function readConfig(template: TemplateName): { config: Config } | { missing: readonly string[] } {
+  const templateVar = TEMPLATES[template];
+  const values: Record<string, string | undefined> = {
     RESEND_API_KEY: process.env.RESEND_API_KEY,
-    CEIBA_EMAIL_TEMPLATE_ID: process.env.CEIBA_EMAIL_TEMPLATE_ID,
+    [templateVar]: process.env[templateVar],
     CEIBA_EMAIL_FROM: process.env.CEIBA_EMAIL_FROM,
   };
   const missing = Object.entries(values)
@@ -45,7 +67,7 @@ function readConfig(): { config: Config } | { missing: readonly string[] } {
   return {
     config: {
       apiKey: values.RESEND_API_KEY!,
-      templateId: values.CEIBA_EMAIL_TEMPLATE_ID!,
+      templateId: values[templateVar]!,
       from: values.CEIBA_EMAIL_FROM!,
     },
   };
@@ -65,12 +87,15 @@ function readConfig(): { config: Config } | { missing: readonly string[] } {
 export async function sendTemplate({
   to,
   data,
+  template = 'confirmation',
 }: {
   to: string;
   /** Variables de la plantilla, con las claves que la plantilla usa. */
   data: Record<string, string>;
+  /** Cuál de las dos plantillas. Por omisión, la confirmación. */
+  template?: TemplateName;
 }): Promise<SendResult> {
-  const read = readConfig();
+  const read = readConfig(template);
   if ('missing' in read) return { status: 'skipped', reason: 'missingConfig', missing: read.missing };
   const { apiKey, templateId, from } = read.config;
 

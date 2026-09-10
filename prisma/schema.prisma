@@ -36,15 +36,31 @@ enum EventChoice {
   AWARD
 }
 
-/// Quien ya confirmó asistencia. Es el contenido del formulario de `/registro`.
+/// En qué punto está un registro.
+///
+/// `PENDING` es quien ha sido **invitado por otro asistente**: de él solo se
+/// conoce el nombre y el correo, porque el resto lo rellena él mismo desde el
+/// enlace que le llega. `CONFIRMED` es quien completó su registro, sea por su
+/// cuenta o viniendo de una invitación.
+enum AttendanceStatus {
+  PENDING
+  CONFIRMED
+}
+
+/// Una persona en la lista. Puede estar **pendiente** —invitada por otra y sin
+/// completar— o **confirmada**, que es el contenido del formulario de
+/// `/registro`.
 model Attendee {
-  id           String   @id @default(cuid())
+  id     String @id @default(cuid())
   /// Identifica al asistente: un correo, un registro.
-  email        String   @unique
-  name         String
-  surname      String
-  organization String
-  role         String
+  email  String @unique
+  name   String
+  surname String @default("")
+  /// Vacíos mientras la invitación está pendiente: de un invitado solo se sabe
+  /// el nombre y el correo hasta que entra a completar su registro. Que estén
+  /// vacíos no es un dato a medias por descuido, lo dice `status`.
+  organization String @default("")
+  role         String @default("")
   /// Opcional en el formulario; se guarda ya normalizado a URL completa.
   linkedin     String?
   /// La fotografía se sube aparte: aquí solo queda su ubicación.
@@ -59,11 +75,32 @@ model Attendee {
   /// asistir a los dos. Vacía mientras el registro no haya llegado a ese paso.
   events EventChoice[]
 
-  /// Si viene con acompañante. Se guarda aparte de la fila del acompañante
-  /// porque se responde antes de tener sus datos, y porque un `false` explícito
-  /// dice algo distinto de una fila que falta.
-  bringsCompanion Boolean @default(false)
-  companion       Companion?
+  /// Si dijo que trae invitado. Se guarda aparte de la fila del invitado porque
+  /// se responde antes de tener sus datos, y porque un `false` explícito dice
+  /// algo distinto de una fila que falta.
+  bringsGuest Boolean @default(false)
+
+  /// Pendiente o confirmado. Por omisión confirmado: quien llega por el
+  /// formulario lo completa entero, y solo las invitaciones nacen pendientes.
+  status AttendanceStatus @default(CONFIRMED)
+
+  /**
+   * Testigo del enlace de invitación.
+   *
+   * Es lo que identifica al invitado cuando abre el correo, en vez del propio
+   * correo: con el correo en la URL, cambiar la dirección a mano abriría el
+   * registro de otra persona. Se borra al completar el registro, así que el
+   * enlace deja de servir en cuanto se usa.
+   */
+  inviteToken  String?   @unique
+  /// Cuándo salió el correo de invitación. Nulo mientras no se haya enviado.
+  inviteSentAt DateTime?
+
+  /// Quién invitó a esta persona, si llegó por invitación.
+  invitedById String?
+  invitedBy   Attendee?  @relation("Guests", fields: [invitedById], references: [id], onDelete: SetNull)
+  /// A quién ha invitado. Es una lista por si algún día se admite más de uno.
+  guests      Attendee[] @relation("Guests")
 
   confirmationSentAt DateTime?
 
@@ -72,19 +109,9 @@ model Attendee {
   invitation   Invitation? @relation(fields: [invitationId], references: [id])
 }
 
-/// Quien acompaña a un asistente. Mismos datos que la persona titular menos el
-/// correo: el formulario no lo pide, porque la confirmación va a quien registra.
-/// Uno por asistente, de ahí el `@unique`.
-model Companion {
-  id           String   @id @default(cuid())
-  name         String
-  surname      String
-  organization String
-  role         String
-  linkedin     String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  attendeeId String   @unique
-  attendee   Attendee @relation(fields: [attendeeId], references: [id], onDelete: Cascade)
-}
+// El modelo `Companion` se retiró: quien viene acompañado ya no rellena los
+// datos de la otra persona. Ahora indica su nombre y su correo, y esa persona
+// entra en la lista como un `Attendee` en `PENDING` que completa su registro
+// —sus actos, su fotografía, su credencial— desde el enlace que le llega. Un
+// acompañante necesitaba exactamente lo mismo que un asistente, así que tener
+// dos modelos era tener dos sitios donde arreglar lo mismo.

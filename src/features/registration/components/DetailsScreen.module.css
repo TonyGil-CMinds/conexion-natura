@@ -311,3 +311,18 @@
     width: 100%;
   }
 }
+
+/**
+ * Nota de la pasada del invitado: explica por qué se le piden dos datos y no
+ * cinco. Va antes de los campos, que es donde surge la pregunta.
+ */
+.note {
+  max-width: 44ch;
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  line-height: 1.6;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+}

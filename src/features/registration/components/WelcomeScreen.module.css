@@ -229,6 +229,40 @@
 }
 
 /**
+ * Estado del invitado: quién es y si ya completó su registro.
+ *
+ * Va bajo las acciones y no junto a la fecha: es información sobre otra persona,
+ * y arriba competiría con lo que quien lee necesita de su propio acto.
+ */
+.guest {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.guestName {
+  color: var(--fg);
+}
+
+/* Pendiente en ámbar y confirmado en el acento: el estado se lee de un vistazo
+   sin tener que leer la palabra. */
+.guestState {
+  color: var(--accent-nav);
+}
+
+.guestState[data-pending] {
+  color: var(--color-yellow);
+}
+
+/**
  * Acción secundaria en texto: cambiar una foto que ya está. Sin caja, porque
  * junto a dos botones macizos un tercero competiría con ellos y esto es un
  * arreglo, no algo que haya que hacer.

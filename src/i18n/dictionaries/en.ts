@@ -383,11 +383,11 @@ export const en: Dictionary = {
 
     details: {
       step: 'Step 2/3',
-      stepCompanion: 'Step 2/3',
+      stepGuest: 'Step 2/3',
       headlineLine1: 'Secure',
       headlineLine2: 'your spot',
-      companionHeadlineLine1: 'And your',
-      companionHeadlineLine2: 'guest details',
+      guestHeadlineLine1: 'Invite',
+      guestHeadlineLine2: 'your guest',
       marquee: 'The earth we inhabit',
       fields: {
         name: 'Your name',
@@ -396,13 +396,11 @@ export const en: Dictionary = {
         role: 'Your role',
         linkedin: 'LinkedIn',
       },
-      companionFields: {
+      guestFields: {
         name: 'Their name',
-        surname: 'Their surname',
-        organization: 'Their organization',
-        role: 'Their role',
-        linkedin: 'LinkedIn',
+        email: 'Their email address',
       },
+      guestNote: 'We will email them to complete their registration and confirm their place.',
       withCompanion: 'I will bring a guest',
       submit: 'Continue',
       back: 'Back',
@@ -466,6 +464,9 @@ export const en: Dictionary = {
       calendarDescription:
         'A night of innovation and investment for biodiversity and the economies of the future.',
       share: 'Share',
+      guestLabel: 'Your guest:',
+      guestPending: 'Yet to complete their registration',
+      guestConfirmed: 'Registration complete',
       addPhoto: 'Add my photo',
       changePhoto: 'Change my photo',
       cardTitle: 'Your card',

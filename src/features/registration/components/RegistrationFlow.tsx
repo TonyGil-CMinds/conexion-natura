@@ -5,10 +5,17 @@ import { AnimatePresence } from 'framer-motion';
 import { StairsReveal } from '@/features/transitions/stairs-reveal';
 import type { Dictionary, Locale } from '@/i18n';
 import type { EventChoice } from '../lib/attendee-input';
-import { readJoinDraft, saveJoinDraft, type JoinDraft, type PersonDraft } from '../lib/join-draft';
+import {
+  readJoinDraft,
+  saveJoinDraft,
+  type GuestDraft,
+  type JoinDraft,
+  type PersonDraft,
+} from '../lib/join-draft';
 import { useAttendance } from '../context/attendance';
 import { clearJoinDraft } from '../lib/join-draft';
 import { lookupAttendee } from '../lib/lookup-attendee';
+import { lookupInvitation } from '../lib/lookup-invitation';
 import { updatePhoto } from '../lib/update-photo';
 import { uploadPhoto } from '../lib/upload-photo';
 import { DetailsScreen } from './DetailsScreen';
@@ -25,10 +32,10 @@ type Props = {
 };
 
 /**
- * Los pasos, en orden. `companion` solo se visita si se dijo que sí, y `welcome`
+ * Los pasos, en orden. `guest` solo se visita si se dijo que sí, y `welcome`
  * es el final —y también la vista de reposo de quien ya confirmó—.
  */
-type Stage = 'join' | 'choice' | 'details' | 'companion' | 'photo' | 'welcome' | 'photoEdit';
+type Stage = 'join' | 'choice' | 'details' | 'guest' | 'photo' | 'welcome' | 'photoEdit';
 
 /**
  * Orquesta los pasos del registro.
@@ -75,6 +82,37 @@ export function RegistrationFlow({ locale, copy }: Props) {
   }, [attendee, stage, pending]);
 
   /**
+   * Quien llega por el enlace de una invitación **no pasa por la pantalla del
+   * correo**: su correo ya lo sabemos, y volver a pedírselo sería preguntar por
+   * el dato que le trajo hasta aquí.
+   *
+   * Se comprueba contra el servidor en vez de creerse la URL: el testigo puede
+   * estar caducado —o ya usado— y en ese caso lo que toca es el registro normal,
+   * no una pantalla en blanco. Si vale, se guarda su correo y su nombre en el
+   * borrador y se entra directo a la elección de acto.
+   */
+  useEffect(() => {
+    const token = new URLSearchParams(window.location.search).get('invitacion');
+    if (!token || attendee) return;
+
+    let cancelled = false;
+    (async () => {
+      const invited = await lookupInvitation(token);
+      if (cancelled || !invited) return;
+      draft.current = saveJoinDraft({
+        email: invited.email,
+        // El nombre llega de quien invitó; el apellido lo pondrá él mismo.
+        person: { name: invited.name, surname: '', organization: '', role: '', linkedin: '' },
+      });
+      setStage('choice');
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [attendee]);
+
+  /**
    * Del correo salen dos caminos.
    *
    * Si ese correo **ya tiene registro**, no hay nada que volver a pedir: se
@@ -118,17 +156,17 @@ export function RegistrationFlow({ locale, copy }: Props) {
     setStage('details');
   }, []);
 
-  const handleDetails = useCallback((person: PersonDraft, bringsCompanion: boolean) => {
+  const handleDetails = useCallback((person: PersonDraft, bringsGuest: boolean) => {
     const current = readJoinDraft();
-    if (current) draft.current = saveJoinDraft({ ...current, person, bringsCompanion });
-    // Con acompañante hay una segunda pasada por la misma pantalla; sin él, la
-    // fotografía es lo único que falta.
-    setStage(bringsCompanion ? 'companion' : 'photo');
+    if (current) draft.current = saveJoinDraft({ ...current, person, bringsGuest });
+    // Con invitado hay una segunda pasada por la misma pantalla —dos campos— y
+    // sin él la fotografía es lo único que falta.
+    setStage(bringsGuest ? 'guest' : 'photo');
   }, []);
 
-  const handleCompanion = useCallback((companion: PersonDraft) => {
+  const handleGuest = useCallback((guest: GuestDraft) => {
     const current = readJoinDraft();
-    if (current) draft.current = saveJoinDraft({ ...current, companion });
+    if (current) draft.current = saveJoinDraft({ ...current, guest });
     setStage('photo');
   }, []);
 
@@ -157,8 +195,8 @@ export function RegistrationFlow({ locale, copy }: Props) {
           ...current.person,
           photoUrl,
           events: current.events ?? [],
-          bringsCompanion: current.bringsCompanion === true,
-          companion: current.companion ?? null,
+          bringsGuest: current.bringsGuest === true,
+          guest: current.guest ?? null,
         }),
       });
 
@@ -226,19 +264,19 @@ export function RegistrationFlow({ locale, copy }: Props) {
             key="details"
             copy={copy.details}
             initial={draft.current?.person}
-            initialCompanion={draft.current?.bringsCompanion ?? true}
+            initialBringsGuest={draft.current?.bringsGuest ?? true}
             onContinue={handleDetails}
             onBack={() => setStage('choice')}
           />
         )}
 
-        {stage === 'companion' && (
+        {stage === 'guest' && (
           <DetailsScreen
-            key="companion"
+            key="guest"
             copy={copy.details}
-            mode="companion"
-            initial={draft.current?.companion}
-            onContinue={handleCompanion}
+            mode="guest"
+            initialGuest={draft.current?.guest}
+            onGuest={handleGuest}
             onBack={() => setStage('details')}
           />
         )}
@@ -248,9 +286,7 @@ export function RegistrationFlow({ locale, copy }: Props) {
             key="photo"
             copy={copy.photo}
             onConfirm={handleConfirm}
-            onBack={() =>
-              setStage(draft.current?.bringsCompanion ? 'companion' : 'details')
-            }
+            onBack={() => setStage(draft.current?.bringsGuest ? 'guest' : 'details')}
           />
         )}
 

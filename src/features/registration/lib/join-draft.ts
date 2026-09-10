@@ -35,14 +35,20 @@ export type PersonDraft = {
   linkedin: string;
 };
 
+/** De un invitado solo se piden dos datos, y son los que quien invita sabe. */
+export type GuestDraft = { name: string; email: string };
+
 export type JoinDraft = {
   email: string;
   /** Datos de quien se registra, del tercer paso. */
   person?: PersonDraft;
   /** Si dijo que viene acompañado. */
-  bringsCompanion?: boolean;
-  /** Datos del acompañante, de la segunda pasada por la misma pantalla. */
-  companion?: PersonDraft;
+  bringsGuest?: boolean;
+  /**
+   * El invitado: solo nombre y correo. Lo demás lo rellena él desde el enlace
+   * que recibe, así que aquí no hay más que guardar.
+   */
+  guest?: GuestDraft;
   /**
    * Eventos elegidos en el segundo paso. Ausente mientras no se llegue a él, y
    * son los valores del enum de la base para que el envío final no traduzca nada.
@@ -62,8 +68,8 @@ export function readJoinDraft(): JoinDraft | null {
       email: parsed.email,
       events: readEvents(parsed.events),
       person: parsed.person,
-      bringsCompanion: parsed.bringsCompanion,
-      companion: parsed.companion,
+      bringsGuest: parsed.bringsGuest,
+      guest: parsed.guest,
       savedAt: parsed.savedAt ?? new Date().toISOString(),
     };
   } catch {

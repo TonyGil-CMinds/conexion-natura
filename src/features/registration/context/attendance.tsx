@@ -34,6 +34,21 @@ export type Attendee = {
    * los trae: quien lo lea debe suponer el acto principal, no romperse.
    */
   events?: EventChoice[];
+  /**
+   * A quién invitó y si ya completó su registro.
+   *
+   * Es una lista porque así lo devuelve el servidor —la relación admite más de
+   * uno—, aunque hoy el formulario solo deje invitar a una persona.
+   */
+  guests?: Guest[];
+};
+
+/** Un invitado, visto desde la pantalla de quien lo invitó. */
+export type Guest = {
+  name: string;
+  email: string;
+  /** `PENDING` mientras no complete su propio registro. */
+  status: 'PENDING' | 'CONFIRMED';
 };
 
 type AttendanceState = {

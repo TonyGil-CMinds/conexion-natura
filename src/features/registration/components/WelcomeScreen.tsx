@@ -332,6 +332,28 @@ export function WelcomeScreen({ locale, copy, attendee, onEditPhoto }: Props) {
               {attendee.photoUrl ? copy.changePhoto : copy.addPhoto}
             </button>
           )}
+
+          {/**
+           * Cómo va el invitado.
+           *
+           * Quien invita no puede saber de otra forma si su acompañante
+           * completó su registro: el correo le llegó a él, no a quien invita. Y
+           * el aforo depende de que lo complete, así que callarlo sería dejar a
+           * los dos esperando.
+           */}
+          {attendee.guests?.map((guest) => (
+            <p key={guest.email} className={styles.guest}>
+              <span className={styles.guestName}>
+                {copy.guestLabel} {guest.name}
+              </span>
+              <span
+                className={styles.guestState}
+                data-pending={guest.status === 'PENDING' || undefined}
+              >
+                {guest.status === 'PENDING' ? copy.guestPending : copy.guestConfirmed}
+              </span>
+            </p>
+          ))}
         </motion.div>
       </div>
 

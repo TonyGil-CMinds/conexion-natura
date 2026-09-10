@@ -432,11 +432,11 @@ export const es = {
      */
     details: {
       step: 'Paso 2/3',
-      stepCompanion: 'Paso 2/3',
+      stepGuest: 'Paso 2/3',
       headlineLine1: 'Garantiza',
       headlineLine2: 'tu lugar',
-      companionHeadlineLine1: 'Y los datos',
-      companionHeadlineLine2: 'de tu acompañante',
+      guestHeadlineLine1: 'Invita a',
+      guestHeadlineLine2: 'tu acompañante',
       marquee: 'La tierra que habitamos',
       fields: {
         name: 'Tu nombre',
@@ -445,13 +445,16 @@ export const es = {
         role: 'Tu rol',
         linkedin: 'LinkedIn',
       },
-      companionFields: {
+      /**
+       * Del invitado solo se piden dos datos: los demás los pondrá esa persona
+       * desde el enlace que le llega, que es quien los sabe de verdad.
+       */
+      guestFields: {
         name: 'Su nombre',
-        surname: 'Su apellido',
-        organization: 'Su organización',
-        role: 'Su rol',
-        linkedin: 'LinkedIn',
+        email: 'Su correo electrónico',
       },
+      guestNote:
+        'Le enviaremos un correo para que complete su registro y confirme su asistencia.',
       withCompanion: 'Asistiré con acompañante',
       submit: 'Continuar',
       back: 'Volver',
@@ -537,6 +540,10 @@ export const es = {
         'Noche de Innovación e Inversión para la Biodiversidad y las Economías del Futuro.',
       share: 'Compartir',
       /** Con la credencial sin retrato, poner uno es lo que falta por hacer. */
+      /** Cómo va el invitado, en la pantalla de quien lo invitó. */
+      guestLabel: 'Tu invitado:',
+      guestPending: 'Pendiente de completar su registro',
+      guestConfirmed: 'Registro completado',
       addPhoto: 'Añadir mi fotografía',
       changePhoto: 'Cambiar mi fotografía',
       cardTitle: 'Tu tarjeta',
