@@ -48,27 +48,77 @@
   color: var(--fg);
 }
 
-.invited {
+/* «¡Nos vemos pronto en X!»: el nombre del acto va en el acento, que es el dato
+   que cambia al pasar de uno a otro. */
+.soon {
+  max-width: 22ch;
   margin: 0;
   font-family: var(--font-mono);
   font-size: var(--text-eyebrow);
+  line-height: 1.35;
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
   color: var(--fg);
 }
 
-/* El número es el dato: va en el acento porque es lo que se recuerda. */
-.invited span {
+.soon span {
   color: var(--accent-nav);
 }
 
-.soon {
-  margin: var(--space-4) 0 0;
-  font-family: var(--font-mono);
-  font-size: var(--text-note);
-  letter-spacing: var(--tracking-eyebrow);
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--fg) 62%, transparent);
+/**
+ * Fecha con el paso al otro acto a los lados.
+ *
+ * Los mandos van en posición absoluta y el hueco se lo reserva el relleno de la
+ * fila: como hermanos en el flujo, la fecha se descentraba al aparecer o
+ * desaparecer una flecha, y el bloque grande bailaba al cambiar de acto.
+ */
+.dateRow {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  /* Se ajusta a la fecha y no al panel: al ancho del panel las flechas se iban
+     a los cantos y quedaban huérfanas, lejos de lo que gobiernan. El relleno es
+     el hueco que se les reserva. */
+  width: fit-content;
+  padding-inline: 34px;
+}
+
+.step {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent-nav);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: opacity var(--duration-fast) var(--ease-out-expo);
+}
+
+.step:hover {
+  opacity: 0.7;
+}
+
+.step:focus-visible {
+  outline: 2px solid var(--accent-nav);
+  outline-offset: 2px;
+}
+
+.stepPrev {
+  left: 0;
+}
+
+/* El chevrón apunta a la derecha, así que el de volver se voltea. */
+.stepPrev svg {
+  transform: scaleX(-1);
+}
+
+.stepNext {
+  right: 0;
 }
 
 /* Fecha en dos bloques con la trama en medio, como en el hero móvil. */

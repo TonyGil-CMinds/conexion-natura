@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { PixelSprite } from '@/features/hero-creature';
@@ -9,6 +9,7 @@ import { SITE } from '@/config/site';
 import { EASE_OUT_EXPO } from '@/lib/motion';
 import type { Dictionary, Locale } from '@/i18n';
 import type { Attendee } from '../context/attendance';
+import { EVENT_OPTIONS } from '../config/event-options';
 import { addToCalendar, type CalendarTarget } from '../lib/calendar';
 import { downloadBadge, renderBadge, shareBadge } from '../lib/badge';
 import { ProfileCard } from './ProfileCard';
@@ -34,6 +35,28 @@ const ITEM = {
 const TARGETS = ['google', 'outlook', 'ics'] as const satisfies readonly CalendarTarget[];
 
 /**
+ * Punta de flecha en escalera, dibujada aquí y no traída de un archivo: los
+ * assets de flecha del sitio son diagonales, y lo que hace falta es un chevrón
+ * de cuadros del mismo paso que el resto de la interfaz. Apunta a la derecha; la
+ * de volver se voltea en el CSS.
+ */
+function PixelChevron() {
+  return (
+    <svg viewBox="0 0 9 15" width="9" height="15" focusable="false" aria-hidden>
+      {[
+        [0, 0],
+        [3, 3],
+        [6, 6],
+        [3, 9],
+        [0, 12],
+      ].map(([x, y]) => (
+        <rect key={`${x}-${y}`} x={x} y={y} width="3" height="3" fill="currentColor" />
+      ))}
+    </svg>
+  );
+}
+
+/**
  * Pantalla de bienvenida: lo que se ve cuando el registro ya está guardado.
  *
  * Es la vista de reposo de `/registro`, no un acuse de recibo que se cierre:
@@ -44,6 +67,22 @@ const TARGETS = ['google', 'outlook', 'ics'] as const satisfies readonly Calenda
  * puntero: cierra el recorrido donde empezó.
  */
 export function WelcomeScreen({ locale, copy, attendee }: Props) {
+  /**
+   * Los actos que se marcaron, en el orden del diseño.
+   *
+   * Un registro guardado antes de que existiera la elección no los trae, y
+   * tampoco uno con un valor que ya no exista: en los dos casos se cae al acto
+   * principal, que es a lo que va todo el mundo.
+   */
+  const events = useMemo(() => {
+    const chosen = EVENT_OPTIONS.filter((option) => attendee.events?.includes(option.choice));
+    return chosen.length ? chosen : [EVENT_OPTIONS[0]];
+  }, [attendee.events]);
+
+  /** Cuál se está mirando. Con un solo acto no se mueve nunca. */
+  const [index, setIndex] = useState(0);
+  const shown = events[Math.min(index, events.length - 1)];
+
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isCardOpen, setIsCardOpen] = useState(false);
   const [badge, setBadge] = useState<string | null>(null);
@@ -120,9 +159,13 @@ export function WelcomeScreen({ locale, copy, attendee }: Props) {
   function pickCalendar(target: CalendarTarget) {
     setIsCalendarOpen(false);
     addToCalendar(target, {
-      title: copy.calendarTitle,
+      uid: shown.uid,
+      // El título nombra el acto: quien va a los dos acaba con dos entradas en
+      // su calendario, y «CEIBA Quito» en las dos no distinguiría nada.
+      title: `${copy.calendarTitle} — ${copy.events[shown.id]}`,
       description: copy.calendarDescription,
-      location: `${SITE.event.venue.name}, ${SITE.event.place}`,
+      location: `${shown.venue.name}, ${SITE.event.place}`,
+      when: shown.calendar,
     });
   }
 
@@ -150,45 +193,75 @@ export function WelcomeScreen({ locale, copy, attendee }: Props) {
           {copy.greeting} {attendee.name}
         </motion.p>
 
-        <motion.p className={styles.invited} variants={ITEM}>
-          {copy.invitedLead} <span>{copy.invitedCount}</span> {copy.invitedTail}
-        </motion.p>
-
+        {/* El acto nombrado: quien va a los dos ve cuál está mirando. */}
         <motion.p className={styles.soon} variants={ITEM}>
-          {copy.soon}
+          {copy.soonIn} <span>{copy.events[shown.id]}!</span>
         </motion.p>
 
-        <motion.time
-          className={styles.date}
-          dateTime={date.toISOString().slice(0, 10)}
-          aria-label={copy.dateLabel}
-          variants={ITEM}
-        >
-          <span aria-hidden>
-            {String(day).padStart(2, '0')}
-            <br />
-            {shortMonth}
-          </span>
-          <span className={styles.dateMark} aria-hidden />
-          <span aria-hidden>
-            {yearLabel.slice(0, 2)}
-            <br />
-            {yearLabel.slice(2)}
-          </span>
-        </motion.time>
+        {/**
+         * Fecha con el paso al otro acto a un lado. La flecha apunta a donde se
+         * va: a la derecha para pasar al siguiente y a la izquierda para volver,
+         * así que su sitio dice tanto como su dibujo. Con un solo acto no hay
+         * ninguna: un mando que no lleva a ningún lado es ruido.
+         */}
+        <motion.div className={styles.dateRow} variants={ITEM}>
+          {events.length > 1 && index > 0 && (
+            <button
+              type="button"
+              className={`${styles.step} ${styles.stepPrev}`}
+              onClick={() => setIndex(index - 1)}
+              aria-label={copy.previousEvent}
+            >
+              <PixelChevron />
+            </button>
+          )}
 
-        <motion.a
-          className={styles.venue}
-          href={SITE.event.venue.mapsUrl}
-          target="_blank"
-          rel="noreferrer"
-          variants={ITEM}
-        >
-          {SITE.event.venue.name}
-        </motion.a>
+          <time className={styles.date} dateTime={date.toISOString().slice(0, 10)} aria-label={copy.dateLabel}>
+            <span aria-hidden>
+              {String(day).padStart(2, '0')}
+              <br />
+              {shortMonth}
+            </span>
+            <span className={styles.dateMark} aria-hidden />
+            <span aria-hidden>
+              {yearLabel.slice(0, 2)}
+              <br />
+              {yearLabel.slice(2)}
+            </span>
+          </time>
 
+          {events.length > 1 && index < events.length - 1 && (
+            <button
+              type="button"
+              className={`${styles.step} ${styles.stepNext}`}
+              onClick={() => setIndex(index + 1)}
+              aria-label={copy.nextEvent}
+            >
+              <PixelChevron />
+            </button>
+          )}
+        </motion.div>
+
+        {/* La sede solo enlaza si hay a dónde: la del premio no tiene mapa. */}
+        {shown.venue.mapsUrl ? (
+          <motion.a
+            className={styles.venue}
+            href={shown.venue.mapsUrl}
+            target="_blank"
+            rel="noreferrer"
+            variants={ITEM}
+          >
+            {shown.venue.name}
+          </motion.a>
+        ) : (
+          <motion.p className={styles.venue} variants={ITEM}>
+            {shown.venue.name}
+          </motion.p>
+        )}
+
+        {/* Sin horas confirmadas se dice, no se inventa. */}
         <motion.p className={styles.schedule} variants={ITEM}>
-          {SITE.event.scheduleLabel}
+          {shown.schedule ?? copy.scheduleTbc}
         </motion.p>
 
         <motion.div className={styles.actions} variants={ITEM}>
@@ -295,7 +368,7 @@ export function WelcomeScreen({ locale, copy, attendee }: Props) {
                   onClick={() => setIsCardOpen(false)}
                   aria-label={copy.close}
                 >
-                  <span aria-hidden />
+                  <PixelChevron />
                 </button>
               </div>
             </motion.div>

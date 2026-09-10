@@ -7,17 +7,30 @@
  * implementar, pero en Google —que es la mayoría— obliga a descargar un archivo
  * e importarlo a mano, y ahí se pierde a la gente.
  *
- * Las horas viven en `SITE.event.calendar` en UTC y de ahí salen los tres
- * formatos: así no hay una fecha escrita dos veces.
+ * Las fechas viven en `src/config/site.ts` y de ahí salen los tres formatos: así
+ * no hay una fecha escrita dos veces.
  */
 
-import { SITE } from '@/config/site';
+/**
+ * Cuándo ocurre.
+ *
+ * Dos formas porque los dos actos del día son distintos: la noche tiene horas
+ * confirmadas (`time`, en UTC) y la premiación todavía no (`day`, de día
+ * completo). Un tramo de horas inventado metería a la gente en una sala a la
+ * hora equivocada, así que la falta de hora se modela, no se rellena.
+ */
+export type CalendarWhen =
+  | { kind: 'time'; startUtc: string; endUtc: string }
+  | { kind: 'day'; start: string; end: string };
 
 /** Lo que las tres variantes necesitan saber del acto. */
 export type CalendarEvent = {
+  /** Identificador estable: es lo que evita duplicados al añadirlo dos veces. */
+  uid: string;
   title: string;
   description: string;
   location: string;
+  when: CalendarWhen;
 };
 
 export type CalendarTarget = 'google' | 'outlook' | 'ics';
@@ -25,7 +38,9 @@ export type CalendarTarget = 'google' | 'outlook' | 'ics';
 /** `20261005T220000Z` → `2026-10-05T22:00:00Z`, que es lo que pide Outlook. */
 function toIso(compact: string) {
   const [date, time] = compact.replace('Z', '').split('T');
-  return `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}T${time.slice(0, 2)}:${time.slice(2, 4)}:${time.slice(4, 6)}Z`;
+  const day = `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}`;
+  if (!time) return day;
+  return `${day}T${time.slice(0, 2)}:${time.slice(2, 4)}:${time.slice(4, 6)}Z`;
 }
 
 function escapeICS(value: string) {
@@ -33,7 +48,16 @@ function escapeICS(value: string) {
 }
 
 function icsFile(event: CalendarEvent) {
-  const { calendar } = SITE.event;
+  /**
+   * En un evento de día completo la fecha va **sin hora y con `VALUE=DATE`**: sin
+   * eso, los clientes lo colocan a medianoche en la zona de quien lo importa, y
+   * en América cae el día anterior.
+   */
+  const when =
+    event.when.kind === 'time'
+      ? [`DTSTART:${event.when.startUtc}`, `DTEND:${event.when.endUtc}`]
+      : [`DTSTART;VALUE=DATE:${event.when.start}`, `DTEND;VALUE=DATE:${event.when.end}`];
+
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -41,10 +65,9 @@ function icsFile(event: CalendarEvent) {
     'BEGIN:VEVENT',
     // El identificador no cambia aunque cambie la marca: es lo que reconoce el
     // calendario de quien ya añadió el evento, y otro crearía un duplicado.
-    'UID:conexion500-2026-10-05@conexion500',
+    `UID:${event.uid}`,
     `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}`,
-    `DTSTART:${calendar.startUtc}`,
-    `DTEND:${calendar.endUtc}`,
+    ...when,
     `SUMMARY:${escapeICS(event.title)}`,
     `LOCATION:${escapeICS(event.location)}`,
     `DESCRIPTION:${escapeICS(event.description)}`,
@@ -63,13 +86,18 @@ function icsFile(event: CalendarEvent) {
  * es donde está la credencial recién creada—; el `.ics` se descarga.
  */
 export function addToCalendar(target: CalendarTarget, event: CalendarEvent): void {
-  const { calendar } = SITE.event;
+  const { when } = event;
 
   if (target === 'google') {
     const url = new URL('https://calendar.google.com/calendar/render');
     url.searchParams.set('action', 'TEMPLATE');
     url.searchParams.set('text', event.title);
-    url.searchParams.set('dates', `${calendar.startUtc}/${calendar.endUtc}`);
+    // El mismo parámetro sirve para las dos formas: con fechas sueltas —sin
+    // hora— Google lo crea de día completo.
+    url.searchParams.set(
+      'dates',
+      when.kind === 'time' ? `${when.startUtc}/${when.endUtc}` : `${when.start}/${when.end}`,
+    );
     url.searchParams.set('location', event.location);
     url.searchParams.set('details', event.description);
     window.open(url.toString(), '_blank', 'noopener,noreferrer');
@@ -81,8 +109,14 @@ export function addToCalendar(target: CalendarTarget, event: CalendarEvent): voi
     url.searchParams.set('path', '/calendar/action/compose');
     url.searchParams.set('rru', 'addevent');
     url.searchParams.set('subject', event.title);
-    url.searchParams.set('startdt', toIso(calendar.startUtc));
-    url.searchParams.set('enddt', toIso(calendar.endUtc));
+    if (when.kind === 'time') {
+      url.searchParams.set('startdt', toIso(when.startUtc));
+      url.searchParams.set('enddt', toIso(when.endUtc));
+    } else {
+      url.searchParams.set('startdt', toIso(when.start));
+      url.searchParams.set('enddt', toIso(when.end));
+      url.searchParams.set('allday', 'true');
+    }
     url.searchParams.set('location', event.location);
     url.searchParams.set('body', event.description);
     window.open(url.toString(), '_blank', 'noopener,noreferrer');
@@ -92,7 +126,7 @@ export function addToCalendar(target: CalendarTarget, event: CalendarEvent): voi
   const href = URL.createObjectURL(icsFile(event));
   const link = document.createElement('a');
   link.href = href;
-  link.download = 'ceiba-quito.ics';
+  link.download = `${event.uid.split('@')[0]}.ics`;
   link.click();
   // El objeto se libera tras el clic: si se revoca antes, la descarga se cae.
   window.setTimeout(() => URL.revokeObjectURL(href), 1000);

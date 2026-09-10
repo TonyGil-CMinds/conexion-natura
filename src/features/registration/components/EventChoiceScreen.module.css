@@ -135,11 +135,63 @@
   background-color: var(--color-light);
 }
 
-.logo {
+/**
+ * Columna de texto de la tarjeta. Se acota al 62 %: el arte ocupa el canto
+ * derecho y sin tope el párrafo se le metía por debajo.
+ */
+.info {
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  max-width: 62%;
+}
+
+/* El trofeo es mucho más ancho que la trama de la noche: sin acotar más, el
+   texto se le metía por debajo. */
+.card[data-event='award'] .info {
+  max-width: 54%;
+}
+
+.logo {
   width: auto;
   height: clamp(58px, 5.6vw, 76px);
+}
+
+.tagline {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  line-height: 1.5;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+/* Al pie del bloque, separado del resumen: es un dato, no una descripción. */
+.schedule {
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+/* Cada tarjeta tiene su fondo, así que la tinta del texto va por tarjeta: sobre
+   el crema del premio, el crema del tema oscuro no se ve. */
+.card[data-event='night'] .tagline {
+  color: var(--color-light);
+}
+
+.card[data-event='night'] .schedule {
+  color: color-mix(in srgb, var(--color-light) 62%, transparent);
+}
+
+.card[data-event='award'] .tagline {
+  color: var(--color-dark);
+}
+
+.card[data-event='award'] .schedule {
+  color: color-mix(in srgb, var(--color-dark) 66%, transparent);
 }
 
 /**

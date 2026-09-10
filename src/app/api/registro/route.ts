@@ -26,6 +26,8 @@ const SELECT = {
   role: true,
   linkedin: true,
   photoUrl: true,
+  /** Los actos elegidos: la bienvenida enseña los que se marcaron. */
+  events: true,
 } as const;
 
 /** Tope de espera del correo. Pasado esto, el registro responde igual. */

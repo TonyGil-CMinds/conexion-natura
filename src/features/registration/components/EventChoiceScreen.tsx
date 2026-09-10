@@ -115,14 +115,27 @@ export function EventChoiceScreen({ copy, initial = ['NIGHT'], onContinue }: Pro
                 />
                 <span className={styles.srOnly}>{copy.events[option.id]}</span>
 
-                <Image
-                  src={option.logo.src}
-                  alt=""
-                  width={option.logo.width}
-                  height={option.logo.height}
-                  className={styles.logo}
-                  aria-hidden
-                />
+                {/**
+                 * Logotipo, de qué va y cuándo. Los tres van en una columna a la
+                 * izquierda, con el arte al canto derecho: sin el texto, las dos
+                 * tarjetas obligaban a reconocer el acto por su logotipo, y la
+                 * hora —o su ausencia— solo se descubría después de elegir.
+                 */}
+                <span className={styles.info}>
+                  <Image
+                    src={option.logo.src}
+                    alt=""
+                    width={option.logo.width}
+                    height={option.logo.height}
+                    className={styles.logo}
+                    aria-hidden
+                  />
+
+                  <span className={styles.tagline}>{copy.taglines[option.id]}</span>
+
+                  {/* Sin horas confirmadas se dice, no se inventa. */}
+                  <span className={styles.schedule}>{option.schedule ?? copy.scheduleTbc}</span>
+                </span>
                 <Image
                   src={option.art.src}
                   alt=""

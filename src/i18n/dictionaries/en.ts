@@ -366,6 +366,11 @@ export const en: Dictionary = {
         night: 'Natura500 Night',
         award: 'NaturaTech LAC 2026 Award',
       },
+      taglines: {
+        night: 'A night of innovation and investment for biodiversity and the economies of the future',
+        award: 'NaturaTech LAC 2026 Award ceremony',
+      },
+      scheduleTbc: 'Time to be confirmed',
     },
 
     details: {
@@ -423,10 +428,14 @@ export const en: Dictionary = {
 
     welcome: {
       greeting: 'Hello',
-      invitedLead: 'You are one of the',
-      invitedCount: '100',
-      invitedTail: 'guests',
-      soon: 'See you soon!',
+      soonIn: 'See you soon at',
+      events: {
+        night: 'Natura500 Night',
+        award: 'Natura500 Awards',
+      },
+      nextEvent: 'See the other event',
+      previousEvent: 'See the previous event',
+      scheduleTbc: 'Time to be confirmed',
       dateLabel: 'October 5, 2026',
       addToCalendar: 'Add to my calendar',
       calendarLabel: 'Pick your calendar',
@@ -435,7 +444,8 @@ export const en: Dictionary = {
         outlook: 'Outlook',
         ics: 'Apple or other (.ics)',
       },
-      calendarTitle: 'CEIBA Quito — Natura500 Night',
+      /** Se completa con el nombre del acto: el título lo compone la pantalla. */
+      calendarTitle: 'CEIBA Quito',
       calendarDescription:
         'A night of innovation and investment for biodiversity and the economies of the future.',
       share: 'Share',

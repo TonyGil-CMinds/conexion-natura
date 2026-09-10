@@ -1,5 +1,6 @@
 'use client';
 
+import type { EventChoice } from '../lib/attendee-input';
 import {
   createContext,
   useCallback,
@@ -26,6 +27,13 @@ export type Attendee = {
   linkedin: string | null;
   /** URL en R2. El archivo no está aquí: solo el enlace. */
   photoUrl: string | null;
+  /**
+   * Los actos a los que va, en los valores de la columna.
+   *
+   * Opcional porque un registro guardado antes de que existiera la elección no
+   * los trae: quien lo lea debe suponer el acto principal, no romperse.
+   */
+  events?: EventChoice[];
 };
 
 type AttendanceState = {

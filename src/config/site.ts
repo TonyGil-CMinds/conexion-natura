@@ -26,7 +26,20 @@ export const SITE = {
      * UTC-5 todo el año —no tiene horario de verano—, así que 17:00 locales son
      * las 22:00 Z y el evento termina ya en el día siguiente en UTC.
      */
-    calendar: { startUtc: '20261005T220000Z', endUtc: '20261006T020000Z' },
+    calendar: { kind: 'time', startUtc: '20261005T220000Z', endUtc: '20261006T020000Z' },
+  },
+  /**
+   * El otro acto del día: la premiación del Premio NaturaTech LAC 2026.
+   *
+   * **La hora está por confirmar**, así que aquí no hay ninguna: el rótulo que
+   * lo dice es copia y vive en el diccionario. Por eso su entrada de calendario
+   * es de día completo —`day`— y no un tramo de horas: inventarle un horario
+   * metería a la gente en una sala a la hora equivocada.
+   */
+  award: {
+    venue: { name: 'Main Stage GET Forum' },
+    /** Día completo. El fin es el día siguiente: el final es exclusivo. */
+    calendar: { kind: 'day', start: '20261005', end: '20261006' },
   },
   /** Destino del botón principal. El rótulo sale del diccionario. */
   cta: { href: '/registro' },

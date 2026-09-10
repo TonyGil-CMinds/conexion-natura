@@ -407,6 +407,13 @@ export const es = {
         night: 'Natura500 Night',
         award: 'Premio NaturaTech LAC 2026',
       },
+      /** De qué va cada acto, dentro de su tarjeta. */
+      taglines: {
+        night: 'Noche de innovación e inversión para la biodiversidad y las economías del futuro',
+        award: 'Premiación del Premio NaturaTech LAC 2026',
+      },
+      /** La premiación aún no tiene hora confirmada. */
+      scheduleTbc: 'Horario por confirmar',
     },
 
     /**
@@ -480,10 +487,18 @@ export const es = {
      */
     welcome: {
       greeting: 'Hola',
-      invitedLead: 'Eres uno de los',
-      invitedCount: '100',
-      invitedTail: 'invitados',
-      soon: '¡Nos vemos pronto!',
+      /** Se completa con el nombre del acto que se está mirando. */
+      soonIn: '¡Nos vemos pronto en',
+      /** Nombres de los dos actos, como se anuncian aquí. */
+      events: {
+        night: 'Natura500 Night',
+        award: 'Premiación Natura500',
+      },
+      /** Paso de un acto al otro, para quien va a los dos. */
+      nextEvent: 'Ver el otro evento',
+      previousEvent: 'Ver el evento anterior',
+      /** La premiación aún no tiene hora ni sala confirmadas. */
+      scheduleTbc: 'Horario por confirmar',
       /** Para lectores de pantalla: la fecha grande va en bloques sin sentido. */
       dateLabel: '5 de octubre de 2026',
       addToCalendar: 'Añadir a mi calendario',
@@ -494,7 +509,8 @@ export const es = {
         ics: 'Apple u otro (.ics)',
       },
       /** Lo que se escribe en el evento del calendario. */
-      calendarTitle: 'CEIBA Quito — Natura500 Night',
+      /** Se completa con el nombre del acto: el título lo compone la pantalla. */
+      calendarTitle: 'CEIBA Quito',
       calendarDescription:
         'Noche de Innovación e Inversión para la Biodiversidad y las Economías del Futuro.',
       share: 'Compartir',
