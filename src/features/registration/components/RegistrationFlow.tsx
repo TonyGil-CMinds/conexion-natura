@@ -103,6 +103,7 @@ export function RegistrationFlow({ locale, copy }: Props) {
         email: invited.email,
         // El nombre llega de quien invitó; el apellido lo pondrá él mismo.
         person: { name: invited.name, surname: '', organization: '', role: '', linkedin: '' },
+        fromInvitation: true,
       });
       setStage('choice');
     })();
@@ -265,6 +266,8 @@ export function RegistrationFlow({ locale, copy }: Props) {
             copy={copy.details}
             initial={draft.current?.person}
             initialBringsGuest={draft.current?.bringsGuest ?? true}
+            /* Quien llega invitado completa su lugar; no reparte otro. */
+            canInvite={!draft.current?.fromInvitation}
             onContinue={handleDetails}
             onBack={() => setStage('choice')}
           />

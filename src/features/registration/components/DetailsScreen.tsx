@@ -26,6 +26,15 @@ type Props = {
   initialGuest?: Partial<GuestDraft>;
   /** Valor de partida de la casilla. Marcada por omisión: se espera compañía. */
   initialBringsGuest?: boolean;
+  /**
+   * Si esta persona puede invitar a alguien.
+   *
+   * En `false` no sale la casilla: es lo que toca para **quien llega invitado**,
+   * que está completando el lugar que otro le dio. Sin esto se le ofrecía traer
+   * a otro invitado —y marcado por omisión—, así que entre sus datos y su
+   * fotografía se le colaba un paso para invitar que no le corresponde.
+   */
+  canInvite?: boolean;
   onContinue?: (person: PersonDraft, bringsGuest: boolean) => void;
   /** Se llama en la pasada del invitado, con sus dos datos. */
   onGuest?: (guest: GuestDraft) => void;
@@ -39,7 +48,6 @@ type Field = (typeof FIELDS)[number];
 
 /** Del invitado, solo lo que quien invita puede saber de memoria. */
 const GUEST_FIELDS = ['name', 'email'] as const;
-type GuestField = (typeof GUEST_FIELDS)[number];
 
 /** Lo mínimo para no mandar una invitación a una dirección imposible. */
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -106,13 +114,14 @@ export function DetailsScreen({
   initial,
   initialGuest,
   initialBringsGuest = true,
+  canInvite = true,
   onContinue,
   onGuest,
   onBack,
 }: Props) {
   const [person, setPerson] = useState<PersonDraft>({ ...EMPTY, ...initial });
   const [guest, setGuest] = useState<GuestDraft>({ name: '', email: '', ...initialGuest });
-  const [bringsGuest, setBringsGuest] = useState(initialBringsGuest);
+  const [bringsGuest, setBringsGuest] = useState(initialBringsGuest && canInvite);
   const [missing, setMissing] = useState<readonly string[]>([]);
 
   const isGuest = mode === 'guest';
@@ -158,7 +167,8 @@ export function DetailsScreen({
       FIELDS.map((field) => [field, person[field].trim()]),
     ) as PersonDraft;
     trimmed.linkedin = normalizeLinkedIn(trimmed.linkedin);
-    onContinue?.(trimmed, bringsGuest);
+    // Quien no puede invitar nunca trae invitado, pase lo que pase con el estado.
+    onContinue?.(trimmed, canInvite && bringsGuest);
   }
 
   return (
@@ -278,7 +288,7 @@ export function DetailsScreen({
           </motion.label>
         ))}
 
-        {!isGuest && (
+        {!isGuest && canInvite && (
           <motion.label className={styles.companion} variants={ITEM}>
             <input
               type="checkbox"

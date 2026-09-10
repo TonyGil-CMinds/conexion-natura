@@ -50,6 +50,14 @@ export type JoinDraft = {
    */
   guest?: GuestDraft;
   /**
+   * Si llegó por el enlace de una invitación.
+   *
+   * Cambia lo que se le pide: quien viene invitado completa **sus** datos y sube
+   * su fotografía, y no se le ofrece traer a nadie —invitar es de quien tiene su
+   * lugar, no de quien lo está consiguiendo—.
+   */
+  fromInvitation?: boolean;
+  /**
    * Eventos elegidos en el segundo paso. Ausente mientras no se llegue a él, y
    * son los valores del enum de la base para que el envío final no traduzca nada.
    */
@@ -70,6 +78,7 @@ export function readJoinDraft(): JoinDraft | null {
       person: parsed.person,
       bringsGuest: parsed.bringsGuest,
       guest: parsed.guest,
+      fromInvitation: parsed.fromInvitation === true,
       savedAt: parsed.savedAt ?? new Date().toISOString(),
     };
   } catch {
