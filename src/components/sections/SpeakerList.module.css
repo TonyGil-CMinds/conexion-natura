@@ -123,7 +123,7 @@
 }
 
 .linkedin:hover {
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 .linkedinMark {
@@ -227,7 +227,7 @@
 .sessionTime {
   display: block;
   overflow: hidden;
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 .session[data-open] .sessionTime {

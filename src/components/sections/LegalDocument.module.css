@@ -29,7 +29,7 @@
   font-size: var(--text-note);
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 .intro {
@@ -72,7 +72,7 @@
   flex: none;
   font-size: var(--text-note);
   letter-spacing: var(--tracking-eyebrow);
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 /* Cuerpo de lectura, no de dato: el tamaño de los párrafos del sitio y no el de
@@ -147,7 +147,7 @@
 }
 
 .data a {
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 /* Lo que falta por rellenar. En rojo y en cursiva: tiene que cantar. */

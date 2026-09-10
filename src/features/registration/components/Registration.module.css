@@ -12,13 +12,13 @@
 .header { min-height: 0; padding: 38px 22px 20px; border-bottom: 1px solid var(--rule); }
 .header h1 { margin-top: 25px; font-family: var(--font-mono); font-size: clamp(1.3rem, 2vw, 1.75rem); font-weight: 400; letter-spacing: .12em; text-transform: uppercase; }
 .eyebrow, .photoUpload, .field span, .error { font-family: var(--font-mono); font-size: var(--text-note); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; }
-.eyebrow { color: var(--accent-nav); }
+.eyebrow { color: var(--accent-nav-ink); }
 .photoActions { display: flex; gap: 8px; margin-top: 56px; }
 .photoUpload { position: relative; display: flex; flex: 1; align-items: center; justify-content: center; min-height: 78px; overflow: hidden; border: 1px dashed color-mix(in srgb, var(--fg) 34%, transparent); background: transparent; color: color-mix(in srgb, var(--fg) 62%, transparent); cursor: pointer; }.photoUpload:disabled { cursor: wait; }
-.cropTrigger { display: grid; width: 78px; place-items: center; border: 1px dashed color-mix(in srgb, var(--fg) 34%, transparent); background: transparent; color: var(--accent-nav); cursor: pointer; transition: background-color var(--duration-fast) var(--ease-out-expo); }.cropTrigger:hover { background: color-mix(in srgb, var(--accent-nav) 12%, transparent); }
+.cropTrigger { display: grid; width: 78px; place-items: center; border: 1px dashed color-mix(in srgb, var(--fg) 34%, transparent); background: transparent; color: var(--accent-nav-ink); cursor: pointer; transition: background-color var(--duration-fast) var(--ease-out-expo); }.cropTrigger:hover { background: color-mix(in srgb, var(--accent-nav) 12%, transparent); }
 .cropIcon { position: relative; width: 22px; height: 22px; border: 2px solid currentColor; }.cropIcon::before, .cropIcon::after { position: absolute; background: var(--color-surface); content: ''; }.cropIcon::before { top: 5px; bottom: 5px; left: -4px; right: -4px; }.cropIcon::after { top: -4px; bottom: -4px; left: 5px; right: 5px; }
 .photoUpload[data-error] { color: #ff8d8d; }
-.photoUpload:has(.pixelLoader) { border-color: var(--accent-nav); color: var(--accent-nav); animation: upload-glow 1s ease-in-out infinite alternate; }
+.photoUpload:has(.pixelLoader) { border-color: var(--accent-nav); color: var(--accent-nav-ink); animation: upload-glow 1s ease-in-out infinite alternate; }
 .pixelLoader { position: absolute; right: 16px; display: grid; grid-template-columns: repeat(3, 5px); gap: 2px; }
 .pixelLoader i { width: 5px; height: 5px; background: currentColor; animation: pixel-pulse .9s steps(2, end) infinite; }.pixelLoader i:nth-child(2), .pixelLoader i:nth-child(4), .pixelLoader i:nth-child(8) { animation-delay: .12s; }.pixelLoader i:nth-child(3), .pixelLoader i:nth-child(5), .pixelLoader i:nth-child(7) { animation-delay: .24s; }.pixelLoader i:nth-child(6), .pixelLoader i:nth-child(9) { animation-delay: .36s; }@keyframes pixel-pulse { 0%, 100% { opacity: .2; transform: scale(.65); } 50% { opacity: 1; transform: scale(1); } }@keyframes upload-glow { from { box-shadow: 0 0 0 color-mix(in srgb, var(--accent-nav) 0%, transparent); } to { box-shadow: 0 0 20px color-mix(in srgb, var(--accent-nav) 38%, transparent); } }
 .photoInput { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
@@ -32,7 +32,7 @@
 .field:focus-within { background: color-mix(in srgb, var(--accent-nav) 5%, transparent); }
 .field[data-error] { box-shadow: inset 4px 0 #e95d5d; background: #e95d5d12; }
 .field em { position: absolute; right: 20px; bottom: 10px; padding: 4px 7px; background: #e95d5d; color: #fff; font-family: var(--font-mono); font-size: 10px; font-style: normal; }
-.emailSuggestions { position: absolute; z-index: 4; top: 71px; right: 28px; left: 28px; display: grid; overflow: hidden; border: 1px solid var(--rule); background: var(--color-surface); box-shadow: 0 12px 22px #0008; }.emailSuggestions button { min-height: 28px; padding-inline: 10px; border: 0; border-bottom: 1px solid color-mix(in srgb, var(--fg) 10%, transparent); background: transparent; color: var(--fg); font-family: var(--font-mono); font-size: var(--text-fine); letter-spacing: var(--tracking-eyebrow); text-align: left; text-transform: lowercase; cursor: pointer; }.emailSuggestions button:last-child { border-bottom: 0; }.emailSuggestions button:hover { background: color-mix(in srgb, var(--accent-nav) 13%, transparent); color: var(--accent-nav); }
+.emailSuggestions { position: absolute; z-index: 4; top: 71px; right: 28px; left: 28px; display: grid; overflow: hidden; border: 1px solid var(--rule); background: var(--color-surface); box-shadow: 0 12px 22px #0008; }.emailSuggestions button { min-height: 28px; padding-inline: 10px; border: 0; border-bottom: 1px solid color-mix(in srgb, var(--fg) 10%, transparent); background: transparent; color: var(--fg); font-family: var(--font-mono); font-size: var(--text-fine); letter-spacing: var(--tracking-eyebrow); text-align: left; text-transform: lowercase; cursor: pointer; }.emailSuggestions button:last-child { border-bottom: 0; }.emailSuggestions button:hover { background: color-mix(in srgb, var(--accent-nav) 13%, transparent); color: var(--accent-nav-ink); }
 .submit { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 91px; margin-top: auto; border: 0; background: var(--accent-nav); color: var(--color-dark); font-family: var(--font-mono); font-size: var(--text-cta); letter-spacing: var(--tracking-cta); text-transform: uppercase; cursor: pointer; transition: background-color var(--duration-fast) var(--ease-out-expo); }
 .submit:hover { background: var(--color-green-soft); }.submit:disabled { cursor: wait; }.spinner { width: 17px; height: 17px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .75s linear infinite; }@keyframes spin { to { transform: rotate(360deg); } }
 /**
@@ -43,7 +43,7 @@
  * traería su relleno fijado y no seguiría al enlace en el hover.
  */
 .switchLink { display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 108px; border: 0; border-top: 1px solid var(--rule); background: transparent; color: var(--fg); font-family: var(--font-mono); font-size: var(--text-note); font-weight: 700; letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; cursor: pointer; transition: color var(--duration-fast) var(--ease-out-expo); }
-.switchLink:hover { color: var(--accent-nav); }
+.switchLink:hover { color: var(--accent-nav-ink); }
 .switchMark { width: 26px; height: 20px; background-color: var(--accent-nav); mask: url('/hero/asset-riggle-green.svg') center / contain no-repeat; }
 
 /**
@@ -73,11 +73,11 @@
 .data { display: grid; gap: 14px; margin-top: 16px; padding: 22px 16px; border: 1px dashed color-mix(in srgb, var(--fg) 34%, transparent); }
 .data dt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .data dd, .eventDate, .eventTime, .eventVenue { margin: 0; font-family: var(--font-mono); font-size: 1rem; letter-spacing: .08em; text-transform: uppercase; color: var(--fg); }
-.data dd a { color: var(--accent-nav); text-decoration: underline; text-underline-offset: 4px; }
+.data dd a { color: var(--accent-nav-ink); text-decoration: underline; text-underline-offset: 4px; }
 .eventTime { color: color-mix(in srgb, var(--fg) 82%, transparent); }
 /* La nota del registro previo es un aparte, no otro dato: baja de tamaño. */
 .eventTime span { font-size: var(--text-note); letter-spacing: var(--tracking-eyebrow); color: color-mix(in srgb, var(--fg) 55%, transparent); }
-.eventVenue { color: var(--accent-nav); }
+.eventVenue { color: var(--accent-nav-ink); }
 .eventVenue:hover { text-decoration: underline; text-underline-offset: 4px; }
 .edit { width: 100%; min-height: 66px; margin-top: 22px; border: 0; background: var(--accent-nav); color: var(--color-dark); font-family: var(--font-mono); font-size: var(--text-cta); letter-spacing: var(--tracking-cta); text-transform: uppercase; cursor: pointer; transition: background-color var(--duration-fast) var(--ease-out-expo); }
 .edit:hover { background: var(--color-green-soft); }
@@ -87,7 +87,7 @@
  * apagado y no en lima porque el lima ya lo lleva «editar mis datos», y dos
  * bloques iguales no dejarían ver cuál es la acción principal.
  */
-.calendar { width: 100%; min-height: 91px; margin-top: auto; border: 0; border-top: 1px solid var(--rule); background: color-mix(in srgb, var(--accent-nav) 14%, transparent); color: var(--accent-nav); font-family: var(--font-mono); font-size: var(--text-cta); letter-spacing: var(--tracking-cta); text-transform: uppercase; cursor: pointer; transition: background-color var(--duration-fast) var(--ease-out-expo); }
+.calendar { width: 100%; min-height: 91px; margin-top: auto; border: 0; border-top: 1px solid var(--rule); background: color-mix(in srgb, var(--accent-nav) 14%, transparent); color: var(--accent-nav-ink); font-family: var(--font-mono); font-size: var(--text-cta); letter-spacing: var(--tracking-cta); text-transform: uppercase; cursor: pointer; transition: background-color var(--duration-fast) var(--ease-out-expo); }
 .calendar:hover { background: color-mix(in srgb, var(--accent-nav) 24%, transparent); }
 /**
  * Pegajoso: la credencial sigue a la vista mientras el formulario se desplaza,

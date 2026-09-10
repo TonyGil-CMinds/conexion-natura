@@ -44,6 +44,18 @@
    */
   --accent-nav: var(--color-lime);
   /**
+   * Los dos acentos **como tinta**.
+   *
+   * Un color que funciona rellenando una caja no funciona escribiendo sobre el
+   * fondo: en el tema claro, el lima de marca sobre el crema deja el texto
+   * ilegible aunque en un botón —con la tinta oscura encima— se lea perfecto.
+   * De ahí que relleno y tinta sean roles distintos y no el mismo valor.
+   *
+   * En oscuro son idénticos a sus acentos, así que este tema no cambia nada.
+   */
+  --accent-ink: var(--color-green);
+  --accent-nav-ink: var(--color-lime);
+  /**
    * Cuadros de color de los créditos de la agenda: uno por función —quien
    * presenta y quienes participan—. Son un código de dos colores, así que van
    * como rol y no como paleta suelta: el componente no elige el verde.
@@ -297,6 +309,13 @@
    */
   --accent: var(--color-green-brand);
   --accent-nav: var(--color-green-brand);
+  /**
+   * La tinta del acento en claro es el **verde base**, más oscuro que el de
+   * marca: es el único de la paleta que se lee sobre el crema. Los rellenos
+   * siguen en el verde de marca, que ahí sí funciona.
+   */
+  --accent-ink: var(--color-green-base);
+  --accent-nav-ink: var(--color-green-base);
   /* El lima apagado se pierde sobre el crema; el azul se lee igual en los dos. */
   --credit-host: var(--color-green-brand);
   --rule: color-mix(in srgb, var(--fg) 14%, transparent);

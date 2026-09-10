@@ -67,7 +67,7 @@
 }
 
 .question:hover {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .question:focus-visible {

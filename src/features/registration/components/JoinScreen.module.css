@@ -41,7 +41,7 @@
 
 /* El tramo de marca, en el acento del tema. */
 .accent {
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 /**

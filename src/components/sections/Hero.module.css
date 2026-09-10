@@ -57,7 +57,7 @@
 }
 
 .place {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 /**
@@ -169,7 +169,7 @@
     line-height: 1;
     text-align: center;
     text-transform: uppercase;
-    color: var(--accent-nav);
+    color: var(--accent-nav-ink);
   }
 
   .dateMark {

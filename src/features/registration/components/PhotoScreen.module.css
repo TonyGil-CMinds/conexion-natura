@@ -378,7 +378,7 @@
   font-size: var(--text-cta);
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 .previewRow {
@@ -434,7 +434,7 @@
 }
 
 .adjust:hover {
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 .adjust:focus-visible {

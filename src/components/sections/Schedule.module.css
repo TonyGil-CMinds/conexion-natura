@@ -60,7 +60,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-answer);
   line-height: 1.2;
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 /**

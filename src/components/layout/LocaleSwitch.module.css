@@ -26,7 +26,7 @@
 
 /* Mismo lima que el enlace activo del menú: los dos viven en la barra. */
 .button[data-active] {
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 .button:hover:not([data-active]) {

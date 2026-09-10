@@ -62,7 +62,7 @@
 }
 
 .soon span {
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 /**
@@ -93,7 +93,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
   cursor: pointer;
   transform: translateY(-50%);
   transition: opacity var(--duration-fast) var(--ease-out-expo);
@@ -131,7 +131,7 @@
   line-height: 1.05;
   text-align: center;
   text-transform: uppercase;
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 .dateMark {
@@ -146,7 +146,7 @@
   font-size: var(--text-meta);
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
   text-decoration: none;
   border-bottom: 1px solid transparent;
   transition: border-color var(--duration-fast) var(--ease-out-expo);
@@ -255,7 +255,7 @@
 /* Pendiente en ámbar y confirmado en el acento: el estado se lee de un vistazo
    sin tener que leer la palabra. */
 .guestState {
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 .guestState[data-pending] {
@@ -281,7 +281,7 @@
 }
 
 .quiet:hover {
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 .quiet:focus-visible {
@@ -404,7 +404,7 @@
   font-size: var(--text-note);
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 /* Cargador de píxeles, el mismo de los pasos anteriores. */

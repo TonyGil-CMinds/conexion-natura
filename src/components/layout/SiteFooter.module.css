@@ -170,7 +170,7 @@
 }
 
 .legalLink:hover {
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 .social {
@@ -189,7 +189,7 @@
 }
 
 .socialLink:hover {
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 .socialMark {

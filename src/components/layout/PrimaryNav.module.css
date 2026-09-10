@@ -23,17 +23,17 @@
 }
 
 .link:hover {
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 /* Llamada a la acción dentro del menú: va en el color de acento de base. */
 .link[data-highlight] {
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 /* La ruta actual: el color acompaña al zigzag. */
 .link[data-selected] {
-  color: var(--accent-nav);
+  color: var(--accent-nav-ink);
 }
 
 /**
