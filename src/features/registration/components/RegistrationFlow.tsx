@@ -8,6 +8,7 @@ import type { EventChoice } from '../lib/attendee-input';
 import { readJoinDraft, saveJoinDraft, type JoinDraft, type PersonDraft } from '../lib/join-draft';
 import { useAttendance } from '../context/attendance';
 import { clearJoinDraft } from '../lib/join-draft';
+import { lookupAttendee } from '../lib/lookup-attendee';
 import { uploadPhoto } from '../lib/upload-photo';
 import { DetailsScreen } from './DetailsScreen';
 import { EventChoiceScreen } from './EventChoiceScreen';
@@ -62,15 +63,45 @@ export function RegistrationFlow({ locale, copy }: Props) {
    * lee de `localStorage` después de montar —en el servidor no existe—, y solo
    * ocurre desde el primer paso: al confirmar aquí mismo, el estado cambia
    * cuando ya se está en la fotografía, y ahí manda la transición.
+   *
+   * Y solo si no hay transición en marcha: al encontrar el registro por correo,
+   * la confirmación llega estando todavía en el primer paso, y sin esta guarda
+   * el cambio de pantalla se adelantaba a la escalera —se veía el salto y la
+   * cortina pasaba después, sobre la pantalla ya cambiada—.
    */
   useEffect(() => {
-    if (attendee && stage === 'join') setStage('welcome');
-  }, [attendee, stage]);
+    if (attendee && stage === 'join' && !pending) setStage('welcome');
+  }, [attendee, stage, pending]);
 
-  const handleSaved = useCallback(() => {
-    draft.current = readJoinDraft();
-    setPending('choice');
-  }, []);
+  /**
+   * Del correo salen dos caminos.
+   *
+   * Si ese correo **ya tiene registro**, no hay nada que volver a pedir: se
+   * adopta lo que devuelve el servidor y se va directo a su información. Si no
+   * lo tiene, empieza el registro por la elección de acto.
+   *
+   * La consulta se espera aquí —la pantalla del correo mantiene su cargador
+   * hasta que esta función termina— y no lanza nunca: sin respuesta se sigue
+   * como si no existiera, y el envío final hace `upsert` por correo, así que
+   * quien sí estaba registrado se corrige en vez de duplicarse.
+   */
+  const handleSaved = useCallback(
+    async (email: string) => {
+      draft.current = readJoinDraft();
+
+      const found = await lookupAttendee(email);
+      if (found) {
+        // El borrador ya no hace falta: no hay registro que completar.
+        clearJoinDraft();
+        confirm(found);
+        setPending('welcome');
+        return;
+      }
+
+      setPending('choice');
+    },
+    [confirm],
+  );
 
   /**
    * De aquí en adelante los pasos cambian **sin escalera**.

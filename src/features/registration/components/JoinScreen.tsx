@@ -12,10 +12,14 @@ type Props = {
   copy: Dictionary['registration']['join'];
   /**
    * Se llama con el correo ya guardado en el navegador, cuando la animación de
-   * guardado termina. Es la costura por donde entra la siguiente etapa —elegir
-   * evento y acompañante—: mientras no exista, la pantalla se queda contraída.
+   * guardado termina. Es la costura por donde entra lo siguiente: quién decide
+   * qué pantalla toca es el orquestador, no esta.
+   *
+   * Si devuelve una promesa, **el cargador espera a que se resuelva**: ahí es
+   * donde se comprueba si el correo ya tiene registro, y esa consulta no debería
+   * dejar un hueco de pantalla quieta después de la animación.
    */
-  onSaved?: (email: string) => void;
+  onSaved?: (email: string) => void | Promise<void>;
 };
 
 /** Iconos que sustituyen a las «o» del titular, en orden de aparición. */
@@ -111,7 +115,15 @@ export function JoinScreen({ copy, onSaved }: Props) {
       setWidth(objetivo);
     });
 
-    window.setTimeout(() => onSaved?.(value), SAVE_MS);
+    /**
+     * La animación y la consulta corren a la vez, y se sigue con la más lenta:
+     * la pausa de 1,8 s ya estaba, así que la comprobación del correo cabe
+     * dentro sin costar tiempo de nadie. Si tarda más, el cargador se queda
+     * —que es justo lo que un cargador tiene que hacer—.
+     */
+    window.setTimeout(() => {
+      void onSaved?.(value);
+    }, SAVE_MS);
   }
 
   return (
