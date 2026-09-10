@@ -19,6 +19,8 @@ type Props = {
   locale: Locale;
   copy: Dictionary['registration']['welcome'];
   attendee: Attendee;
+  /** Lleva al paso de la fotografía para poner o cambiar el retrato. */
+  onEditPhoto?: () => void;
 };
 
 const PANEL = {
@@ -66,7 +68,7 @@ function PixelChevron() {
  * El ave de píxeles es la del hero, con su misma entrada y su misma repulsión al
  * puntero: cierra el recorrido donde empezó.
  */
-export function WelcomeScreen({ locale, copy, attendee }: Props) {
+export function WelcomeScreen({ locale, copy, attendee, onEditPhoto }: Props) {
   /**
    * Los actos que se marcaron, en el orden del diseño.
    *
@@ -309,6 +311,27 @@ export function WelcomeScreen({ locale, copy, attendee }: Props) {
           <button type="button" className={styles.secondary} onClick={openCard}>
             {copy.share}
           </button>
+
+          {/**
+           * Poner o cambiar el retrato **desde aquí**.
+           *
+           * Sin esto, quien se registró sin foto —o con una que no le gusta— se
+           * quedaba con la credencial así para siempre: el correo ya registrado
+           * lleva directo a esta pantalla y no hay vuelta al formulario.
+           *
+           * Sin foto es una llamada a la acción y no un enlace discreto: la
+           * credencial sale con el hueco del retrato vacío y eso hay que
+           * resolverlo, no ofrecerlo.
+           */}
+          {onEditPhoto && (
+            <button
+              type="button"
+              className={attendee.photoUrl ? styles.quiet : styles.secondary}
+              onClick={onEditPhoto}
+            >
+              {attendee.photoUrl ? copy.changePhoto : copy.addPhoto}
+            </button>
+          )}
         </motion.div>
       </div>
 

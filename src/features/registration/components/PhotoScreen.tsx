@@ -20,6 +20,13 @@ import styles from './PhotoScreen.module.css';
 type Props = {
   copy: Dictionary['registration']['photo'];
   /**
+   * `register` es el último paso del registro; `edit` es la misma pantalla usada
+   * para cambiar el retrato de un registro que ya existe. Solo cambian los
+   * rótulos: el recorte, el quitado de fondo y los avisos son los mismos, y
+   * duplicar la pantalla para eso habría sido duplicar todo lo demás.
+   */
+  mode?: 'register' | 'edit';
+  /**
    * Confirma el registro con el retrato ya recortado, si hay alguno. Llega como
    * `Blob` y no como el archivo elegido: lo que se sube es el recorte.
    */
@@ -68,7 +75,9 @@ const DRAG_RATIO = 0.76;
  * La subida a R2 no ocurre al elegir el archivo sino al confirmar: quien cambia
  * de imagen tres veces no deja tres archivos huérfanos en el bucket.
  */
-export function PhotoScreen({ copy, onConfirm, onBack }: Props) {
+export function PhotoScreen({ copy, mode = 'register', onConfirm, onBack }: Props) {
+  /** Rótulos de este uso de la pantalla. Lo demás es común a los dos. */
+  const labels = mode === 'edit' ? copy.edit : copy;
   /** URL local de la imagen ya sin fondo. Es la fuente del editor y del recorte. */
   const [preview, setPreview] = useState<string | null>(null);
   const [crop, setCrop] = useState<Crop>(CROP_RESET);
@@ -185,8 +194,8 @@ export function PhotoScreen({ copy, onConfirm, onBack }: Props) {
           )}
 
           <h1 className={styles.headline}>
-            <span>{copy.headlineLine1}</span>
-            <span>{copy.headlineLine2}</span>
+            <span>{labels.headlineLine1}</span>
+            <span>{labels.headlineLine2}</span>
           </h1>
         </div>
 
@@ -220,11 +229,11 @@ export function PhotoScreen({ copy, onConfirm, onBack }: Props) {
 
       <motion.div className={styles.panel} variants={PANEL}>
         <motion.p className={styles.step} variants={ITEM}>
-          {copy.step}
+          {labels.step}
         </motion.p>
 
         <motion.p className={styles.copy} variants={ITEM}>
-          {copy.intro}
+          {labels.intro}
         </motion.p>
 
         {/**
@@ -326,7 +335,7 @@ export function PhotoScreen({ copy, onConfirm, onBack }: Props) {
             disabled={isBusy}
             data-sending={isSending || undefined}
           >
-            {isSending ? copy.sending : copy.submit}
+            {isSending ? labels.sending : labels.submit}
             {isSending && (
               <span className={styles.loader} aria-hidden>
                 {Array.from({ length: 9 }, (_, index) => (

@@ -34,10 +34,23 @@ async function api<T>(path: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-/** Los `{{ nombre }}` que la plantilla usa de verdad, leídos de su HTML. */
+/**
+ * Los nombres que la plantilla usa de verdad, leídos de su HTML.
+ *
+ * Cuenta las dos formas: la variable que se imprime y la que gobierna un bloque
+ * condicional (`#if`, `#unless`, `#each`). Sin la segunda, las condiciones de
+ * los actos salían como «mandamos y la plantilla no usa» —una falsa alarma justo
+ * sobre lo que decide qué evento se pinta—.
+ */
 function templateVariables(html: string): readonly string[] {
+  /** Palabras de la plantilla, no datos: `{{else}}` no es una variable. */
+  const keywords = new Set(['if', 'unless', 'each', 'else', 'this', 'with']);
   const found = new Set<string>();
-  for (const match of html.matchAll(/\{\{\s*([A-Za-z0-9_]+)/g)) found.add(match[1]!);
+  const pattern = /\{\{\s*(?:#(?:if|unless|each)\s+)?([A-Za-z0-9_]+)/g;
+  for (const match of html.matchAll(pattern)) {
+    const name = match[1]!;
+    if (!keywords.has(name)) found.add(name);
+  }
   return [...found].sort();
 }
 
@@ -48,7 +61,13 @@ async function main() {
   console.log(`remitente: ${process.env.CEIBA_EMAIL_FROM ?? '(sin CEIBA_EMAIL_FROM)'}`);
   console.log(`plantilla: ${templateId ?? '(sin CEIBA_EMAIL_TEMPLATE_ID)'}`);
 
-  const { data, missing } = confirmationTemplateData({ name: 'Antonio', surname: 'Gil' });
+  // Con los dos actos: así se listan todas las variables que la plantilla puede
+  // llegar a pedir, y no solo las del acto principal.
+  const { data, missing } = confirmationTemplateData({
+    name: 'Antonio',
+    surname: 'Gil',
+    events: ['NIGHT', 'AWARD'],
+  });
 
   // 1. Datos del evento que faltan en el entorno.
   console.log('\ndatos del evento:');

@@ -30,7 +30,8 @@ const prisma = new PrismaClient({
 async function main() {
   const pending = await prisma.attendee.findMany({
     where: { confirmationSentAt: null },
-    select: { id: true, name: true, surname: true, email: true },
+    // Los actos entran: la plantilla pinta un bloque por cada uno.
+    select: { id: true, name: true, surname: true, email: true, events: true },
     orderBy: { createdAt: 'asc' },
   });
 
@@ -55,6 +56,7 @@ async function main() {
     const { data, missing } = confirmationTemplateData({
       name: person.name,
       surname: person.surname,
+      events: person.events,
     });
 
     // La misma puerta que la ruta: Resend entregaría el correo con el hueco de la

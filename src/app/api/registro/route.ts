@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { parseAttendeeInput } from '@/features/registration/lib/attendee-input';
+import { parseAttendeeInput, type EventChoice } from '@/features/registration/lib/attendee-input';
 import { confirmationTemplateData } from '@/features/registration/lib/confirmation-email';
 import { prisma } from '@/lib/prisma';
 import { sendTemplate } from '@/lib/resend';
@@ -53,13 +53,16 @@ async function sendConfirmation({
   email,
   name,
   surname,
+  events,
 }: {
   id: string;
   email: string;
   name: string;
   surname: string;
+  /** A qué actos va: la plantilla pinta un bloque por cada uno. */
+  events: readonly EventChoice[];
 }): Promise<{ status: 'sent' | 'skipped' | 'failed'; reason?: string }> {
-  const { data, missing } = confirmationTemplateData({ name, surname });
+  const { data, missing } = confirmationTemplateData({ name, surname, events });
 
   if (missing.length) {
     console.error(
@@ -156,6 +159,7 @@ export async function POST(request: Request) {
           email,
           name: attendee.name,
           surname: attendee.surname,
+          events: attendee.events,
         }),
         new Promise<{ status: 'failed'; reason: string }>((resolve) =>
           setTimeout(() => resolve({ status: 'failed', reason: 'timeout' }), EMAIL_TIMEOUT_MS),
@@ -186,9 +190,65 @@ export async function POST(request: Request) {
 }
 
 /**
+ * Cambia **solo la fotografía** de un registro que ya existe.
+ *
+ * Va aparte del `POST` y no reenviando el formulario entero porque cambiar el
+ * retrato no es volver a registrarse: por el `POST` habría que mandar de nuevo
+ * todos los campos, y los que no se conocen desde la pantalla de bienvenida
+ * —si viene acompañante y con qué datos— se perderían por el camino. Aquí solo
+ * se toca una columna.
+ *
+ * La URL tiene que estar bajo la base pública del bucket, igual que en el
+ * registro: si no, esto sería un sitio donde colgar la imagen que uno quiera en
+ * la credencial de otra persona.
+ */
+export async function PATCH(request: Request) {
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Cuerpo inválido: se esperaba JSON.' }, { status: 400 });
+  }
+
+  const publicBaseUrl = process.env.R2_PUBLIC_BASE_URL;
+  if (!publicBaseUrl) {
+    console.error('[api/registro] falta R2_PUBLIC_BASE_URL');
+    return NextResponse.json({ error: 'El servidor no está configurado.' }, { status: 500 });
+  }
+
+  const raw = (body ?? {}) as Record<string, unknown>;
+  const email = typeof raw.email === 'string' ? raw.email.trim().toLowerCase() : '';
+  const photoUrl = typeof raw.photoUrl === 'string' ? raw.photoUrl.trim() : '';
+
+  if (!email) return NextResponse.json({ error: 'Falta el correo.' }, { status: 400 });
+  if (!photoUrl.startsWith(`${publicBaseUrl.replace(/\/+$/, '')}/`)) {
+    return NextResponse.json(
+      { error: 'La imagen no proviene del almacenamiento del sitio.' },
+      { status: 422 },
+    );
+  }
+
+  try {
+    const attendee = await prisma.attendee.update({
+      where: { email },
+      data: { photoUrl },
+      select: SELECT,
+    });
+    return NextResponse.json({ attendee });
+  } catch (error) {
+    // `update` sin fila lanza; para quien llama es un «no existe», no un fallo.
+    if ((error as { code?: string }).code === 'P2025') {
+      return NextResponse.json({ error: 'No hay registro con ese correo.' }, { status: 404 });
+    }
+    console.error('[api/registro] no se pudo cambiar la imagen', error);
+    return NextResponse.json({ error: 'No se pudo guardar la imagen.' }, { status: 500 });
+  }
+}
+
+/**
  * Consulta un registro por correo, para que quien vuelva al sitio en otro
- * dispositivo pueda recuperar su perfil. Hoy nadie la llama: el navegador se
- * apoya en `localStorage`. Queda como la mitad que le falta a ese apaño.
+ * dispositivo pueda recuperar su perfil. Es lo que decide, en el primer paso,
+ * si hay que registrar a alguien o si ya está.
  */
 export async function GET(request: Request) {
   const email = new URL(request.url).searchParams.get('email')?.trim().toLowerCase();

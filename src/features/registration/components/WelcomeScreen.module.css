@@ -228,6 +228,33 @@
   cursor: not-allowed;
 }
 
+/**
+ * Acción secundaria en texto: cambiar una foto que ya está. Sin caja, porque
+ * junto a dos botones macizos un tercero competiría con ellos y esto es un
+ * arreglo, no algo que haya que hacer.
+ */
+.quiet {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.quiet:hover {
+  color: var(--accent-nav);
+}
+
+.quiet:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 4px;
+}
+
 /* Menú de calendarios. Cuelga del botón y tapa lo que haya debajo. */
 .menu {
   position: absolute;

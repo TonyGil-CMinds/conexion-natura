@@ -9,6 +9,7 @@ import { readJoinDraft, saveJoinDraft, type JoinDraft, type PersonDraft } from '
 import { useAttendance } from '../context/attendance';
 import { clearJoinDraft } from '../lib/join-draft';
 import { lookupAttendee } from '../lib/lookup-attendee';
+import { updatePhoto } from '../lib/update-photo';
 import { uploadPhoto } from '../lib/upload-photo';
 import { DetailsScreen } from './DetailsScreen';
 import { EventChoiceScreen } from './EventChoiceScreen';
@@ -27,7 +28,7 @@ type Props = {
  * Los pasos, en orden. `companion` solo se visita si se dijo que sí, y `welcome`
  * es el final —y también la vista de reposo de quien ya confirmó—.
  */
-type Stage = 'join' | 'choice' | 'details' | 'companion' | 'photo' | 'welcome';
+type Stage = 'join' | 'choice' | 'details' | 'companion' | 'photo' | 'welcome' | 'photoEdit';
 
 /**
  * Orquesta los pasos del registro.
@@ -179,6 +180,23 @@ export function RegistrationFlow({ locale, copy }: Props) {
     [confirm],
   );
 
+  /**
+   * Cambia la fotografía de un registro que ya está guardado.
+   *
+   * Va por su propio camino y no reenviando el formulario: por el `POST` habría
+   * que mandar otra vez todos los campos, y desde aquí no se conocen los del
+   * acompañante —se borrarían—. La petición toca solo esa columna.
+   */
+  const handlePhotoEdit = useCallback(
+    async (photo: Blob | null) => {
+      if (!attendee || !photo) throw new Error('Falta la imagen.');
+      confirm(await updatePhoto(attendee.email, photo));
+      // Sin escalera: se vuelve a la pantalla de la que se salió.
+      setStage('welcome');
+    },
+    [attendee, confirm],
+  );
+
   return (
     <div className={styles.root}>
       {/**
@@ -239,7 +257,24 @@ export function RegistrationFlow({ locale, copy }: Props) {
         {/* Sin `attendee` no hay nada que enseñar: el estado llega con la
             respuesta del servidor, o del almacenamiento al montar. */}
         {stage === 'welcome' && attendee && (
-          <WelcomeScreen key="welcome" locale={locale} copy={copy.welcome} attendee={attendee} />
+          <WelcomeScreen
+            key="welcome"
+            locale={locale}
+            copy={copy.welcome}
+            attendee={attendee}
+            onEditPhoto={() => setStage('photoEdit')}
+          />
+        )}
+
+        {/* La misma pantalla de la foto, con otros rótulos y otro destino. */}
+        {stage === 'photoEdit' && attendee && (
+          <PhotoScreen
+            key="photoEdit"
+            copy={copy.photo}
+            mode="edit"
+            onConfirm={handlePhotoEdit}
+            onBack={() => setStage('welcome')}
+          />
         )}
       </AnimatePresence>
 

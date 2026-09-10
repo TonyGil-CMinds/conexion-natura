@@ -23,19 +23,28 @@ export type BadgeFields = {
 /** El lienzo se pinta a triple resolución: la tarjeta se descarga y se comparte. */
 const SCALE = 3;
 
+/**
+ * Los retratos viven en R2, en otro dominio, y una imagen de otro dominio
+ * dibujada en el lienzo lo deja «contaminado»: `toDataURL()` lanza y se caen
+ * descargar y compartir. La salida habitual es `crossOrigin`, pero entonces
+ * pintar la credencial depende de que ese dominio esté en la regla CORS del
+ * bucket —y esa regla se edita a mano—.
+ *
+ * Así que el retrato se pide **por nuestro propio origen**, que reenvía los
+ * bytes: misma imagen, sin CORS de por medio y sin lienzo contaminado en ningún
+ * dominio. Lo que no venga de R2 —el arte de la tarjeta, el glifo— se carga tal
+ * cual, porque ya es del sitio.
+ */
+function sameOrigin(source: string) {
+  return /^https?:/i.test(source) ? `/api/photo?url=${encodeURIComponent(source)}` : source;
+}
+
 function loadImage(source: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image();
     image.onload = () => resolve(image);
-    image.onerror = reject;
-    /**
-     * Los retratos vienen de R2, de otro origen. Sin `crossOrigin` el lienzo
-     * queda «contaminado» al dibujarlos y `toDataURL()` lanza un error de
-     * seguridad, así que se caerían descargar y compartir. Requiere que el
-     * bucket permita `GET` en su regla CORS.
-     */
-    if (/^https?:/i.test(source)) image.crossOrigin = 'anonymous';
-    image.src = source;
+    image.onerror = () => reject(new Error(`No se pudo cargar la imagen: ${source}`));
+    image.src = sameOrigin(source);
   });
 }
 
@@ -80,8 +89,14 @@ export async function renderBadge(fields: BadgeFields): Promise<string> {
         drawHeight,
       );
       context.restore();
-    } catch {
-      // Sin retrato: el arte ya trae su propio hueco.
+    } catch (error) {
+      /**
+       * Sin retrato: el arte ya trae su propio hueco, y una tarjeta con el hueco
+       * vacío es mejor que ninguna tarjeta. Pero se anota: el fallo era
+       * invisible, y una credencial sin foto por un error de carga se confunde
+       * con una credencial de alguien que no subió ninguna.
+       */
+      console.warn('[credencial] no se pudo dibujar el retrato', error);
     }
   }
 

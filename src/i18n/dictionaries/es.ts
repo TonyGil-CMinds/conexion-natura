@@ -486,6 +486,18 @@ export const es = {
       tooBig: 'La imagen pesa más de 8 MB. Elige otra o hazla más pequeña.',
       notImage: 'Ese archivo no es una imagen.',
       failed: 'No se pudo confirmar. Inténtalo de nuevo.',
+      /**
+       * La misma pantalla, usada para cambiar el retrato de un registro que ya
+       * existe: solo cambian los rótulos.
+       */
+      edit: {
+        step: 'Tu credencial',
+        headlineLine1: 'Cambia',
+        headlineLine2: 'tu fotografía',
+        intro: 'Sube la imagen que quieres que salga en tu tarjeta virtual.',
+        submit: 'Guardar imagen',
+        sending: 'Guardando',
+      },
     },
 
     /**
@@ -524,6 +536,9 @@ export const es = {
       calendarDescription:
         'Noche de Innovación e Inversión para la Biodiversidad y las Economías del Futuro.',
       share: 'Compartir',
+      /** Con la credencial sin retrato, poner uno es lo que falta por hacer. */
+      addPhoto: 'Añadir mi fotografía',
+      changePhoto: 'Cambiar mi fotografía',
       cardTitle: 'Tu tarjeta',
       cardFlip: 'Haz clic para girarla',
       preparing: 'Creando tu tarjeta',

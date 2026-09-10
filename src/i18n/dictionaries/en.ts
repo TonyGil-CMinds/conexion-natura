@@ -433,6 +433,14 @@ export const en: Dictionary = {
       tooBig: 'That image is over 8 MB. Pick another or make it smaller.',
       notImage: 'That file is not an image.',
       failed: 'We could not confirm. Please try again.',
+      edit: {
+        step: 'Your badge',
+        headlineLine1: 'Change',
+        headlineLine2: 'your photo',
+        intro: 'Upload the image you want on your virtual card.',
+        submit: 'Save image',
+        sending: 'Saving',
+      },
     },
 
     welcome: {
@@ -458,6 +466,8 @@ export const en: Dictionary = {
       calendarDescription:
         'A night of innovation and investment for biodiversity and the economies of the future.',
       share: 'Share',
+      addPhoto: 'Add my photo',
+      changePhoto: 'Change my photo',
       cardTitle: 'Your card',
       cardFlip: 'Click to flip it',
       preparing: 'Creating your card',
