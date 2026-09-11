@@ -183,12 +183,13 @@ export function TanusasHeader({ locale, copy, header }: Props) {
               aria-label={`${SITE.name} — ${header.home}`}
               className={styles.logo}
             >
+              {/* El de esta página es el lockup del retiro, no el del sitio. */}
               <ThemedImage
-                dark="/brand/icon-dark-ceibaquito.svg"
-                light="/brand/icon-light-ceibaquito.svg"
+                dark={TANUSAS.media.logo.onDark}
+                light={TANUSAS.media.logo.onLight}
                 alt={SITE.name}
-                width={123}
-                height={27}
+                width={TANUSAS.media.logo.width}
+                height={TANUSAS.media.logo.height}
                 priority
               />
             </Link>

@@ -80,7 +80,23 @@ export const TANUSAS = {
     night: { src: '/tanusas/hero-noche.jpg', width: 1600, height: 2000 },
     /** Mesa de trabajo: acompaña a lo que se busca del retiro. */
     table: { src: '/tanusas/mesa-trabajo.jpg', width: 1600, height: 1066 },
-    logo: { src: '/tanusas/logo-ceiba-tanusas.svg', width: 220, height: 44 },
+    /**
+     * Logotipo de la barra: el lockup de una línea, rombo más «CEIBA».
+     *
+     * La variante de tinta oscura está **generada del original** cambiando el
+     * crema de la palabra por el oscuro y dejando el rombo en lima, que no
+     * cambia con el tema. Hacía falta porque el original es crema y en tema
+     * claro, con la barra ya opaca, habría quedado crema sobre crema.
+     */
+    logo: {
+      /** Tinta crema: sobre la fotografía del hero y sobre el tema oscuro. */
+      onDark: '/brand/logo-ceiba-tanusas.svg',
+      /** Tinta oscura: sobre el crema del tema claro. */
+      onLight: '/brand/logo-ceiba-tanusas-light.svg',
+      /** Medidas naturales del SVG. */
+      width: 125,
+      height: 25,
+    },
     /**
      * Rótulo circular que gira junto al titular de los pasos del registro. Es el
      * del registro del sitio: la pieza es de CEIBA, no del acto de Quito.
