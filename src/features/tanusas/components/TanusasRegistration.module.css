@@ -421,3 +421,142 @@
     padding-bottom: var(--space-12);
   }
 }
+
+/* ——— Acuse: calendario, credencial y compartir ——— */
+
+/* La fila de acciones de la pantalla final: dos botones y su menú. */
+.doneActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+/* Ancla del menú del calendario, que va fuera del flujo. */
+.calendar {
+  position: relative;
+}
+
+/**
+ * Lista de calendarios. Va **encima** del botón y no debajo: el acuse suele
+ * quedar al final de la columna, y hacia abajo el menú se salía de la pantalla.
+ */
+.menu {
+  position: absolute;
+  bottom: calc(100% + var(--space-2));
+  left: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 100%;
+  border: 1px solid var(--rule);
+  background-color: var(--color-surface);
+}
+
+.menu button {
+  padding: var(--space-4) var(--space-5);
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out-expo);
+}
+
+.menu button:hover {
+  background-color: color-mix(in srgb, var(--fg) 8%, transparent);
+}
+
+/* Acción secundaria: el mismo cuerpo que la principal, en contorno. */
+.secondary {
+  min-height: 58px;
+  padding-inline: var(--space-8);
+  border: 1px solid var(--accent-nav);
+  background: transparent;
+  color: var(--accent-nav-ink);
+  font-family: var(--font-mono);
+  font-size: var(--text-nav);
+  letter-spacing: var(--tracking-cta);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-out-expo);
+}
+
+.secondary:hover {
+  background-color: var(--accent-nav);
+  color: var(--color-dark);
+}
+
+.secondary:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+/**
+ * La credencial, sobre la pantalla.
+ *
+ * Va fija al viewport y no dentro de la columna: es una tarjeta que se mira, y
+ * dentro del panel habría quedado a media página y con el formulario asomando.
+ */
+.cardLayer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-toast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  background-color: color-mix(in srgb, var(--color-dark) 82%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  width: min(100%, 380px);
+}
+
+.cardActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+/* Mientras el lienzo compone la credencial. */
+.preparing {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-light) 62%, transparent);
+}
+
+/* Acuse de compartir. Fuera del flujo: no debe mover la columna. */
+.notice {
+  position: fixed;
+  bottom: var(--space-8);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-toast);
+  margin: 0;
+  padding: var(--space-4) var(--space-6);
+  border: 1px solid var(--rule);
+  background-color: var(--color-surface);
+  color: var(--color-light);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}

@@ -23,6 +23,32 @@ export const TANUSAS = {
     /** Búsqueda y no coordenada, igual que la sede de Quito. */
     mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Tanusas+Puerto+Cayo+Manab%C3%AD',
   },
+  /**
+   * El retiro, para el calendario. Va de **día completo** y de tres días: no hay
+   * horas confirmadas, y el fin es el 11 porque en los calendarios el último día
+   * es exclusivo.
+   */
+  calendar: {
+    when: { kind: 'day', start: '20261008', end: '20261011' },
+    /** Estable de por vida: es lo que evita duplicados al añadirlo dos veces. */
+    uid: 'ceiba-tanusas-2026-10-08@naturatech',
+  },
+
+  /**
+   * Arte de la credencial del retiro. Misma geometría que la de Quito —lo
+   * comprobé casilla a casilla— y otra paleta: fondo crema, así que la banda del
+   * nombre va en crema con tinta oscura, y sin viñeta, que es de una lima que
+   * sobre el crema no se vería.
+   */
+  card: {
+    front: '/img/card-front-tanusas.png',
+    back: '/img/card-back-tanusas.png',
+    band: '#f7ffd2',
+    ink: '#151d17',
+    glyph: null,
+    fileName: 'ceiba-tanusas',
+  },
+
   /** Correo de contacto del retiro, tal y como aparece en la invitación. */
   contactEmail: 'hola@naturatech.org',
   siteUrl: 'https://naturatech.org',

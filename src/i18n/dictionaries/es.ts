@@ -1320,9 +1320,31 @@ export const es = {
         retreatLabel: 'Retiro',
         retreatValue: '8 – 10 oct 2026 · Tanusas',
         dietLabel: 'En la mesa',
-        photoLabel: 'Fotografía',
-        photoValue: 'Recibida',
         edit: 'Editar mi registro',
+        /** Calendario: se elige plataforma, no se impone el .ics. */
+        addToCalendar: 'Añadir a mi calendario',
+        calendarLabel: 'Elige tu calendario',
+        calendars: {
+          google: 'Google Calendar',
+          outlook: 'Outlook',
+          ics: 'Descargar .ics',
+        },
+        calendarTitle: 'Retiro CEIBA · Tanusas',
+        calendarDescription:
+          'Tres días para co-diseñar la Arquitectura de Capital para la BioProsperidad en América Latina y el Caribe.',
+        /** La credencial. */
+        card: 'Ver mi credencial',
+        cardTitle: 'Tu credencial del retiro',
+        cardFlip: 'Gira la tarjeta',
+        cardClose: 'Cerrar',
+        preparing: 'Preparando tu credencial',
+        download: 'Descargar',
+        share: 'Compartir',
+        shareTitle: 'Retiro CEIBA · Tanusas 2026',
+        shareText: 'Nos vemos en Tanusas del 8 al 10 de octubre de 2026.',
+        shared: 'Credencial compartida',
+        copied: 'Enlace copiado',
+        shareFailed: 'No se pudo compartir. Descárgala y compártela tú.',
       },
 
       failed: 'No se pudo guardar el registro. Inténtalo de nuevo.',

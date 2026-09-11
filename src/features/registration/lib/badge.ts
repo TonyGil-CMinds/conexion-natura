@@ -11,6 +11,37 @@
 
 import { PORTRAIT } from './portrait';
 
+/**
+ * Arte y tintas de una credencial.
+ *
+ * Va como dato y no fijado en el código porque hay **dos** actos con la misma
+ * geometría y distinta paleta: comprobé casilla a casilla que el arte del retiro
+ * repite los mismos escalones en los mismos sitios, así que lo único que cambia
+ * son los archivos y los colores de la banda.
+ */
+export type BadgeArt = {
+  front: string;
+  back: string;
+  /** Fondo de la banda del nombre: el mismo del arte, para que no se note. */
+  band: string;
+  /** Tinta de los datos sobre esa banda. */
+  ink: string;
+  /** Viñeta junto a la organización, o `null` donde su color no se vería. */
+  glyph: string | null;
+  /** Raíz del nombre del archivo al descargar o compartir. */
+  fileName: string;
+};
+
+/** La del acto de Quito, que es la de omisión. */
+export const CEIBA_BADGE: BadgeArt = {
+  front: '/img/card-front.png',
+  back: '/img/card-back.png',
+  band: '#151d17',
+  ink: '#f7ffd2',
+  glyph: '/icons/icon-logo.svg',
+  fileName: 'ceiba-quito',
+};
+
 /** Datos que salen impresos en la tarjeta. */
 export type BadgeFields = {
   name: string;
@@ -54,15 +85,15 @@ function loadImage(source: string) {
  * Si el retrato no se puede cargar —bucket sin CORS, imagen borrada— se sigue
  * sin él: una tarjeta con el hueco vacío es mejor que ninguna tarjeta.
  */
-export async function renderBadge(fields: BadgeFields): Promise<string> {
+export async function renderBadge(fields: BadgeFields, art: BadgeArt = CEIBA_BADGE): Promise<string> {
   const canvas = document.createElement('canvas');
   canvas.width = 430 * SCALE;
   canvas.height = 600 * SCALE;
   const context = canvas.getContext('2d');
-  if (!context) return '/img/card-front.png';
+  if (!context) return art.front;
   context.scale(SCALE, SCALE);
 
-  const template = await loadImage('/img/card-front.png');
+  const template = await loadImage(art.front);
   context.drawImage(template, 0, 0, 430, 600);
 
   if (fields.photoUrl) {
@@ -100,30 +131,39 @@ export async function renderBadge(fields: BadgeFields): Promise<string> {
     }
   }
 
-  // Banda opaca del nombre, del mismo oscuro que el fondo del arte.
-  context.fillStyle = '#151d17';
+  // Banda opaca del nombre, del mismo color que el fondo del arte.
+  context.fillStyle = art.band;
   context.fillRect(32, 482, 310, 62);
-  context.fillStyle = '#f7ffd2';
+  context.fillStyle = art.ink;
   context.font = '600 15px ui-monospace, monospace';
   context.fillText(`${fields.name} ${fields.surname}`.trim().toUpperCase(), 32, 508);
   context.font = '10px ui-monospace, monospace';
 
-  try {
-    const icon = await loadImage('/icons/icon-logo.svg');
-    context.drawImage(icon, 32, 520, 13, 13);
-  } catch {
-    // Sin el glifo, la organización se pinta igual: solo pierde su viñeta.
+  /**
+   * La viñeta es de una tinta fija, así que solo se pinta donde se ve: sobre el
+   * crema del retiro desaparecería, y la organización empieza en su sitio en
+   * lugar de quedar sangrada contra un hueco vacío.
+   */
+  let textX = 32;
+  if (art.glyph) {
+    try {
+      const icon = await loadImage(art.glyph);
+      context.drawImage(icon, 32, 520, 13, 13);
+      textX = 55;
+    } catch {
+      // Sin el glifo, la organización se pinta igual: solo pierde su viñeta.
+    }
   }
-  context.fillText(fields.organization.toUpperCase(), 55, 532);
+  context.fillText(fields.organization.toUpperCase(), textX, 532);
 
   return canvas.toDataURL('image/png');
 }
 
 /** Descarga la tarjeta ya compuesta. */
-export function downloadBadge(image: string, name: string): void {
+export function downloadBadge(image: string, name: string, art: BadgeArt = CEIBA_BADGE): void {
   const link = document.createElement('a');
   link.href = image;
-  link.download = `credencial-${name.trim().toLowerCase().replace(/\s+/g, '-') || 'ceiba-quito'}.png`;
+  link.download = `credencial-${name.trim().toLowerCase().replace(/\s+/g, '-') || art.fileName}.png`;
   link.click();
 }
 
@@ -138,9 +178,10 @@ export function downloadBadge(image: string, name: string): void {
 export async function shareBadge(
   image: string,
   copy: { title: string; text: string },
+  art: BadgeArt = CEIBA_BADGE,
 ): Promise<'shared' | 'copied' | 'unavailable'> {
   const blob = await (await fetch(image)).blob();
-  const file = new File([blob], 'mi-credencial-ceiba-quito.png', { type: 'image/png' });
+  const file = new File([blob], `mi-credencial-${art.fileName}.png`, { type: 'image/png' });
 
   if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
     try {

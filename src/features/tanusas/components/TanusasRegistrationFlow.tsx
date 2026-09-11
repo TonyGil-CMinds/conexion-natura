@@ -1,16 +1,13 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import Image from 'next/image';
-import { AnimatePresence, motion } from 'framer-motion';
-import { EASE_OUT_EXPO } from '@/lib/motion';
+import { AnimatePresence } from 'framer-motion';
 import { PhotoScreen, uploadPhoto } from '@/features/registration';
-import { TANUSAS } from '@/config/tanusas';
 import type { Dictionary, Locale } from '@/i18n';
 import type { TanusasRegistrationRecord } from '../lib/lookup-registration';
 import { EMPTY_DETAILS, TanusasDetailsScreen, type DetailsDraft } from './TanusasDetailsScreen';
 import { TanusasDietScreen, type DietDraft } from './TanusasDietScreen';
-import styles from './TanusasRegistration.module.css';
+import { TanusasDoneScreen } from './TanusasDoneScreen';
 
 type Props = {
   /** Lo dio el hero: aquí ya no se vuelve a pedir. */
@@ -61,6 +58,8 @@ export function TanusasRegistrationFlow({ email, existing, locale, copy, photoCo
         }
       : EMPTY_DETAILS,
   );
+  /** La del registro guardado: la credencial la necesita para el retrato. */
+  const [photoUrl, setPhotoUrl] = useState<string | null>(existing?.photoUrl ?? null);
   const [diet, setDiet] = useState<DietDraft>(
     existing ? { diet: existing.diet, dietNotes: existing.dietNotes } : { diet: [], dietNotes: '' },
   );
@@ -102,12 +101,12 @@ export function TanusasRegistrationFlow({ email, existing, locale, copy, photoCo
       });
 
       if (!response.ok) throw new Error(copy.failed);
+      setPhotoUrl(photoUrl);
       setStage('done');
     },
     [copy.failed, details, diet, email, existing?.photoUrl, locale, photoCopy.required],
   );
 
-  const firstName = details.name.trim().split(' ')[0];
 
   return (
     <AnimatePresence mode="wait" initial={false}>
@@ -140,67 +139,19 @@ export function TanusasRegistrationFlow({ email, existing, locale, copy, photoCo
       )}
 
       {stage === 'done' && (
-        <motion.section
+        <TanusasDoneScreen
           key="done"
-          className={styles.root}
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 14 }}
-          transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
-        >
-          <div className={styles.intro}>
-            <div className={styles.heading}>
-              <h1 className={styles.headline}>
-                <span>{copy.done.greeting}</span>
-                <span>{firstName || copy.done.greetingFallback}</span>
-              </h1>
-              <p>{copy.done.body}</p>
-            </div>
-
-            <Image
-              src={TANUSAS.media.marquee}
-              alt=""
-              width={150}
-              height={150}
-              className={styles.marquee}
-              aria-hidden
-            />
-          </div>
-
-          <div className={styles.panel}>
-            <dl className={styles.rows}>
-              <div className={styles.row}>
-                <dt className={styles.rowLabel}>{copy.done.emailLabel}</dt>
-                <dd className={styles.rowValue}>{email}</dd>
-              </div>
-              <div className={styles.row}>
-                <dt className={styles.rowLabel}>{copy.done.retreatLabel}</dt>
-                <dd className={styles.rowValue}>{copy.done.retreatValue}</dd>
-              </div>
-              <div className={styles.row}>
-                <dt className={styles.rowLabel}>{copy.done.dietLabel}</dt>
-                <dd className={styles.rowValue}>
-                  {diet.diet.map((key) => copy.diet.options[key]).join(' · ')}
-                </dd>
-              </div>
-              <div className={styles.row}>
-                <dt className={styles.rowLabel}>{copy.done.photoLabel}</dt>
-                <dd className={styles.rowValue}>{copy.done.photoValue}</dd>
-              </div>
-            </dl>
-
-            <div className={styles.actions}>
-              {/* Volver al primer paso: el envío hace `upsert`, así que corregir
-                  no duplica. */}
-              <button type="button" className={styles.quiet} onClick={() => setStage('details')}>
-                {copy.done.edit}
-              </button>
-              <a className={styles.quiet} href={`mailto:${TANUSAS.contactEmail}`}>
-                {TANUSAS.contactEmail}
-              </a>
-            </div>
-          </div>
-        </motion.section>
+          copy={copy}
+          email={email}
+          name={details.name}
+          surname={details.surname}
+          organization={details.organization}
+          photoUrl={photoUrl}
+          diet={diet.diet}
+          /* Volver al primer paso: el envío hace `upsert`, así que corregir
+             no duplica. */
+          onEdit={() => setStage('details')}
+        />
       )}
     </AnimatePresence>
   );
