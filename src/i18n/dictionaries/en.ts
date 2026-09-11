@@ -722,7 +722,7 @@ export const en: Dictionary = {
           id: 'programa',
           title: 'The programme may change',
           body: [
-            'The published agenda is preliminary: times, sessions and the people taking part may change up to the day itself. The time and room for the NaturaTech LAC 2026 Award ceremony are still to be confirmed.',
+            'The published agenda is preliminary: times, sessions and the people taking part may change up to the day itself.',
             'If the event has to change date, venue or format, we will tell you at the address you registered with.',
           ],
           list: [],

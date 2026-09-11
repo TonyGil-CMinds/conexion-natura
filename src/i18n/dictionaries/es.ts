@@ -819,7 +819,7 @@ export const es = {
           id: 'programa',
           title: 'El programa puede cambiar',
           body: [
-            'La agenda publicada es preliminar: los horarios, las intervenciones y las personas que participan pueden variar hasta el mismo día. El horario y la sala de la premiación del Premio NaturaTech LAC 2026 están por confirmar.',
+            'La agenda publicada es preliminar: los horarios, las intervenciones y las personas que participan pueden variar hasta el mismo día.',
             'Si el evento tuviera que cambiar de fecha, de sede o de formato, te avisaremos al correo con el que te registraste.',
           ],
           list: [],

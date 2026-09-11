@@ -44,15 +44,26 @@ export const SITE = {
   /**
    * El otro acto del día: la premiación del Premio NaturaTech LAC 2026.
    *
-   * **La hora está por confirmar**, así que aquí no hay ninguna: el rótulo que
-   * lo dice es copia y vive en el diccionario. Por eso su entrada de calendario
-   * es de día completo —`day`— y no un tramo de horas: inventarle un horario
-   * metería a la gente en una sala a la hora equivocada.
+   * Hora y sede **ya confirmadas**. Antes no las había —la entrada de calendario
+   * era de día completo y el horario un rótulo de «por confirmar»—, y el dato
+   * vive aquí para que la agenda, la tarjeta de elección del registro y el
+   * correo lo cuenten igual: cuando estaba en tres sitios, se corrigió a medias.
    */
   award: {
-    venue: { name: 'Main Stage GET Forum' },
-    /** Día completo. El fin es el día siguiente: el final es exclusivo. */
-    calendar: { kind: 'day', start: '20261005', end: '20261006' },
+    /** Se escribe igual en los dos idiomas, como el de la noche. */
+    scheduleLabel: '4:00 pm — 4:45 pm',
+    venue: {
+      name: 'UDLA Arena',
+      mapsUrl: 'https://share.google/7YkJTo3HMDfjwDg4N',
+    },
+    /** Tramo de horas en hora local de Quito, igual que el de la noche. */
+    calendar: {
+      kind: 'time',
+      start: '20261005T160000',
+      end: '20261005T164500',
+      timeZone: 'America/Guayaquil',
+      offset: '-0500',
+    },
   },
   /**
    * Si la lista de ponentes ya se puede enseñar.

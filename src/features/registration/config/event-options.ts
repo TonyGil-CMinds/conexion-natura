@@ -22,9 +22,9 @@ import type { EventChoice } from '../lib/attendee-input';
  */
 /**
  * La forma de un acto. Va como anotación y no como `satisfies`: con `satisfies`
- * cada acto conserva su tipo literal, y entonces la premiación —que no tiene
- * mapa— no comparte `mapsUrl` con la noche y quien recorre la lista no puede
- * preguntar por él.
+ * cada acto conserva su tipo literal, y quien recorre la lista no puede
+ * preguntar por los campos que un acto pueda no traer —`mapsUrl` o el horario—,
+ * porque el tipo de ese acto concreto ni los declara.
  */
 export type EventOption = {
   id: 'night' | 'award';
@@ -62,7 +62,7 @@ export const EVENT_OPTIONS: readonly EventOption[] = [
     logo: { src: '/icons/logo-premio3036-dark.svg', width: 150, height: 78 },
     art: { src: '/icons/asset-selection-premio2026.svg', width: 183, height: 182 },
     venue: SITE.award.venue,
-    schedule: null,
+    schedule: SITE.award.scheduleLabel,
     calendar: SITE.award.calendar,
     uid: 'conexion500-award-2026-10-05@conexion500',
   },

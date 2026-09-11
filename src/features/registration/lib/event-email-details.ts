@@ -13,8 +13,8 @@ import { SITE } from '@/config/site';
  * puede quedar a medias. Por eso van separados, con una puerta solo sobre esto.
  *
  * Desde que se puede elegir acto, la plantilla trae **un bloque por acto** y
- * cada uno con su fecha, su hora y su sede: la noche tiene horario confirmado y
- * la premiación no, así que ya no valía un solo juego de `event_*`.
+ * cada uno con su fecha, su hora y su sede: son dos horarios y dos sedes el
+ * mismo día, así que ya no valía un solo juego de `event_*`.
  *
  * **Las claves son los nombres de las variables de la plantilla en Resend.** Se
  * escriben tal cual —minúsculas y guion bajo— aunque no sea el estilo del resto
@@ -44,20 +44,15 @@ export const EVENT_EMAIL = {
   natura_venue_url: 'https://share.google/wt2Ayao7q2ObvggbQ',
 
   /**
-   * Premio NaturaTech LAC 2026, el mismo día.
+   * Premio NaturaTech LAC 2026, el mismo día y antes de la noche.
    *
-   * La hora **está por confirmar** y así se dice: la plantilla imprime este
-   * valor tal cual, así que aquí va la frase y no una hora inventada.
+   * Hora y sede ya confirmadas. Salen de `SITE` por lo mismo que la hora de la
+   * noche: escritas a mano aquí, el correo y la agenda se separaban.
    */
   premio_date: '05 de Octubre de 2026',
-  premio_time: 'Horario por confirmar',
-  premio_venue: 'Main Stage GET Forum',
-  /**
-   * No hay mapa de esta sala todavía, y el rótulo de la plantilla es un enlace.
-   * Apunta a la agenda —donde estará el detalle cuando se confirme— en vez de a
-   * una ubicación inventada. **Sustituir por el mapa real al tenerlo.**
-   */
-  premio_venue_url: 'https://ceiba.naturatech.org/es/agenda',
+  premio_time: SITE.award.scheduleLabel,
+  premio_venue: SITE.award.venue.name,
+  premio_venue_url: SITE.award.venue.mapsUrl,
 
   agenda_url: 'https://ceiba.naturatech.org/es/agenda',
   sitio_web_url: 'https://ceiba.naturatech.org',
