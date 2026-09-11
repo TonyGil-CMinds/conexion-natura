@@ -851,14 +851,43 @@
 
 @media (max-width: 640px) {
   .section,
-  .hero,
   .closing {
     padding-inline: 24px;
   }
 
-  .nav {
-    justify-content: flex-start;
+  /**
+   * El hero no entra en la regla de arriba: su margen lo pone el cuerpo, y con
+   * los dos sumaba 54px de canto en una pantalla de 390 —el texto se quedaba en
+   * el 72% del ancho—. Aquí el cuerpo iguala el de las secciones.
+   */
+  .heroBody {
     padding-inline: 24px;
+  }
+
+  /**
+   * La llamada ocupa el ancho de la columna. Su mínimo de 380px no cabe en una
+   * pantalla estrecha y hacía que la fila del pie se saliera 22px por la
+   * derecha: el botón acababa más ancho que el texto de encima y se leía
+   * descentrado.
+   */
+  .heroActions,
+  .heroPartners {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /**
+   * Los dos socios alinean por arriba y no por abajo: sus logotipos miden
+   * distinto, y alineando pies los rótulos quedaban a dos alturas. Arriba es
+   * donde está el texto, que es lo que se lee en fila.
+   */
+  .heroPartners {
+    align-items: flex-start;
+  }
+
+  /* Cada logotipo con su rótulo encima y los dos al canto izquierdo. */
+  .heroPartner {
+    align-items: flex-start;
   }
 
   .media {
@@ -990,4 +1019,20 @@
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: contain;
+}
+
+/**
+ * La llamada, en estrecho.
+ *
+ * Va **al final del archivo** y no con el resto de lo móvil: una consulta de
+ * medios no añade especificidad, así que puesta antes de `.join` perdía contra
+ * su regla base y el alto seguía siendo el de escritorio.
+ */
+@media (max-width: 640px) {
+  .join {
+    width: 100%;
+    min-width: 0;
+    /* 84px es alto de escritorio; aquí come pantalla sin ganar nada. */
+    min-height: 64px;
+  }
 }
