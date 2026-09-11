@@ -833,6 +833,9 @@ export const en: Dictionary = {
         'We are not looking to arrive with all the answers. We are looking for perspectives that put pressure on the assumptions, enrich the architecture and help us turn it into something that can be tested in the territories.',
       ],
       questionLabel: 'We start from one question',
+      marquee: 'A living weave',
+      pauseMarquee: 'Pause marquee',
+      playMarquee: 'Resume marquee',
       question:
         'How can we innovate in the building of prosperity by recognizing the economy as part of a living system, and making it possible for nature, the cultures and the communities that sustain it to prosper together?',
     },

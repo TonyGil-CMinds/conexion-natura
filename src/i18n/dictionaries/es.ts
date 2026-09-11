@@ -949,6 +949,9 @@ export const es = {
         'No buscamos llegar con todas las respuestas. Buscamos perspectivas que tensionen los supuestos, enriquezcan la arquitectura y nos ayuden a convertirla en algo que pueda ponerse a prueba en los territorios.',
       ],
       questionLabel: 'Partimos de una pregunta',
+      marquee: 'Un tejido',
+      pauseMarquee: 'Pausar marquesina',
+      playMarquee: 'Reanudar marquesina',
       question:
         '¿Cómo podemos innovar en la construcción de prosperidad reconociendo a la economía como parte de un sistema vivo, y haciendo posible que la naturaleza, las culturas y las comunidades que la sostienen prosperen conjuntamente?',
     },

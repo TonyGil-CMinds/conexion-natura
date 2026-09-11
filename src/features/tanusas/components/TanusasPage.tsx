@@ -5,8 +5,10 @@ import { TanusasAccordion } from './TanusasAccordion';
 import { TanusasAgenda } from './TanusasAgenda';
 import { TanusasExperience } from './TanusasExperience';
 import { TanusasJoinCta } from './TanusasJoinCta';
+import { TanusasMarquee } from './TanusasMarquee';
 import { WaterRipple } from './WaterRipple';
 import styles from './Tanusas.module.css';
+import invitationStyles from './TanusasInvitation.module.css';
 
 type Props = {
   copy: Dictionary['tanusas'];
@@ -95,26 +97,28 @@ export function TanusasPage({ copy, locale, header, photo }: Props) {
 
 
       {/* 01 · La invitación */}
-      <section id="invitacion" className={styles.section}>
-        <div className={styles.sectionInner}>
-          <div className={styles.sectionHead}>
-            <p className={styles.kicker}>
-              <b>{copy.invitation.number}</b>
+      <section id="invitacion" className={invitationStyles.invitation} aria-labelledby="invitation-title">
+        <div className={invitationStyles.inner}>
+          <div>
+            <p className={invitationStyles.kicker}>
               {copy.invitation.kicker}
+              <Image src="/tanusas/asset-divider-yellow.svg" alt="" width={40} height={30} />
             </p>
-            <h2 className={styles.title}>{copy.invitation.title}</h2>
+            <h2 id="invitation-title" className={invitationStyles.title}>{copy.invitation.title}</h2>
           </div>
 
-          <div className={styles.prose}>
-            {copy.invitation.body.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+          <div className={invitationStyles.columns}>
+            <p>{copy.invitation.body[0]}</p>
+            <p>{copy.invitation.body.slice(1).join(' ')}</p>
           </div>
+        </div>
+      </section>
 
-          <div className={styles.quote}>
-            <span className={styles.quoteLabel}>{copy.invitation.questionLabel}</span>
-            <p className={styles.quoteText}>{copy.invitation.question}</p>
-          </div>
+      <section id="pregunta" className={invitationStyles.question} aria-labelledby="question-title">
+        <TanusasMarquee text={copy.invitation.marquee} pauseLabel={copy.invitation.pauseMarquee} playLabel={copy.invitation.playMarquee} />
+        <div className={invitationStyles.questionInner}>
+          <h2 id="question-title" className={styles.srOnly}>{copy.invitation.questionLabel}</h2>
+          <p className={invitationStyles.questionText}>{copy.invitation.question}<span className={invitationStyles.cursor} aria-hidden="true">|</span></p>
         </div>
       </section>
 
