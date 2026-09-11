@@ -68,6 +68,11 @@ export default async function AgendaPage({ params }: Props) {
     <PageFrame locale={locale} hasColumnRules={false}>
       <PageCover title={t.meta.agenda.title} image={cover} seed={coverSeed} />
 
+      {/**
+       * `venue` es la sede de todos los momentos menos el Premio. Sale de `SITE`
+       * y no del diccionario porque es un nombre propio: se escribe igual en los
+       * dos idiomas, y ya lo dicen la portada, el registro y el correo.
+       */}
       {programme.length > 0 ? (
         <Schedule
           items={programme}
@@ -76,6 +81,7 @@ export default async function AgendaPage({ params }: Props) {
           peopleLabel={peopleLabel}
           dateLabel={dateLabel}
           feature={feature}
+          venue={SITE.event.venue.name}
           searchLabel={searchLabel}
           searchPlaceholder={searchPlaceholder}
           searchEmpty={searchEmpty}

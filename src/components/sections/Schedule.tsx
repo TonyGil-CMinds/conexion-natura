@@ -15,6 +15,14 @@ type Props = {
   dateLabel: string;
   /** La fila que abre el programa: el Premio, antes de la noche y en otra sede. */
   feature: { name: string; time: string; venue: string };
+  /**
+   * La sede de la noche, que es la de **todos** los momentos menos el Premio.
+   *
+   * Va como una sola cadena y no como un campo de cada momento porque el dato es
+   * uno: repetirlo en cada entrada del diccionario, y en los dos idiomas, es
+   * repetirlo dieciséis veces para poder equivocarse en una.
+   */
+  venue: string;
   searchLabel: string;
   searchPlaceholder: string;
   searchEmpty: string;
@@ -31,8 +39,14 @@ function normalize(value: string) {
     .replace(new RegExp('[\\u0300-\\u036f]', 'g'), '');
 }
 
-/** Todo el texto de un momento en una sola cadena, para buscar dentro. */
-function haystack(item: AgendaItem) {
+/**
+ * Todo el texto de un momento en una sola cadena, para buscar dentro.
+ *
+ * La sede entra aunque se pinte una vez por fila y sea la misma en todas: quien
+ * la escribe en el buscador espera encontrar lo que ocurre allí, y que el
+ * resultado sea el programa entero menos el Premio es la respuesta correcta.
+ */
+function haystack(item: AgendaItem, venue: string) {
   /**
    * Los créditos entran en la búsqueda **si están**. Cuando los ponentes aún no
    * se revelan no llegan hasta aquí: la página los quita antes de pasar la
@@ -43,7 +57,9 @@ function haystack(item: AgendaItem) {
     item.host?.role,
     ...(item.people ?? []).flatMap((person) => [person.name, person.role, person.organization]),
   ];
-  return normalize([item.time, item.title, item.description, ...credits].filter(Boolean).join(' '));
+  return normalize(
+    [item.time, item.title, item.description, venue, ...credits].filter(Boolean).join(' '),
+  );
 }
 
 /**
@@ -67,6 +83,7 @@ export function Schedule({
   peopleLabel,
   dateLabel,
   feature,
+  venue,
   searchLabel,
   searchPlaceholder,
   searchEmpty,
@@ -80,10 +97,10 @@ export function Schedule({
     // las dos palabras no vayan seguidas en el texto.
     const words = needle.split(/\s+/);
     return items.filter((item) => {
-      const text = haystack(item);
+      const text = haystack(item, venue);
       return words.every((word) => text.includes(word));
     });
-  }, [items, query]);
+  }, [items, query, venue]);
 
   /** La fila destacada se busca igual que las demás: por su texto. */
   const showsFeature = useMemo(() => {
@@ -156,7 +173,16 @@ export function Schedule({
 
             {visible.map((item) => (
               <li key={item.id} className={styles.item} id={item.id}>
-                <p className={styles.time}>{item.time}</p>
+                {/**
+                 * Cuándo y dónde, en la misma columna: la sede es la de la
+                 * noche y se repite en todas las filas, así que va debajo de la
+                 * hora —más tenue— y no como tercera columna, que habría abierto
+                 * una banda de texto repetido al lado de los créditos.
+                 */}
+                <div className={styles.when}>
+                  <p className={styles.time}>{item.time}</p>
+                  <p className={styles.venue}>{venue}</p>
+                </div>
 
                 <div className={styles.body}>
                   <h2 className={styles.title}>{item.title}</h2>

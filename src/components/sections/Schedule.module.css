@@ -169,14 +169,50 @@
   border-bottom: 1px solid var(--rule);
 }
 
+/**
+ * La columna de la izquierda: cuándo y dónde.
+ *
+ * El relleno superior vive aquí y no en la hora porque lo que tiene que alinear
+ * con la primera línea del título es el bloque entero.
+ */
+.when {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+  /* Alinea con la primera línea del título, que es más alta. */
+  padding-top: 4px;
+}
+
 .time {
+  margin: 0;
   font-family: var(--font-mono);
   font-size: var(--text-note);
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
   color: color-mix(in srgb, var(--fg) 62%, transparent);
-  /* Alinea con la primera línea del título, que es más alta. */
-  padding-top: 4px;
+}
+
+/**
+ * La sede, bajo la hora. Más tenue que ella: se repite en todas las filas, así
+ * que es el fondo del dato y no lo que se recorre con la vista.
+ *
+ * En versalitas no: el nombre es propio y lleva tilde y mayúsculas suyas.
+ *
+ * 11,5px y no `--text-fine`: ese token son 9px, que valen para un rótulo de
+ * función («Presenta») pero no para un nombre propio que hay que poder leer.
+ */
+.venue {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.71875rem;
+  line-height: 1.35;
+  /**
+   * Al 60% y no al 45% de los rótulos de crédito: a 11,5px el 45% se quedaba
+   * por debajo del contraste mínimo en los dos temas —medido: 2,9 en claro y
+   * 4,3 en oscuro—. La jerarquía frente a la hora la dan el cuerpo y la letra,
+   * que aquí es la de texto y no la monoespaciada.
+   */
+  color: color-mix(in srgb, var(--fg) 60%, transparent);
 }
 
 .body {
@@ -330,8 +366,14 @@
     gap: var(--space-2);
   }
 
-  .time {
+  /* Arriba del todo no hay título con el que alinear. */
+  .when {
     padding-top: 0;
+    /* Hora y sede en una línea: apiladas abrían dos renglones sobre el título. */
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: baseline;
+    gap: var(--space-3);
   }
 }
 
