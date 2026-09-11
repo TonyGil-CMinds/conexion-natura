@@ -1,0 +1,58 @@
+/* CEIBA — typography. Sizes are the source's literal values, unrounded. */
+:root{
+  /* families */
+  --font-pixel:"Departure Mono","IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --font-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --font-display:"Cubao Free","Cubao Free Wide",-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --font-display-narrow:"Cubao Free Narrow","Cubao Free",Arial,sans-serif;
+  --font-sans:"Host Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --font-bitmap:Bytesized,"Departure Mono",monospace;
+  --font-sans-alt:"Hanken Grotesk",-apple-system,"Helvetica Neue",Arial,sans-serif;
+
+  /* size scale — every value observed in NEXO CEIBA.fig */
+  --fs-micro:7.425568103790283px;   /* partner eyebrows */
+  --fs-nano:10px;                   /* countdown ruler labels */
+  --fs-2xs:11px;                    /* CUPO LIMITADO* */
+  --fs-xs:12px;
+  --fs-sm:13px;                     /* nav, meta, ES|EN — the workhorse label */
+  --fs-base:16px;                   /* mono body */
+  --fs-md:20px;                     /* section notes */
+  --fs-lg:20.727272033691406px;     /* button + field label */
+  --fs-xl:22px;
+  --fs-2xl:24px;
+  --fs-3xl:32px;                    /* hero lede */
+  --fs-4xl:36px;
+  --fs-5xl:37.83159255981445px;      /* section headline */
+  --fs-6xl:42.2682991027832px;       /* bitmap wordmark */
+  --fs-7xl:55px;
+  --fs-8xl:64px;                     /* section title */
+  --fs-9xl:80px;
+  --fs-10xl:87.08000183105469px;      /* pixel display */
+  --fs-11xl:96px;
+  --fs-12xl:132.3076934814453px;
+  --fs-13xl:159.59671020507812px;     /* Cubao poster display */
+
+  /* tracking */
+  --tracking-label:0.17em;   /* every uppercase label in the system */
+  --tracking-display:0.08em; /* Cubao Free display */
+  --tracking-none:0;
+
+  /* leading */
+  --leading-flush:100%;
+  --leading-lede:1.29;
+  --leading-prose:1.3;
+}
+
+/* Text styles — the source defines no named Figma text styles; these classes
+   are the recurring type roles read off the frames themselves. */
+.ceiba-eyebrow{font-family:var(--font-sans);font-weight:700;font-size:var(--fs-sm);line-height:var(--leading-flush);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--text-meta)}
+.ceiba-eyebrow-micro{font-family:var(--font-sans);font-weight:700;font-size:var(--fs-micro);line-height:var(--leading-prose);letter-spacing:1.856px;text-transform:uppercase;color:var(--text-meta)}
+.ceiba-nav{font-family:var(--font-pixel);font-size:var(--fs-sm);line-height:var(--leading-flush);letter-spacing:var(--tracking-label);text-transform:uppercase}
+.ceiba-display-pixel{font-family:var(--font-pixel);font-size:var(--fs-10xl);line-height:var(--leading-flush);text-transform:uppercase;color:var(--text-primary)}
+.ceiba-title-pixel{font-family:var(--font-pixel);font-size:var(--fs-8xl);line-height:var(--leading-lede);text-transform:uppercase}
+.ceiba-headline-mono{font-family:var(--font-mono);font-weight:700;font-size:var(--fs-5xl);line-height:var(--leading-flush);text-transform:uppercase;color:var(--text-primary)}
+.ceiba-lede-mono{font-family:var(--font-mono);font-weight:400;font-size:var(--fs-3xl);line-height:var(--leading-lede);text-transform:uppercase;color:var(--text-primary)}
+.ceiba-body-mono{font-family:var(--font-mono);font-weight:400;font-size:var(--fs-base);line-height:var(--leading-flush);text-transform:uppercase;color:var(--text-primary)}
+.ceiba-display-cubao{font-family:var(--font-display);font-size:var(--fs-10xl);line-height:var(--leading-flush);letter-spacing:var(--tracking-display);color:var(--text-display)}
+.ceiba-wordmark-bitmap{font-family:var(--font-bitmap);font-size:var(--fs-6xl);line-height:var(--leading-flush);text-transform:uppercase;color:var(--text-primary)}
+.ceiba-ruler{font-family:var(--font-pixel);font-size:var(--fs-nano);line-height:var(--leading-flush);letter-spacing:var(--tracking-label);color:var(--text-primary)}

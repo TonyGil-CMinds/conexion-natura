@@ -1,0 +1,29 @@
+/* CEIBA — spacing + layout. Values read off the 1280×832 desktop frames. */
+:root{
+  --space-1:4px;
+  --space-2:6px;
+  --space-3:8px;
+  --space-4:15px;
+  --space-5:16px;
+  --space-6:19.623401641845703px;  /* partner block stack */
+  --space-7:27px;                  /* globe → ES|EN */
+  --space-8:32px;                  /* header stack, hero stack */
+  --space-9:38.1566162109375px;    /* partner columns */
+  --space-10:49px;                 /* nav item gap */
+  --space-11:64px;
+  --space-12:89px;                 /* page gutter */
+
+  --layout-frame-w:1280px;
+  --layout-frame-h:832px;
+  --layout-gutter:89px;            /* left/right content margin */
+  --layout-content-w:1102px;       /* header inner width */
+  --layout-header-h:89px;          /* rule sits at y=89 */
+  --layout-grid-step:172px;        /* vertical grid lines: 91,263,…,1029,1201 */
+  --layout-nav-gap:49px;
+
+  --social-frame:1080px;           /* Instagram post width  (1080×1440) */
+  --social-frame-h:1440px;
+  --slide-w:1920px;                /* Slide 16:9 */
+  --slide-h:1080px;
+  --slide-radius:82px;             /* slide corner radius */
+}

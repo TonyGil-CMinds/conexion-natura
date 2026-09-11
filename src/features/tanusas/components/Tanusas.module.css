@@ -1,0 +1,993 @@
+/**
+ * Micropágina del retiro de Tanusas.
+ *
+ * Es una invitación larga, así que manda la lectura: una columna de medida
+ * cómoda, sin los filetes de retícula del resto del sitio —aquí no hay tabla de
+ * datos que alinear— y con las secciones separadas por su propio fondo en vez
+ * de por reglas.
+ *
+ * Todo el color sale de los tokens: la paleta del documento de diseño es la
+ * misma del sitio, así que no hace falta ni un hex suelto.
+ */
+.root {
+  /**
+   * Alto de la barra de la página. Lo usan la barra, el hueco que el hero le
+   * deja por arriba y el `scroll-margin` de las secciones, que si no la dejaría
+   * tapando el título al saltar a un ancla. En estrecho la barra pasa a dos
+   * filas, y por eso el valor cambia con el viewport en vez de ser un número.
+   */
+  --tanusas-bar: var(--header-height);
+
+  /**
+   * Ancho máximo del contenido: el del sitio. Sigue siendo una variable y no
+   * `--content-max` a pelo porque la barra, el hero y las secciones tienen que
+   * acotarse por el mismo sitio para que su texto caiga en la misma vertical.
+   */
+  --tanusas-content: var(--content-max);
+
+  /**
+   * Suelo del cuerpo de letra de la página: 11.5px y no los 9 de
+   * `--text-caption`. Nueve píxeles valen para un dato suelto de la retícula del
+   * sitio; aquí los rótulos y los pies se leen de corrido.
+   */
+  --text-caption: 0.71875rem;
+
+  position: relative;
+  background-color: var(--bg);
+}
+
+@media (max-width: 900px) {
+  .root {
+    /* La fila de las anclas: `2.75rem` es su alto en `.barInner`. */
+    --tanusas-bar: calc(var(--header-height) + 2.75rem);
+  }
+}
+
+/* ——— Barra de la propia página ——— */
+
+/**
+ * Sustituye a la cabecera del sitio en esta ruta, así que ocupa su alto y su
+ * retícula. En estrecho pasa a dos filas —logotipo y controles arriba, anclas
+ * abajo— y de ese alto depende tanto el `scroll-margin` de las secciones como el
+ * hueco que el hero deja por arriba, de ahí que sea una variable y no un número
+ * repetido en tres reglas.
+ */
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  height: var(--tanusas-bar);
+  /**
+   * No ocupa sitio en el flujo: el hero sube por debajo y la fotografía llega al
+   * borde superior del viewport, que es como está en el diseño. El negativo va
+   * aquí y no en el hero porque es la barra la que decide superponerse.
+   */
+  margin-bottom: calc(-1 * var(--tanusas-bar));
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color var(--duration-fast) var(--ease-out-expo),
+    border-color var(--duration-fast) var(--ease-out-expo);
+}
+
+/**
+ * Sobre el hero: sin fondo, y con la tinta fijada en clara en los dos temas
+ * porque lo que hay debajo es la fotografía, no la página.
+ */
+.bar:not([data-solid]) {
+  --fg: var(--color-light);
+  --accent: var(--color-green);
+  --accent-ink: var(--color-green);
+  --accent-nav: var(--color-lime);
+  --accent-nav-ink: var(--color-lime);
+  --rule: color-mix(in srgb, var(--color-light) 16%, transparent);
+}
+
+/**
+ * El logotipo trae variante por tema, y sobre la fotografía vale siempre la
+ * clara. Se apaga la del tema claro por su `aria-hidden` —que es lo que la
+ * distingue en el DOM— y no por su clase, que va con hash.
+ */
+.bar:not([data-solid]) .logo img[aria-hidden] {
+  display: none;
+}
+
+.bar:not([data-solid]) .logo img:not([aria-hidden]) {
+  display: block;
+}
+
+/* Pasado el hero se comporta como la cabecera del sitio: fondo y filete. */
+.bar[data-solid] {
+  border-bottom-color: var(--rule);
+  background-color: var(--bg);
+}
+
+.barInner {
+  display: grid;
+  grid-template-columns: var(--header-side) 1fr var(--header-side);
+  grid-template-areas: 'logo nav controls';
+  align-items: center;
+  height: var(--tanusas-bar);
+  /* Mismo tope y mismos márgenes que el cuerpo del hero: el logotipo cae en la
+     misma vertical que el rótulo y que el texto de las secciones. */
+  max-width: var(--tanusas-content);
+  margin-inline: auto;
+  padding-inline: var(--container-margin);
+}
+
+.barLogo {
+  grid-area: logo;
+  display: flex;
+  align-items: center;
+}
+
+.barNav {
+  grid-area: nav;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.barControls {
+  grid-area: controls;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-10);
+  padding-right: 8px;
+}
+
+.logo {
+  display: block;
+}
+
+@media (max-width: 900px) {
+  /**
+   * Dos filas. Las anclas no se esconden tras un menú como en la cabecera del
+   * sitio: son seis secciones de esta misma página, caben en una tira
+   * desplazable, y un menú a pantalla completa para recorrer una página que ya
+   * estás leyendo sobra.
+   */
+  .barInner {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'logo controls'
+      'nav nav';
+    grid-template-rows: var(--header-height) 2.75rem;
+  }
+
+  .barNav {
+    justify-content: flex-start;
+    /* La tira se desplaza hasta el borde, sin el margen del contenedor. */
+    margin-inline: calc(-1 * var(--container-margin));
+    padding-inline: var(--container-margin);
+  }
+
+  .barControls {
+    gap: var(--space-2);
+    padding-right: 0;
+    margin-right: -11px;
+  }
+}
+
+/* ——— Hero ——— */
+
+/**
+ * Ocupa el viewport entero: la fotografía llega a los cuatro bordes y la barra
+ * va por encima sin ocupar sitio.
+ *
+ * Sale del ancho acotado por `PageShell` con la fórmula de la casa —`100vw` y
+ * centrado con `transform`—; el recorte lo pone `PageFrame` con `overflow-x:
+ * clip`. El `transform` crea contexto de apilamiento, y por eso el contenido del
+ * hero no puede competir con la barra: queda por debajo de ella pase lo que pase.
+ *
+ * Va **oscuro en los dos temas**, como las portadas de las páginas interiores: es
+ * una fotografía, y con el velo en crema el texto encima se quedaba sin
+ * contraste. Los roles se fijan aquí a sus valores del tema oscuro y de aquí
+ * bajan al velo, al rótulo, al texto y al botón.
+ */
+.hero {
+  --bg: var(--color-surface);
+  --fg: var(--color-light);
+  --accent: var(--color-green);
+  --accent-ink: var(--color-green);
+  --accent-nav: var(--color-lime);
+  --accent-nav-ink: var(--color-lime);
+  --rule: color-mix(in srgb, var(--color-light) 16%, transparent);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+  min-height: 100dvh;
+  padding-block: calc(var(--tanusas-bar) + clamp(0.5rem, 2dvh, 1.5rem))
+    clamp(2rem, 5dvh, 3.5rem);
+  overflow: hidden;
+}
+
+/**
+ * Capa de la imagen. Va aparte del cuerpo porque el velo tiene que quedar entre
+ * las dos: dentro del cuerpo velaría también el texto.
+ */
+.heroMedia {
+  position: absolute;
+  inset: 0;
+}
+
+.ripple {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.rippleCanvas,
+.rippleFallback {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.rippleFallback {
+  object-fit: cover;
+}
+
+.rippleCanvas[data-hidden] {
+  display: none;
+}
+
+/**
+ * Velo sobre la imagen. Hace falta para que el texto se lea: la fotografía
+ * tiene cielo y arena claros, y todo el texto va en crema.
+ */
+.heroVeil {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    to top,
+    var(--color-surface) 0%,
+    color-mix(in srgb, var(--color-surface) 74%, transparent) 45%,
+    color-mix(in srgb, var(--color-surface) 32%, transparent) 100%
+  );
+}
+
+/**
+ * El cuerpo se acota a la medida del contenido del sitio y se centra: la
+ * fotografía va a sangre, pero el texto sigue la misma retícula que las
+ * secciones. Dentro no lleva margen interior: el texto se alinea al mismo canto
+ * que el rótulo, y esa alineación es la que sostiene el bloque.
+ */
+.heroBody {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: clamp(var(--space-5), 2.5dvh, var(--space-8));
+  width: 100%;
+  max-width: var(--tanusas-content);
+  margin-inline: auto;
+  padding-inline: var(--container-margin);
+}
+
+/**
+ * Fecha y sede, centradas sobre el rótulo.
+ *
+ * El `max-width` hay que soltarlo a mano: la hoja global acota todo párrafo a
+ * 62ch para que el texto corrido se lea, y aquí eso dejaba la línea centrada
+ * dentro de una caja estrecha —descentrada respecto del rótulo— en vez de
+ * centrada sobre él.
+ */
+.heroDateline {
+  margin: 0;
+  max-width: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-align: center;
+  text-transform: uppercase;
+  text-wrap: balance;
+  color: var(--fg);
+}
+
+.heroDateline span {
+  padding-inline: var(--space-2);
+  color: color-mix(in srgb, var(--fg) 45%, transparent);
+}
+
+/**
+ * Fecha y rótulo van juntos y pegados: la línea de datos es el antetítulo del
+ * nombre del retiro, no un dato suelto arriba del todo. El `margin-top: auto`
+ * —con el del pie— reparte el hueco libre y deja el grupo a media altura.
+ */
+.heroTitleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: auto;
+}
+
+/* El rótulo es el titular: el `h1` no aporta caja, solo jerarquía. */
+.heroTitle {
+  margin: 0;
+  line-height: 0;
+}
+
+.heroWordmark {
+  width: 100%;
+  height: auto;
+}
+
+.heroLede {
+  margin: 0;
+  max-width: 58rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-retreat-lede);
+  line-height: 1.3;
+  text-transform: uppercase;
+  text-wrap: pretty;
+  color: var(--fg);
+}
+
+/**
+ * Pie del hero: la llamada a un lado y los logotipos al otro. Se apila en
+ * pantallas estrechas, donde en fila los logotipos quedarían diminutos.
+ */
+.heroFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-8);
+  margin-top: auto;
+}
+
+.heroActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.heroPartners {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: clamp(var(--space-6), 3vw, var(--space-10));
+}
+
+.heroPartner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+/**
+ * Los dos logotipos vienen a escalas distintas —uno es un rótulo apaisado y el
+ * otro lleva su emblema— así que se acotan por alto y no por ancho, y cada uno
+ * con el suyo: con un tope común, el de C Minds quedaba diminuto al lado del
+ * otro.
+ */
+.heroPartnerLogo {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 2rem;
+}
+
+.heroPartner[data-partner='coled'] .heroPartnerLogo {
+  max-height: 3.25rem;
+}
+
+/* El aviso del hero se lee de pie, a un par de metros: no va a cuerpo de nota. */
+.heroNote {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+}
+
+.note {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 55%, transparent);
+}
+
+/* ——— Secciones ——— */
+
+.section {
+  /**
+   * La barra pegajosa taparía el título al saltar a un ancla. Va **justo** su
+   * alto, sin holgura: con unos píxeles de más, al aterrizar quedaba bajo la
+   * barra la última franja del hero —y la barra, todavía transparente, dejaba
+   * ver su botón por detrás—. El aire lo pone el relleno de la sección.
+   */
+  scroll-margin-top: var(--tanusas-bar);
+  padding: clamp(3.5rem, 9vw, 8rem) var(--container-margin);
+}
+
+/**
+ * Las pares van sobre el verde profundo, que es el otro fondo de la marca.
+ *
+ * El fondo es **constante de marca** y no cambia con el tema, así que la tinta
+ * tampoco puede: en tema claro `--fg` es el oscuro y la sección entera quedaba
+ * de texto oscuro sobre fondo oscuro. Por eso los roles se vuelven a declarar
+ * aquí con sus valores del tema oscuro —una declaración en el elemento gana a
+ * lo heredado, y de aquí hacia abajo heredan todos—.
+ *
+ * `--rule` se redeclara aparte porque su `color-mix` ya resolvió `--fg` en la
+ * raíz: hereda el color mezclado, no la fórmula.
+ */
+.section[data-tone='deep'] {
+  --bg: var(--color-surface);
+  --fg: var(--color-light);
+  --accent: var(--color-green);
+  --accent-ink: var(--color-green);
+  --accent-nav: var(--color-lime);
+  --accent-nav-ink: var(--color-lime);
+  --rule: color-mix(in srgb, var(--color-light) 16%, transparent);
+
+  background-color: var(--color-surface);
+  color: var(--fg);
+}
+
+/* El tope es el del contenido menos sus márgenes: la sección ya los pone como
+   relleno, así que sin descontarlos su texto no alinearía con el del hero. */
+.sectionInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  max-width: calc(var(--tanusas-content) - 2 * var(--container-margin));
+  margin: 0 auto;
+}
+
+/* Sin tope: un titular no es texto corrido, y a 46rem se quedaba a media
+   columna al lado de un cuerpo que llegaba más lejos. */
+.sectionHead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.kicker {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+}
+
+.kicker b {
+  font-weight: 400;
+  color: var(--accent-nav-ink);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-section-small, var(--text-choice));
+  font-weight: 400;
+  line-height: 1.12;
+  text-transform: uppercase;
+  text-wrap: pretty;
+  color: var(--fg);
+}
+
+/**
+ * Columna de lectura. Va al ancho de la sección, como el titular: acotada, se
+ * quedaba a media columna al lado de un título que llegaba al otro canto.
+ */
+.prose {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* El tope lo pone la columna, no el párrafo: la hoja global acota todo `p` a
+   62ch y ese, por ser el más estrecho, era el que mandaba. */
+.prose p {
+  margin: 0;
+  max-width: none;
+  font-family: var(--font-body);
+  font-size: var(--text-schedule-intro);
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--fg) 82%, transparent);
+}
+
+/**
+ * La pregunta de la que parte el retiro. Va en caja y con el filete del acento a
+ * la izquierda: es una cita del documento, no un párrafo más.
+ */
+.quote {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-left: var(--space-6);
+  border-left: 2px solid var(--accent-nav);
+}
+
+.quoteLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent-nav-ink);
+}
+
+.quoteText {
+  margin: 0;
+  max-width: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-schedule-title);
+  line-height: 1.45;
+  color: var(--fg);
+}
+
+/* ——— Rejillas de tarjetas ——— */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-6);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border: 1px solid var(--rule);
+  background-color: color-mix(in srgb, var(--fg) 3%, transparent);
+}
+
+.cardNumber {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--accent-nav-ink);
+}
+
+.cardTitle {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-schedule-title);
+  font-weight: 400;
+  line-height: 1.25;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.cardBody {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-answer);
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--fg) 78%, transparent);
+}
+
+/* ——— Filas de datos ——— */
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  max-width: 62rem;
+  margin: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(120px, 180px) minmax(0, 1fr);
+  gap: var(--space-6);
+  padding: var(--space-5) 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.rowLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent-nav-ink);
+}
+
+.rowValue {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-answer);
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--fg) 82%, transparent);
+}
+
+/* ——— Acordeón ——— */
+
+.accordion {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--rule);
+}
+
+.accordionItem {
+  border-bottom: 1px solid var(--rule);
+}
+
+.accordionButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  width: 100%;
+  min-height: 66px;
+  padding: var(--space-4) 0;
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: var(--text-schedule-title);
+  letter-spacing: 0;
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.accordionButton:hover {
+  color: var(--accent-nav-ink);
+}
+
+.accordionButton:focus-visible {
+  outline: 2px solid var(--accent-nav);
+  outline-offset: 4px;
+}
+
+/* Cruz que se convierte en raya: el estado se ve sin leer nada. */
+.accordionMark {
+  position: relative;
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+.accordionMark::before,
+.accordionMark::after {
+  content: '';
+  position: absolute;
+  inset: 50% 0 auto;
+  height: 2px;
+  background-color: currentColor;
+  transition: transform var(--duration-fast) var(--ease-out-expo);
+}
+
+.accordionMark::after {
+  transform: rotate(90deg);
+}
+
+.accordionButton[aria-expanded='true'] .accordionMark::after {
+  transform: rotate(0deg);
+}
+
+.accordionPanel {
+  overflow: hidden;
+}
+
+.accordionPanel p {
+  max-width: 86ch;
+  margin: 0 0 var(--space-5);
+  font-family: var(--font-body);
+  font-size: var(--text-answer);
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--fg) 78%, transparent);
+}
+
+/* ——— Agenda por días ——— */
+
+.dayTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.dayTab {
+  min-height: 44px;
+  padding-inline: var(--space-6);
+  border: 1px solid color-mix(in srgb, var(--fg) 24%, transparent);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out-expo),
+    border-color var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-out-expo);
+}
+
+/**
+ * Lo elegido se rellena: en una fila de dos o tres, el borde solo no basta.
+ *
+ * Dos atributos porque son dos papeles: las pestañas de la agenda son `tab` y
+ * usan `aria-selected`, y el sí/no de la confirmación son `radio` y usan
+ * `aria-checked` —a un `radio` no se le permite `aria-selected`—.
+ */
+.dayTab[aria-selected='true'],
+.dayTab[aria-checked='true'] {
+  border-color: var(--accent-nav);
+  background-color: var(--accent-nav);
+  color: var(--color-dark);
+}
+
+.dayTitle {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-schedule-title);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent-nav-ink);
+}
+
+/* ——— El lugar: imagen a sangre ——— */
+
+.media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+  gap: clamp(var(--space-8), 6vw, var(--space-16));
+  align-items: start;
+}
+
+/* ——— Confirmación ——— */
+
+/* ——— Cierre ——— */
+
+.closing {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: clamp(4rem, 10vw, 9rem) var(--container-margin);
+}
+
+.closingQuote {
+  margin: 0;
+  max-width: 56rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-choice);
+  font-weight: 400;
+  line-height: 1.15;
+  text-transform: uppercase;
+  text-wrap: pretty;
+  color: var(--fg);
+}
+
+.closingInvite {
+  margin: 0;
+  max-width: 72ch;
+  font-family: var(--font-body);
+  font-size: var(--text-schedule-intro);
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--fg) 82%, transparent);
+}
+
+.closingFoot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--rule);
+}
+
+.closingFoot p {
+  max-width: 86ch;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--fg) 60%, transparent);
+}
+
+.closingCredit {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 60%, transparent);
+}
+
+.closingCredit a {
+  color: var(--accent-nav-ink);
+}
+
+/* ——— Botón de acción, compartido ——— */
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+}
+
+@media (max-width: 640px) {
+  .section,
+  .hero,
+  .closing {
+    padding-inline: 24px;
+  }
+
+  .nav {
+    justify-content: flex-start;
+    padding-inline: 24px;
+  }
+
+  .media {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* ——— Registro del retiro ——— */
+
+/* ——— Tarjetas de restricciones ——— */
+
+/* ——— Llamada del hero: botón que se vuelve campo ——— */
+
+/**
+ * La caja que cambia de forma. El contorno y el alto viven **aquí** y no en cada
+ * estado: así lo único que interpola Framer es el ancho, y el botón y el campo
+ * se cruzan dentro de una caja que nunca salta.
+ */
+.join {
+  display: flex;
+  align-items: center;
+  /* El ancho es un mínimo y la caja crece con el rótulo, como el CTA del sitio:
+     con uno largo, una medida fija lo partía en dos líneas. */
+  width: auto;
+  min-width: min(var(--cta-width), 100%);
+  max-width: 100%;
+  min-height: 84px;
+  background-color: var(--accent-nav);
+  transition: background-color var(--duration-base) var(--ease-out-expo);
+}
+
+/* Abierta deja de ser un botón: se vacía y se queda en contorno. */
+.join[data-open] {
+  /* Ancho fijo y no porcentual: el contenedor se dimensiona por su contenido,
+     así que un 100% aquí se resolvía contra la caja cerrada y apenas crecía. */
+  width: 32rem;
+  max-width: 100%;
+  border: 1px solid color-mix(in srgb, var(--fg) 45%, transparent);
+  background-color: color-mix(in srgb, var(--color-surface) 35%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.joinButton {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  padding-inline: var(--space-10);
+  border: 0;
+  background: transparent;
+  color: var(--color-dark);
+  font-family: var(--font-mono);
+  font-size: var(--text-cta);
+  letter-spacing: var(--tracking-cta);
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.joinForm {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-4);
+  align-self: stretch;
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-6);
+}
+
+.joinInput {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: var(--text-cta);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.joinInput::placeholder {
+  color: color-mix(in srgb, var(--fg) 55%, transparent);
+}
+
+.joinInput:focus-visible {
+  outline: none;
+}
+
+/* El correo mal escrito se dice en el propio campo: no hay sitio para un aviso. */
+.joinInput[data-missing] {
+  color: var(--color-red);
+}
+
+.joinInput[data-missing]::placeholder {
+  color: var(--color-red);
+}
+
+.joinGo {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  align-self: stretch;
+  border: 0;
+  background-color: var(--accent-nav);
+  cursor: pointer;
+  transition: filter var(--duration-fast) var(--ease-out-expo);
+}
+
+.joinGo:hover {
+  filter: brightness(1.1);
+}
+
+/* Mientras se comprueba el correo: sigue siendo el mismo botón, esperando. */
+.joinGo[data-busy] {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+/* La flecha va como máscara: el archivo trae su color fijado. */
+.joinArrow {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: var(--color-dark);
+  mask-image: url('/icons/icon-arrow-white.svg');
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+}

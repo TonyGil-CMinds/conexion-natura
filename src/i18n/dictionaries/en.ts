@@ -36,6 +36,11 @@ export const en: Dictionary = {
       title: 'Terms and conditions',
       description: 'Terms for using this site and registering for CEIBA Quito.',
     },
+    tanusas: {
+      title: 'Tanusas Retreat 2026',
+      description:
+        'CEIBA Council retreat at Tanusas, Puerto Cayo: three days to co-design the Capital Architecture for BioProsperity.',
+    },
     privacy: {
       title: 'Privacy notice',
       description: 'What data we ask for to register you for CEIBA Quito, and what we do with it.',
@@ -775,6 +780,442 @@ export const en: Dictionary = {
           list: [],
         },
       ],
+    },
+  },
+
+  tanusas: {
+    nav: {
+      label: 'Retreat sections',
+      invitation: 'Invitation',
+      concept: 'Concept',
+      architecture: 'Architecture',
+      place: 'Place',
+      agenda: 'Agenda',
+      rsvp: 'Confirm',
+    },
+
+    hero: {
+      wordmarkAlt: 'Tanusas',
+      headline:
+        'Three days to co-design the Capital Architecture for BioProsperity in Latin America and the Caribbean.',
+      facts: [
+        { label: 'Dates', value: 'October 8 – 10, 2026' },
+        { label: 'Place', value: 'Tanusas, Puerto Cayo · Manabí, Ecuador' },
+        { label: 'Format', value: 'Residential retreat · 12 – 15 people' },
+      ],
+      cta: 'Confirm attendance',
+      emailLabel: 'Your email address',
+      emailPlaceholder: 'Your email address',
+      emailSubmit: 'Continue with this email',
+      emailChecking: 'Checking your email',
+      emailInvalid: 'Please enter a valid email',
+      note: 'Please confirm before September 15*',
+      personal: 'Personal invitation',
+      partners: {
+        initiative: 'An initiative by',
+        coled: 'Co-led by',
+      },
+    },
+
+    invitation: {
+      number: '01',
+      kicker: 'The invitation',
+      title: 'We want you at the table where this gets built',
+      body: [
+        'After the GET Forum, from October 8 to 10, we will gather at Tanusas, on the coast of Ecuador, a small group of people from the CEIBA Council whose experience, vision and capacity to act we consider essential to take a next step towards BioProsperity in the region.',
+        'We want three days away from the usual pace and formats, and to create the conditions to think deeply, question ourselves, build trust and work together.',
+        'We are not looking to arrive with all the answers. We are looking for perspectives that put pressure on the assumptions, enrich the architecture and help us turn it into something that can be tested in the territories.',
+      ],
+      questionLabel: 'We start from one question',
+      question:
+        'How can we innovate in the building of prosperity by recognizing the economy as part of a living system, and making it possible for nature, the cultures and the communities that sustain it to prosper together?',
+    },
+
+    concept: {
+      number: '02',
+      kicker: 'The concept',
+      title: 'What is a BioProsperity System?',
+      body: [
+        'The problem is not only that funding for biodiversity is missing: it is that the systems sustaining ecological integrity and socioeconomic prosperity are financed, governed and managed as if they were separate. Capital arrives fragmented and reinforces silos instead of coherence.',
+        'We have become very effective at financing production and transactions, and very ineffective at financing the conditions that make prosperity possible.',
+        'BioProsperity names a simple conviction: ecological integrity, community wellbeing, cultural continuity and regenerative economic value are not competing goals. They are interdependent outcomes of healthy territorial systems. If resilience is systemic, the ways to finance and govern it must be systemic too.',
+        'A BioProsperity System is transition infrastructure: an integrated portfolio of interrelated processes, coordinated and financed together under a 10 to 20 year transformation path, to strengthen the capacity of a biodiverse and biocultural territory to generate, retain and recirculate ecological, social, cultural and economic value across generations.',
+      ],
+      facts: [
+        {
+          label: 'Demonstrator scale',
+          value:
+            '500,000 hectares across biodiversity and culture hotspots, aggregated among the system’s custodial partners.',
+        },
+        {
+          label: 'Horizon',
+          value: '10–20 years of a transformation path coordinated and financed as a single portfolio.',
+        },
+        {
+          label: 'Flagship metric · Territorial value retention',
+          value:
+            'The share of generated value that stays, is reinvested or recirculates within the territory.',
+        },
+      ],
+      dimensionsTitle: 'Five interdependent dimensions',
+      dimensionsNote:
+        'They are not separate sectors: they work as a coordinated portfolio. None holds up in isolation. Open each one to see what it contains.',
+      dimensions: [
+        {
+          question: '01 · Processes that increase ecological integrity',
+          answer:
+            'Water function, biodiversity, ecosystem connectivity, soil regeneration and ecosystem health, maintained and expanded as resilience infrastructure.',
+        },
+        {
+          question: '02 · Nature-positive industries and associative value systems',
+          answer:
+            'Diversified, regenerative economic activity: agroforestry, fisheries, restoration services, nature tourism, value-added processing and emerging bioeconomy.',
+        },
+        {
+          question: '03 · Cultural continuity and biocultural heritage',
+          answer:
+            'Languages, traditional knowledge and technologies, intergenerational learning, biocultural governance and place-based identities.',
+        },
+        {
+          question: '04 · Community wellbeing and Buen Vivir',
+          answer:
+            'Communities’ own life plans: food sovereignty, clean water, health and energy, with explicit commitments to child nutrition and gender equity in local governance.',
+        },
+        {
+          question: '05 · Capital flows and territorial connectivity',
+          answer:
+            'Circulation and coordination of financial, intellectual, social, technological, political and cultural capital between rural and urban territories.',
+        },
+        {
+          question: '↺ · And, cutting across all of them: territorial governance and coordination',
+          answer:
+            'The articulating mechanism that aligns conservation, economic development, culture and wellbeing into a shared territorial vision.',
+        },
+      ],
+    },
+
+    architecture: {
+      number: '03',
+      kicker: 'The architecture',
+      title: 'The Custodial Capital Architecture',
+      body: [
+        'The innovation is not a new fund: it is a new way of coordinating capital around the resilience of living systems. Each BioProsperity System works as an integrated portfolio whose performance depends on the health of the whole territory, not on maximizing returns project by project.',
+        'It is in early design stages: that is why we are going to Tanusas.',
+      ],
+      principlesTitle: 'Three principles',
+      principles: [
+        {
+          title: 'Sequencing',
+          body: 'Philanthropic and concessional capital opens governance, trust and evidence; as risk comes down, impact, commercial and institutional capital step in.',
+        },
+        {
+          title: 'Stacking',
+          body: 'Grants, catalytic capital, concessional finance, impact investment and commercial capital coexist in the same system according to their risk tolerance and expected return.',
+        },
+        {
+          title: 'Diversification',
+          body: 'Economic sovereignty grows stronger with complementary sources of value, not with dependence on a single chain or commodity.',
+        },
+      ],
+      functionsTitle: 'Functions of capital',
+      functions: [
+        {
+          question: 'Philanthropic and catalytic',
+          answer:
+            'Governance, systems mapping, resilience measurement, trust and first risk mitigations.',
+        },
+        {
+          question: 'Performance-linked investment',
+          answer:
+            'Long-term financing for productive activity and infrastructure, with returns tied to the system’s flows.',
+        },
+        {
+          question: 'Results-based capital',
+          answer: 'Recognizes verified ecological performance: biodiversity, carbon, water, soils.',
+        },
+      ],
+      portfolioTitle: 'The portfolio, in three horizons',
+      portfolio: [
+        {
+          question: 'Transition enterprises',
+          answer: 'Productive sectors and regenerative industries with short-term revenue and stability.',
+        },
+        {
+          question: 'Emerging nature-positive industries',
+          answer:
+            'New enterprises and value systems with medium-term growth, diversification and innovation.',
+        },
+        {
+          question: 'Future pipelines',
+          answer: 'Research, science and experimentation that build tomorrow’s adaptive capacity.',
+        },
+      ],
+      thesisTitle: 'The investment thesis',
+      thesis: [
+        'Long-term financial performance depends on the resilience of the ecological, governance and productive systems that sustain economic activity. Regeneration is not a cost of performance: it is its condition.',
+        'A second enabling mechanism goes with it: the BioProsperous Value System, multicapital and biocultural, which makes visible the forms of value that sustain resilience without reducing nature or culture to monetary terms.',
+      ],
+    },
+
+    goals: {
+      number: '04',
+      kicker: 'What we are after',
+      title: 'Leaving Tanusas with three things built',
+      intro:
+        'We will work on how to finance the resilience of a territory as a whole system: what capital must sustain, which kinds of capital need to meet, in what sequence, how to build portfolios that jointly finance ecological integrity, territorial economies, culture, wellbeing and governance, and which principles should be non-negotiable.',
+      outcomes: [
+        {
+          number: '01',
+          title: 'A first Capital Architecture for BioProsperity',
+          body: 'Functions, sequence, capital mix and safeguards.',
+        },
+        {
+          number: '02',
+          title: 'The decisions to publish the BioProsperity Systems Framework',
+          body: 'Structure, authorship, scope and publication path for the framework and its capital architecture.',
+        },
+        {
+          number: '03',
+          title: 'A 12-month path to test it',
+          body: 'Candidate territories in Latin America and the Caribbean, with first actors, responsibilities and milestones.',
+        },
+      ],
+      planesTitle: 'How we will work · five planes at once',
+      planes: [
+        {
+          title: 'Relational',
+          body: 'Trust and bonds able to hold disagreement and long collaboration.',
+        },
+        {
+          title: 'Conceptual',
+          body: 'A shared language about value, wellbeing, governance and regeneration.',
+        },
+        {
+          title: 'Strategic',
+          body: 'Clarity on architecture, pilots, risks and questions to test.',
+        },
+        {
+          title: 'Practical',
+          body: 'Owners, contributions and concrete next steps.',
+        },
+        {
+          title: 'Personal',
+          body: 'A renewed connection with nature, the body and the meaning of the work.',
+        },
+      ],
+      format: 'Format: four deep working tables, walks, sea and food from the forest.',
+    },
+
+    place: {
+      number: '05',
+      kicker: 'The place',
+      title: 'Tanusas: edible forest, sea and territory',
+      body: [
+        'Tanusas sits in Puerto Cayo, on the coast of Manabí: a place where the tropical dry forest reaches the sea. We chose this setting because the territory works too: walking, eating and talking there changes the conversation.',
+        'Its restaurant Boca Valdivia, by chef Rodrigo Pacheco, cooks from an edible forest planted in that same territory: hundreds of native species, agroforestry and artisanal fishing in dialogue with neighbouring communities. It is, in practice, a living demonstration of bioprosperity and one of our classrooms during these days.',
+        'The programme moves between the working table, the forest and the beach: guayusa mornings, a swim in the sea for whoever wants one, observation walks with Rodrigo, and gatherings facing the sunset to think out loud.',
+      ],
+      locationTitle: 'Location',
+      location: [
+        { label: 'Venue', value: 'Puerto Cayo · Manabí' },
+        { label: 'From Manta', value: '≈ 1 h by car' },
+        { label: 'Quito – Manta flight', value: '≈ 55 min' },
+        { label: 'Ecosystem', value: 'Tropical dry forest' },
+      ],
+      closing:
+        'Activities include walking the edible forest, gatherings by the sea and dedicated work to build the capital architecture: a curated group, from several countries and perspectives, with the intention of getting to work.',
+    },
+
+    agenda: {
+      number: '06',
+      kicker: 'General agenda',
+      title: 'Three days, a different pace',
+      days: [
+        {
+          tab: 'Thursday 8',
+          title: 'Arrival, transfer and opening',
+          rows: [
+            { time: 'Morning', text: 'Arrival in Quito. Each person arranges their own flight to Quito.' },
+            {
+              time: '12:00',
+              text: 'Meeting point at Quito airport. We travel together from here.',
+            },
+            { time: '15:45', text: 'Quito → Manta flight.' },
+            {
+              time: 'Afternoon',
+              text: 'Arrival in Manta and road transfer to Tanusas. Check-in and time to land.',
+            },
+            {
+              time: 'Evening',
+              text: 'Bonfire of intentions: a shared dinner, the CEIBA opening and a round. What am I arriving with? What do I want to understand? What can I contribute?',
+            },
+          ],
+        },
+        {
+          tab: 'Friday 9',
+          title: 'A full day of working tables',
+          rows: [
+            {
+              time: 'Sunrise',
+              text: 'Optional: silence, guayusa and tobacco with our Indigenous allies, a swim in the sea.',
+            },
+            {
+              time: 'Breakfast',
+              text: 'Edible forest breakfast with Rodrigo Pacheco: where food comes from and how it relates to territory, nutrition and regeneration.',
+            },
+            {
+              time: 'Morning',
+              text: 'Tables I and II · Capital stacking. What must capital sustain? Which capitals and capabilities need to meet, and what function does each one serve?',
+            },
+            { time: 'Midday', text: 'Edible forest lunch and unscheduled rest.' },
+            {
+              time: 'Afternoon',
+              text: 'Table III · Portfolio. How to finance resilience as a system and not as a set of profitable assets.',
+            },
+            {
+              time: 'Sunset',
+              text: 'A walk in pairs facing the sea. Which idea did I let go of? What do I see now that I did not see before? Then a celebration dinner.',
+            },
+          ],
+        },
+        {
+          tab: 'Saturday 10',
+          title: 'Forest, synthesis and closing',
+          rows: [
+            {
+              time: 'Early',
+              text: 'Into the edible forest with Rodrigo Pacheco: walking, observing and conversations on foot. Circle in the forest: one lesson from the territory per person.',
+            },
+            {
+              time: 'Morning',
+              text: 'Table IV · Weaving the path. Synthesis, decisions, publication structure, demonstration route and commitments.',
+            },
+            {
+              time: '13:00',
+              text: 'Closing lunch and final circle: one gratitude, one commitment and a connection that continues.',
+            },
+            {
+              time: '15:00',
+              text: 'Coordinated departure to Manta airport and other connection points.',
+            },
+          ],
+        },
+      ],
+      note: 'General agenda, subject to adjustments. Flight and transfer times will be confirmed with each person before tickets are bought.',
+    },
+
+    practical: {
+      number: '07',
+      kicker: 'The practical side',
+      title: 'What accepting this invitation involves',
+      items: [
+        {
+          title: 'Participation',
+          body: 'A personal, non-transferable invitation, with active participation across all three days.',
+        },
+        {
+          title: 'Group',
+          body: 'Between 12 and 15 people from the CEIBA Council and allies, from multiple countries and perspectives.',
+        },
+        {
+          title: 'Transfers and stay',
+          body: 'We coordinate the Quito–Manta flight, road transfers, accommodation and meals at Tanusas.',
+        },
+        {
+          title: 'What to bring',
+          body: 'Light and walking clothes, swimwear, sun protection, and a question you really care about.',
+        },
+      ],
+    },
+
+    registration: {
+      details: {
+        step: 'Step 1/3',
+        headlineLine1: 'Save',
+        headlineLine2: 'your place',
+        intro:
+          'We are twelve to fifteen people, so every place counts. We use these details to prepare your arrival and to design the three days.',
+        fields: {
+          name: 'First name',
+          surname: 'Last name',
+          organization: 'Organisation',
+          role: 'Role',
+          city: 'City you fly from',
+          question: 'A question that really matters to you',
+        },
+        placeholders: {
+          name: 'Your first name',
+          surname: 'Your last name',
+          organization: 'Where you work',
+          role: 'What you do there',
+          city: 'Where you fly to Quito from',
+          question: 'The one you would bring to the table',
+        },
+        hints: {
+          city: 'We coordinate the Quito–Manta leg together.',
+          question: 'It feeds into the design of the retreat conversations.',
+        },
+        submit: 'Continue',
+        required: 'Please complete the highlighted fields',
+      },
+
+      diet: {
+        step: 'Step 2/3',
+        headlineLine1: 'How we',
+        headlineLine2: 'look after you',
+        intro:
+          'We eat together all three days and the kitchen is prepared around what you tell us. Tick everything that applies.',
+        options: {
+          none: 'No restrictions',
+          vegetarian: 'Vegetarian',
+          vegan: 'Vegan',
+          glutenFree: 'Gluten free',
+          lactoseFree: 'Lactose free',
+          allergy: 'Food allergy',
+          health: 'Health condition',
+        },
+        descriptions: {
+          none: 'I eat everything',
+          vegetarian: 'No meat or fish',
+          vegan: 'Nothing of animal origin',
+          glutenFree: 'Coeliac or intolerant',
+          lactoseFree: 'Lactose intolerant',
+          allergy: 'Tell us what to, below',
+          health: 'Something we should know',
+        },
+        notesLabel: 'Tell us the details',
+        notesPlaceholder: 'What you are allergic to, or what we should bear in mind',
+        notesRequired: 'Please tell us the details of what you ticked',
+        needOne: 'Tick at least one option',
+        selected: 'Selected',
+        submit: 'Continue',
+        back: 'Back',
+      },
+
+      done: {
+        greeting: 'Hello',
+        greetingFallback: 'Your place is saved',
+        body:
+          'We will write to coordinate the Quito–Manta flight and transfers, and to send you the detailed agenda with the pre-reading materials.',
+        emailLabel: 'Email',
+        retreatLabel: 'Retreat',
+        retreatValue: 'Oct 8 – 10, 2026 · Tanusas',
+        dietLabel: 'At the table',
+        photoLabel: 'Photograph',
+        photoValue: 'Received',
+        edit: 'Edit my registration',
+      },
+
+      failed: 'We could not save your registration. Please try again.',
+    },
+
+    closing: {
+      quote: 'New economies are being woven from the forests, the coasts and the communities.',
+      invite: 'It would give us enormous joy to build this next step with you.',
+      cta: 'Confirm my place',
+      partners:
+        'NaturaTech LAC is an initiative driven by IDB Lab and co-led by C Minds, with the support of Sweden, the Government of France, Climate Collective and the CEIBA Council network.',
+      credit: 'CEIBA Council · NaturaTech LAC',
     },
   },
 };

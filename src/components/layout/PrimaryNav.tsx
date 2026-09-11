@@ -1,57 +1,91 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useAttendance } from '@/features/registration';
-import { NAV_LINKS } from '@/config/site';
-import { localePath, type Dictionary, type Locale } from '@/i18n';
 import styles from './PrimaryNav.module.css';
 
+/** Un enlace de la navegación, ya resuelto: aquí no se consulta ni ruta ni copia. */
+export type NavItem = {
+  key: string;
+  /** Ruta con prefijo de idioma, o ancla (`#seccion`) de la propia página. */
+  href: string;
+  label: string;
+  /** Lo actual: es lo que dibuja el zigzag. */
+  selected?: boolean;
+  /** La acción, no un destino más: va en el color de acento. */
+  highlight?: boolean;
+  /**
+   * Si lo que hace no es ir a ningún sitio, sino algo en esta misma pantalla.
+   * Con esto el elemento sale como `<button>` y no como enlace: abrir un
+   * formulario no es navegar, y un enlace lo anunciaría como si lo fuera.
+   */
+  onSelect?: () => void;
+};
+
 type Props = {
-  locale: Locale;
-  labels: Dictionary['nav'];
+  items: readonly NavItem[];
+  ariaLabel: string;
+  /**
+   * En estrecho, en vez de esconderse deja los enlaces en una tira desplazable.
+   * Lo usa la barra de una micropágina, donde los enlaces son anclas de la
+   * propia página: no hay a dónde navegar, así que tampoco hay menú que abrir.
+   */
+  compact?: boolean;
 };
 
 /**
- * Navegación principal con indicador de zigzag.
+ * Navegación con indicador de zigzag. Es **presentacional**: recibe los enlaces
+ * ya resueltos y no sabe de dónde salen, así que sirve igual a la cabecera del
+ * sitio —donde lo actual es la ruta— y a la barra de una micropágina, donde lo
+ * actual es la sección que se está leyendo. Quien decide eso es quien la usa
+ * (`SiteNav`, `TanusasHeader`), y así el zigzag se implementa una sola vez.
  *
- * El estado seleccionado sale de la ruta, no de un clic: así el indicador acierta
- * también al entrar directo a una URL o al volver con el botón atrás. Se compara
- * contra la ruta con prefijo de idioma, que es la que devuelve `usePathname`.
- *
- * El enlace de registro cambia de rótulo cuando ya hay asistencia confirmada:
- * pasa a mostrar el nombre, y sigue llevando al perfil para poder editarlo.
- *
- * Solo los enlaces a rutas pueden estar seleccionados. Los que apuntan a secciones
- * de la portada (`/#agenda`) llevan ancla, y una ancla no es un destino que la
- * navegación pueda marcar como actual.
+ * Las anclas van como `<a>` y no como `Link`: no hay cambio de ruta, y el salto
+ * dentro de la página es cosa del navegador. Su estado actual es
+ * `aria-current="location"` y no `"page"`: la página no ha cambiado.
  */
-export function PrimaryNav({ locale, labels }: Props) {
-  const pathname = usePathname();
-  const { attendee } = useAttendance();
-
+export function PrimaryNav({ items, ariaLabel, compact }: Props) {
   return (
-    <nav className={styles.root} aria-label={labels.ariaLabel}>
+    <nav className={styles.root} aria-label={ariaLabel} data-compact={compact || undefined}>
       <ul className={styles.list}>
-        {NAV_LINKS.map((link) => {
-          const href = localePath(locale, link.href);
-          const isRoute = !link.href.includes('#');
-          const isSelected = isRoute && pathname === href;
-          // El nombre sin apellido: la celda del menú no da para los dos.
-          const label = link.key === 'register' && attendee ? attendee.name : labels[link.key];
+        {items.map((item) => {
+          const isAnchor = item.href.startsWith('#');
+          /**
+           * Lo actual de una ancla es `location` y no `page`: la página no ha
+           * cambiado, solo el sitio de ella donde está el lector.
+           */
+          const current: 'location' | 'page' | undefined = item.selected
+            ? isAnchor
+              ? 'location'
+              : 'page'
+            : undefined;
+          const attrs = {
+            className: styles.link,
+            'data-selected': item.selected || undefined,
+            'data-highlight': item.highlight ? '' : undefined,
+            'aria-current': current,
+          };
+          const content = (
+            <>
+              {item.label}
+              <span className={styles.indicator} aria-hidden />
+            </>
+          );
 
           return (
-            <li key={link.href}>
-              <Link
-                className={styles.link}
-                href={href}
-                data-selected={isSelected || undefined}
-                data-highlight={'highlight' in link && link.highlight ? '' : undefined}
-                aria-current={isSelected ? 'page' : undefined}
-              >
-                {label}
-                <span className={styles.indicator} aria-hidden />
-              </Link>
+            <li key={item.key}>
+              {item.onSelect ? (
+                <button type="button" onClick={item.onSelect} {...attrs}>
+                  {content}
+                </button>
+              ) : isAnchor ? (
+                <a href={item.href} {...attrs}>
+                  {content}
+                </a>
+              ) : (
+                <Link href={item.href} {...attrs}>
+                  {content}
+                </Link>
+              )}
             </li>
           );
         })}

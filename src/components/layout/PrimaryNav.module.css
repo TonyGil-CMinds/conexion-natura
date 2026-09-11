@@ -14,6 +14,12 @@
   /* Ancla del indicador, que va fuera del flujo. */
   position: relative;
   display: inline-block;
+  /* El mismo rótulo sirve de enlace o de botón —cuando lo que hace no es ir a
+     ningún sitio—, así que se le quita al botón lo que le pone el navegador. */
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
   font-family: var(--font-mono);
   font-size: var(--text-nav);
   letter-spacing: var(--tracking-nav);
@@ -75,7 +81,43 @@
 }
 
 @media (max-width: 900px) {
+  /* En la cabecera del sitio los enlaces pasan al menú: aquí no hay sitio. */
   .root {
     display: none;
+  }
+
+  /**
+   * Salvo en modo compacto, que los deja en una tira desplazable. Lo usa la barra
+   * de una micropágina: sus enlaces son anclas de la propia página, así que no
+   * hay a dónde navegar ni menú que abrir, y esconderlos dejaría la página sin
+   * forma de recorrerse.
+   */
+  .root[data-compact] {
+    display: flex;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .root[data-compact]::-webkit-scrollbar {
+    display: none;
+  }
+
+  .root[data-compact] .list {
+    gap: var(--space-6);
+  }
+
+  /* El elemento de la fila es el `li`: es él quien no debe encogerse. */
+  .root[data-compact] .list > li {
+    flex: none;
+  }
+
+  .root[data-compact] .link {
+    font-size: var(--text-caption);
+  }
+
+  /* El zigzag, más pegado: a este cuerpo, doce píxeles lo dejaban suelto. */
+  .root[data-compact] .indicator {
+    bottom: -6px;
   }
 }

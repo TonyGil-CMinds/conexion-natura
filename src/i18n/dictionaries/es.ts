@@ -38,6 +38,11 @@ export const es = {
       title: 'Términos y condiciones',
       description: 'Condiciones de uso del sitio y del registro a CEIBA Quito.',
     },
+    tanusas: {
+      title: 'Retiro Tanusas 2026',
+      description:
+        'Retiro del Consejo CEIBA en Tanusas, Puerto Cayo: tres días para co-diseñar la Arquitectura de Capital para la BioProsperidad.',
+    },
     privacy: {
       title: 'Aviso de privacidad',
       description: 'Qué datos pedimos para registrarte en CEIBA Quito y qué hacemos con ellos.',
@@ -866,6 +871,471 @@ export const es = {
           list: [],
         },
       ],
+    },
+  },
+
+  /**
+   * Micropágina del retiro del Consejo CEIBA en Tanusas (`/tanusas`).
+   *
+   * Es una invitación, no una página de producto: el texto es largo a propósito
+   * porque quien la recibe tiene que poder decidir con lo que lee. Está
+   * transcrito del documento de la organización; lo que no depende del idioma
+   * —fechas, sede, aforo, imágenes— vive en `src/config/tanusas.ts`.
+   */
+  tanusas: {
+    /** Navegación de la propia página: son anclas, no rutas. */
+    nav: {
+      /** Nombre accesible del bloque. No es una de las anclas. */
+      label: 'Secciones del retiro',
+      invitation: 'Invitación',
+      concept: 'Concepto',
+      architecture: 'Arquitectura',
+      place: 'Lugar',
+      agenda: 'Agenda',
+      rsvp: 'Confirmar',
+    },
+
+    hero: {
+      /** Nombre del rótulo, para quien no ve la imagen. */
+      wordmarkAlt: 'Tanusas',
+      /**
+       * Fecha y sede, en una línea sobre el rótulo. Son las mismas de `facts`,
+       * de donde se componen al pintar: un solo sitio donde corregirlas.
+       */
+      headline:
+        'Tres días para co-diseñar la Arquitectura de Capital para la BioProsperidad en América Latina y el Caribe.',
+      /** Los tres datos de cabecera, en el orden del diseño. */
+      facts: [
+        { label: 'Fechas', value: '8 – 10 de octubre de 2026' },
+        { label: 'Lugar', value: 'Tanusas, Puerto Cayo · Manabí, Ecuador' },
+        { label: 'Formato', value: 'Retiro residencial · 12 – 15 personas' },
+      ],
+      cta: 'Confirmar asistencia',
+      /** El campo en que se convierte el botón al pulsarlo. */
+      emailLabel: 'Tu correo electrónico',
+      emailPlaceholder: 'Tu correo electrónico',
+      emailSubmit: 'Continuar con este correo',
+      /** Mientras se comprueba si ese correo ya tiene registro. */
+      emailChecking: 'Comprobando tu correo',
+      emailInvalid: 'Escribe un correo válido',
+      note: 'Confirmación antes del 15 de septiembre*',
+      personal: 'Invitación personal',
+      /** Rótulos de los dos logotipos del pie del hero. */
+      partners: {
+        initiative: 'Una iniciativa de',
+        coled: 'Co-liderada por',
+      },
+    },
+
+    invitation: {
+      number: '01',
+      kicker: 'La invitación',
+      title: 'Te queremos en la mesa donde esto se construye',
+      body: [
+        'Después del GET Forum, del 8 al 10 de octubre, reuniremos en Tanusas, en la costa de Ecuador, a un grupo pequeño de personas del Consejo CEIBA cuya experiencia, visión y capacidad de acción consideramos fundamentales para dar un siguiente paso hacia la BioProsperidad en la región.',
+        'Queremos alejarnos durante tres días del ritmo y los formatos habituales, y crear las condiciones para pensar profundamente, cuestionarnos, construir confianza y trabajar de forma colaborativa.',
+        'No buscamos llegar con todas las respuestas. Buscamos perspectivas que tensionen los supuestos, enriquezcan la arquitectura y nos ayuden a convertirla en algo que pueda ponerse a prueba en los territorios.',
+      ],
+      questionLabel: 'Partimos de una pregunta',
+      question:
+        '¿Cómo podemos innovar en la construcción de prosperidad reconociendo a la economía como parte de un sistema vivo, y haciendo posible que la naturaleza, las culturas y las comunidades que la sostienen prosperen conjuntamente?',
+    },
+
+    concept: {
+      number: '02',
+      kicker: 'El concepto',
+      title: '¿Qué es un Sistema de BioProsperidad?',
+      body: [
+        'El problema no es solo que falte financiamiento para la biodiversidad: es que los sistemas que sostienen la integridad ecológica y la prosperidad socioeconómica se financian, gobiernan y gestionan como si fueran separados. El capital llega fragmentado y refuerza silos en lugar de coherencia.',
+        'Nos hemos vuelto muy eficaces financiando producción y transacciones, y muy poco eficaces financiando las condiciones que hacen posible la prosperidad.',
+        'BioProsperidad nombra una convicción simple: la integridad ecológica, el bienestar comunitario, la continuidad cultural y el valor económico regenerativo no son objetivos que compiten. Son resultados interdependientes de sistemas territoriales sanos. Si la resiliencia es sistémica, las vías para financiarla y gobernarla también deben serlo.',
+        'Un Sistema de BioProsperidad es una infraestructura de transición: un portafolio integrado de procesos interrelacionados, coordinados y financiados juntos bajo una ruta de transformación de 10 a 20 años, para fortalecer la capacidad de un territorio biodiverso y biocultural de generar, retener y recircular valor ecológico, social, cultural y económico entre generaciones.',
+      ],
+      facts: [
+        {
+          label: 'Escala del demostrador',
+          value:
+            '500.000 hectáreas en hotspots de biodiversidad y cultura, agregadas entre los socios custodios del sistema.',
+        },
+        {
+          label: 'Horizonte',
+          value:
+            '10–20 años de ruta de transformación coordinada y financiada como un solo portafolio.',
+        },
+        {
+          label: 'Métrica insignia · Retención de valor territorial',
+          value:
+            'La proporción del valor generado que permanece, se reinvierte o recircula dentro del territorio.',
+        },
+      ],
+      dimensionsTitle: 'Cinco dimensiones interdependientes',
+      dimensionsNote:
+        'No son sectores separados: funcionan como un portafolio coordinado. Ninguna se sostiene en aislamiento. Abre cada una para ver qué contiene.',
+      dimensions: [
+        {
+          question: '01 · Procesos que aumentan la integridad ecológica',
+          answer:
+            'Función hídrica, biodiversidad, conectividad de ecosistemas, regeneración de suelos y salud ecosistémica, mantenidas y ampliadas como infraestructura de resiliencia.',
+        },
+        {
+          question: '02 · Industrias nature-positive y sistemas asociativos de valor',
+          answer:
+            'Actividad económica diversificada y regenerativa: agroforestería, pesca, servicios de restauración, turismo de naturaleza, procesamiento con valor agregado y bioeconomía emergente.',
+        },
+        {
+          question: '03 · Continuidad cultural y patrimonio biocultural',
+          answer:
+            'Lenguas, conocimientos y tecnologías tradicionales, aprendizaje intergeneracional, gobernanza biocultural e identidades ligadas al lugar.',
+        },
+        {
+          question: '04 · Bienestar comunitario y Buen Vivir',
+          answer:
+            'Planes de vida propios: soberanía alimentaria, agua limpia, salud y energía, con compromisos explícitos con la nutrición infantil y la equidad de género en la gobernanza local.',
+        },
+        {
+          question: '05 · Flujos de capital y conectividad territorial',
+          answer:
+            'Circulación y coordinación de capital financiero, intelectual, social, tecnológico, político y cultural entre territorios rurales y urbanos.',
+        },
+        {
+          question: '↺ · Y, atravesando todas: gobernanza y coordinación territorial',
+          answer:
+            'El mecanismo articulador que alinea conservación, desarrollo económico, cultura y bienestar en una visión territorial compartida.',
+        },
+      ],
+    },
+
+    architecture: {
+      number: '03',
+      kicker: 'La arquitectura',
+      title: 'La Arquitectura de Capital de Custodia',
+      body: [
+        'La innovación no es un fondo nuevo: es una forma nueva de coordinar capital alrededor de la resiliencia de sistemas vivos. Cada Sistema de BioProsperidad funciona como un portafolio integrado cuyo desempeño depende de la salud del territorio completo, no de maximizar retornos proyecto por proyecto.',
+        'Está en etapas tempranas de diseño: por eso vamos a Tanusas.',
+      ],
+      principlesTitle: 'Tres principios',
+      principles: [
+        {
+          title: 'Secuenciación',
+          body: 'Lo filantrópico y concesional abre gobernanza, confianza y evidencia; a medida que baja el riesgo entra capital de impacto, comercial e institucional.',
+        },
+        {
+          title: 'Stacking',
+          body: 'Donaciones, capital catalítico, finanzas concesionales, inversión de impacto y capital comercial coexisten en un mismo sistema según su tolerancia al riesgo y su retorno esperado.',
+        },
+        {
+          title: 'Diversificación',
+          body: 'La soberanía económica se fortalece con fuentes de valor complementarias, no con dependencia de una sola cadena o commodity.',
+        },
+      ],
+      functionsTitle: 'Funciones del capital',
+      functions: [
+        {
+          question: 'Filantrópico y catalítico',
+          answer:
+            'Gobernanza, mapeo de sistemas, medición de resiliencia, confianza y primeras mitigaciones de riesgo.',
+        },
+        {
+          question: 'Inversión ligada a desempeño',
+          answer:
+            'Financiamiento de largo plazo para actividad productiva e infraestructura, con retornos atados a flujos del sistema.',
+        },
+        {
+          question: 'Capital basado en resultados',
+          answer: 'Reconoce desempeño ecológico verificado: biodiversidad, carbono, agua, suelos.',
+        },
+      ],
+      portfolioTitle: 'El portafolio, en tres tiempos',
+      portfolio: [
+        {
+          question: 'Empresas de transición',
+          answer:
+            'Sectores productivos e industrias regenerativas con ingresos y estabilidad de corto plazo.',
+        },
+        {
+          question: 'Industrias nature-positive emergentes',
+          answer:
+            'Nuevas empresas y sistemas de valor con crecimiento, diversificación e innovación a mediano plazo.',
+        },
+        {
+          question: 'Pipelines de futuro',
+          answer:
+            'Investigación, ciencia y experimentación que crean la capacidad adaptativa de mañana.',
+        },
+      ],
+      thesisTitle: 'La tesis de inversión',
+      thesis: [
+        'El desempeño financiero de largo plazo depende de la resiliencia de los sistemas ecológicos, de gobernanza y productivos que sostienen la actividad económica. La regeneración no es un costo del desempeño: es su condición.',
+        'Un segundo mecanismo habilitante la acompaña: el Sistema de Valor BioPróspero, multicapital y biocultural, que hace visibles las formas de valor que sostienen la resiliencia sin reducir la naturaleza ni la cultura a términos monetarios.',
+      ],
+    },
+
+    goals: {
+      number: '04',
+      kicker: 'Qué buscamos',
+      title: 'Salir de Tanusas con tres cosas construidas',
+      intro:
+        'Trabajaremos sobre cómo financiar la resiliencia de un territorio como un sistema completo: qué debe sostener el capital, qué tipos de capital necesitan encontrarse, en qué secuencia, cómo construir portafolios que financien conjuntamente integridad ecológica, economías territoriales, cultura, bienestar y gobernanza, y qué principios deberían ser no negociables.',
+      outcomes: [
+        {
+          number: '01',
+          title: 'Una primera Arquitectura de Capital para la BioProsperidad',
+          body: 'Funciones, secuencia, combinación de capitales y salvaguardas.',
+        },
+        {
+          number: '02',
+          title: 'Las decisiones para publicar el Marco de Sistemas de BioProsperidad',
+          body: 'Estructura, autoría, alcance y ruta de publicación del marco y su arquitectura de capital.',
+        },
+        {
+          number: '03',
+          title: 'Una ruta de 12 meses para ponerla a prueba',
+          body: 'Territorios candidatos en América Latina y el Caribe, con primeros actores, responsabilidades e hitos.',
+        },
+      ],
+      planesTitle: 'Cómo trabajaremos · cinco planos al mismo tiempo',
+      planes: [
+        {
+          title: 'Relacional',
+          body: 'Confianza y vínculos capaces de sostener desacuerdos y colaboración larga.',
+        },
+        {
+          title: 'Conceptual',
+          body: 'Un lenguaje compartido sobre valor, bienestar, gobernanza y regeneración.',
+        },
+        {
+          title: 'Estratégico',
+          body: 'Claridad sobre arquitectura, pilotos, riesgos y preguntas por probar.',
+        },
+        {
+          title: 'Práctico',
+          body: 'Responsables, contribuciones y próximos pasos concretos.',
+        },
+        {
+          title: 'Personal',
+          body: 'Una conexión renovada con la naturaleza, el cuerpo y el sentido del trabajo.',
+        },
+      ],
+      format: 'Formato: cuatro mesas de trabajo profundo, caminatas, mar y comida del bosque.',
+    },
+
+    place: {
+      number: '05',
+      kicker: 'El lugar',
+      title: 'Tanusas: bosque comestible, mar y territorio',
+      body: [
+        'Tanusas está en Puerto Cayo, en la costa de Manabí: un lugar donde el bosque seco tropical llega hasta el mar. Es el escenario que elegimos porque el territorio también trabaja: caminar, comer y conversar allí cambia la conversación.',
+        'Su restaurante Boca Valdivia, del chef Rodrigo Pacheco, cocina desde un bosque comestible sembrado en el mismo territorio: cientos de especies nativas, agroforestería y pesca artesanal en diálogo con las comunidades vecinas. Es, en la práctica, una demostración viva de bioprosperidad y una de nuestras aulas durante estos días.',
+        'El programa se mueve entre la mesa de trabajo, el bosque y la playa: mañanas de guayusa, baño en el mar para quien quiera, caminatas de observación con Rodrigo, y encuentros frente al atardecer para pensar en voz alta.',
+      ],
+      locationTitle: 'Ubicación',
+      location: [
+        { label: 'Sede', value: 'Puerto Cayo · Manabí' },
+        { label: 'Desde Manta', value: '≈ 1 h en auto' },
+        { label: 'Vuelo Quito – Manta', value: '≈ 55 min' },
+        { label: 'Ecosistema', value: 'Bosque seco tropical' },
+      ],
+      closing:
+        'Las actividades incluyen caminar el bosque comestible, encuentros frente al mar y trabajo dedicado a construir la arquitectura de capital: un grupo curado, de varios países y perspectivas, con la intención de poner manos a la obra.',
+    },
+
+    agenda: {
+      number: '06',
+      kicker: 'Agenda general',
+      title: 'Tres días, un ritmo distinto',
+      days: [
+        {
+          tab: 'Jueves 8',
+          title: 'Llegada, traslado y apertura',
+          rows: [
+            { time: 'Mañana', text: 'Llegada a Quito. Cada persona gestiona su vuelo hasta Quito.' },
+            {
+              time: '12:00',
+              text: 'Punto de encuentro en el aeropuerto de Quito. Viajamos juntas y juntos desde aquí.',
+            },
+            { time: '15:45', text: 'Vuelo Quito → Manta.' },
+            {
+              time: 'Tarde',
+              text: 'Llegada a Manta y traslado terrestre a Tanusas. Check-in y tiempo para aterrizar.',
+            },
+            {
+              time: 'Noche',
+              text: 'Fogata de las intenciones: cena compartida, apertura de CEIBA y una ronda. ¿Con qué llego?, ¿qué quiero comprender?, ¿qué puedo aportar?',
+            },
+          ],
+        },
+        {
+          tab: 'Viernes 9',
+          title: 'Día completo de mesas de trabajo',
+          rows: [
+            {
+              time: 'Amanecer',
+              text: 'Opcional: silencio, guayusa y tabaco con nuestros aliados indígenas, baño en el mar.',
+            },
+            {
+              time: 'Desayuno',
+              text: 'Desayuno del bosque comestible con Rodrigo Pacheco: el origen de los alimentos y su relación con territorio, nutrición y regeneración.',
+            },
+            {
+              time: 'Mañana',
+              text: 'Mesas I y II · Capital stacking. ¿Qué debe sostener el capital? ¿Qué capitales y capacidades necesitan encontrarse, y qué función cumple cada uno?',
+            },
+            { time: 'Mediodía', text: 'Almuerzo del bosque comestible y descanso sin programación.' },
+            {
+              time: 'Tarde',
+              text: 'Mesa III · Portafolio. Cómo financiar la resiliencia como sistema y no como un conjunto de activos rentables.',
+            },
+            {
+              time: 'Atardecer',
+              text: 'Caminata en pares frente al mar. ¿Qué idea solté?, ¿qué veo ahora que antes no veía? Y cena de celebración.',
+            },
+          ],
+        },
+        {
+          tab: 'Sábado 10',
+          title: 'Bosque, síntesis y cierre',
+          rows: [
+            {
+              time: 'Temprano',
+              text: 'Entrada al bosque comestible con Rodrigo Pacheco: caminar, observar y conversaciones caminadas. Círculo en el bosque: una lección del territorio por persona.',
+            },
+            {
+              time: 'Mañana',
+              text: 'Mesa IV · Tejer el camino. Síntesis, decisiones, estructura de publicación, ruta de demostración y compromisos.',
+            },
+            {
+              time: '13:00',
+              text: 'Almuerzo de cierre y círculo final: una gratitud, un compromiso y una conexión que continúa.',
+            },
+            {
+              time: '15:00',
+              text: 'Salida coordinada hacia el aeropuerto de Manta y otros puntos de conexión.',
+            },
+          ],
+        },
+      ],
+      note: 'Agenda general y sujeta a ajustes. Horarios de vuelo y traslados se confirmarán con cada persona antes de la compra de boletos.',
+    },
+
+    practical: {
+      number: '07',
+      kicker: 'Lo práctico',
+      title: 'Qué implica aceptar esta invitación',
+      items: [
+        {
+          title: 'Participación',
+          body: 'Invitación personal y no transferible, con participación activa durante los tres días completos.',
+        },
+        {
+          title: 'Grupo',
+          body: 'Entre 12 y 15 personas del Consejo CEIBA y aliados, de múltiples países y perspectivas.',
+        },
+        {
+          title: 'Traslados y estadía',
+          body: 'Coordinamos el vuelo Quito–Manta, los traslados terrestres, el alojamiento y la alimentación en Tanusas.',
+        },
+        {
+          title: 'Qué traer',
+          body: 'Ropa ligera y de caminata, traje de baño, protección solar, y una pregunta que te importe de verdad.',
+        },
+      ],
+    },
+
+    /**
+     * Registro del retiro, en tres pasos: datos, restricciones y fotografía.
+     * El paso de la fotografía reutiliza el del registro de Quito, así que su
+     * copia vive en `registration.photo` y no aquí.
+     */
+    registration: {
+      details: {
+        step: 'Paso 1/3',
+        headlineLine1: 'Reserva',
+        headlineLine2: 'tu lugar',
+        intro:
+          'Somos entre doce y quince personas, así que cada lugar cuenta. Con estos datos preparamos tu llegada y el diseño de los tres días.',
+        fields: {
+          name: 'Nombre',
+          surname: 'Apellido',
+          organization: 'Organización',
+          role: 'Rol',
+          city: 'Ciudad de origen del vuelo',
+          question: 'Una pregunta que te importe de verdad',
+        },
+        placeholders: {
+          name: 'Tu nombre',
+          surname: 'Tu apellido',
+          organization: 'Dónde trabajas',
+          role: 'Qué haces ahí',
+          city: 'Desde dónde vuelas a Quito',
+          question: 'La que traerías a la mesa',
+        },
+        /** Por qué se pide cada uno de los dos campos que no son obvios. */
+        hints: {
+          city: 'Coordinamos juntos el tramo Quito–Manta.',
+          question: 'Entra en el diseño de las conversaciones del retiro.',
+        },
+        submit: 'Continuar',
+        required: 'Completa los datos marcados',
+      },
+
+      diet: {
+        step: 'Paso 2/3',
+        headlineLine1: 'Cómo',
+        headlineLine2: 'te cuidamos',
+        intro:
+          'Comemos juntos las tres jornadas y la cocina se prepara con lo que nos digas. Marca todo lo que aplique.',
+        options: {
+          none: 'Sin restricciones',
+          vegetarian: 'Vegetariana',
+          vegan: 'Vegana',
+          glutenFree: 'Sin gluten',
+          lactoseFree: 'Sin lactosa',
+          allergy: 'Alergia alimentaria',
+          health: 'Condición de salud',
+        },
+        descriptions: {
+          none: 'Como de todo',
+          vegetarian: 'Sin carne ni pescado',
+          vegan: 'Sin nada de origen animal',
+          glutenFree: 'Celiaquía o intolerancia',
+          lactoseFree: 'Intolerancia a la lactosa',
+          allergy: 'Cuéntanos a qué, abajo',
+          health: 'Algo que debamos saber',
+        },
+        notesLabel: 'Cuéntanos los detalles',
+        notesPlaceholder: 'A qué eres alérgico, o qué debemos tener en cuenta',
+        notesRequired: 'Cuéntanos los detalles de lo que marcaste',
+        needOne: 'Marca al menos una opción',
+        selected: 'Elegido',
+        submit: 'Continuar',
+        back: 'Volver',
+      },
+
+      done: {
+        greeting: 'Hola',
+        greetingFallback: 'Tu lugar queda reservado',
+        body:
+          'Te escribiremos para coordinar el vuelo Quito–Manta, los traslados y enviarte la agenda detallada con los materiales de lectura previa.',
+        emailLabel: 'Correo',
+        retreatLabel: 'Retiro',
+        retreatValue: '8 – 10 oct 2026 · Tanusas',
+        dietLabel: 'En la mesa',
+        photoLabel: 'Fotografía',
+        photoValue: 'Recibida',
+        edit: 'Editar mi registro',
+      },
+
+      failed: 'No se pudo guardar el registro. Inténtalo de nuevo.',
+    },
+
+    closing: {
+      quote:
+        'Nuevas economías se están tejiendo desde las selvas, las costas y las comunidades.',
+      invite: 'Nos daría muchísima alegría construir este siguiente paso contigo.',
+      cta: 'Confirmar mi lugar',
+      partners:
+        'NaturaTech LAC es una iniciativa impulsada por BID Lab y co-liderada por C Minds, con el apoyo de Suecia, el Gobierno de Francia, Climate Collective y la red del Consejo CEIBA.',
+      credit: 'Consejo CEIBA · NaturaTech LAC',
     },
   },
 } as const;

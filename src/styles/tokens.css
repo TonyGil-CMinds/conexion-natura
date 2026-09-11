@@ -151,6 +151,12 @@
    */
   --text-schedule-intro: clamp(0.9375rem, 1.41vw, 1.125rem); /* 18px @1280 */
   --text-answer: 0.8125rem; /* 13px */
+  /**
+   * Entradilla del hero del retiro, bajo el rótulo «Tanusas». Va por debajo del
+   * rótulo y por encima de cualquier titular de sección: es la frase que explica
+   * el acto, y a esta medida el texto cae en tres líneas dentro de su columna.
+   */
+  --text-retreat-lede: clamp(1.125rem, 2.58vw, 2.0625rem); /* 33px @1280 */
   --text-caption: 0.5625rem; /* 9px */
   /**
    * Legales y créditos del pie. 9px y no 10: los tres bloques tienen que caber en

@@ -1,0 +1,423 @@
+/**
+ * Pasos del registro del retiro.
+ *
+ * Misma retícula que el registro del sitio —titular y moneda a la izquierda,
+ * panel a la derecha— para que pasar de un paso a otro no mueva la página, y
+ * para que quien ya se registró en Quito reconozca dónde está.
+ *
+ * Es un módulo aparte de `Tanusas.module.css` porque no comparte nada con la
+ * invitación: allí manda una columna de lectura y aquí, un formulario.
+ */
+.root {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 507px);
+  gap: var(--space-16);
+  align-items: start;
+  /**
+   * La barra se superpone sin ocupar sitio, así que esto empieza en el borde de
+   * arriba del viewport: el hueco para ella lo tiene que poner el relleno, y por
+   * eso su alto va **sumado** y no descontado. Sin esto, el titular arrancaba
+   * pegado —y por debajo— de la barra.
+   */
+  min-height: 100dvh;
+  max-width: var(--tanusas-content);
+  margin-inline: auto;
+  padding: calc(var(--tanusas-bar) + clamp(2rem, 7dvh, 4.5rem)) var(--container-margin)
+    var(--space-16);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(2rem, 7dvh, 4rem);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.headline {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-choice);
+  font-weight: 700;
+  line-height: 1.12;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+/* El segundo tramo, en el acento: el titular se lee en dos tiempos. */
+.headline span + span {
+  color: var(--accent-nav-ink);
+}
+
+/* Gira en CSS: el disparo es que aparezca, no una señal de JavaScript. */
+.marquee {
+  width: clamp(110px, 11vw, 150px);
+  height: auto;
+  animation: spin 18s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    animation: none;
+  }
+}
+
+/**
+ * Volver al paso anterior. Va encima del titular y no junto a «continuar»: es
+ * navegación, no una acción del formulario, y ahí se lee antes de empezar a
+ * escribir en vez de después.
+ */
+.back {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.back:hover {
+  color: var(--fg);
+}
+
+/* La flecha va como máscara para tomar la tinta del rótulo. */
+.backIcon {
+  display: block;
+  width: 12px;
+  height: 12px;
+  background-color: currentColor;
+  mask-image: url('/icons/icon-arrow-white.svg');
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  transform: rotate(180deg);
+}
+
+/* ——— Panel ——— */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.step {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 55%, transparent);
+}
+
+.intro p {
+  margin: 0;
+  max-width: 42ch;
+  font-family: var(--font-body);
+  font-size: var(--text-schedule-intro);
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--fg) 78%, transparent);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.fieldLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: var(--space-5) var(--space-5);
+  border: 1px solid var(--rule);
+  background-color: color-mix(in srgb, var(--fg) 4%, transparent);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: var(--text-nav);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.textarea {
+  min-height: 7rem;
+  line-height: 1.5;
+  text-transform: none;
+  resize: vertical;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: color-mix(in srgb, var(--fg) 45%, transparent);
+}
+
+.input:focus-visible,
+.textarea:focus-visible {
+  outline: none;
+  border-color: var(--accent-nav);
+}
+
+.input[data-missing],
+.textarea[data-missing] {
+  border-color: var(--color-red);
+}
+
+/* Nombre y apellido: dos mitades de una fila que se apilan en estrecho. */
+.fieldPair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--space-5);
+}
+
+.hint {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--fg) 55%, transparent);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+  margin-top: var(--space-3);
+}
+
+.submit {
+  min-height: 58px;
+  padding-inline: var(--space-10);
+  border: 0;
+  background-image: linear-gradient(100deg, var(--color-green-base) 0%, var(--accent-nav) 100%);
+  color: var(--color-dark);
+  font-family: var(--font-mono);
+  font-size: var(--text-nav);
+  letter-spacing: var(--tracking-cta);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: filter var(--duration-fast) var(--ease-out-expo);
+}
+
+.submit:hover {
+  filter: brightness(1.1);
+}
+
+.submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.error {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-red);
+}
+
+/* ——— Tarjetas de restricciones ——— */
+
+.dietGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--space-4);
+}
+
+/**
+ * Cada tarjeta es una casilla de verificación de verdad: el `input` va oculto
+ * para el ojo pero no para el teclado ni para el lector, que es lo que anuncia
+ * que se pueden marcar varias.
+ */
+.dietCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--rule);
+  background-color: color-mix(in srgb, var(--fg) 4%, transparent);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-expo),
+    background-color var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-out-expo);
+}
+
+.dietCard:hover {
+  border-color: color-mix(in srgb, var(--accent-nav) 60%, transparent);
+}
+
+/* El foco del teclado tiene que verse en la tarjeta, no en el `input` oculto. */
+.dietCard:focus-within {
+  outline: 2px solid var(--accent-nav);
+  outline-offset: 2px;
+}
+
+/**
+ * Elegida: se invierte. El icono va con `currentColor`, así que cambia de tinta
+ * con la tarjeta sin una regla propia.
+ */
+.dietCard[data-chosen] {
+  border-color: var(--accent-nav);
+  background-color: var(--accent-nav);
+  color: var(--color-dark);
+}
+
+.dietIcon {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.dietText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.dietName {
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.dietNote {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: 1.4;
+  opacity: 0.72;
+}
+
+.dietCheck {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  display: flex;
+  color: var(--color-dark);
+}
+
+/* ——— Acuse ——— */
+
+.done {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  align-items: flex-start;
+}
+
+.doneBody {
+  margin: 0;
+  max-width: 48ch;
+  font-family: var(--font-body);
+  font-size: var(--text-schedule-intro);
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--fg) 82%, transparent);
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  width: 100%;
+  border-top: 1px solid var(--rule);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  justify-content: space-between;
+  padding-block: var(--space-4);
+  border-bottom: 1px solid var(--rule);
+}
+
+.rowLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent-nav-ink);
+}
+
+.rowValue {
+  margin: 0;
+  max-width: 32ch;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  text-align: right;
+  color: var(--fg);
+}
+
+.quiet {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.quiet:hover {
+  color: var(--fg);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* En una columna: la retícula de dos no cabe y el panel manda. */
+@media (max-width: 900px) {
+  .root {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-10);
+    padding-bottom: var(--space-12);
+  }
+}

@@ -4,7 +4,7 @@ import { PageShell } from './PageShell';
 import { SITE } from '@/config/site';
 import { localePath, type Dictionary, type Locale } from '@/i18n';
 import { LocaleSwitch } from './LocaleSwitch';
-import { PrimaryNav } from './PrimaryNav';
+import { SiteNav } from './SiteNav';
 import { ThemeToggle } from './ThemeToggle';
 import { MobileMenu } from './MobileMenu';
 import styles from './SiteHeader.module.css';
@@ -52,7 +52,7 @@ export function SiteHeader({ locale, nav, header, cta }: Props) {
           </div>
 
           <div className={styles.navCell}>
-            <PrimaryNav locale={locale} labels={nav} />
+            <SiteNav locale={locale} labels={nav} />
           </div>
 
           <div className={styles.controlsCell}>

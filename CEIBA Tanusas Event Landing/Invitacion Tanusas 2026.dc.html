@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/ceiba-design-system-b9a09465-dcf1-490f-a12b-5638c53e0220/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/ceiba-design-system-b9a09465-dcf1-490f-a12b-5638c53e0220/tokens/colors.css">
+<link rel="stylesheet" href="_ds/ceiba-design-system-b9a09465-dcf1-490f-a12b-5638c53e0220/tokens/typography.css">
+<link rel="stylesheet" href="_ds/ceiba-design-system-b9a09465-dcf1-490f-a12b-5638c53e0220/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/ceiba-design-system-b9a09465-dcf1-490f-a12b-5638c53e0220/tokens/effects.css">
+<link rel="stylesheet" href="_ds/ceiba-design-system-b9a09465-dcf1-490f-a12b-5638c53e0220/tokens/base.css">
+<link rel="stylesheet" href="_ds/ceiba-design-system-b9a09465-dcf1-490f-a12b-5638c53e0220/styles.css">
+<script src="_ds/ceiba-design-system-b9a09465-dcf1-490f-a12b-5638c53e0220/_ds_bundle.js"></script>
+<script src="./doc-page.js"></script>
+<style>
+doc-page:not(:defined){visibility:hidden}
+body{margin:0;font-family:"IBM Plex Mono",ui-monospace,monospace}
+a{color:#02751F;text-decoration:none}
+a:hover{color:#007A23}
+.page{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+</style>
+</helmet>
+
+<doc-page size="a4">
+
+<!-- ══ 01 PORTADA ═══════════════════════════════════════════ -->
+<section class="page" data-screen-label="Portada" style="position:relative;overflow:hidden;background:#151D17;color:#F7FFD2;-webkit-print-color-adjust:exact;print-color-adjust:exact">
+  <img src="assets/img/tanusas-village.jpg" alt="Tanusas, Puerto Cayo" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">
+  <div style="position:absolute;inset:0;background:linear-gradient(179.317deg,rgba(21,29,23,0.42) 3.05%,rgba(21,29,23,0.97) 96.95%)"></div>
+  <div style="position:absolute;left:0;right:0;top:0;bottom:0;padding:18mm 18mm 16mm;display:flex;flex-direction:column;justify-content:space-between">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px">
+      <x-import component-from-global-scope="CEIBADesignSystem_b9a094.CeibaLogo" tone="onDark" height="{{ 24 }}" hint-size="120px,26px"></x-import>
+      <span style="font-family:'Host Grotesk',sans-serif;font-weight:700;font-size:10px;letter-spacing:0.17em;text-transform:uppercase;color:#FFFFFF;text-align:right">Consejo CEIBA<br>Retiro 2026</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:9mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:#D0FF00">Invitación personal y no transferible</span>
+      <img src="assets/logo/ceiba-tanusas-light.svg" alt="CEIBA Tanusas 2026" style="width:100%;max-width:150mm;display:block">
+      <p style="margin:0;max-width:145mm;font-size:19px;line-height:1.29;color:#F9FFE1;text-wrap:pretty">Tres días para co-diseñar la Arquitectura de Capital para la BioProsperidad en América Latina y el Caribe.</p>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8mm;padding-top:6mm;border-top:0.5px solid rgba(255,255,255,0.2)">
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(247,255,210,0.58)">Fechas</span>
+          <span style="font-size:15px;line-height:1.3;color:#F9FFE1">8 – 10 de octubre de 2026</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(247,255,210,0.58)">Lugar</span>
+          <span style="font-size:15px;line-height:1.3;color:#F9FFE1">Tanusas, Puerto Cayo<br>Manabí, Ecuador</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(247,255,210,0.58)">Formato</span>
+          <span style="font-size:15px;line-height:1.3;color:#F9FFE1">Retiro residencial<br>12 a 15 personas</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding-top:4mm">
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(247,255,210,0.58)">Una iniciativa NaturaTech LAC · co-liderada por C Minds</span>
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:#D0FF00">{{ invitadoLinea }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 02 LA INVITACIÓN ═════════════════════════════════════ -->
+<section class="page" data-screen-label="01 La invitación" style="position:relative;overflow:hidden;background:#F5FECF;color:#001D09;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:18mm 18mm 14mm;display:flex;flex-direction:column;gap:7mm">
+  <div style="display:flex;align-items:baseline;gap:14px">
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;color:#02751F">01</span>
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.62)">La invitación</span>
+  </div>
+  <h2 style="margin:0;max-width:155mm;font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:33px;line-height:1.1;text-transform:uppercase;color:#001D09;text-wrap:pretty">Te queremos en la mesa donde esto se construye</h2>
+  <div style="column-count:2;column-gap:10mm">
+    <p style="margin:0 0 5mm;font-size:14px;line-height:1.6;color:#001D09;text-wrap:pretty">Después del GET Forum, del 8 al 10 de octubre, reuniremos en Tanusas, en la costa de Ecuador, a un grupo pequeño de personas del Consejo CEIBA cuya experiencia, visión y capacidad de acción consideramos fundamentales para dar un siguiente paso hacia la BioProsperidad en la región.</p>
+    <p style="margin:0;font-size:14px;line-height:1.6;color:#001D09;text-wrap:pretty">Queremos alejarnos durante tres días del ritmo y los formatos habituales, y crear las condiciones para pensar profundamente, cuestionarnos, construir confianza y trabajar de forma colaborativa. No buscamos llegar con todas las respuestas. Buscamos perspectivas que tensionen los supuestos, enriquezcan la arquitectura y nos ayuden a convertirla en algo que pueda ponerse a prueba en los territorios.</p>
+  </div>
+  <div style="background:#FECC0C;color:#151D17;padding:10mm;display:flex;flex-direction:column;gap:5mm">
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(21,29,23,0.7)">Partimos de una pregunta</span>
+    <p style="margin:0;font-size:21px;line-height:1.29;color:#151D17;text-wrap:pretty">¿Cómo podemos innovar en la construcción de prosperidad reconociendo a la economía como parte de un sistema vivo, y haciendo posible que la naturaleza, las culturas y las comunidades que la sostienen prosperen conjuntamente?</p>
+  </div>
+  <div style="position:relative;height:52mm;overflow:hidden">
+    <img src="assets/img/speakers-stage.jpg" alt="Mesa de trabajo del Consejo CEIBA" style="width:100%;height:100%;object-fit:cover;display:block">
+  </div>
+  <div style="margin-top:auto;padding-top:6mm;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.55)">
+    <span>CEIBA Tanusas 2026 · Invitación</span><span>02</span>
+  </div>
+</section>
+
+<!-- ══ 03 EL CONCEPTO ═══════════════════════════════════════ -->
+<section class="page" data-screen-label="02 El concepto" style="position:relative;overflow:hidden;background:#151D17;color:#F7FFD2;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:18mm 18mm 14mm;display:flex;flex-direction:column;gap:9mm">
+  <div style="position:absolute;right:0;top:0;width:80mm;height:70mm;background:url(assets/patterns/pixel-staircase-lime.svg) right top/140px auto repeat;opacity:0.07"></div>
+  <div style="position:relative;display:flex;align-items:baseline;gap:14px">
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;color:#D0FF00">02</span>
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(247,255,210,0.58)">El concepto</span>
+  </div>
+  <h2 style="position:relative;margin:0;max-width:150mm;font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:31px;line-height:1.12;text-transform:uppercase;color:#F9FFE1">¿Qué es un Sistema de BioProsperidad?</h2>
+  <div style="column-count:2;column-gap:10mm">
+    <p style="margin:0 0 5mm;font-size:14px;line-height:1.6;color:#F7FFD2;text-wrap:pretty">El problema no es solo que falte financiamiento para la biodiversidad: es que los sistemas que sostienen la integridad ecológica y la prosperidad socioeconómica se financian, gobiernan y gestionan como si fueran separados. El capital llega fragmentado y refuerza silos en lugar de coherencia.</p>
+    <p style="margin:0;font-size:14px;line-height:1.6;color:#F7FFD2;text-wrap:pretty">BioProsperidad nombra una convicción simple: la integridad ecológica, el bienestar comunitario, la continuidad cultural y el valor económico regenerativo no son objetivos que compiten. Son resultados interdependientes de sistemas territoriales sanos. Si la resiliencia es sistémica, las vías para financiarla y gobernarla también deben serlo.</p>
+  </div>
+  <div style="padding:11mm 0;border-top:0.5px solid rgba(255,255,255,0.2);border-bottom:0.5px solid rgba(255,255,255,0.2)">
+    <p style="margin:0;font-size:18px;line-height:1.5;color:#C5FF62;text-wrap:pretty">Un Sistema de BioProsperidad es una infraestructura de transición: un portafolio integrado de procesos interrelacionados, coordinados y financiados juntos bajo una ruta de transformación de 10 a 20 años, para fortalecer la capacidad de un territorio biodiverso y biocultural de generar, retener y recircular valor ecológico, social, cultural y económico entre generaciones.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8mm">
+    <div style="display:flex;flex-direction:column;gap:4mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(247,255,210,0.58)">Escala del demostrador</span>
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:44px;line-height:1;color:#D0FF00">500.000</span>
+      <span style="font-size:13px;line-height:1.5;color:#F7FFD2">hectáreas en hotspots de biodiversidad y cultura, agregadas entre los socios custodios del sistema.</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(247,255,210,0.58)">Horizonte</span>
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:44px;line-height:1;color:#D0FF00">10–20</span>
+      <span style="font-size:13px;line-height:1.5;color:#F7FFD2">años de ruta de transformación coordinada y financiada como un solo portafolio.</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(247,255,210,0.58)">Métrica insignia</span>
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:21px;line-height:1.1;color:#D0FF00">Retención de valor territorial</span>
+      <span style="font-size:13px;line-height:1.5;color:#F7FFD2">La proporción del valor generado que permanece, se reinvierte o recircula dentro del territorio.</span>
+    </div>
+  </div>
+  <p style="margin:0;max-width:150mm;font-size:14px;line-height:1.6;color:rgba(247,255,210,0.58)">Nos hemos vuelto muy eficaces financiando producción y transacciones, y muy poco eficaces financiando las condiciones que hacen posible la prosperidad.</p>
+  <div style="margin-top:auto;padding-top:6mm;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(247,255,210,0.55)">
+    <span>CEIBA Tanusas 2026 · Invitación</span><span>03</span>
+  </div>
+</section>
+
+<!-- ══ 04 CINCO DIMENSIONES ═════════════════════════════════ -->
+<section class="page" data-screen-label="03 Cinco dimensiones" style="position:relative;overflow:hidden;background:#F5FECF;color:#001D09;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:18mm 18mm 14mm;display:flex;flex-direction:column;gap:6mm">
+  <div style="display:flex;align-items:baseline;gap:14px">
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;color:#02751F">03</span>
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.62)">Las cinco dimensiones</span>
+  </div>
+  <h2 style="margin:0;max-width:150mm;font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:29px;line-height:1.12;text-transform:uppercase;color:#001D09">Un portafolio, no cinco sectores</h2>
+  <p style="margin:0;max-width:150mm;font-size:14px;line-height:1.6;color:#001D09">Las cinco dimensiones funcionan de forma coordinada. Ninguna se sostiene en aislamiento, y por eso ninguna se financia por separado.</p>
+  <div style="display:flex;flex-direction:column">
+    <div style="display:grid;grid-template-columns:14mm minmax(0,1fr);gap:6mm;padding:4.5mm 0;border-top:1px dashed rgba(0,29,9,0.25)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:22px;line-height:1;color:#02751F">01</span>
+      <div style="display:flex;flex-direction:column;gap:3mm">
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:16px;letter-spacing:0.06em;text-transform:uppercase;color:#001D09">Procesos que aumentan la integridad ecológica</span>
+        <span style="font-size:13.5px;line-height:1.55;color:rgba(0,29,9,0.8)">Función hídrica, biodiversidad, conectividad de ecosistemas, regeneración de suelos y salud ecosistémica, mantenidas y ampliadas como infraestructura de resiliencia.</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:14mm minmax(0,1fr);gap:6mm;padding:4.5mm 0;border-top:1px dashed rgba(0,29,9,0.25)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:22px;line-height:1;color:#02751F">02</span>
+      <div style="display:flex;flex-direction:column;gap:3mm">
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:16px;letter-spacing:0.06em;text-transform:uppercase;color:#001D09">Industrias nature-positive y sistemas asociativos de valor</span>
+        <span style="font-size:13.5px;line-height:1.55;color:rgba(0,29,9,0.8)">Actividad económica diversificada y regenerativa: agroforestería, pesca, servicios de restauración, turismo de naturaleza, procesamiento con valor agregado y bioeconomía emergente.</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:14mm minmax(0,1fr);gap:6mm;padding:4.5mm 0;border-top:1px dashed rgba(0,29,9,0.25)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:22px;line-height:1;color:#02751F">03</span>
+      <div style="display:flex;flex-direction:column;gap:3mm">
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:16px;letter-spacing:0.06em;text-transform:uppercase;color:#001D09">Continuidad cultural y patrimonio biocultural</span>
+        <span style="font-size:13.5px;line-height:1.55;color:rgba(0,29,9,0.8)">Lenguas, conocimientos y tecnologías tradicionales, aprendizaje intergeneracional, gobernanza biocultural e identidades ligadas al lugar.</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:14mm minmax(0,1fr);gap:6mm;padding:4.5mm 0;border-top:1px dashed rgba(0,29,9,0.25)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:22px;line-height:1;color:#02751F">04</span>
+      <div style="display:flex;flex-direction:column;gap:3mm">
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:16px;letter-spacing:0.06em;text-transform:uppercase;color:#001D09">Bienestar comunitario y Buen Vivir</span>
+        <span style="font-size:13.5px;line-height:1.55;color:rgba(0,29,9,0.8)">Planes de vida propios: soberanía alimentaria, agua limpia, salud y energía, con compromisos explícitos con la nutrición infantil y la equidad de género en la gobernanza local.</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:14mm minmax(0,1fr);gap:6mm;padding:4.5mm 0;border-top:1px dashed rgba(0,29,9,0.25);border-bottom:1px dashed rgba(0,29,9,0.25)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:22px;line-height:1;color:#02751F">05</span>
+      <div style="display:flex;flex-direction:column;gap:3mm">
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:16px;letter-spacing:0.06em;text-transform:uppercase;color:#001D09">Flujos de capital y conectividad territorial</span>
+        <span style="font-size:13.5px;line-height:1.55;color:rgba(0,29,9,0.8)">Circulación y coordinación de capital financiero, intelectual, social, tecnológico, político y cultural entre territorios rurales y urbanos.</span>
+      </div>
+    </div>
+  </div>
+  <div style="background:#A2E136;color:#001D09;padding:6mm 8mm;display:grid;grid-template-columns:14mm minmax(0,1fr);gap:6mm;align-items:center">
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:22px;line-height:1;color:#001D09">↺</span>
+    <div style="display:flex;flex-direction:column;gap:3mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:14px;letter-spacing:0.1em;text-transform:uppercase;color:#001D09">Y, atravesando todas: gobernanza y coordinación territorial</span>
+      <span style="font-size:13.5px;line-height:1.55;color:rgba(0,29,9,0.85)">El mecanismo articulador que alinea conservación, desarrollo económico, cultura y bienestar en una visión territorial compartida.</span>
+    </div>
+  </div>
+  <div style="margin-top:auto;padding-top:6mm;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.55)">
+    <span>CEIBA Tanusas 2026 · Invitación</span><span>04</span>
+  </div>
+</section>
+
+<!-- ══ 05 LA ARQUITECTURA ═══════════════════════════════════ -->
+<section class="page" data-screen-label="04 La arquitectura" style="position:relative;overflow:hidden;background:#F5FECF;color:#001D09;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:18mm 18mm 14mm;display:flex;flex-direction:column;gap:6mm">
+  <div style="display:flex;align-items:baseline;gap:14px">
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;color:#02751F">04</span>
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.62)">La arquitectura</span>
+  </div>
+  <h2 style="margin:0;max-width:155mm;font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:31px;line-height:1.12;text-transform:uppercase;color:#001D09">La Arquitectura de Capital de Custodia</h2>
+  <p style="margin:0;max-width:155mm;font-size:14px;line-height:1.6;color:#001D09;text-wrap:pretty">La innovación no es un fondo nuevo: es una forma nueva de coordinar capital alrededor de la resiliencia de sistemas vivos. Cada Sistema de BioProsperidad funciona como un portafolio integrado cuyo desempeño depende de la salud del territorio completo, no de maximizar retornos proyecto por proyecto. Está en etapas tempranas de diseño, y por eso vamos a Tanusas.</p>
+  <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:#02751F">Tres principios</span>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1mm;background:rgba(0,29,9,0.2)">
+    <div style="background:#F5FECF;padding:6mm;display:flex;flex-direction:column;gap:3mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:17px;line-height:1.1;text-transform:uppercase;color:#001D09">Secuenciación</span>
+      <span style="font-size:13px;line-height:1.55;color:rgba(0,29,9,0.8)">Lo filantrópico y concesional abre gobernanza, confianza y evidencia; a medida que baja el riesgo entra capital de impacto, comercial e institucional.</span>
+    </div>
+    <div style="background:#F5FECF;padding:6mm;display:flex;flex-direction:column;gap:3mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:17px;line-height:1.1;text-transform:uppercase;color:#001D09">Stacking</span>
+      <span style="font-size:13px;line-height:1.55;color:rgba(0,29,9,0.8)">Donaciones, capital catalítico, finanzas concesionales, inversión de impacto y capital comercial coexisten en un mismo sistema según su tolerancia al riesgo y su retorno esperado.</span>
+    </div>
+    <div style="background:#F5FECF;padding:6mm;display:flex;flex-direction:column;gap:3mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:17px;line-height:1.1;text-transform:uppercase;color:#001D09">Diversificación</span>
+      <span style="font-size:13px;line-height:1.55;color:rgba(0,29,9,0.8)">La soberanía económica se fortalece con fuentes de valor complementarias, no con dependencia de una sola cadena o commodity.</span>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9mm;padding-top:2mm">
+    <div style="display:flex;flex-direction:column;gap:4mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:#02751F">Funciones del capital</span>
+      <div style="display:flex;flex-direction:column;gap:4mm">
+        <div style="display:flex;flex-direction:column;gap:2mm;padding-top:3mm;border-top:1px solid rgba(0,29,9,0.25)">
+          <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:14px;text-transform:uppercase;color:#001D09">Filantrópico y catalítico</span>
+          <span style="font-size:13px;line-height:1.55;color:rgba(0,29,9,0.8)">Gobernanza, mapeo de sistemas, medición de resiliencia, confianza y primeras mitigaciones de riesgo.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2mm;padding-top:3mm;border-top:1px solid rgba(0,29,9,0.25)">
+          <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:14px;text-transform:uppercase;color:#001D09">Inversión ligada a desempeño</span>
+          <span style="font-size:13px;line-height:1.55;color:rgba(0,29,9,0.8)">Financiamiento de largo plazo para actividad productiva e infraestructura, con retornos atados a flujos del sistema.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2mm;padding-top:3mm;border-top:1px solid rgba(0,29,9,0.25)">
+          <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:14px;text-transform:uppercase;color:#001D09">Capital basado en resultados</span>
+          <span style="font-size:13px;line-height:1.55;color:rgba(0,29,9,0.8)">Reconoce desempeño ecológico verificado: biodiversidad, carbono, agua, suelos.</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:#02751F">El portafolio, en tres tiempos</span>
+      <div style="display:flex;flex-direction:column;gap:4mm">
+        <div style="display:flex;flex-direction:column;gap:2mm;padding-top:3mm;border-top:1px solid rgba(0,29,9,0.25)">
+          <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:14px;text-transform:uppercase;color:#001D09">Empresas de transición</span>
+          <span style="font-size:13px;line-height:1.55;color:rgba(0,29,9,0.8)">Sectores productivos e industrias regenerativas con ingresos y estabilidad de corto plazo.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2mm;padding-top:3mm;border-top:1px solid rgba(0,29,9,0.25)">
+          <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:14px;text-transform:uppercase;color:#001D09">Industrias nature-positive emergentes</span>
+          <span style="font-size:13px;line-height:1.55;color:rgba(0,29,9,0.8)">Nuevas empresas y sistemas de valor con crecimiento, diversificación e innovación a mediano plazo.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2mm;padding-top:3mm;border-top:1px solid rgba(0,29,9,0.25)">
+          <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:14px;text-transform:uppercase;color:#001D09">Pipelines de futuro</span>
+          <span style="font-size:13px;line-height:1.55;color:rgba(0,29,9,0.8)">Investigación, ciencia y experimentación que crean la capacidad adaptativa de mañana.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:auto;padding-top:6mm;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.55)">
+    <span>CEIBA Tanusas 2026 · Invitación</span><span>05</span>
+  </div>
+</section>
+
+<!-- ══ 06 LA TESIS ══════════════════════════════════════════ -->
+<section class="page" data-screen-label="05 La tesis" style="position:relative;overflow:hidden;background:#151D17;color:#F7FFD2;-webkit-print-color-adjust:exact;print-color-adjust:exact;display:flex;flex-direction:column">
+  <div style="position:relative;height:95mm;overflow:hidden">
+    <img src="assets/img/hero-ceiba-night.png" alt="Encuentro CEIBA" style="width:100%;height:100%;object-fit:cover;display:block">
+    <div style="position:absolute;inset:0;background:linear-gradient(179.317deg,rgba(21,29,23,0.25) 3.05%,#151D17 96.95%)"></div>
+    <div style="position:absolute;left:18mm;bottom:9mm;display:flex;align-items:baseline;gap:14px">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;color:#D0FF00">05</span>
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(247,255,210,0.58)">La tesis de inversión</span>
+    </div>
+  </div>
+  <div style="flex:1;padding:10mm 18mm 14mm;display:flex;flex-direction:column;gap:8mm">
+    <div style="background:#A2E136;color:#001D09;padding:10mm;display:flex;flex-direction:column;gap:5mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.7)">La tesis</span>
+      <p style="margin:0;font-size:22px;line-height:1.29;color:#001D09;text-wrap:pretty">El desempeño financiero de largo plazo depende de la resiliencia de los sistemas ecológicos, de gobernanza y productivos que sostienen la actividad económica. La regeneración no es un costo del desempeño: es su condición.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9mm">
+      <div style="display:flex;flex-direction:column;gap:3mm">
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:#D0FF00">Mecanismo habilitante</span>
+        <span style="font-size:14px;line-height:1.6;color:#F7FFD2">Un segundo mecanismo la acompaña: el Sistema de Valor BioPróspero, multicapital y biocultural, que hace visibles las formas de valor que sostienen la resiliencia sin reducir la naturaleza ni la cultura a términos monetarios.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3mm">
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:#D0FF00">Lo que se mide</span>
+        <span style="font-size:14px;line-height:1.6;color:#F7FFD2">Retención de valor territorial: la proporción del valor generado que permanece, se reinvierte o recircula dentro del territorio, entre generaciones.</span>
+      </div>
+    </div>
+    <div style="margin-top:auto;padding-top:6mm;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(247,255,210,0.55)">
+      <span>CEIBA Tanusas 2026 · Invitación</span><span>06</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 07 QUÉ BUSCAMOS ══════════════════════════════════════ -->
+<section class="page" data-screen-label="06 Qué buscamos" style="position:relative;overflow:hidden;background:#F5FECF;color:#001D09;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:18mm 18mm 14mm;display:flex;flex-direction:column;gap:6mm">
+  <div style="display:flex;align-items:baseline;gap:14px">
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;color:#02751F">06</span>
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.62)">Qué buscamos</span>
+  </div>
+  <h2 style="margin:0;max-width:155mm;font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:31px;line-height:1.12;text-transform:uppercase;color:#001D09">Salir de Tanusas con tres cosas construidas</h2>
+  <p style="margin:0;max-width:155mm;font-size:14px;line-height:1.6;color:#001D09;text-wrap:pretty">Trabajaremos sobre cómo financiar la resiliencia de un territorio como un sistema completo: qué debe sostener el capital, qué tipos de capital necesitan encontrarse, en qué secuencia, cómo construir portafolios que financien conjuntamente integridad ecológica, economías territoriales, cultura, bienestar y gobernanza, y qué principios deberían ser no negociables.</p>
+  <div style="display:flex;flex-direction:column;gap:1mm;background:rgba(0,29,9,0.2)">
+    <div style="background:#F5FECF;padding:6mm;display:grid;grid-template-columns:14mm minmax(0,1fr);gap:6mm;align-items:baseline">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:24px;line-height:1;color:#02751F">01</span>
+      <div style="display:flex;flex-direction:column;gap:3mm">
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:17px;line-height:1.2;text-transform:uppercase;color:#001D09">Una primera Arquitectura de Capital para la BioProsperidad</span>
+        <span style="font-size:13.5px;line-height:1.55;color:rgba(0,29,9,0.8)">Funciones, secuencia, combinación de capitales y salvaguardas.</span>
+      </div>
+    </div>
+    <div style="background:#F5FECF;padding:6mm;display:grid;grid-template-columns:14mm minmax(0,1fr);gap:6mm;align-items:baseline">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:24px;line-height:1;color:#02751F">02</span>
+      <div style="display:flex;flex-direction:column;gap:3mm">
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:17px;line-height:1.2;text-transform:uppercase;color:#001D09">Las decisiones para publicar el Marco de Sistemas de BioProsperidad</span>
+        <span style="font-size:13.5px;line-height:1.55;color:rgba(0,29,9,0.8)">Estructura, autoría, alcance y ruta de publicación del marco y su arquitectura de capital.</span>
+      </div>
+    </div>
+    <div style="background:#F5FECF;padding:6mm;display:grid;grid-template-columns:14mm minmax(0,1fr);gap:6mm;align-items:baseline">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:24px;line-height:1;color:#02751F">03</span>
+      <div style="display:flex;flex-direction:column;gap:3mm">
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:17px;line-height:1.2;text-transform:uppercase;color:#001D09">Una ruta de 12 meses para ponerla a prueba</span>
+        <span style="font-size:13.5px;line-height:1.55;color:rgba(0,29,9,0.8)">Territorios candidatos en América Latina y el Caribe, con primeros actores, responsabilidades e hitos.</span>
+      </div>
+    </div>
+  </div>
+  <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:#02751F;padding-top:2mm">Cómo trabajaremos · cinco planos al mismo tiempo</span>
+  <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5mm">
+    <div style="display:flex;flex-direction:column;gap:3mm;padding-top:4mm;border-top:1px solid #02751F">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#001D09">Relacional</span>
+      <span style="font-size:12.5px;line-height:1.5;color:rgba(0,29,9,0.8)">Confianza y vínculos capaces de sostener desacuerdos y colaboración larga.</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:3mm;padding-top:4mm;border-top:1px solid #02751F">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#001D09">Conceptual</span>
+      <span style="font-size:12.5px;line-height:1.5;color:rgba(0,29,9,0.8)">Un lenguaje compartido sobre valor, bienestar, gobernanza y regeneración.</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:3mm;padding-top:4mm;border-top:1px solid #02751F">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#001D09">Estratégico</span>
+      <span style="font-size:12.5px;line-height:1.5;color:rgba(0,29,9,0.8)">Claridad sobre arquitectura, pilotos, riesgos y preguntas por probar.</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:3mm;padding-top:4mm;border-top:1px solid #02751F">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#001D09">Práctico</span>
+      <span style="font-size:12.5px;line-height:1.5;color:rgba(0,29,9,0.8)">Responsables, contribuciones y próximos pasos concretos.</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:3mm;padding-top:4mm;border-top:1px solid #02751F">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#001D09">Personal</span>
+      <span style="font-size:12.5px;line-height:1.5;color:rgba(0,29,9,0.8)">Una conexión renovada con la naturaleza, el cuerpo y el sentido del trabajo.</span>
+    </div>
+  </div>
+  <p style="margin:0;font-size:13px;line-height:1.6;color:rgba(0,29,9,0.62)">Formato: cuatro mesas de trabajo profundo, caminatas, mar y comida del bosque.</p>
+  <div style="margin-top:auto;padding-top:6mm;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.55)">
+    <span>CEIBA Tanusas 2026 · Invitación</span><span>07</span>
+  </div>
+</section>
+
+<!-- ══ 08 EL LUGAR ══════════════════════════════════════════ -->
+<section class="page" data-screen-label="07 El lugar" style="position:relative;overflow:hidden;background:#151D17;color:#F7FFD2;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:18mm 18mm 14mm;display:flex;flex-direction:column;gap:6mm">
+  <div style="display:flex;align-items:baseline;gap:14px">
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;color:#D0FF00">07</span>
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(247,255,210,0.58)">El lugar</span>
+  </div>
+  <h2 style="margin:0;max-width:155mm;font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:31px;line-height:1.12;text-transform:uppercase;color:#F9FFE1">Tanusas: bosque comestible, mar y territorio</h2>
+  <div style="display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:9mm">
+    <div style="display:flex;flex-direction:column;gap:5mm">
+      <p style="margin:0;font-size:14px;line-height:1.6;color:#F7FFD2;text-wrap:pretty">Tanusas está en Puerto Cayo, en la costa de Manabí: un lugar donde el bosque seco tropical llega hasta el mar. Es el escenario que elegimos porque el territorio también trabaja: caminar, comer y conversar allí cambia la conversación.</p>
+      <p style="margin:0;font-size:14px;line-height:1.6;color:#F7FFD2;text-wrap:pretty">Su restaurante Boca Valdivia, del chef Rodrigo Pacheco, cocina desde un bosque comestible sembrado en el mismo territorio: cientos de especies nativas, agroforestería y pesca artesanal en diálogo con las comunidades vecinas. Es, en la práctica, una demostración viva de bioprosperidad y una de nuestras aulas durante estos días.</p>
+      <p style="margin:0;font-size:14px;line-height:1.6;color:#F7FFD2;text-wrap:pretty">El programa se mueve entre la mesa de trabajo, el bosque y la playa: mañanas de guayusa, baño en el mar para quien quiera, caminatas de observación con Rodrigo, y encuentros frente al atardecer para pensar en voz alta.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:2mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:#D0FF00;margin-bottom:2mm">Cómo llegar</span>
+      <x-import component-from-global-scope="CEIBADesignSystem_b9a094.DataRow" label="Sede" value="Puerto Cayo · Manabí" hint-size="100%,44px"></x-import>
+      <x-import component-from-global-scope="CEIBADesignSystem_b9a094.DataRow" label="Vuelo Quito – Manta" value="≈ 55 min" hint-size="100%,44px"></x-import>
+      <x-import component-from-global-scope="CEIBADesignSystem_b9a094.DataRow" label="Desde Manta" value="≈ 1 h en auto" hint-size="100%,44px"></x-import>
+      <x-import component-from-global-scope="CEIBADesignSystem_b9a094.DataRow" label="Ecosistema" value="Bosque seco tropical" hint-size="100%,44px"></x-import>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:1mm;height:62mm">
+    <div style="position:relative;overflow:hidden">
+      <img src="assets/img/tanusas-village.jpg" alt="Tanusas, Puerto Cayo" style="width:100%;height:100%;object-fit:cover;display:block">
+      <span style="position:absolute;left:5mm;bottom:4mm;font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:#F9FFE1">Tanusas · Puerto Cayo</span>
+    </div>
+    <div style="position:relative;overflow:hidden">
+      <img src="assets/img/hero-ceiba-night.png" alt="Encuentro CEIBA" style="width:100%;height:100%;object-fit:cover;display:block">
+      <span style="position:absolute;left:5mm;bottom:4mm;font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:#F9FFE1">Mesa de trabajo</span>
+    </div>
+  </div>
+  <p style="margin:0;max-width:165mm;font-size:16px;line-height:1.5;color:#C5FF62;text-wrap:pretty">Las actividades incluyen caminar el bosque comestible, encuentros frente al mar y trabajo dedicado a construir la arquitectura de capital: un grupo curado, de varios países y perspectivas, con la intención de poner manos a la obra.</p>
+  <div style="margin-top:auto;padding-top:6mm;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(247,255,210,0.55)">
+    <span>CEIBA Tanusas 2026 · Invitación</span><span>08</span>
+  </div>
+</section>
+
+<!-- ══ 09 AGENDA ════════════════════════════════════════════ -->
+<section class="page" data-screen-label="08 Agenda" style="position:relative;overflow:hidden;background:#F5FECF;color:#001D09;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:18mm 18mm 14mm;display:flex;flex-direction:column;gap:4mm">
+  <div style="display:flex;align-items:baseline;gap:14px">
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;color:#02751F">08</span>
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.62)">Agenda general</span>
+  </div>
+  <h2 style="margin:0;font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:25px;line-height:1.12;text-transform:uppercase;color:#001D09">Tres días, un ritmo distinto</h2>
+
+  <div style="display:flex;flex-direction:column;gap:2mm">
+    <div style="display:flex;align-items:baseline;gap:5mm;background:#FECC0C;padding:3mm 6mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:15px;letter-spacing:0.14em;text-transform:uppercase;color:#151D17">Jueves 8</span>
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(21,29,23,0.7)">Llegada, traslado y apertura</span>
+    </div>
+    <div style="display:grid;grid-template-columns:26mm minmax(0,1fr);gap:5mm;padding:2mm 0;border-bottom:1px solid rgba(0,29,9,0.18)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,29,9,0.62)">Mañana</span>
+      <span style="font-size:12.5px;line-height:1.45;color:#001D09">Llegada a Quito. Cada persona gestiona su vuelo hasta Quito.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:26mm minmax(0,1fr);gap:5mm;padding:2mm 0;border-bottom:1px solid rgba(0,29,9,0.18)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,29,9,0.62)">12:00</span>
+      <span style="font-size:12.5px;line-height:1.45;color:#001D09">Punto de encuentro en el aeropuerto de Quito. Viajamos juntas y juntos desde aquí.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:26mm minmax(0,1fr);gap:5mm;padding:2mm 0;border-bottom:1px solid rgba(0,29,9,0.18)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,29,9,0.62)">15:45</span>
+      <span style="font-size:12.5px;line-height:1.45;color:#001D09">Vuelo Quito → Manta. Llegada y traslado terrestre a Tanusas, check-in y tiempo para aterrizar.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:26mm minmax(0,1fr);gap:5mm;padding:2mm 0;border-bottom:1px solid rgba(0,29,9,0.18)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,29,9,0.62)">Noche</span>
+      <span style="font-size:12.5px;line-height:1.45;color:#001D09">Fogata de las intenciones: cena compartida, apertura de CEIBA y una ronda. ¿Con qué llego?, ¿qué quiero comprender?, ¿qué puedo aportar?</span>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:2mm">
+    <div style="display:flex;align-items:baseline;gap:5mm;background:#FECC0C;padding:3mm 6mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:15px;letter-spacing:0.14em;text-transform:uppercase;color:#151D17">Viernes 9</span>
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(21,29,23,0.7)">Día completo de mesas de trabajo</span>
+    </div>
+    <div style="display:grid;grid-template-columns:26mm minmax(0,1fr);gap:5mm;padding:2mm 0;border-bottom:1px solid rgba(0,29,9,0.18)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,29,9,0.62)">Amanecer</span>
+      <span style="font-size:12.5px;line-height:1.45;color:#001D09">Opcional: silencio, guayusa y tabaco con nuestros aliados indígenas, baño en el mar.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:26mm minmax(0,1fr);gap:5mm;padding:2mm 0;border-bottom:1px solid rgba(0,29,9,0.18)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,29,9,0.62)">Desayuno</span>
+      <span style="font-size:12.5px;line-height:1.45;color:#001D09">Desayuno del bosque comestible con Rodrigo Pacheco: el origen de los alimentos y su relación con territorio, nutrición y regeneración.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:26mm minmax(0,1fr);gap:5mm;padding:2mm 0;border-bottom:1px solid rgba(0,29,9,0.18)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,29,9,0.62)">Mañana</span>
+      <span style="font-size:12.5px;line-height:1.45;color:#001D09">Mesas I y II · Capital stacking. ¿Qué debe sostener el capital? ¿Qué capitales y capacidades necesitan encontrarse, y qué función cumple cada uno?</span>
+    </div>
+    <div style="display:grid;grid-template-columns:26mm minmax(0,1fr);gap:5mm;padding:2mm 0;border-bottom:1px solid rgba(0,29,9,0.18)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,29,9,0.62)">Tarde</span>
+      <span style="font-size:12.5px;line-height:1.45;color:#001D09">Almuerzo del bosque comestible y descanso. Mesa III · Portafolio: cómo financiar la resiliencia como sistema y no como un conjunto de activos rentables.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:26mm minmax(0,1fr);gap:5mm;padding:2mm 0;border-bottom:1px solid rgba(0,29,9,0.18)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,29,9,0.62)">Atardecer</span>
+      <span style="font-size:12.5px;line-height:1.45;color:#001D09">Caminata en pares frente al mar. ¿Qué idea solté?, ¿qué veo ahora que antes no veía? Y cena de celebración.</span>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:2mm">
+    <div style="display:flex;align-items:baseline;gap:5mm;background:#FECC0C;padding:3mm 6mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:15px;letter-spacing:0.14em;text-transform:uppercase;color:#151D17">Sábado 10</span>
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(21,29,23,0.7)">Bosque, síntesis y cierre</span>
+    </div>
+    <div style="display:grid;grid-template-columns:26mm minmax(0,1fr);gap:5mm;padding:2mm 0;border-bottom:1px solid rgba(0,29,9,0.18)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,29,9,0.62)">Temprano</span>
+      <span style="font-size:12.5px;line-height:1.45;color:#001D09">Entrada al bosque comestible con Rodrigo Pacheco: caminar, observar y conversaciones caminadas. Círculo en el bosque: una lección del territorio por persona.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:26mm minmax(0,1fr);gap:5mm;padding:2mm 0;border-bottom:1px solid rgba(0,29,9,0.18)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,29,9,0.62)">Mañana</span>
+      <span style="font-size:12.5px;line-height:1.45;color:#001D09">Mesa IV · Tejer el camino. Síntesis, decisiones, estructura de publicación, ruta de demostración y compromisos.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:26mm minmax(0,1fr);gap:5mm;padding:2mm 0;border-bottom:1px solid rgba(0,29,9,0.18)">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,29,9,0.62)">13:00</span>
+      <span style="font-size:12.5px;line-height:1.45;color:#001D09">Almuerzo de cierre y círculo final: una gratitud, un compromiso y una conexión que continúa. Salida coordinada a las 15:00 hacia Manta.</span>
+    </div>
+  </div>
+
+  <p style="margin:0;font-size:11.5px;line-height:1.5;color:rgba(0,29,9,0.62)">Agenda general y sujeta a ajustes. Horarios de vuelo y traslados se confirmarán con cada persona antes de la compra de boletos.</p>
+  <div style="margin-top:auto;padding-top:5mm;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.55)">
+    <span>CEIBA Tanusas 2026 · Invitación</span><span>09</span>
+  </div>
+</section>
+
+<!-- ══ 10 LO PRÁCTICO ═══════════════════════════════════════ -->
+<section class="page" data-screen-label="09 Lo práctico" style="position:relative;overflow:hidden;background:#151D17;color:#F7FFD2;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:18mm 18mm 14mm;display:flex;flex-direction:column;gap:6mm">
+  <div style="position:absolute;left:0;bottom:0;width:100mm;height:80mm;background:url(assets/patterns/pixel-lattice-amber.svg) left bottom/140px auto repeat;opacity:0.06"></div>
+  <div style="position:relative;display:flex;align-items:baseline;gap:14px">
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;color:#D0FF00">09</span>
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(247,255,210,0.58)">Lo práctico</span>
+  </div>
+  <h2 style="position:relative;margin:0;max-width:155mm;font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:31px;line-height:1.12;text-transform:uppercase;color:#F9FFE1">Qué implica aceptar esta invitación</h2>
+  <div style="position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1mm;background:rgba(247,255,210,0.14)">
+    <div style="background:#151D17;padding:7mm;display:flex;flex-direction:column;gap:3mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:#D0FF00">Participación</span>
+      <span style="font-size:14px;line-height:1.6;color:#F7FFD2">Invitación personal y no transferible, con participación activa durante los tres días completos.</span>
+    </div>
+    <div style="background:#151D17;padding:7mm;display:flex;flex-direction:column;gap:3mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:#D0FF00">Grupo</span>
+      <span style="font-size:14px;line-height:1.6;color:#F7FFD2">Entre 12 y 15 personas del Consejo CEIBA y aliados, de múltiples países y perspectivas.</span>
+    </div>
+    <div style="background:#151D17;padding:7mm;display:flex;flex-direction:column;gap:3mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:#D0FF00">Traslados y estadía</span>
+      <span style="font-size:14px;line-height:1.6;color:#F7FFD2">Coordinamos el vuelo Quito–Manta, los traslados terrestres, el alojamiento y la alimentación en Tanusas.</span>
+    </div>
+    <div style="background:#151D17;padding:7mm;display:flex;flex-direction:column;gap:3mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:#D0FF00">Qué traer</span>
+      <span style="font-size:14px;line-height:1.6;color:#F7FFD2">Ropa ligera y de caminata, traje de baño, protección solar, y una pregunta que te importe de verdad.</span>
+    </div>
+  </div>
+  <div style="position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9mm;padding-top:2mm">
+    <div style="display:flex;flex-direction:column;gap:2mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:#D0FF00;margin-bottom:2mm">Datos del retiro</span>
+      <x-import component-from-global-scope="CEIBADesignSystem_b9a094.DataRow" label="Fechas" value="8 – 10 oct 2026" hint-size="100%,44px"></x-import>
+      <x-import component-from-global-scope="CEIBADesignSystem_b9a094.DataRow" label="Sede" value="Tanusas · Puerto Cayo" hint-size="100%,44px"></x-import>
+      <x-import component-from-global-scope="CEIBADesignSystem_b9a094.DataRow" label="Grupo" value="12 a 15 personas" hint-size="100%,44px"></x-import>
+      <x-import component-from-global-scope="CEIBADesignSystem_b9a094.DataRow" label="Contacto" value="naturatech.org" hint-size="100%,44px"></x-import>
+    </div>
+    <div style="position:relative;overflow:hidden;min-height:60mm">
+      <img src="assets/img/speakers-stage.jpg" alt="Consejo CEIBA" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">
+      <span style="position:absolute;left:5mm;bottom:4mm;font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:#F9FFE1">Consejo CEIBA</span>
+    </div>
+  </div>
+  <div style="position:relative;margin-top:auto;padding-top:6mm;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(247,255,210,0.55)">
+    <span>CEIBA Tanusas 2026 · Invitación</span><span>10</span>
+  </div>
+</section>
+
+<!-- ══ 11 CONFIRMACIÓN ══════════════════════════════════════ -->
+<section class="page" data-screen-label="10 Confirmación" style="position:relative;overflow:hidden;background:#F5FECF;color:#001D09;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:18mm 18mm 14mm;display:flex;flex-direction:column;gap:6mm">
+  <div style="display:flex;align-items:baseline;gap:14px">
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;color:#02751F">10</span>
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.62)">Confirmación</span>
+  </div>
+  <h2 style="margin:0;max-width:155mm;font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:31px;line-height:1.12;text-transform:uppercase;color:#001D09">Reserva tu lugar en la mesa</h2>
+  <p style="margin:0;max-width:155mm;font-size:14px;line-height:1.6;color:#001D09;text-wrap:pretty">Confirma antes del {{ fechaLimite }} para que podamos reservar tu lugar, coordinar tus vuelos y compartirte la agenda detallada con los materiales de lectura previa. Puedes responder en línea o devolver esta hoja completada a hola@naturatech.org.</p>
+  <div style="display:flex;align-items:center;gap:6mm;background:#001D09;color:#F7FFD2;padding:6mm 8mm">
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:#D0FF00">Confirma en línea</span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:#F9FFE1">naturatech.org/ceiba-tanusas</span>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:5mm;padding:8mm;background:rgba(0,29,9,0.04)">
+    <span style="font-family:'Host Grotesk',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.62)">Tu respuesta</span>
+    <div style="display:flex;gap:8mm">
+      <div style="display:flex;align-items:center;gap:3mm">
+        <span style="display:inline-block;width:5mm;height:5mm;border:1px solid #001D09"></span>
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#001D09">Confirmo mi lugar</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:3mm">
+        <span style="display:inline-block;width:5mm;height:5mm;border:1px solid #001D09"></span>
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#001D09">Esta vez no puedo</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6mm 8mm;padding-top:2mm">
+      <div style="display:flex;flex-direction:column;gap:6mm">
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.62);border-bottom:1px solid rgba(0,29,9,0.35);padding-bottom:1mm">Nombre y apellido</span>
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.62);border-bottom:1px solid rgba(0,29,9,0.35);padding-bottom:1mm">Organización y rol</span>
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.62);border-bottom:1px solid rgba(0,29,9,0.35);padding-bottom:1mm">Restricciones alimentarias o de salud</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6mm">
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.62);border-bottom:1px solid rgba(0,29,9,0.35);padding-bottom:1mm">Correo</span>
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.62);border-bottom:1px solid rgba(0,29,9,0.35);padding-bottom:1mm">Ciudad de origen del vuelo</span>
+        <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.62);border-bottom:1px solid rgba(0,29,9,0.35);padding-bottom:1mm">Teléfono de contacto</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8mm;padding-top:2mm">
+      <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.62)">Una pregunta que te importe de verdad</span>
+      <span style="border-bottom:1px solid rgba(0,29,9,0.35)"></span>
+      <span style="border-bottom:1px solid rgba(0,29,9,0.35)"></span>
+    </div>
+    <span style="font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.62);padding-top:2mm">Invitación personal y no transferible*</span>
+  </div>
+  <div style="margin-top:auto;padding-top:5mm;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;text-transform:uppercase;color:rgba(0,29,9,0.55)">
+    <span>CEIBA Tanusas 2026 · Invitación</span><span>11</span>
+  </div>
+</section>
+
+<!-- ══ 12 CIERRE ════════════════════════════════════════════ -->
+<section class="page" data-screen-label="Cierre" style="position:relative;overflow:hidden;background:#151D17;color:#F7FFD2;-webkit-print-color-adjust:exact;print-color-adjust:exact">
+  <img src="assets/img/tanusas-village.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:0.3">
+  <div style="position:absolute;inset:0;background:linear-gradient(179.317deg,rgba(21,29,23,0.55) 3.05%,#151D17 96.95%)"></div>
+  <div style="position:absolute;inset:0;padding:18mm;display:flex;flex-direction:column;justify-content:space-between">
+    <img src="assets/logo/ceiba-tanusas-light.svg" alt="CEIBA Tanusas 2026" style="width:100%;max-width:110mm;display:block">
+    <p style="margin:0;max-width:160mm;font-family:'IBM Plex Mono',monospace;font-size:24px;line-height:1.25;text-transform:uppercase;color:#F9FFE1;text-wrap:pretty">Nuevas economías se están tejiendo desde las selvas, las costas y las comunidades. Nos daría muchísima alegría construir este siguiente paso contigo.</p>
+    <div style="display:flex;flex-direction:column;gap:7mm;padding-top:7mm;border-top:0.5px solid rgba(255,255,255,0.2)">
+      <p style="margin:0;max-width:160mm;font-size:12.5px;line-height:1.6;color:rgba(247,255,210,0.58)">NaturaTech LAC es una iniciativa impulsada por BID Lab y co-liderada por C Minds, con el apoyo de Suecia, el Gobierno de Francia, Climate Collective y la red del Consejo CEIBA.</p>
+      <x-import component-from-global-scope="CEIBADesignSystem_b9a094.PartnerStrip" groups="{{ partners }}" hint-size="100%,70px"></x-import>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Departure Mono','IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.17em;text-transform:uppercase">
+        <span style="color:#F7FFD2">Consejo CEIBA · NaturaTech LAC</span>
+        <span style="color:#D0FF00">naturatech.org</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+</doc-page>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;nombreInvitado&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Invitación&quot;},&quot;fechaLimite&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;15 de septiembre&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Invitación&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const inv = (this.props.nombreInvitado ?? '').trim();
+    return {
+      invitadoLinea: inv ? 'Para ' + inv : '8 – 10 · X · 2026',
+      fechaLimite: this.props.fechaLimite ?? '15 de septiembre',
+      partners: [
+        { label: 'Initiative led by', logos: [{ alt: 'BID Lab' }, { alt: 'C Minds' }] },
+        { label: 'Funding partners', logos: [{ alt: 'Suecia' }, { alt: 'Gobierno de Francia' }, { alt: 'Climate Collective' }] },
+      ],
+    };
+  }
+}
+
+</script>
+</body>
+</html>

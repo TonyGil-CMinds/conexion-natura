@@ -109,6 +109,80 @@ model Attendee {
   invitation   Invitation? @relation(fields: [invitationId], references: [id])
 }
 
+/// Sí o no a la invitación del retiro.
+enum RetreatAnswer {
+  YES
+  NO
+}
+
+/// Respuesta a la invitación del retiro del Consejo CEIBA en Tanusas.
+///
+/// Va en su propia tabla y no en `Attendee`: es otro acto, con otras preguntas
+/// —ciudad desde la que se vuela, restricciones alimentarias— y con un «no» que
+/// también hay que guardar. Mezclarlos habría contaminado la lista de Quito con
+/// filas que no son asistentes suyos.
+model RetreatRsvp {
+  id String @id @default(cuid())
+  /// Identifica a la persona: una respuesta por correo, y reenviar corrige.
+  email        String        @unique
+  name         String
+  organization String        @default("")
+  /// Desde dónde vuela: el equipo coordina el tramo Quito–Manta.
+  city         String        @default("")
+  /// Restricciones alimentarias o de salud. Opcional a propósito.
+  diet         String        @default("")
+  /// «Una pregunta que te importe de verdad»: entra en el diseño del retiro.
+  question     String        @default("")
+  answer       RetreatAnswer
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+/// Registro al retiro de Tanusas.
+///
+/// Tabla propia y no `Attendee`: es otro acto, con otros campos —la ciudad desde
+/// la que se vuela, las restricciones alimentarias, una pregunta— y sin nada de
+/// lo que allí manda, que son los dos actos de Quito y el invitado. Mezclarlos
+/// habría llenado la lista de Quito de filas que no son asistentes suyos.
+///
+/// Es distinto de `RetreatRsvp`, que solo recogía un sí o un no: esto es el
+/// registro completo, con fotografía.
+model TanusasRegistration {
+  id String @id @default(cuid())
+  /// Identifica a la persona: un correo, un registro, y reenviar corrige.
+  email        String @unique
+  name         String
+  surname      String
+  organization String
+  role         String
+  /// Desde dónde vuela: el equipo coordina el tramo Quito–Manta.
+  city         String
+  /// «Una pregunta que te importe de verdad»: entra en el diseño del retiro.
+  question     String @default("")
+
+  /// Restricciones alimentarias o de salud. Es una lista porque la elección es
+  /// múltiple, y guarda las claves del catálogo, no la copia traducida.
+  diet      String[]
+  /// Detalle libre de las restricciones: una alergia concreta, una condición.
+  dietNotes String   @default("")
+
+  /// La fotografía se sube aparte: aquí solo queda su ubicación. Es obligatoria
+  /// en el formulario, pero la columna admite nulo para que un fallo de la
+  /// subida no impida arreglar la fila a mano.
+  photoUrl String?
+
+  /// En qué idioma se registró. Decide con cuál de las dos plantillas sale el
+  /// correo de confirmación: el retiro tiene una por idioma.
+  locale String @default("es")
+
+  /// Cuándo salió el correo de confirmación. Nulo mientras no se haya enviado,
+  /// que es lo que impide mandarlo dos veces al corregir el registro.
+  confirmationSentAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 // El modelo `Companion` se retiró: quien viene acompañado ya no rellena los
 // datos de la otra persona. Ahora indica su nombre y su correo, y esa persona
 // entra en la lista como un `Attendee` en `PENDING` que completa su registro

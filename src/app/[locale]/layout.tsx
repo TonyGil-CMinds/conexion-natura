@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
 import { bodyFont, cubao } from '@/fonts';
+import { HeaderGate } from '@/components/layout/HeaderGate';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { AttendanceProvider } from '@/features/registration';
 import { PageTransition } from '@/features/transitions/page-transition';
@@ -122,12 +123,15 @@ export default async function RootLayout({ children, params }: LayoutProps) {
         {/* El estado de asistencia lo consultan la cabecera, el hero y el pie:
             tres ramas distintas del árbol, así que vive por encima de las tres. */}
         <AttendanceProvider>
-          <SiteHeader
-            locale={locale as Locale}
-            nav={t.nav}
-            header={t.header}
-            cta={{ label: t.hero.ctaLabel, confirmedLabel: t.registration.confirmedCta, note: t.hero.ctaNote }}
-          />
+          {/* Salvo en las rutas que traen su propia barra: ver `HeaderGate`. */}
+          <HeaderGate>
+            <SiteHeader
+              locale={locale as Locale}
+              nav={t.nav}
+              header={t.header}
+              cta={{ label: t.hero.ctaLabel, confirmedLabel: t.registration.confirmedCta, note: t.hero.ctaNote }}
+            />
+          </HeaderGate>
 
           <PageTransition>{children}</PageTransition>
         </AttendanceProvider>

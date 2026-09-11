@@ -1,0 +1,87 @@
+/* CEIBA — colour. Every value transcribed verbatim from NEXO CEIBA.fig. */
+:root{
+  /* ── Grounds: green-blacks ───────────────────────────────── */
+  --ceiba-ink-forest:#151D17;      /* rgb(21,29,23)  primary web ground */
+  --ceiba-ink-deep:#001D09;        /* rgb(0,29,9)    deepest brand ground */
+  --ceiba-black:#000000;
+
+  /* ── Creams ──────────────────────────────────────────────── */
+  --ceiba-cream:#F7FFD2;           /* rgb(247,255,210) primary ink on dark */
+  --ceiba-cream-hi:#F9FFE1;        /* rgb(249,255,225) display fill */
+  --ceiba-cream-page:#F5FECF;      /* rgb(245,254,207) light page ground */
+  --ceiba-cream-warm:#F7EEE3;      /* rgb(247,238,227) print/paper */
+  --ceiba-white:#FFFFFF;
+  --ceiba-off-white:#FFFFF4;       /* rgb(255,255,244) */
+
+  /* ── Limes: the signal family ────────────────────────────── */
+  --ceiba-lime:#D0FF00;            /* rgb(208,255,0)   CTA / signal */
+  --ceiba-lime-chartreuse:#C8F01A; /* rgb(200,240,26) */
+  --ceiba-lime-acid:#C0E619;       /* rgb(192,230,25)  logo mark */
+  --ceiba-lime-leaf:#A2E136;       /* rgb(162,225,54)  light-theme accent block */
+  --ceiba-lime-grass:#8FE200;      /* rgb(143,226,0)   pixel glyphs */
+  --ceiba-lime-deep:#AFD900;       /* rgb(175,217,0) */
+  --ceiba-lime-olive:#A2D200;      /* rgb(162,210,0)   slide ground */
+  --ceiba-lime-pale:#C5FF62;       /* rgb(197,255,98)  meta on dark */
+
+  /* ── Greens ──────────────────────────────────────────────── */
+  --ceiba-green:#00B000;           /* rgb(0,176,0) */
+  --ceiba-green-emerald:#009D58;   /* rgb(0,157,88) */
+  --ceiba-green-forest:#02751F;    /* rgb(2,117,31) */
+  --ceiba-green-deep:#007A23;      /* rgb(0,122,35) */
+  --ceiba-mint:#61DDAF;            /* rgb(97,221,175) */
+
+  /* ── Blues ───────────────────────────────────────────────── */
+  --ceiba-blue:#005BE8;            /* rgb(0,91,232) */
+  --ceiba-blue-royal:#0359E1;      /* rgb(3,89,225)  pattern blue */
+  --ceiba-blue-ink:#041DA2;        /* rgb(4,29,162) */
+  --ceiba-blue-sky:#65A1FF;        /* rgb(101,161,255) */
+  --ceiba-blue-pale:#71C2FF;       /* rgb(113,194,255) */
+
+  /* ── Warm + hot accents ──────────────────────────────────── */
+  --ceiba-amber:#FFB600;           /* rgb(255,182,0) */
+  --ceiba-amber-hi:#FFBB00;        /* rgb(255,187,0) */
+  --ceiba-yellow:#FECC0C;          /* rgb(254,204,12) section block */
+  --ceiba-magenta:#F62FA2;         /* rgb(246,47,162) */
+  --ceiba-red:#E22829;             /* rgb(226,40,41) */
+
+  /* ── Neutrals ────────────────────────────────────────────── */
+  --ceiba-grey-400:#D9D9D9;        /* rgb(217,217,217) */
+  --ceiba-grey-500:#A9AAA9;        /* rgb(169,170,169) */
+  --ceiba-grey-sage:#C8CDB9;       /* rgb(200,205,185) muted mono copy */
+
+  /* ── Semantic: surfaces ──────────────────────────────────── */
+  --surface-page:var(--ceiba-ink-forest);
+  --surface-page-deep:var(--ceiba-ink-deep);
+  --surface-page-light:var(--ceiba-cream-page);
+  --surface-block-light:var(--ceiba-lime-leaf);
+  --surface-block-warm:var(--ceiba-yellow);
+  --surface-field:rgba(217,217,217,0.03);
+  --surface-signal:var(--ceiba-lime);
+
+  /* ── Semantic: ink ───────────────────────────────────────── */
+  --text-primary:var(--ceiba-cream);
+  --text-display:var(--ceiba-cream-hi);
+  --text-on-light:var(--ceiba-ink-deep);
+  --text-on-signal:var(--ceiba-ink-forest);
+  --text-meta:var(--ceiba-white);
+  --text-meta-lime:var(--ceiba-lime-pale);
+  --text-muted:rgba(247,255,210,0.58);
+  --text-placeholder:rgba(247,255,210,0.5);
+  --text-quiet:var(--ceiba-grey-sage);
+  --text-link:var(--ceiba-lime);
+  --text-link-hover:var(--ceiba-lime-grass);
+
+  /* ── Semantic: lines ─────────────────────────────────────── */
+  --border-hairline:rgba(255,255,255,0.2);   /* 0.5px header rules */
+  --border-grid:rgba(247,255,210,0.25);      /* 0.25px vertical grid */
+  --border-grid-dashed:rgba(208,255,0,0.25); /* 0.341px dashed grid */
+  --border-outline:var(--ceiba-cream);       /* 1px inset outline button */
+
+  /* ── Gradients (angles verbatim from the file) ───────────── */
+  --gradient-cta:linear-gradient(90deg,#00B000 0%,#8FE200 100%); /* @kind color */
+  --gradient-mark:linear-gradient(238.824deg,#8FE200 11.29%,#009D58 85.05%); /* @kind color */
+  --gradient-sun:linear-gradient(238.827deg,#00B000 27.08%,#FFB600 117.92%); /* @kind color */
+  --gradient-lime-sky:linear-gradient(238.838deg,#D0FF00 28.48%,#65A1FF 99.99%); /* @kind color */
+  --gradient-scrim:linear-gradient(179.317deg,rgba(21,29,23,0) 3.05%,#151D17 96.95%); /* @kind color */
+  --gradient-deep-leaf:linear-gradient(180deg,#001D09 0%,#A3E136 100%); /* @kind color */
+}

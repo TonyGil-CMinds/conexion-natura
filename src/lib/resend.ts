@@ -27,14 +27,21 @@ export type SendResult =
 /**
  * Las plantillas del sitio, con la variable de entorno de cada una.
  *
- * Son dos correos distintos y por eso son dos plantillas: la **confirmación**
- * la recibe quien acaba su registro, y la **invitación** quien ha sido apuntado
- * por otra persona y todavía tiene que completarlo. Quien envía elige por
- * nombre, no por id: los ids viven en el entorno y no en el código.
+ * Cada correo es una plantilla: la **confirmación** la recibe quien acaba su
+ * registro en Quito, la **invitación** quien ha sido apuntado por otra persona,
+ * y el **retiro** tiene la suya en cada idioma. Quien envía elige por nombre, no
+ * por id: los ids viven en el entorno y no en el código.
  */
 export const TEMPLATES = {
   confirmation: 'CEIBA_EMAIL_TEMPLATE_ID',
   invite: 'CEIBA_EMAIL_INVITE_TEMPLATE_ID',
+  /**
+   * El retiro tiene **una plantilla por idioma** y no una con variables: su
+   * correo es casi todo texto corrido, y traducirlo con variables habría dejado
+   * el idioma repartido entre Resend y el código.
+   */
+  tanusasEs: 'CEIBA_EMAIL_TEMPLATE_ID_TANUSAS_ES',
+  tanusasEn: 'CEIBA_EMAIL_TEMPLATE_ID_TANUSAS_EN',
 } as const;
 
 export type TemplateName = keyof typeof TEMPLATES;

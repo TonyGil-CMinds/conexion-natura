@@ -1,0 +1,25 @@
+/* CEIBA — borders, radii, shadows, motion. The system is square: there is
+   almost no corner radius anywhere except the 82px slide frame and the
+   circular pixel-ring badges. Depth comes from inset outlines, not shadows. */
+:root{
+  --radius-none:0;
+  --radius-slide:82px;
+  --radius-pill:9999px;
+
+  --hairline:0.5px;                /* header rules */
+  --grid-line:0.25px;              /* vertical column grid */
+  --dashed-line:0.341px;           /* dashed column grid */
+
+  --outline-button:inset 0 0 0 1px var(--ceiba-cream);
+  --outline-grid:inset 0 0 0 var(--grid-line) var(--border-grid);
+  --shadow-none:none;
+
+  /* motion — the source is a static comp set; these are the house defaults
+     used by this design system's components. */
+  /* pixel-native stepped reveals */
+  --ease-step:steps(4,end);               /* @kind other */
+  --ease-out:cubic-bezier(0.2,0.8,0.2,1); /* @kind other */
+  --dur-fast:120ms;                       /* @kind other */
+  --dur-base:200ms;                       /* @kind other */
+  --dur-slow:420ms;                       /* @kind other */
+}
