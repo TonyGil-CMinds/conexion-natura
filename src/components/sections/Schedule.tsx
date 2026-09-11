@@ -1,7 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import type { AgendaItem } from '@/config/agenda';
+import Image from 'next/image';
+import { AGENDA_FEATURE, type AgendaItem } from '@/config/agenda';
 import styles from './Schedule.module.css';
 
 type Props = {
@@ -12,6 +13,8 @@ type Props = {
   peopleLabel: string;
   /** Fecha abreviada del distintivo, ya traducida. */
   dateLabel: string;
+  /** La fila que abre el programa: el Premio, antes de la noche y en otra sede. */
+  feature: { name: string; time: string; venue: string };
   searchLabel: string;
   searchPlaceholder: string;
   searchEmpty: string;
@@ -30,16 +33,17 @@ function normalize(value: string) {
 
 /** Todo el texto de un momento en una sola cadena, para buscar dentro. */
 function haystack(item: AgendaItem) {
-  const people = (item.people ?? []).flatMap((person) => [
-    person.name,
-    person.role,
-    person.organization,
-  ]);
-  return normalize(
-    [item.time, item.title, item.description, item.host?.name, item.host?.role, ...people]
-      .filter(Boolean)
-      .join(' '),
-  );
+  /**
+   * Los créditos entran en la búsqueda **si están**. Cuando los ponentes aún no
+   * se revelan no llegan hasta aquí: la página los quita antes de pasar la
+   * lista, así que ni se pintan ni se pueden encontrar.
+   */
+  const credits = [
+    item.host?.name,
+    item.host?.role,
+    ...(item.people ?? []).flatMap((person) => [person.name, person.role, person.organization]),
+  ];
+  return normalize([item.time, item.title, item.description, ...credits].filter(Boolean).join(' '));
 }
 
 /**
@@ -62,6 +66,7 @@ export function Schedule({
   hostLabel,
   peopleLabel,
   dateLabel,
+  feature,
   searchLabel,
   searchPlaceholder,
   searchEmpty,
@@ -79,6 +84,14 @@ export function Schedule({
       return words.every((word) => text.includes(word));
     });
   }, [items, query]);
+
+  /** La fila destacada se busca igual que las demás: por su texto. */
+  const showsFeature = useMemo(() => {
+    const needle = normalize(query.trim());
+    if (!needle) return true;
+    const text = normalize([feature.name, feature.time, feature.venue].join(' '));
+    return needle.split(/\s+/).every((word) => text.includes(word));
+  }, [feature, query]);
 
   return (
     <section className={styles.root}>
@@ -101,8 +114,46 @@ export function Schedule({
           </label>
         </div>
 
-        {visible.length > 0 ? (
+        {visible.length > 0 || showsFeature ? (
           <ol className={styles.list}>
+            {/**
+             * El Premio abre el programa. Es un momento del día como los demás
+             * —tiene hora y sede— pero con su propio rótulo, así que va como
+             * fila destacada y no como una fila más con un título de texto.
+             */}
+            {showsFeature && (
+              <li className={`${styles.item} ${styles.feature}`} id={AGENDA_FEATURE.id}>
+                <p className={styles.time}>{feature.time}</p>
+
+                <h2 className={styles.featureName}>
+                  {/* El rótulo se compone de trozos, así que el nombre legible
+                      va aparte: lo que se lee en voz alta es «Premio 2026». */}
+                  <span className={styles.srOnly}>{feature.name}</span>
+                  <span className={styles.wordmark} aria-hidden>
+                    PREMI
+                    <Image
+                      src={AGENDA_FEATURE.letterO.src}
+                      alt=""
+                      width={AGENDA_FEATURE.letterO.width}
+                      height={AGENDA_FEATURE.letterO.height}
+                      className={styles.glyph}
+                    />
+                    <span className={styles.wordmarkGap} />2
+                    <Image
+                      src={AGENDA_FEATURE.numberZero.src}
+                      alt=""
+                      width={AGENDA_FEATURE.numberZero.width}
+                      height={AGENDA_FEATURE.numberZero.height}
+                      className={styles.glyph}
+                    />
+                    26
+                  </span>
+                </h2>
+
+                <p className={styles.featureVenue}>{feature.venue}</p>
+              </li>
+            )}
+
             {visible.map((item) => (
               <li key={item.id} className={styles.item} id={item.id}>
                 <p className={styles.time}>{item.time}</p>

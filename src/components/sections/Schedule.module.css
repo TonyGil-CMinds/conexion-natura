@@ -334,3 +334,111 @@
     padding-top: 0;
   }
 }
+
+/* ——— Fila destacada: el Premio ——— */
+
+/**
+ * Abre el programa y se distingue invirtiendo la banda: crema de fondo y tinta
+ * oscura. Los roles se redeclaran aquí —no solo el `color`— para que la hora,
+ * que se pinta con una mezcla de `--fg`, siga al fondo nuevo.
+ *
+ * Tres partes: hora a la izquierda, rótulo centrado y sede a la derecha. Las
+ * dos columnas de los lados miden lo mismo (`1fr`) porque es lo que deja el
+ * rótulo centrado en la banda y no en el hueco sobrante.
+ */
+.feature {
+  --fg: var(--color-dark);
+
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-6);
+  padding-block: var(--space-6);
+  border-top: 0;
+  background-color: var(--color-light);
+  color: var(--color-dark);
+}
+
+.featureName {
+  margin: 0;
+  justify-self: center;
+}
+
+/**
+ * El rótulo: Cubao con dos glifos de marca en lugar de la «O» y el «0».
+ *
+ * Va en una caja flexible y alineada por la base para que los glifos se sienten
+ * sobre la misma línea que las letras. Su alto se da en `em`, así que siguen al
+ * cuerpo del rótulo cuando este encoge en pantallas estrechas.
+ */
+.wordmark {
+  display: flex;
+  align-items: baseline;
+  font-family: var(--font-cubao);
+  font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-dark);
+}
+
+/**
+ * El glifo va un pelo más alto que la versal —medido: 31px contra 27,7 a cuerpo
+ * de 44—, que es la proporción de la referencia: asoma un poco por arriba y por
+ * abajo, como en el rótulo impreso. A su alto natural quedaba un 22% más alto.
+ *
+ * Se apoya en la base con `align-self: baseline`, que pone el canto inferior de
+ * la imagen sobre la línea de base, y el desplazamiento de un cuarto de píxel lo
+ * baja lo justo para que no parezca flotando.
+ */
+.glyph {
+  width: auto;
+  height: 0.71em;
+  align-self: baseline;
+  transform: translateY(0.02em);
+}
+
+/* El espacio entre «PREMIO» y «2026», que un espacio normal no da aquí. */
+.wordmarkGap {
+  width: 0.3em;
+}
+
+.featureVenue {
+  margin: 0;
+  justify-self: end;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-align: right;
+  color: color-mix(in srgb, var(--color-dark) 72%, transparent);
+}
+
+/**
+ * En estrecho las tres partes se apilan: en fila, el rótulo obligaba a la hora y
+ * a la sede a partirse en dos renglones cada una.
+ */
+@media (max-width: 760px) {
+  .feature {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+    text-align: left;
+  }
+
+  .featureName,
+  .featureVenue {
+    justify-self: start;
+    text-align: left;
+  }
+}
+
+/** Para lectores de pantalla: lo que el rótulo dice, ya que va en trozos. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -114,6 +114,16 @@ export const es = {
      * en `SITE.event.date`, pero cómo se abrevia un mes cambia con el idioma.
      */
     dateLabel: '5 oct',
+    /**
+     * La fila que abre el programa: el Premio, que ocurre antes de que empiece
+     * la noche y en otra sede. El nombre no se traduce; la sede y la franja sí
+     * viven aquí, como las de los demás momentos.
+     */
+    feature: {
+      name: 'Premio 2026',
+      time: '16:00 - 16:45',
+      venue: 'UDLA Arena · Quito, Ecuador',
+    },
     /** Buscador del programa. */
     searchLabel: 'Buscar en la agenda',
     searchPlaceholder: 'Buscar...',
@@ -210,6 +220,8 @@ export const es = {
     listTitle: 'Todos los ponentes',
     introHeadline: ['Quienes dan forma', 'a lo que viene en', 'el futuro'],
     introNote: 'Conoce la lista de participantes y ponentes de alto nivel',
+    /** Mientras la lista no se enseña. La hoja lo pone en versales. */
+    introNotePending: 'Revelación de speakers en breve',
     sessionsLabel: 'Sesiones',
     /**
      * Del programa de la organización. Solo entran quienes constan con cargo y

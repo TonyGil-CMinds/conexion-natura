@@ -5,6 +5,7 @@ import { PageCover } from '@/components/sections/PageCover';
 import { PageIntro } from '@/components/sections/PageIntro';
 import { SpeakerList } from '@/components/sections/SpeakerList';
 import { PAGES } from '@/config/pages';
+import { SITE } from '@/config/site';
 import { getDictionary, isLocale } from '@/i18n';
 import { socialMeta } from '@/config/seo';
 
@@ -62,13 +63,24 @@ export default async function SpeakersPage({ params }: Props) {
         tone="lime"
         hasGradientBlock
       />
-      <PageIntro headline={t.speakers.introHeadline} note={t.speakers.introNote} icon={introIcon} />
-      <SpeakerList
-        title={t.speakers.listTitle}
-        speakers={t.speakers.items}
-        sessionsLabel={t.speakers.sessionsLabel}
-        sessionTimes={sessionTimes}
+      {/**
+       * Mientras los ponentes no se revelan, la página se queda en portada y
+       * aviso. La lista no se esconde con CSS: no se pinta, así que los nombres
+       * tampoco viajan en el HTML.
+       */}
+      <PageIntro
+        headline={t.speakers.introHeadline}
+        note={SITE.speakersRevealed ? t.speakers.introNote : t.speakers.introNotePending}
+        icon={introIcon}
       />
+      {SITE.speakersRevealed && (
+        <SpeakerList
+          title={t.speakers.listTitle}
+          speakers={t.speakers.items}
+          sessionsLabel={t.speakers.sessionsLabel}
+          sessionTimes={sessionTimes}
+        />
+      )}
     </PageFrame>
   );
 }

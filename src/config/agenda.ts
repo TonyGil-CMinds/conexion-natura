@@ -32,3 +32,21 @@ export type AgendaItem = {
   /** Quienes intervienen. */
   people?: readonly AgendaPerson[];
 };
+
+/**
+ * La fila que abre el programa: el Premio, que ocurre antes de que empiece la
+ * noche y en otra sede.
+ *
+ * Aquí solo vive lo que **no** se traduce: el ancla y los dos glifos de marca
+ * que sustituyen a la «O» y al «0» del rótulo. La franja, la sede y el nombre
+ * accesible están en los diccionarios, con los de los demás momentos.
+ *
+ * Los glifos van como imagen y no como máscara: traen su verde fijado y son
+ * parte del rótulo, no un icono que deba tomar la tinta del texto.
+ */
+export const AGENDA_FEATURE = {
+  /** Ancla de la fila, como la de cualquier otro momento. */
+  id: 'premio',
+  letterO: { src: '/brand/premio-letter-o.svg', width: 28, height: 37 },
+  numberZero: { src: '/brand/premio-number-zero.svg', width: 29, height: 38 },
+} as const;

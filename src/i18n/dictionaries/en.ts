@@ -100,6 +100,11 @@ export const en: Dictionary = {
     hostLabel: 'Hosted by',
     peopleLabel: 'With',
     dateLabel: 'Oct 5',
+    feature: {
+      name: 'Premio 2026',
+      time: '16:00 - 16:45',
+      venue: 'UDLA Arena · Quito, Ecuador',
+    },
     searchLabel: 'Search the agenda',
     searchPlaceholder: 'Search...',
     searchEmpty: 'No moment matches your search',
@@ -190,6 +195,7 @@ export const en: Dictionary = {
     listTitle: 'All speakers',
     introHeadline: ['The people shaping', 'what comes next in', 'the future'],
     introNote: 'Meet the high-level participants and speakers',
+    introNotePending: 'Speaker reveal coming soon',
     sessionsLabel: 'Sessions',
     items: [
       {

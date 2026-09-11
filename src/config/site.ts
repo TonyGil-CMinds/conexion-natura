@@ -54,6 +54,17 @@ export const SITE = {
     /** Día completo. El fin es el día siguiente: el final es exclusivo. */
     calendar: { kind: 'day', start: '20261005', end: '20261006' },
   },
+  /**
+   * Si la lista de ponentes ya se puede enseñar.
+   *
+   * Va aquí y no en cada página porque lo miran **dos**: la lista de ponentes y
+   * los créditos de la agenda. Con un interruptor por sitio, revelar habría
+   * sido acordarse de los dos.
+   *
+   * Los datos siguen en los diccionarios: esto no los borra, solo no los pinta.
+   */
+  speakersRevealed: false,
+
   /** Destino del botón principal. El rótulo sale del diccionario. */
   cta: { href: '/registro' },
 } as const;
