@@ -3,14 +3,27 @@ import { notFound } from 'next/navigation';
 import { PageFrame } from '@/components/layout/PageFrame';
 import { TanusasPage } from '@/features/tanusas';
 import { getDictionary, isLocale } from '@/i18n';
+import { OG_IMAGES, socialMeta } from '@/config/seo';
 
 type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
-  const { title, description } = getDictionary(locale).meta.tanusas;
-  return { title, description };
+  const t = getDictionary(locale);
+  const { title, description } = t.meta.tanusas;
+  return {
+    title,
+    description,
+    ...socialMeta({
+      title: `${title} - ${t.meta.siteName}`,
+      description,
+      locale,
+      siteName: t.meta.siteName,
+      // La suya: el retiro tiene identidad propia dentro del sitio.
+      image: OG_IMAGES.tanusas,
+    }),
+  };
 }
 
 /**

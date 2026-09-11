@@ -6,14 +6,26 @@ import { PageIntro } from '@/components/sections/PageIntro';
 import { SpeakerList } from '@/components/sections/SpeakerList';
 import { PAGES } from '@/config/pages';
 import { getDictionary, isLocale } from '@/i18n';
+import { socialMeta } from '@/config/seo';
 
 type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
-  const { title, description } = getDictionary(locale).meta.speakers;
-  return { title, description };
+  const t = getDictionary(locale);
+  const { title, description } = t.meta.speakers;
+  return {
+    title,
+    description,
+    ...socialMeta({
+      // Al compartir no hay plantilla que ponga el sufijo: va escrito.
+      title: `${title} - ${t.meta.siteName}`,
+      description,
+      locale,
+      siteName: t.meta.siteName,
+    }),
+  };
 }
 
 /**

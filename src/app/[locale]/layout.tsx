@@ -6,6 +6,7 @@ import { SiteHeader } from '@/components/layout/SiteHeader';
 import { AttendanceProvider } from '@/features/registration';
 import { PageTransition } from '@/features/transitions/page-transition';
 import { LOCALES, getDictionary, isLocale, type Locale } from '@/i18n';
+import { socialMeta } from '@/config/seo';
 import { SITE_URL } from '@/config/urls';
 import '@/styles/globals.css';
 
@@ -50,6 +51,17 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       canonical: `/${locale}`,
       languages: Object.fromEntries(LOCALES.map((code) => [code, `/${code}`])),
     },
+    /**
+     * Lo que se ve al pegar un enlace. Va en el layout para que valga de
+     * omisión en todas las rutas; cada página lo vuelve a componer con su
+     * título, y el retiro además con su propia imagen.
+     */
+    ...socialMeta({
+      title: t.meta.home.title,
+      description: t.meta.home.description,
+      locale: locale as Locale,
+      siteName: t.meta.siteName,
+    }),
   };
 }
 
