@@ -92,20 +92,26 @@ export function TanusasRegistrationFlow({ email, existing, locale, copy, photoCo
        * conserva la que subió: la fila guarda una URL, y volver a exigir el
        * archivo solo para cambiar una ciudad sería pedir dos veces lo mismo.
        */
-      const photoUrl = photo ? await uploadPhoto(photo) : existing?.photoUrl;
-      if (!photoUrl) throw new Error(photoCopy.required);
+      /**
+       * Sin imagen nueva se conserva la que ya está en R2. Sale del estado y
+       * **no** de `existing`: quien acaba de registrarse en esta misma sesión
+       * y entra a «editar» no tiene `existing` —no venía de la base—, y con
+       * aquel respaldo su corrección moría con «falta la fotografía».
+       */
+      const saved = photo ? await uploadPhoto(photo) : photoUrl;
+      if (!saved) throw new Error(photoCopy.required);
 
       const response = await fetch('/api/tanusas/registro', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ email, locale, ...details, ...diet, photoUrl }),
+        body: JSON.stringify({ email, locale, ...details, ...diet, photoUrl: saved }),
       });
 
       if (!response.ok) throw new Error(copy.failed);
-      setPhotoUrl(photoUrl);
+      setPhotoUrl(saved);
       setStage('done');
     },
-    [copy.failed, details, diet, email, existing?.photoUrl, locale, photoCopy.required],
+    [copy.failed, details, diet, email, locale, photoCopy.required, photoUrl],
   );
 
 
@@ -134,6 +140,9 @@ export function TanusasRegistrationFlow({ email, existing, locale, copy, photoCo
         <PhotoScreen
           key="photo"
           copy={photoCopy}
+          /* Lo ya guardado, si lo hay: con esto la pantalla deja de exigir una
+             imagen nueva a quien solo vuelve a corregir un dato. */
+          currentPhotoUrl={photoUrl}
           onConfirm={handleConfirm}
           onBack={() => setStage('diet')}
         />

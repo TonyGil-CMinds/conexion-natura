@@ -27,8 +27,22 @@ type Props = {
    */
   mode?: 'register' | 'edit';
   /**
+   * El retrato que ya está guardado, si lo hay.
+   *
+   * Con él, la fotografía deja de ser obligatoria en esta pantalla: quien vuelve
+   * a **editar** su registro pasa por aquí otra vez, y exigirle que suba de
+   * nuevo la misma imagen para corregir una ciudad no tiene sentido. Sin nueva
+   * imagen se confirma con `null` y quien orquesta conserva la URL que ya tenía.
+   *
+   * No se usa para recortar ni para dibujar en un lienzo: solo se enseña. Viene
+   * de otro dominio (R2) y pintarlo en un canvas lo dejaría contaminado.
+   */
+  currentPhotoUrl?: string | null;
+  /**
    * Confirma el registro con el retrato ya recortado, si hay alguno. Llega como
    * `Blob` y no como el archivo elegido: lo que se sube es el recorte.
+   *
+   * Llega `null` cuando no se eligió imagen nueva y ya había una guardada.
    */
   onConfirm?: (photo: Blob | null) => Promise<void> | void;
   onBack?: () => void;
@@ -75,7 +89,13 @@ const DRAG_RATIO = 0.76;
  * La subida a R2 no ocurre al elegir el archivo sino al confirmar: quien cambia
  * de imagen tres veces no deja tres archivos huérfanos en el bucket.
  */
-export function PhotoScreen({ copy, mode = 'register', onConfirm, onBack }: Props) {
+export function PhotoScreen({
+  copy,
+  mode = 'register',
+  currentPhotoUrl = null,
+  onConfirm,
+  onBack,
+}: Props) {
   /** Rótulos de este uso de la pantalla. Lo demás es común a los dos. */
   const labels = mode === 'edit' ? copy.edit : copy;
   /** URL local de la imagen ya sin fondo. Es la fuente del editor y del recorte. */
@@ -124,9 +144,16 @@ export function PhotoScreen({ copy, mode = 'register', onConfirm, onBack }: Prop
   async function confirm() {
     if (isSending || isRemoving) return;
 
-    // Sin fotografía no se sigue. Se dice aquí en vez de dejar el botón muerto:
-    // un botón apagado no explica qué falta.
-    if (!preview) {
+    /**
+     * Sin fotografía no se sigue —**salvo que ya haya una guardada**—. Se dice
+     * aquí en vez de dejar el botón muerto: un botón apagado no explica qué
+     * falta.
+     *
+     * La excepción es la edición: quien vuelve a pasar por este paso para
+     * corregir un dato ya subió su retrato, y pedírselo otra vez le obligaba a
+     * buscar el archivo original para no cambiar nada.
+     */
+    if (!preview && !currentPhotoUrl) {
       setError(copy.required);
       return;
     }
@@ -134,8 +161,11 @@ export function PhotoScreen({ copy, mode = 'register', onConfirm, onBack }: Prop
     setError(null);
     setIsSending(true);
     try {
-      // El recorte se cuece aquí: lo que se sube es lo que se ha visto.
-      const portrait = await renderPortrait(preview, crop);
+      /**
+       * El recorte se cuece aquí: lo que se sube es lo que se ha visto. Sin
+       * imagen nueva va `null`, y quien orquesta conserva la URL que ya tenía.
+       */
+      const portrait = preview ? await renderPortrait(preview, crop) : null;
       await onConfirm?.(portrait);
     } catch {
       setError(copy.failed);
@@ -243,7 +273,7 @@ export function PhotoScreen({ copy, mode = 'register', onConfirm, onBack }: Prop
          */}
         <motion.label
           className={styles.drop}
-          data-filled={preview ? true : undefined}
+          data-filled={preview || currentPhotoUrl ? true : undefined}
           /* Lo que falta se marca en la caja, no solo en el texto de abajo: el
              aviso está al pie del botón y la caja es lo que hay que tocar. */
           data-missing={!preview && error === copy.required ? true : undefined}
@@ -290,6 +320,35 @@ export function PhotoScreen({ copy, mode = 'register', onConfirm, onBack }: Prop
                   {/* Sin `next/image`: la fuente es un blob del navegador, que
                       el optimizador no puede procesar. */}
                   <img src={preview} alt="" style={framing} draggable={false} />
+                </span>
+                <span className={styles.dropLabel}>{copy.change}</span>
+              </motion.span>
+            ) : currentPhotoUrl ? (
+              /**
+               * La que ya está guardada. Se enseña para que quien vuelve a pasar
+               * por aquí vea que su retrato sigue puesto y que solo tiene que
+               * tocar esto si quiere cambiarlo.
+               *
+               * No lleva `framing`: lo guardado **ya es** el recorte, así que
+               * moverlo con el encuadre en curso lo descuadraría.
+               */
+              <motion.span
+                key="current"
+                className={styles.previewRow}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.24, ease: EASE_OUT_EXPO }}
+              >
+                <span className={styles.previewFrame}>
+                  {/* Sin `next/image`: el optimizador no sirve un dominio que no
+                      está declarado, y aquí solo hace falta enseñarla. */}
+                  <img
+                    src={currentPhotoUrl}
+                    alt=""
+                    style={{ transform: 'translate(-50%, -50%)' }}
+                    draggable={false}
+                  />
                 </span>
                 <span className={styles.dropLabel}>{copy.change}</span>
               </motion.span>

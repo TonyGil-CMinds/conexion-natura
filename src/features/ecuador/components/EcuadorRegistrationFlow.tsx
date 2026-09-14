@@ -5,7 +5,6 @@ import { AnimatePresence } from 'framer-motion';
 import { JoinScreen, PhotoScreen, uploadPhoto } from '@/features/registration';
 import type { Dictionary, Locale } from '@/i18n';
 import { lookupEcuadorRegistration } from '../lib/lookup-registration';
-import type { EcuadorRegistrationRecord } from '../lib/lookup-registration';
 import { EcuadorDetailsScreen, EMPTY_DETAILS, type DetailsDraft } from './EcuadorDetailsScreen';
 import {
   EcuadorParticipationScreen,
@@ -49,14 +48,6 @@ export function EcuadorRegistrationFlow({ locale, copy, photoCopy }: Props) {
   /** La del registro guardado: la credencial la necesita para el retrato. */
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   /**
-   * El registro que ya había con ese correo, si lo había. Se guarda entero
-   * porque al corregir hay que poder reutilizar su fotografía: la fila guarda
-   * una URL, y volver a exigir el archivo solo para cambiar una palabra sería
-   * pedir dos veces lo mismo.
-   */
-  const [existing, setExisting] = useState<EcuadorRegistrationRecord | null>(null);
-
-  /**
    * Llega con el correo ya validado por la primera pantalla. La consulta corre
    * dentro de su animación de guardado, así que no añade espera.
    */
@@ -65,7 +56,6 @@ export function EcuadorRegistrationFlow({ locale, copy, photoCopy }: Props) {
     const found = await lookupEcuadorRegistration(value);
 
     if (found) {
-      setExisting(found);
       setDetails({
         fullName: found.fullName,
         organization: found.organization,
@@ -107,7 +97,13 @@ export function EcuadorRegistrationFlow({ locale, copy, photoCopy }: Props) {
    */
   const handleConfirm = useCallback(
     async (photo: Blob | null) => {
-      const uploaded = photo ? await uploadPhoto(photo) : existing?.photoUrl;
+      /**
+       * Sin imagen nueva se conserva la que ya está en R2. Sale del estado y
+       * **no** de `existing`: quien acaba de registrarse en esta misma sesión
+       * y entra a «editar» no tiene `existing` —no venía de la base—, y con
+       * aquel respaldo su corrección moría con «falta la fotografía».
+       */
+      const uploaded = photo ? await uploadPhoto(photo) : photoUrl;
       if (!uploaded) throw new Error(photoCopy.required);
 
       const response = await fetch('/api/registro/ecuador', {
@@ -120,7 +116,7 @@ export function EcuadorRegistrationFlow({ locale, copy, photoCopy }: Props) {
       setPhotoUrl(uploaded);
       setStage('done');
     },
-    [copy.registration.failed, details, email, existing?.photoUrl, locale, participation, photoCopy.required],
+    [copy.registration.failed, details, email, locale, participation, photoCopy.required, photoUrl],
   );
 
   return (
@@ -150,6 +146,9 @@ export function EcuadorRegistrationFlow({ locale, copy, photoCopy }: Props) {
         <PhotoScreen
           key="photo"
           copy={photoCopy}
+          /* Lo ya guardado, si lo hay: con esto la pantalla deja de exigir una
+             imagen nueva a quien solo vuelve a corregir un dato. */
+          currentPhotoUrl={photoUrl}
           onConfirm={handleConfirm}
           onBack={() => setStage('participation')}
         />
