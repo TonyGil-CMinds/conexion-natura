@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { EASE_OUT_EXPO } from '@/lib/motion';
 import type { Dictionary } from '@/i18n';
 import { TANUSAS } from '@/config/tanusas';
-import styles from './TanusasRegistration.module.css';
+import styles from '@/features/registration/components/StepShell.module.css';
 
 /**
  * Los campos de texto, en el orden del diseño. El correo no está: lo dio el

@@ -1,0 +1,176 @@
+/**
+ * Lo propio del registro de empresas de Ecuador.
+ *
+ * El armazón de los pasos —retícula, titular, panel, campos, botones— es el
+ * compartido (`features/registration/components/StepShell.module.css`). Aquí
+ * solo está lo que esta pantalla tiene y las demás no: las tarjetas de cómo
+ * participar y el bloque del acompañante.
+ */
+
+/* ——— Tarjetas de participación ——— */
+
+/**
+ * Una debajo de otra y no en dos columnas: la segunda opción trae una
+ * explicación de tres líneas —el aforo, la disponibilidad, que no cuesta—, y a
+ * media columna se partía en siete renglones contra un icono de dos.
+ */
+.grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+/**
+ * Cada tarjeta es un botón de radio de verdad: el `input` va oculto para el ojo
+ * pero no para el teclado ni para el lector, que es lo que anuncia que solo se
+ * puede elegir una. Con `<button>` habría que contarlo a mano y mal.
+ */
+.card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--rule);
+  background-color: color-mix(in srgb, var(--fg) 4%, transparent);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-expo),
+    background-color var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-out-expo);
+}
+
+.card:hover {
+  border-color: color-mix(in srgb, var(--accent-nav) 60%, transparent);
+}
+
+/* El foco del teclado tiene que verse en la tarjeta, no en el `input` oculto. */
+.card:focus-within {
+  outline: 2px solid var(--accent-nav);
+  outline-offset: 2px;
+}
+
+/**
+ * Elegida: se invierte. El icono va con `currentColor`, así que cambia de tinta
+ * con la tarjeta sin una regla propia.
+ */
+.card[data-chosen] {
+  border-color: var(--accent-nav);
+  background-color: var(--accent-nav);
+  color: var(--color-dark);
+}
+
+.icon {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  /* Alinea con la primera línea del rótulo, que es más alta que el icono. */
+  margin-top: -0.15rem;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  /* Deja sitio a la marca de elegido, que va en la esquina de arriba. */
+  padding-right: var(--space-6);
+}
+
+.name {
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.note {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: 1.45;
+  opacity: 0.72;
+}
+
+.check {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: flex;
+  color: var(--color-dark);
+}
+
+/* ——— Acompañante ——— */
+
+/**
+ * La pregunta del acompañante es un sí/no que abre dos campos. Va en su propio
+ * bloque con filete encima: es otra cosa que los datos de quien rellena, y sin
+ * la separación se leía como un tercer campo del mismo grupo.
+ */
+.guest {
+  display: grid;
+  gap: var(--space-4);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--rule);
+}
+
+.guestLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+}
+
+/** Sí / No, uno al lado del otro. */
+.choices {
+  display: flex;
+  gap: var(--space-3);
+}
+
+/**
+ * Cada opción es un radio con su rótulo. Ancho mínimo y no `flex: 1`: con dos
+ * palabras cortas, dos botones a media pantalla parecían el envío del paso.
+ */
+.choice {
+  position: relative;
+  min-width: 6.5rem;
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--rule);
+  background-color: color-mix(in srgb, var(--fg) 4%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-align: center;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-expo),
+    background-color var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-out-expo);
+}
+
+.choice:hover {
+  border-color: color-mix(in srgb, var(--accent-nav) 60%, transparent);
+}
+
+.choice:focus-within {
+  outline: 2px solid var(--accent-nav);
+  outline-offset: 2px;
+}
+
+.choice[data-chosen] {
+  border-color: var(--accent-nav);
+  background-color: var(--accent-nav);
+  color: var(--color-dark);
+}
+
+/* Los dos campos del acompañante, uno debajo de otro. */
+.guestFields {
+  display: grid;
+  gap: var(--space-4);
+  /* Lo abre una animación de alto: sin esto, el margen del último campo se
+     salía de la caja medida y el cierre daba un salto. */
+  overflow: hidden;
+}

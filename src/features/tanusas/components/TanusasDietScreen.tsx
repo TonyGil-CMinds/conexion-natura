@@ -8,7 +8,8 @@ import type { Dictionary } from '@/i18n';
 import { TANUSAS } from '@/config/tanusas';
 import { DIET_OPTIONS, type DietKey } from '../config/diet-options';
 import { DietIcon } from './DietIcon';
-import styles from './TanusasRegistration.module.css';
+import styles from '@/features/registration/components/StepShell.module.css';
+import dietStyles from './TanusasDiet.module.css';
 
 const PANEL = {
   hidden: {},
@@ -120,13 +121,13 @@ export function TanusasDietScreen({ copy, initial, onContinue, onBack }: Props) 
           {copy.step}
         </motion.p>
 
-      <motion.div className={styles.dietGrid} variants={PANEL}>
+      <motion.div className={dietStyles.dietGrid} variants={PANEL}>
         {DIET_OPTIONS.map((option) => {
           const isChosen = chosen.includes(option.key);
           return (
             <motion.label
               key={option.key}
-              className={styles.dietCard}
+              className={dietStyles.dietCard}
               data-chosen={isChosen || undefined}
               variants={ITEM}
             >
@@ -136,19 +137,19 @@ export function TanusasDietScreen({ copy, initial, onContinue, onBack }: Props) 
                 checked={isChosen}
                 onChange={() => toggle(option)}
               />
-              <span className={styles.dietIcon} aria-hidden>
+              <span className={dietStyles.dietIcon} aria-hidden>
                 <DietIcon name={option.key} />
               </span>
-              <span className={styles.dietText}>
-                <span className={styles.dietName}>{copy.options[option.key]}</span>
-                <span className={styles.dietNote}>{copy.descriptions[option.key]}</span>
+              <span className={dietStyles.dietText}>
+                <span className={dietStyles.dietName}>{copy.options[option.key]}</span>
+                <span className={dietStyles.dietNote}>{copy.descriptions[option.key]}</span>
               </span>
 
               {/* La marca solo aparece al elegir: es el estado, no un adorno. */}
               <AnimatePresence initial={false}>
                 {isChosen && (
                   <motion.span
-                    className={styles.dietCheck}
+                    className={dietStyles.dietCheck}
                     title={copy.selected}
                     initial={{ opacity: 0, scale: 0.6 }}
                     animate={{ opacity: 1, scale: 1 }}

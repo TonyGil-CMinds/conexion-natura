@@ -1,0 +1,85 @@
+/* ——— Tarjetas de restricciones ——— */
+
+.dietGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--space-4);
+}
+
+/**
+ * Cada tarjeta es una casilla de verificación de verdad: el `input` va oculto
+ * para el ojo pero no para el teclado ni para el lector, que es lo que anuncia
+ * que se pueden marcar varias.
+ */
+.dietCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--rule);
+  background-color: color-mix(in srgb, var(--fg) 4%, transparent);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-expo),
+    background-color var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-out-expo);
+}
+
+.dietCard:hover {
+  border-color: color-mix(in srgb, var(--accent-nav) 60%, transparent);
+}
+
+/* El foco del teclado tiene que verse en la tarjeta, no en el `input` oculto. */
+.dietCard:focus-within {
+  outline: 2px solid var(--accent-nav);
+  outline-offset: 2px;
+}
+
+/**
+ * Elegida: se invierte. El icono va con `currentColor`, así que cambia de tinta
+ * con la tarjeta sin una regla propia.
+ */
+.dietCard[data-chosen] {
+  border-color: var(--accent-nav);
+  background-color: var(--accent-nav);
+  color: var(--color-dark);
+}
+
+.dietIcon {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.dietText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.dietName {
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.dietNote {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: 1.4;
+  opacity: 0.72;
+}
+
+.dietCheck {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  display: flex;
+  color: var(--color-dark);
+}

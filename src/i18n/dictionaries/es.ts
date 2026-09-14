@@ -34,6 +34,11 @@ export const es = {
       title: 'Registro',
       description: 'Confirma tu asistencia a CEIBA Quito.',
     },
+    ecuador: {
+      title: 'Registro · Empresas de Ecuador',
+      description:
+        'Confirma la participación de tu iniciativa, organización o empresa en la Natura500 Night del 5 de octubre de 2026 en Quito.',
+    },
     terms: {
       title: 'Términos y condiciones',
       description: 'Condiciones de uso del sitio y del registro a CEIBA Quito.',
@@ -1373,6 +1378,134 @@ export const es = {
       partners:
         'NaturaTech LAC es una iniciativa impulsada por BID Lab y co-liderada por C Minds, con el apoyo de Suecia, el Gobierno de Francia, Climate Collective y la red del Consejo CEIBA.',
       credit: 'Consejo CEIBA · NaturaTech LAC',
+    },
+  },
+
+  /**
+   * Registro de empresas e iniciativas de Ecuador a la Natura500 Night.
+   *
+   * Es otro registro al **mismo acto** que `/registro`, con otras preguntas: no
+   * se elige entre dos actos —solo está la noche— y en cambio se pregunta cómo
+   * se quiere estar en ella, porque el aforo del cóctel es limitado y los
+   * espacios para presentar se asignan leyendo lo que cada quien propone.
+   *
+   * El paso de la fotografía reutiliza el del registro de Quito, así que su
+   * copia vive en `registration.photo` y no aquí.
+   */
+  ecuador: {
+    /**
+     * Primera pantalla: el titular grande y la captura del correo. Es el mismo
+     * componente que el de `/registro`, así que la copia tiene su misma forma:
+     * los iconos sustituyen a las letras «o» en el orden en que aparecen.
+     */
+    join: {
+      headlineLine1: 'Acompáñanos',
+      headlineLine2: 'en natura500 night',
+      /** Tramo de la segunda línea que va en lima. Debe aparecer tal cual en ella. */
+      headlineAccent: 'natura500',
+      emailLabel: 'Tu correo electrónico',
+      submit: 'Continuar',
+      saving: 'Espera un momento...',
+      note: 'Aforo aproximado de 120 personas, por invitación',
+      invalid: 'Escribe un correo válido',
+    },
+
+    registration: {
+      details: {
+        step: 'Paso 1/3',
+        headlineLine1: 'Confirma',
+        headlineLine2: 'tu participación',
+        intro:
+          'La Noche Natura500 es el 5 de octubre de 2026 en el Jardín Botánico de Quito, en el marco de GET Forum. Con estos datos reservamos tu lugar.',
+        fields: {
+          fullName: 'Nombre completo',
+          organization: 'Iniciativa, organización o empresa',
+          guestName: 'Nombre de tu acompañante',
+          guestEmail: 'Correo de tu acompañante',
+        },
+        placeholders: {
+          fullName: 'Nombre y apellidos',
+          organization: 'A quién representas',
+          guestName: 'Nombre y apellidos',
+          guestEmail: 'correo@ejemplo.com',
+        },
+        /** La pregunta del acompañante, con sus dos respuestas. */
+        guestQuestion: '¿Irías con un acompañante?',
+        guestYes: 'Sí',
+        guestNo: 'No',
+        guestInvalid: 'Escribe un correo válido para tu acompañante',
+        submit: 'Continuar',
+        required: 'Completa los datos marcados',
+      },
+
+      participation: {
+        step: 'Paso 2/3',
+        headlineLine1: 'Cómo',
+        headlineLine2: 'quieres estar',
+        intro:
+          'El aforo del cóctel es de unas 120 personas, de una lista curada por invitación. Si además quieres presentar algo, cuéntanoslo aquí.',
+        /** Rótulo del grupo de radios, para el lector de pantalla. */
+        groupLabel: 'Cómo deseas participar',
+        options: {
+          attendee: 'Como asistente',
+          table: 'Asistente y con mesa',
+        },
+        descriptions: {
+          attendee:
+            'Vienes a la noche: a escuchar, conversar y encontrarte con el ecosistema.',
+          table:
+            'Además solicitas un espacio (mesa) para presentar tus productos o servicios. Sujeto a disponibilidad y sin costo.',
+        },
+        selected: 'Elegido',
+        pitchLabel: 'Qué te gustaría presentar',
+        pitchPlaceholder: 'El producto, servicio o solución, en dos o tres líneas',
+        pitchHint: 'Es lo que leemos para asignar los espacios disponibles.',
+        pitchRequired: 'Cuéntanos qué presentarías',
+        needOne: 'Elige cómo quieres participar',
+        submit: 'Continuar',
+        back: 'Volver',
+      },
+
+      done: {
+        greeting: 'Gracias',
+        greetingFallback: 'Recibimos tu respuesta',
+        body:
+          'Hemos recibido tu respuesta. Próximamente te enviaremos los detalles del encuentro y, en caso de haber solicitado una mesa, la confirmación de disponibilidad de tu espacio.',
+        /** Quién firma el acuse, como en el formulario original. */
+        signature: 'El equipo de NaturaTech LAC',
+        emailLabel: 'Correo',
+        eventLabel: 'Evento',
+        eventValue: 'Natura500 Night · 5 oct 2026',
+        participationLabel: 'Participación',
+        guestLabel: 'Acompañante',
+        edit: 'Editar mi registro',
+        /** Calendario: se elige plataforma, no se impone el .ics. */
+        addToCalendar: 'Añadir a mi calendario',
+        calendarLabel: 'Elige tu calendario',
+        calendars: {
+          google: 'Google Calendar',
+          outlook: 'Outlook',
+          ics: 'Descargar .ics',
+        },
+        calendarTitle: 'Natura500 Night · Quito',
+        calendarDescription:
+          'Noche de innovación e inversión para la biodiversidad y las economías del futuro, en el Jardín Botánico de Quito.',
+        /** La credencial. */
+        card: 'Ver mi credencial',
+        cardTitle: 'Tu credencial',
+        cardFlip: 'Gira la tarjeta',
+        cardClose: 'Cerrar',
+        preparing: 'Preparando tu credencial',
+        download: 'Descargar',
+        share: 'Compartir',
+        shareTitle: 'Natura500 Night · Quito 2026',
+        shareText: 'Nos vemos en la Natura500 Night el 5 de octubre de 2026 en Quito.',
+        shared: 'Credencial compartida',
+        copied: 'Enlace copiado',
+        shareFailed: 'No se pudo compartir. Descárgala y compártela tú.',
+      },
+
+      failed: 'No se pudo guardar el registro. Inténtalo de nuevo.',
     },
   },
 } as const;

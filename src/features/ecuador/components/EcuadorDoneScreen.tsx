@@ -5,57 +5,55 @@ import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import { EASE_OUT_EXPO } from '@/lib/motion';
 import {
+  CEIBA_BADGE,
   ProfileCard,
   addToCalendar,
   downloadBadge,
   renderBadge,
   shareBadge,
-  type BadgeArt,
   type CalendarTarget,
   type CalendarWhen,
 } from '@/features/registration';
-import { TANUSAS } from '@/config/tanusas';
+import { ECUADOR } from '@/config/ecuador';
+import { SITE } from '@/config/site';
 import type { Dictionary } from '@/i18n';
-import type { DietKey } from '../config/diet-options';
+import type { ParticipationKey } from '../config/participation-options';
 import styles from '@/features/registration/components/StepShell.module.css';
 
 /** Los tres destinos, en el orden en que se ofrecen. */
 const TARGETS = ['google', 'outlook', 'ics'] as const satisfies readonly CalendarTarget[];
 
-/** El arte del retiro, con el tipo que espera el lienzo. */
-const ART: BadgeArt = TANUSAS.card;
-
 type Props = {
-  copy: Dictionary['tanusas']['registration'];
+  copy: Dictionary['ecuador']['registration'];
   email: string;
-  name: string;
-  surname: string;
+  fullName: string;
   organization: string;
+  participation: ParticipationKey | null;
+  guestName: string;
   photoUrl: string | null;
-  diet: readonly DietKey[];
   onEdit: () => void;
 };
 
 /**
- * Pantalla final del registro del retiro.
+ * Pantalla final del registro de empresas.
  *
- * Hace lo mismo que la del sitio y con las mismas piezas —la credencial se
+ * Hace lo mismo que la del retiro y con las mismas piezas —la credencial se
  * compone en un lienzo, la tarjeta gira con el puntero, el calendario se elige y
- * no se impone— pero con el arte del retiro: `TANUSAS.card`, que solo cambia
- * archivos y tintas porque la geometría de las dos es la misma.
+ * no se impone— pero con el arte de la Natura500 Night, que es el acto al que se
+ * viene: `CEIBA_BADGE`, el mismo que entrega `/registro`.
  *
  * La credencial se compone **al pedirla** y no al entrar: es una imagen de 1290
  * píxeles de lado que hay que descargar y dibujar, y quien solo viene a
  * comprobar su registro no tiene por qué pagarla.
  */
-export function TanusasDoneScreen({
+export function EcuadorDoneScreen({
   copy,
   email,
-  name,
-  surname,
+  fullName,
   organization,
+  participation,
+  guestName,
   photoUrl,
-  diet,
   onEdit,
 }: Props) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -91,35 +89,37 @@ export function TanusasDoneScreen({
   const openCard = useCallback(async () => {
     setIsCardOpen(true);
     if (badge) return;
-    setBadge(
-      await renderBadge({ name, surname, organization, photoUrl }, ART),
-    );
-  }, [badge, name, organization, photoUrl, surname]);
+    /**
+     * El nombre va entero en `name` y `surname` queda vacío: el lienzo los
+     * junta con un espacio y recorta, así que un nombre completo sale bien sin
+     * partirlo por donde no toca.
+     */
+    setBadge(await renderBadge({ name: fullName, surname: '', organization, photoUrl }));
+  }, [badge, fullName, organization, photoUrl]);
 
   function pickCalendar(target: CalendarTarget) {
     setIsCalendarOpen(false);
     addToCalendar(target, {
-      uid: TANUSAS.calendar.uid,
+      uid: ECUADOR.calendarUid,
       title: copy.done.calendarTitle,
       description: copy.done.calendarDescription,
-      location: `${TANUSAS.venue.name}, ${TANUSAS.venue.place}`,
-      when: TANUSAS.calendar.when as CalendarWhen,
+      location: `${SITE.event.venue.name}, ${SITE.event.place}`,
+      when: SITE.event.calendar as CalendarWhen,
     });
   }
 
   async function share() {
     if (!badge) return;
-    const result = await shareBadge(
-      badge,
-      { title: copy.done.shareTitle, text: copy.done.shareText },
-      ART,
-    );
+    const result = await shareBadge(badge, {
+      title: copy.done.shareTitle,
+      text: copy.done.shareText,
+    });
     if (result === 'shared') setNotice(copy.done.shared);
     else if (result === 'copied') setNotice(copy.done.copied);
     else setNotice(copy.done.shareFailed);
   }
 
-  const firstName = name.trim().split(' ')[0];
+  const firstName = fullName.trim().split(' ')[0];
 
   return (
     <motion.section
@@ -136,10 +136,12 @@ export function TanusasDoneScreen({
             <span>{firstName || copy.done.greetingFallback}</span>
           </h1>
           <p>{copy.done.body}</p>
+          {/* Quien firma el acuse, como en el formulario original. */}
+          <p>{copy.done.signature}</p>
         </div>
 
         <Image
-          src={TANUSAS.media.marquee}
+          src={ECUADOR.marquee.participation}
           alt=""
           width={150}
           height={150}
@@ -155,15 +157,21 @@ export function TanusasDoneScreen({
             <dd className={styles.rowValue}>{email}</dd>
           </div>
           <div className={styles.row}>
-            <dt className={styles.rowLabel}>{copy.done.retreatLabel}</dt>
-            <dd className={styles.rowValue}>{copy.done.retreatValue}</dd>
+            <dt className={styles.rowLabel}>{copy.done.eventLabel}</dt>
+            <dd className={styles.rowValue}>{copy.done.eventValue}</dd>
           </div>
-          <div className={styles.row}>
-            <dt className={styles.rowLabel}>{copy.done.dietLabel}</dt>
-            <dd className={styles.rowValue}>
-              {diet.map((key) => copy.diet.options[key]).join(' · ')}
-            </dd>
-          </div>
+          {participation && (
+            <div className={styles.row}>
+              <dt className={styles.rowLabel}>{copy.done.participationLabel}</dt>
+              <dd className={styles.rowValue}>{copy.participation.options[participation]}</dd>
+            </div>
+          )}
+          {guestName && (
+            <div className={styles.row}>
+              <dt className={styles.rowLabel}>{copy.done.guestLabel}</dt>
+              <dd className={styles.rowValue}>{guestName}</dd>
+            </div>
+          )}
         </dl>
 
         <div className={styles.doneActions}>
@@ -217,8 +225,8 @@ export function TanusasDoneScreen({
           <button type="button" className={styles.quiet} onClick={onEdit}>
             {copy.done.edit}
           </button>
-          <a className={styles.quiet} href={`mailto:${TANUSAS.contactEmail}`}>
-            {TANUSAS.contactEmail}
+          <a className={styles.quiet} href={`mailto:${ECUADOR.contactEmail}`}>
+            {ECUADOR.contactEmail}
           </a>
         </div>
       </div>
@@ -243,7 +251,7 @@ export function TanusasDoneScreen({
               {badge ? (
                 <ProfileCard
                   front={badge}
-                  back={ART.back}
+                  back={CEIBA_BADGE.back}
                   label={copy.done.cardTitle}
                   flipLabel={copy.done.cardFlip}
                 />
@@ -252,18 +260,13 @@ export function TanusasDoneScreen({
               )}
 
               <div className={styles.cardActions}>
-                <button
-                  type="button"
-                  className={styles.submit}
-                  onClick={share}
-                  disabled={!badge}
-                >
+                <button type="button" className={styles.submit} onClick={share} disabled={!badge}>
                   {copy.done.share}
                 </button>
                 <button
                   type="button"
                   className={styles.secondary}
-                  onClick={() => badge && downloadBadge(badge, `${name} ${surname}`, ART)}
+                  onClick={() => badge && downloadBadge(badge, fullName)}
                   disabled={!badge}
                 >
                   {copy.done.download}

@@ -26,6 +26,14 @@
   --tanusas-content: var(--content-max);
 
   /**
+   * Lo que el armazón de los pasos del registro (`StepShell.module.css`) espera
+   * encontrar. Se declaran aquí, en la raíz de la página, y no dentro del
+   * armazón: es esta página la que sabe que su barra flota y cuánto mide.
+   */
+  --step-bar: var(--tanusas-bar);
+  --step-content: var(--tanusas-content);
+
+  /**
    * Suelo del cuerpo de letra de la página: 11.5px y no los 9 de
    * `--text-caption`. Nueve píxeles valen para un dato suelto de la retícula del
    * sitio; aquí los rótulos y los pies se leen de corrido.

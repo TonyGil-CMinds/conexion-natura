@@ -42,6 +42,13 @@ export const TEMPLATES = {
    */
   tanusasEs: 'CEIBA_EMAIL_TEMPLATE_ID_TANUSAS_ES',
   tanusasEn: 'CEIBA_EMAIL_TEMPLATE_ID_TANUSAS_EN',
+  /**
+   * El registro de empresas de Ecuador, también con una por idioma. Es otro
+   * correo que el de `/registro` aunque el acto sea el mismo: este acusa una
+   * solicitud —la mesa está sujeta a disponibilidad— y aquel confirma una plaza.
+   */
+  ecuadorEs: 'CEIBA_EMAIL_TEMPLATE_ID_ECUADOR_ES',
+  ecuadorEn: 'CEIBA_EMAIL_TEMPLATE_ID_ECUADOR_EN',
 } as const;
 
 export type TemplateName = keyof typeof TEMPLATES;

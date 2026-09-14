@@ -1,0 +1,490 @@
+/**
+ * Armazón de los pasos de un registro: titular y moneda a la izquierda, panel
+ * de formulario a la derecha.
+ *
+ * Vive en `features/registration` y no en una feature concreta porque **lo usan
+ * varias**: el retiro de Tanusas y el registro de empresas de Ecuador. Es la
+ * misma pieza compartida que ya son `PhotoScreen`, `ProfileCard` y el lienzo de
+ * la credencial; duplicar estas reglas en cada registro nuevo era garantizar que
+ * se separaran a la primera corrección.
+ *
+ * Lo propio de cada registro —las tarjetas de una elección, sus iconos— se queda
+ * en su feature, en un módulo suyo que se importa al lado de este.
+ *
+ * Misma retícula que el registro del sitio para que pasar de un paso a otro no
+ * mueva la página, y para que quien ya se registró en Quito reconozca dónde
+ * está.
+ *
+ * Se ajusta con tres variables, que pone quien lo monta:
+ *
+ * - `--step-bar`: alto de una barra que **se superpone** sin ocupar sitio, como
+ *   la de `/tanusas`. Se suma al relleno de arriba. Sin barra flotante, 0.
+ * - `--step-content`: ancho máximo. Por omisión, el del sitio.
+ * - `--step-min-height`: alto mínimo de la pantalla.
+ */
+.root {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 507px);
+  gap: var(--space-16);
+  align-items: start;
+  /**
+   * Cuando hay barra superpuesta, esto empieza en el borde de arriba del
+   * viewport: el hueco para ella lo tiene que poner el relleno, y por eso su
+   * alto va **sumado** y no descontado. Sin esto, el titular arrancaba pegado
+   * —y por debajo— de la barra.
+   */
+  min-height: var(--step-min-height, 100dvh);
+  max-width: var(--step-content, var(--content-max));
+  margin-inline: auto;
+  padding: calc(var(--step-bar, 0px) + clamp(2rem, 7dvh, 4.5rem)) var(--container-margin)
+    var(--space-16);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(2rem, 7dvh, 4rem);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.headline {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-choice);
+  font-weight: 700;
+  line-height: 1.12;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+/* El segundo tramo, en el acento: el titular se lee en dos tiempos. */
+.headline span + span {
+  color: var(--accent-nav-ink);
+}
+
+/* Gira en CSS: el disparo es que aparezca, no una señal de JavaScript. */
+.marquee {
+  width: clamp(110px, 11vw, 150px);
+  height: auto;
+  animation: spin 18s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    animation: none;
+  }
+}
+
+/**
+ * Volver al paso anterior. Va encima del titular y no junto a «continuar»: es
+ * navegación, no una acción del formulario, y ahí se lee antes de empezar a
+ * escribir en vez de después.
+ */
+.back {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.back:hover {
+  color: var(--fg);
+}
+
+/* La flecha va como máscara para tomar la tinta del rótulo. */
+.backIcon {
+  display: block;
+  width: 12px;
+  height: 12px;
+  background-color: currentColor;
+  mask-image: url('/icons/icon-arrow-white.svg');
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  transform: rotate(180deg);
+}
+
+/* ——— Panel ——— */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.step {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 55%, transparent);
+}
+
+.intro p {
+  margin: 0;
+  max-width: 42ch;
+  font-family: var(--font-body);
+  font-size: var(--text-schedule-intro);
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--fg) 78%, transparent);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.fieldLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: var(--space-5) var(--space-5);
+  border: 1px solid var(--rule);
+  background-color: color-mix(in srgb, var(--fg) 4%, transparent);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: var(--text-nav);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.textarea {
+  min-height: 7rem;
+  line-height: 1.5;
+  text-transform: none;
+  resize: vertical;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: color-mix(in srgb, var(--fg) 45%, transparent);
+}
+
+.input:focus-visible,
+.textarea:focus-visible {
+  outline: none;
+  border-color: var(--accent-nav);
+}
+
+.input[data-missing],
+.textarea[data-missing] {
+  border-color: var(--color-red);
+}
+
+/* Nombre y apellido: dos mitades de una fila que se apilan en estrecho. */
+.fieldPair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--space-5);
+}
+
+.hint {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--fg) 55%, transparent);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+  margin-top: var(--space-3);
+}
+
+.submit {
+  min-height: 58px;
+  padding-inline: var(--space-10);
+  border: 0;
+  background-image: linear-gradient(100deg, var(--color-green-base) 0%, var(--accent-nav) 100%);
+  color: var(--color-dark);
+  font-family: var(--font-mono);
+  font-size: var(--text-nav);
+  letter-spacing: var(--tracking-cta);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: filter var(--duration-fast) var(--ease-out-expo);
+}
+
+.submit:hover {
+  filter: brightness(1.1);
+}
+
+.submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.error {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-red);
+}
+
+/* ——— Acuse ——— */
+
+.done {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  align-items: flex-start;
+}
+
+.doneBody {
+  margin: 0;
+  max-width: 48ch;
+  font-family: var(--font-body);
+  font-size: var(--text-schedule-intro);
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--fg) 82%, transparent);
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  width: 100%;
+  border-top: 1px solid var(--rule);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  justify-content: space-between;
+  padding-block: var(--space-4);
+  border-bottom: 1px solid var(--rule);
+}
+
+.rowLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent-nav-ink);
+}
+
+.rowValue {
+  margin: 0;
+  max-width: 32ch;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  text-align: right;
+  color: var(--fg);
+}
+
+.quiet {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.quiet:hover {
+  color: var(--fg);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* En una columna: la retícula de dos no cabe y el panel manda. */
+@media (max-width: 900px) {
+  .root {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-10);
+    padding-bottom: var(--space-12);
+  }
+}
+
+/* ——— Acuse: calendario, credencial y compartir ——— */
+
+/* La fila de acciones de la pantalla final: dos botones y su menú. */
+.doneActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+/* Ancla del menú del calendario, que va fuera del flujo. */
+.calendar {
+  position: relative;
+}
+
+/**
+ * Lista de calendarios. Va **encima** del botón y no debajo: el acuse suele
+ * quedar al final de la columna, y hacia abajo el menú se salía de la pantalla.
+ */
+.menu {
+  position: absolute;
+  bottom: calc(100% + var(--space-2));
+  left: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 100%;
+  border: 1px solid var(--rule);
+  background-color: var(--color-surface);
+}
+
+.menu button {
+  padding: var(--space-4) var(--space-5);
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out-expo);
+}
+
+.menu button:hover {
+  background-color: color-mix(in srgb, var(--fg) 8%, transparent);
+}
+
+/* Acción secundaria: el mismo cuerpo que la principal, en contorno. */
+.secondary {
+  min-height: 58px;
+  padding-inline: var(--space-8);
+  border: 1px solid var(--accent-nav);
+  background: transparent;
+  color: var(--accent-nav-ink);
+  font-family: var(--font-mono);
+  font-size: var(--text-nav);
+  letter-spacing: var(--tracking-cta);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-out-expo);
+}
+
+.secondary:hover {
+  background-color: var(--accent-nav);
+  color: var(--color-dark);
+}
+
+.secondary:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+/**
+ * La credencial, sobre la pantalla.
+ *
+ * Va fija al viewport y no dentro de la columna: es una tarjeta que se mira, y
+ * dentro del panel habría quedado a media página y con el formulario asomando.
+ */
+.cardLayer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-toast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  background-color: color-mix(in srgb, var(--color-dark) 82%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  width: min(100%, 380px);
+}
+
+.cardActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+/* Mientras el lienzo compone la credencial. */
+.preparing {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-light) 62%, transparent);
+}
+
+/* Acuse de compartir. Fuera del flujo: no debe mover la columna. */
+.notice {
+  position: fixed;
+  bottom: var(--space-8);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-toast);
+  margin: 0;
+  padding: var(--space-4) var(--space-6);
+  border: 1px solid var(--rule);
+  background-color: var(--color-surface);
+  color: var(--color-light);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}

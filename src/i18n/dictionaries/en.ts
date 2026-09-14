@@ -32,6 +32,11 @@ export const en: Dictionary = {
       title: 'Registration',
       description: 'Confirm your attendance at CEIBA Quito.',
     },
+    ecuador: {
+      title: 'Registration · Ecuadorian companies',
+      description:
+        'Confirm your initiative, organisation or company at the Natura500 Night on October 5, 2026 in Quito.',
+    },
     terms: {
       title: 'Terms and conditions',
       description: 'Terms for using this site and registering for CEIBA Quito.',
@@ -1245,6 +1250,113 @@ export const en: Dictionary = {
       partners:
         'NaturaTech LAC is an initiative driven by IDB Lab and co-led by C Minds, with the support of Sweden, the Government of France, Climate Collective and the CEIBA Council network.',
       credit: 'CEIBA Council · NaturaTech LAC',
+    },
+  },
+
+  ecuador: {
+    join: {
+      headlineLine1: 'Join us',
+      headlineLine2: 'at natura500 night',
+      /** Tramo de la segunda línea que va en lima. Debe aparecer tal cual en ella. */
+      headlineAccent: 'natura500',
+      emailLabel: 'Your email address',
+      submit: 'Continue',
+      saving: 'One moment...',
+      note: 'Around 120 places, by invitation',
+      invalid: 'Enter a valid email',
+    },
+
+    registration: {
+      details: {
+        step: 'Step 1/3',
+        headlineLine1: 'Confirm',
+        headlineLine2: 'your place',
+        intro:
+          'The Natura500 Night is on October 5, 2026 at the Jardín Botánico de Quito, alongside GET Forum. We use these details to hold your place.',
+        fields: {
+          fullName: 'Full name',
+          organization: 'Initiative, organisation or company',
+          guestName: "Your guest's name",
+          guestEmail: "Your guest's email",
+        },
+        placeholders: {
+          fullName: 'First and last name',
+          organization: 'Who you represent',
+          guestName: 'First and last name',
+          guestEmail: 'name@example.com',
+        },
+        guestQuestion: 'Would you bring a guest?',
+        guestYes: 'Yes',
+        guestNo: 'No',
+        guestInvalid: "Enter a valid email for your guest",
+        submit: 'Continue',
+        required: 'Complete the fields marked',
+      },
+
+      participation: {
+        step: 'Step 2/3',
+        headlineLine1: 'How',
+        headlineLine2: 'you want in',
+        intro:
+          'The cocktail holds around 120 people, from a curated guest list. If you would also like to show something, tell us here.',
+        groupLabel: 'How you would like to take part',
+        options: {
+          attendee: 'As an attendee',
+          table: 'Attendee and with a table',
+        },
+        descriptions: {
+          attendee:
+            'You come to the night: to listen, talk and meet the ecosystem.',
+          table:
+            'You also request a space (a table) to present your products or services. Subject to availability and free of charge.',
+        },
+        selected: 'Selected',
+        pitchLabel: 'What you would like to present',
+        pitchPlaceholder: 'The product, service or solution, in two or three lines',
+        pitchHint: 'This is what we read when assigning the available spaces.',
+        pitchRequired: 'Tell us what you would present',
+        needOne: 'Choose how you want to take part',
+        submit: 'Continue',
+        back: 'Back',
+      },
+
+      done: {
+        greeting: 'Thank you',
+        greetingFallback: 'We got your answer',
+        body:
+          'We have received your answer. We will send you the details of the gathering shortly and, if you requested a table, confirmation that your space is available.',
+        signature: 'The NaturaTech LAC team',
+        emailLabel: 'Email',
+        eventLabel: 'Event',
+        eventValue: 'Natura500 Night · Oct 5, 2026',
+        participationLabel: 'Taking part',
+        guestLabel: 'Guest',
+        edit: 'Edit my registration',
+        addToCalendar: 'Add to my calendar',
+        calendarLabel: 'Pick your calendar',
+        calendars: {
+          google: 'Google Calendar',
+          outlook: 'Outlook',
+          ics: 'Download .ics',
+        },
+        calendarTitle: 'Natura500 Night · Quito',
+        calendarDescription:
+          'A night of innovation and investment for biodiversity and the economies of the future, at the Jardín Botánico de Quito.',
+        card: 'See my badge',
+        cardTitle: 'Your badge',
+        cardFlip: 'Flip the card',
+        cardClose: 'Close',
+        preparing: 'Preparing your badge',
+        download: 'Download',
+        share: 'Share',
+        shareTitle: 'Natura500 Night · Quito 2026',
+        shareText: 'See you at the Natura500 Night on October 5, 2026 in Quito.',
+        shared: 'Badge shared',
+        copied: 'Link copied',
+        shareFailed: 'Could not share. Download it and share it yourself.',
+      },
+
+      failed: 'Could not save your registration. Please try again.',
     },
   },
 };

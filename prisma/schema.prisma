@@ -189,3 +189,54 @@ model TanusasRegistration {
 // —sus actos, su fotografía, su credencial— desde el enlace que le llega. Un
 // acompañante necesitaba exactamente lo mismo que un asistente, así que tener
 // dos modelos era tener dos sitios donde arreglar lo mismo.
+
+/// Registro de empresas e iniciativas de Ecuador a la Natura500 Night.
+///
+/// Tabla propia y no `Attendee` por lo mismo que el retiro: son otros campos.
+/// Aquí no se elige acto —la noche es el único— y en cambio se pregunta **cómo**
+/// se quiere participar: como público, o pidiendo una mesa para enseñar algo.
+///
+/// El aforo del cóctel es de unas 120 personas por invitación, así que lo que
+/// llega aquí es una solicitud que el equipo revisa, no una plaza asignada.
+model EcuadorRegistration {
+  id String @id @default(cuid())
+
+  /// Identifica a la empresa que se apunta: un correo, un registro, y reenviar
+  /// corrige en vez de duplicar.
+  email String @unique
+
+  /// Tal cual se pide: un solo campo y no nombre + apellido. Quien escribe una
+  /// empresa no siempre parte su nombre igual, y partirlo al guardar es inventar.
+  fullName String
+
+  /// Iniciativa, organización o empresa.
+  organization String
+
+  /// Cómo quiere participar: `attendee` o `table`. Se guarda la clave del
+  /// catálogo y no el rótulo, que se traduce.
+  participation String
+
+  /// Qué producto, servicio o solución presentaría. Solo tiene sentido —y solo
+  /// se pide— con `participation = "table"`.
+  tablePitch String @default("")
+
+  /// Acompañante: nombre y correo, si viene con alguien. Se guardan como texto
+  /// y no como una fila aparte porque aquí no completan ningún registro propio:
+  /// es un dato de aforo, no una persona con credencial.
+  guestName  String @default("")
+  guestEmail String @default("")
+
+  /// La fotografía se sube aparte: aquí solo queda su ubicación.
+  photoUrl String?
+
+  /// En qué idioma se registró. Decide con cuál de las dos plantillas sale el
+  /// correo de confirmación.
+  locale String @default("es")
+
+  /// Cuándo salió el correo de confirmación. Nulo mientras no se haya enviado,
+  /// que es lo que impide mandarlo dos veces al corregir el registro.
+  confirmationSentAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
