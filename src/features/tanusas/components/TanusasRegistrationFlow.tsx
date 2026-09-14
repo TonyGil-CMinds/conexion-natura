@@ -55,6 +55,7 @@ export function TanusasRegistrationFlow({ email, existing, locale, copy, photoCo
           role: existing.role,
           city: existing.city,
           question: existing.question,
+          shirtSize: existing.shirtSize,
         }
       : EMPTY_DETAILS,
   );
@@ -148,6 +149,7 @@ export function TanusasRegistrationFlow({ email, existing, locale, copy, photoCo
           organization={details.organization}
           photoUrl={photoUrl}
           diet={diet.diet}
+          shirtSize={details.shirtSize}
           /* Volver al primer paso: el envío hace `upsert`, así que corregir
              no duplica. */
           onEdit={() => setStage('details')}

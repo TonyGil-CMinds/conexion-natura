@@ -1280,6 +1280,7 @@ export const es = {
           role: 'Rol',
           city: 'Ciudad de origen del vuelo',
           question: 'Una pregunta que te importe de verdad',
+          shirtSize: 'Talla de playera',
         },
         placeholders: {
           name: 'Tu nombre',
@@ -1293,6 +1294,7 @@ export const es = {
         hints: {
           city: 'Coordinamos juntos el tramo Quito–Manta.',
           question: 'Entra en el diseño de las conversaciones del retiro.',
+          shirtSize: 'Te espera en Tanusas el primer día.',
         },
         submit: 'Continuar',
         required: 'Completa los datos marcados',
@@ -1340,6 +1342,7 @@ export const es = {
         retreatLabel: 'Retiro',
         retreatValue: '8 – 10 oct 2026 · Tanusas',
         dietLabel: 'En la mesa',
+        shirtLabel: 'Talla',
         edit: 'Editar mi registro',
         /** Calendario: se elige plataforma, no se impone el .ics. */
         addToCalendar: 'Añadir a mi calendario',

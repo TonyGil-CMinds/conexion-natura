@@ -171,8 +171,8 @@ export function EcuadorDetailsScreen({ copy, initial, onContinue }: Props) {
           </motion.label>
         ))}
 
-        <motion.div className={local.guest} variants={ITEM}>
-          <span className={local.guestLabel} id="guest-question">
+        <motion.div className={styles.group} variants={ITEM}>
+          <span className={styles.groupLabel} id="guest-question">
             {copy.guestQuestion}
           </span>
 
@@ -181,11 +181,11 @@ export function EcuadorDetailsScreen({ copy, initial, onContinue }: Props) {
            * pregunta con dos respuestas excluyentes, y el teclado y el lector de
            * pantalla tienen que poder recorrerla como tal.
            */}
-          <div className={local.choices} role="radiogroup" aria-labelledby="guest-question">
+          <div className={styles.choices} role="radiogroup" aria-labelledby="guest-question">
             {[true, false].map((value) => (
               <label
                 key={String(value)}
-                className={local.choice}
+                className={styles.choice}
                 data-chosen={values.bringsGuest === value || undefined}
               >
                 <input

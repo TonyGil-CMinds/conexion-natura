@@ -1155,6 +1155,7 @@ export const en: Dictionary = {
           organization: 'Organisation',
           role: 'Role',
           city: 'City you fly from',
+          shirtSize: 'T-shirt size',
           question: 'A question that really matters to you',
         },
         placeholders: {
@@ -1168,6 +1169,7 @@ export const en: Dictionary = {
         hints: {
           city: 'We coordinate the Quito–Manta leg together.',
           question: 'It feeds into the design of the retreat conversations.',
+          shirtSize: 'It will be waiting for you at Tanusas on day one.',
         },
         submit: 'Continue',
         required: 'Please complete the highlighted fields',
@@ -1215,6 +1217,7 @@ export const en: Dictionary = {
         retreatLabel: 'Retreat',
         retreatValue: 'Oct 8 – 10, 2026 · Tanusas',
         dietLabel: 'At the table',
+        shirtLabel: 'Size',
         edit: 'Edit my registration',
         addToCalendar: 'Add to my calendar',
         calendarLabel: 'Choose your calendar',

@@ -104,67 +104,10 @@
 /* ——— Acompañante ——— */
 
 /**
- * La pregunta del acompañante es un sí/no que abre dos campos. Va en su propio
- * bloque con filete encima: es otra cosa que los datos de quien rellena, y sin
- * la separación se leía como un tercer campo del mismo grupo.
+ * El bloque con filete y la fila de fichas de sí/no viven en el armazón
+ * compartido (`.group`, `.groupLabel`, `.choices`, `.choice`): los usa también
+ * el selector de talla del retiro. Aquí solo queda lo que abre la respuesta.
  */
-.guest {
-  display: grid;
-  gap: var(--space-4);
-  padding-top: var(--space-6);
-  border-top: 1px solid var(--rule);
-}
-
-.guestLabel {
-  font-family: var(--font-mono);
-  font-size: var(--text-caption);
-  letter-spacing: var(--tracking-eyebrow);
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--fg) 62%, transparent);
-}
-
-/** Sí / No, uno al lado del otro. */
-.choices {
-  display: flex;
-  gap: var(--space-3);
-}
-
-/**
- * Cada opción es un radio con su rótulo. Ancho mínimo y no `flex: 1`: con dos
- * palabras cortas, dos botones a media pantalla parecían el envío del paso.
- */
-.choice {
-  position: relative;
-  min-width: 6.5rem;
-  padding: var(--space-3) var(--space-5);
-  border: 1px solid var(--rule);
-  background-color: color-mix(in srgb, var(--fg) 4%, transparent);
-  font-family: var(--font-mono);
-  font-size: var(--text-caption);
-  letter-spacing: var(--tracking-eyebrow);
-  text-align: center;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition:
-    border-color var(--duration-fast) var(--ease-out-expo),
-    background-color var(--duration-fast) var(--ease-out-expo),
-    color var(--duration-fast) var(--ease-out-expo);
-}
-
-.choice:hover {
-  border-color: color-mix(in srgb, var(--accent-nav) 60%, transparent);
-}
-
-.choice:focus-within {
-  outline: 2px solid var(--accent-nav);
-  outline-offset: 2px;
-}
-
-.choice[data-chosen] {
-  border-color: var(--accent-nav);
-  background-color: var(--accent-nav);
-  color: var(--color-dark);
-}
 
 /* Los dos campos del acompañante, uno debajo de otro. */
 .guestFields {

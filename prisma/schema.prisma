@@ -166,6 +166,14 @@ model TanusasRegistration {
   /// Detalle libre de las restricciones: una alergia concreta, una condición.
   dietNotes String   @default("")
 
+  /// Talla de playera. Guarda la clave del catálogo ("S", "M", "L", "XL",
+  /// "XXL"), que no se traduce.
+  ///
+  /// Por omisión vacía y no nula: la columna se añadió después de que hubiera
+  /// filas, y una cadena vacía dice «todavía no la sabemos» sin obligar a
+  /// distinguir dos formas de ausencia. El formulario sí la exige.
+  shirtSize String @default("")
+
   /// La fotografía se sube aparte: aquí solo queda su ubicación. Es obligatoria
   /// en el formulario, pero la columna admite nulo para que un fallo de la
   /// subida no impida arreglar la fila a mano.

@@ -2,6 +2,7 @@ import { after } from 'next/server';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { DIET_KEYS } from '@/features/tanusas/config/diet-options';
+import { isShirtSize } from '@/features/tanusas/config/shirt-sizes';
 import { sendRetreatConfirmation } from '@/features/tanusas/lib/confirmation-email';
 
 /**
@@ -63,6 +64,12 @@ export async function POST(request: Request) {
   const photoUrl = typeof raw.photoUrl === 'string' && raw.photoUrl ? raw.photoUrl : null;
   if (!photoUrl) fields.photoUrl = 'Falta la fotografía.';
   if (!diet.length) fields.diet = 'Elige al menos una opción.';
+  /**
+   * Solo se acepta una talla del catálogo: lo que se guarda es la clave, y un
+   * cliente manipulado no debe poder meter texto libre en esa columna.
+   */
+  const shirtSize = isShirtSize(raw.shirtSize) ? raw.shirtSize : '';
+  if (!shirtSize) fields.shirtSize = 'Elige tu talla de playera.';
 
   if (Object.keys(fields).length) {
     return NextResponse.json({ error: 'Revisa los datos marcados.', fields }, { status: 422 });
@@ -75,6 +82,7 @@ export async function POST(request: Request) {
     ...values,
     locale,
     question: text(raw.question, MAX_TEXT),
+    shirtSize,
     diet,
     dietNotes: text(raw.dietNotes, MAX_TEXT),
     photoUrl,
@@ -140,6 +148,7 @@ export async function GET(request: Request) {
         role: true,
         city: true,
         question: true,
+        shirtSize: true,
         diet: true,
         dietNotes: true,
         photoUrl: true,

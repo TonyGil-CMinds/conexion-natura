@@ -33,6 +33,8 @@ type Props = {
   organization: string;
   photoUrl: string | null;
   diet: readonly DietKey[];
+  /** Vacía en los registros anteriores a que se pidiera la talla. */
+  shirtSize: string;
   onEdit: () => void;
 };
 
@@ -56,6 +58,7 @@ export function TanusasDoneScreen({
   organization,
   photoUrl,
   diet,
+  shirtSize,
   onEdit,
 }: Props) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -164,6 +167,14 @@ export function TanusasDoneScreen({
               {diet.map((key) => copy.diet.options[key]).join(' · ')}
             </dd>
           </div>
+          {/* Los registros hechos antes de que se pidiera la talla no la tienen:
+              la fila no se pinta en vez de enseñar un hueco. */}
+          {shirtSize && (
+            <div className={styles.row}>
+              <dt className={styles.rowLabel}>{copy.done.shirtLabel}</dt>
+              <dd className={styles.rowValue}>{shirtSize}</dd>
+            </div>
+          )}
         </dl>
 
         <div className={styles.doneActions}>

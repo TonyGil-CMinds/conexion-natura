@@ -1,4 +1,5 @@
 import type { DietKey } from '../config/diet-options';
+import type { ShirtSize } from '../config/shirt-sizes';
 
 /**
  * Lo que devuelve la consulta por correo: el registro tal y como se guardó.
@@ -14,6 +15,8 @@ export type TanusasRegistrationRecord = {
   role: string;
   city: string;
   question: string;
+  /** Vacía en los registros anteriores a que se pidiera la talla. */
+  shirtSize: ShirtSize | '';
   diet: DietKey[];
   dietNotes: string;
   photoUrl: string | null;

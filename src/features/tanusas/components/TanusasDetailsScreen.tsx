@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { EASE_OUT_EXPO } from '@/lib/motion';
 import type { Dictionary } from '@/i18n';
 import { TANUSAS } from '@/config/tanusas';
+import { SHIRT_SIZES, type ShirtSize } from '../config/shirt-sizes';
 import styles from '@/features/registration/components/StepShell.module.css';
 
 /**
@@ -16,7 +17,10 @@ import styles from '@/features/registration/components/StepShell.module.css';
 const FIELDS = ['name', 'surname', 'organization', 'role', 'city'] as const;
 type Field = (typeof FIELDS)[number];
 
-export type DetailsDraft = Record<Field | 'question', string>;
+export type DetailsDraft = Record<Field | 'question', string> & {
+  /** Talla de playera. Vacía mientras no se elige ninguna. */
+  shirtSize: ShirtSize | '';
+};
 
 export const EMPTY_DETAILS: DetailsDraft = {
   name: '',
@@ -25,6 +29,7 @@ export const EMPTY_DETAILS: DetailsDraft = {
   role: '',
   city: '',
   question: '',
+  shirtSize: '',
 };
 
 /**
@@ -77,16 +82,29 @@ export function TanusasDetailsScreen({ copy, initial, onContinue }: Props) {
   const [missing, setMissing] = useState<readonly string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  function change(field: keyof DetailsDraft, value: string) {
+  function change(field: Field | 'question', value: string) {
     setValues((current) => ({ ...current, [field]: value }));
     if (missing.includes(field)) setMissing((m) => m.filter((f) => f !== field));
+  }
+
+  /**
+   * La talla va aparte de `change` porque no es texto: su valor sale del
+   * catálogo y no de lo que se teclee, así que pasarla por la misma puerta
+   * obligaría a ensanchar el tipo a `string` y perder justo lo que la protege.
+   */
+  function pickSize(size: ShirtSize) {
+    setValues((current) => ({ ...current, shirtSize: size }));
+    setMissing((m) => m.filter((f) => f !== 'shirtSize'));
+    setError(null);
   }
 
   function submit(event: FormEvent) {
     event.preventDefault();
 
-    // La pregunta es opcional; los cinco datos de arriba no.
-    const empty = FIELDS.filter((field) => !values[field].trim());
+    // La pregunta es opcional; los cinco datos de arriba y la talla, no.
+    const empty: string[] = FIELDS.filter((field) => !values[field].trim());
+    if (!values.shirtSize) empty.push('shirtSize');
+
     if (empty.length) {
       setMissing(empty);
       setError(copy.required);
@@ -95,11 +113,14 @@ export function TanusasDetailsScreen({ copy, initial, onContinue }: Props) {
 
     setMissing([]);
     setError(null);
-    onContinue(
-      Object.fromEntries(
-        Object.entries(values).map(([field, value]) => [field, value.trim()]),
-      ) as DetailsDraft,
-    );
+    onContinue({
+      ...(Object.fromEntries(
+        FIELDS.map((field) => [field, values[field].trim()]),
+      ) as Record<Field, string>),
+      question: values.question.trim(),
+      // Del catálogo, no del teclado: no hay nada que recortar.
+      shirtSize: values.shirtSize,
+    });
   }
 
   return (
@@ -181,6 +202,49 @@ export function TanusasDetailsScreen({ copy, initial, onContinue }: Props) {
           />
           <span className={styles.hint}>{copy.hints.question}</span>
         </motion.label>
+
+        {/**
+         * La talla de la playera. Va en su propio bloque, con filete encima:
+         * los campos de arriba son quién eres y de dónde vienes, y esto es una
+         * medida para encargar la ropa. Sin la separación se leía como un campo
+         * más del mismo grupo.
+         *
+         * Son radios de verdad y no un desplegable: cinco opciones cortas caben
+         * a la vista, y un `select` esconde detrás de un clic lo que se elige
+         * de un vistazo.
+         */}
+        <motion.div className={styles.group} variants={ITEM}>
+          <span className={styles.groupLabel} id="tanusas-shirt">
+            {copy.fields.shirtSize}
+          </span>
+
+          <div
+            className={styles.choices}
+            role="radiogroup"
+            aria-labelledby="tanusas-shirt"
+            data-missing={missing.includes('shirtSize') || undefined}
+          >
+            {SHIRT_SIZES.map((size) => (
+              <label
+                key={size}
+                className={styles.choice}
+                data-chosen={values.shirtSize === size || undefined}
+              >
+                <input
+                  type="radio"
+                  name="shirtSize"
+                  value={size}
+                  className={styles.srOnly}
+                  checked={values.shirtSize === size}
+                  onChange={() => pickSize(size)}
+                />
+                {size}
+              </label>
+            ))}
+          </div>
+
+          <span className={styles.hint}>{copy.hints.shirtSize}</span>
+        </motion.div>
 
         <motion.div className={styles.actions} variants={ITEM}>
           <button type="submit" className={styles.submit}>
