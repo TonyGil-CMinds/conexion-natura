@@ -119,14 +119,19 @@ export function parseAttendeeInput(
   }
 
   /**
-   * El invitado se acepta solo **completo**: nombre y correo válido. Si falta
-   * uno se descarta en silencio en vez de tirar el registro, porque el dato
-   * principal —quien se inscribe— ya es válido y perderlo por el invitado sería
-   * peor.
+   * El invitado se acepta solo **completo**: nombre y correo válido. Y su correo
+   * **no puede ser el de quien invita**: un correo es un registro, así que
+   * invitarse a uno mismo dejaría la fila propia en pendiente y borraría los
+   * datos que se acaban de escribir.
    *
-   * Y su correo **no puede ser el de quien invita**: un correo es un registro,
-   * así que invitarse a uno mismo dejaría la fila propia en pendiente y borraría
-   * los datos que se acaban de escribir.
+   * Antes, un invitado incompleto se descartaba **en silencio** para no tirar el
+   * registro entero. La intención era buena y el efecto, malo: la fila quedaba
+   * diciendo `bringsGuest: true` sin acompañante, nadie se enteraba —ni quien se
+   * registraba, ni quien mira la lista— y el invitado no recibía nada. Pasó de
+   * verdad, con alguien que puso su propio correo en la casilla del invitado.
+   *
+   * Ahora es un error de validación como cualquier otro. No se pierde nada: el
+   * borrador vive en el navegador, así que quien lo corrige no vuelve a teclear.
    */
   const rawGuest = (raw.guest ?? {}) as Record<string, unknown>;
   const guestName = text(rawGuest.name);
@@ -137,6 +142,18 @@ export function parseAttendeeInput(
     /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(guestEmail) &&
     guestEmail !== email;
   const guest: GuestInput | null = guestValid ? { name: guestName, email: guestEmail } : null;
+
+  /**
+   * Decir que se viene acompañado y no mandar un acompañante válido es una
+   * contradicción, no un dato que se pueda recortar. Se rechaza en vez de
+   * guardar media verdad.
+   */
+  if (raw.bringsGuest === true && !guest) {
+    errors.guest =
+      guestEmail && guestEmail === email
+        ? 'El correo de tu acompañante no puede ser el tuyo.'
+        : 'Faltan el nombre o el correo de tu acompañante.';
+  }
 
   if (Object.keys(errors).length) return { errors };
 

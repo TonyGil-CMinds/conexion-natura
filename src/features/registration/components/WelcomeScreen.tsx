@@ -21,6 +21,15 @@ type Props = {
   attendee: Attendee;
   /** Lleva al paso de la fotografía para poner o cambiar el retrato. */
   onEditPhoto?: () => void;
+  /**
+   * Vuelve al formulario con los datos ya puestos: nombre, organización,
+   * rol, enlace y acompañante.
+   *
+   * Hasta ahora esta pantalla era un callejón sin salida —solo se podía
+   * cambiar la fotografía—, así que un dato mal escrito, o un acompañante
+   * que no llegó a guardarse, no había forma de arreglarlos desde aquí.
+   */
+  onEditDetails?: () => void;
 };
 
 const PANEL = {
@@ -68,7 +77,7 @@ function PixelChevron() {
  * El ave de píxeles es la del hero, con su misma entrada y su misma repulsión al
  * puntero: cierra el recorrido donde empezó.
  */
-export function WelcomeScreen({ locale, copy, attendee, onEditPhoto }: Props) {
+export function WelcomeScreen({ locale, copy, attendee, onEditPhoto, onEditDetails }: Props) {
   /**
    * Los actos que se marcaron, en el orden del diseño.
    *
@@ -330,6 +339,14 @@ export function WelcomeScreen({ locale, copy, attendee, onEditPhoto }: Props) {
               onClick={onEditPhoto}
             >
               {attendee.photoUrl ? copy.changePhoto : copy.addPhoto}
+            </button>
+          )}
+
+          {/* Editar los datos. Discreto, como el de la fotografía: el
+              estado de reposo de esta pantalla es mirar, no corregir. */}
+          {onEditDetails && (
+            <button type="button" className={styles.quiet} onClick={onEditDetails}>
+              {copy.editDetails}
             </button>
           )}
 

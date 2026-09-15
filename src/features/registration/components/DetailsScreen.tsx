@@ -35,6 +35,13 @@ type Props = {
    * fotografía se le colaba un paso para invitar que no le corresponde.
    */
   canInvite?: boolean;
+  /**
+   * El correo de quien se registra. Solo lo usa la pasada del invitado, para
+   * no dejar poner el mismo: un correo es un registro, así que invitarse a uno
+   * mismo dejaría la fila propia en pendiente. El servidor también lo
+   * rechaza; aquí se dice **antes**, junto al campo y no al final del flujo.
+   */
+  ownEmail?: string;
   onContinue?: (person: PersonDraft, bringsGuest: boolean) => void;
   /** Se llama en la pasada del invitado, con sus dos datos. */
   onGuest?: (guest: GuestDraft) => void;
@@ -115,6 +122,7 @@ export function DetailsScreen({
   initialGuest,
   initialBringsGuest = true,
   canInvite = true,
+  ownEmail,
   onContinue,
   onGuest,
   onBack,
@@ -123,6 +131,11 @@ export function DetailsScreen({
   const [guest, setGuest] = useState<GuestDraft>({ name: '', email: '', ...initialGuest });
   const [bringsGuest, setBringsGuest] = useState(initialBringsGuest && canInvite);
   const [missing, setMissing] = useState<readonly string[]>([]);
+  /**
+   * Qué se le dice a quien envía. Antes salía siempre «completa los datos que
+   * faltan», que con un campo relleno pero mal no decía nada útil.
+   */
+  const [notice, setNotice] = useState<string | null>(null);
 
   const isGuest = mode === 'guest';
   /** Los campos de esta pasada. Cinco para uno mismo, dos para el invitado. */
@@ -134,6 +147,7 @@ export function DetailsScreen({
     if (isGuest) setGuest((current) => ({ ...current, [field]: value }));
     else setPerson((current) => ({ ...current, [field]: value }));
     if (missing.includes(field)) setMissing((m) => m.filter((f) => f !== field));
+    if (notice) setNotice(null);
   }
 
   function submit(event: FormEvent) {
@@ -149,9 +163,23 @@ export function DetailsScreen({
       const badEmail = !empty.includes('email') && !EMAIL.test(guest.email.trim());
       if (empty.length || badEmail) {
         setMissing(badEmail ? [...empty, 'email'] : empty);
+        setNotice(copy.required);
         return;
       }
+
+      /**
+       * Y no puede ser el correo de quien invita. Se comprueba aquí y no solo en
+       * el servidor porque el aviso del servidor llegaría dos pantallas después,
+       * al confirmar, cuando ya no se ve el campo que hay que arreglar.
+       */
+      if (ownEmail && guest.email.trim().toLowerCase() === ownEmail.trim().toLowerCase()) {
+        setMissing(['email']);
+        setNotice(copy.guestSameEmail);
+        return;
+      }
+
       setMissing([]);
+      setNotice(null);
       onGuest?.({ name: guest.name.trim(), email: guest.email.trim().toLowerCase() });
       return;
     }
@@ -160,9 +188,11 @@ export function DetailsScreen({
     const empty = FIELDS.filter((field) => field !== 'linkedin' && !person[field].trim());
     if (empty.length) {
       setMissing(empty);
+      setNotice(copy.required);
       return;
     }
     setMissing([]);
+    setNotice(null);
     const trimmed = Object.fromEntries(
       FIELDS.map((field) => [field, person[field].trim()]),
     ) as PersonDraft;
@@ -317,7 +347,7 @@ export function DetailsScreen({
           </button>
 
           <AnimatePresence initial={false}>
-            {missing.length > 0 && (
+            {notice && (
               <motion.p
                 className={styles.error}
                 initial={{ opacity: 0, y: 4 }}
@@ -326,7 +356,7 @@ export function DetailsScreen({
                 transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
                 role="alert"
               >
-                {copy.required}
+                {notice}
               </motion.p>
             )}
           </AnimatePresence>

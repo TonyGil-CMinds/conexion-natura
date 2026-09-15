@@ -421,6 +421,7 @@ export const en: Dictionary = {
       submit: 'Continue',
       back: 'Back',
       required: 'Fill in the missing details',
+      guestSameEmail: "Your guest's email cannot be your own",
     },
 
     photo: {
@@ -484,6 +485,7 @@ export const en: Dictionary = {
       guestPending: 'Yet to complete their registration',
       guestConfirmed: 'Registration complete',
       addPhoto: 'Add my photo',
+      editDetails: 'Edit my details',
       changePhoto: 'Change my photo',
       cardTitle: 'Your card',
       cardFlip: 'Click to flip it',

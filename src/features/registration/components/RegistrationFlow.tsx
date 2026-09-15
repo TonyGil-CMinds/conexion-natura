@@ -220,6 +220,37 @@ export function RegistrationFlow({ locale, copy }: Props) {
   );
 
   /**
+   * Vuelve al formulario para corregir los datos de un registro ya guardado.
+   *
+   * El borrador se **reconstruye** desde el perfil: al confirmar se borra, así
+   * que a estas alturas no queda nada en el navegador y sin esto el formulario
+   * saldría vacío —y al enviarlo borraría lo que había—.
+   *
+   * Se entra por los datos y no por la elección de acto: lo que se viene a
+   * arreglar aquí es un nombre, un rol o un acompañante. Los actos ya elegidos
+   * viajan en el borrador, así que el envío final no los toca.
+   */
+  const handleEditDetails = useCallback(() => {
+    if (!attendee) return;
+    draft.current = saveJoinDraft({
+      email: attendee.email,
+      events: attendee.events,
+      person: {
+        name: attendee.name,
+        surname: attendee.surname,
+        organization: attendee.organization,
+        role: attendee.role,
+        linkedin: attendee.linkedin ?? "",
+      },
+      bringsGuest: attendee.bringsGuest === true,
+      // Solo el nombre y el correo: es lo único que quien invita rellenó.
+      guest: attendee.guests?.[0]
+        ? { name: attendee.guests[0].name, email: attendee.guests[0].email }
+        : undefined,
+    });
+    setStage("details");
+  }, [attendee]);
+  /**
    * Cambia la fotografía de un registro que ya está guardado.
    *
    * Va por su propio camino y no reenviando el formulario: por el `POST` habría
@@ -269,7 +300,9 @@ export function RegistrationFlow({ locale, copy }: Props) {
             /* Quien llega invitado completa su lugar; no reparte otro. */
             canInvite={!draft.current?.fromInvitation}
             onContinue={handleDetails}
-            onBack={() => setStage('choice')}
+            /* Quien está corrigiendo vuelve a su resumen, no a la elección de
+               acto: no entró por ahí. */
+            onBack={() => setStage(attendee ? 'welcome' : 'choice')}
           />
         )}
 
@@ -279,6 +312,8 @@ export function RegistrationFlow({ locale, copy }: Props) {
             copy={copy.details}
             mode="guest"
             initialGuest={draft.current?.guest}
+            /* Para no dejar poner el correo propio como el del acompañante. */
+            ownEmail={draft.current?.email}
             onGuest={handleGuest}
             onBack={() => setStage('details')}
           />
@@ -288,6 +323,9 @@ export function RegistrationFlow({ locale, copy }: Props) {
           <PhotoScreen
             key="photo"
             copy={copy.photo}
+            /* La que ya está guardada: quien corrige un dato no tiene que
+               volver a subir la misma imagen. */
+            currentPhotoUrl={attendee?.photoUrl ?? null}
             onConfirm={handleConfirm}
             onBack={() => setStage(draft.current?.bringsGuest ? 'guest' : 'details')}
           />
@@ -302,6 +340,7 @@ export function RegistrationFlow({ locale, copy }: Props) {
             copy={copy.welcome}
             attendee={attendee}
             onEditPhoto={() => setStage('photoEdit')}
+            onEditDetails={handleEditDetails}
           />
         )}
 

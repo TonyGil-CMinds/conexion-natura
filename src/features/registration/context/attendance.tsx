@@ -35,6 +35,13 @@ export type Attendee = {
    */
   events?: EventChoice[];
   /**
+   * Si dijo que viene acompañado.
+   *
+   * Opcional porque un perfil guardado en el navegador antes de que se
+   * devolviera este campo no lo trae: quien lo lea debe suponer que no.
+   */
+  bringsGuest?: boolean;
+  /**
    * A quién invitó y si ya completó su registro.
    *
    * Es una lista porque así lo devuelve el servidor —la relación admite más de

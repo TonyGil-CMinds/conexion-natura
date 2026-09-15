@@ -30,6 +30,12 @@ const SELECT = {
   /** Los actos elegidos: la bienvenida enseña los que se marcaron. */
   events: true,
   /**
+   * Si dijo que viene acompañado. Lo necesita el resumen para volver al
+   * formulario con la casilla como la dejó: sin esto, quien edita sus datos
+   * la encontraría desmarcada y perdería a su acompañante sin querer.
+   */
+  bringsGuest: true,
+  /**
    * El invitado y en qué punto está. La pantalla final de quien invita dice si
    * su invitado ya completó su registro o sigue pendiente, y sin eso quien
    * invita no tiene forma de saberlo.

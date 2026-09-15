@@ -481,6 +481,8 @@ export const es = {
       submit: 'Continuar',
       back: 'Volver',
       required: 'Completa los datos que faltan',
+      /** Un correo es un registro: invitarse a uno mismo no es posible. */
+      guestSameEmail: 'El correo de tu acompañante no puede ser el tuyo',
     },
 
     /** Último paso: la fotografía de la credencial y la confirmación. */
@@ -567,6 +569,7 @@ export const es = {
       guestPending: 'Pendiente de completar su registro',
       guestConfirmed: 'Registro completado',
       addPhoto: 'Añadir mi fotografía',
+      editDetails: 'Editar mis datos',
       changePhoto: 'Cambiar mi fotografía',
       cardTitle: 'Tu tarjeta',
       cardFlip: 'Haz clic para girarla',
