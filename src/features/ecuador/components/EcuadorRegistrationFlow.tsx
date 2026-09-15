@@ -121,7 +121,16 @@ export function EcuadorRegistrationFlow({ locale, copy, photoCopy }: Props) {
 
   return (
     <AnimatePresence mode="wait" initial={false}>
-      {stage === 'join' && <JoinScreen key="join" copy={copy.join} onSaved={start} />}
+      {stage === 'join' && (
+        <JoinScreen
+          key="join"
+          copy={copy.join}
+          /* Sin borrador: este registro vive en el estado de React, y el del
+             navegador es del registro del sitio —escribir aquí lo borraría—. */
+          savesDraft={false}
+          onSaved={start}
+        />
+      )}
 
       {stage === 'details' && (
         <EcuadorDetailsScreen

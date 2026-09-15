@@ -11,6 +11,17 @@ import styles from './JoinScreen.module.css';
 type Props = {
   copy: Dictionary['registration']['join'];
   /**
+   * Si el correo se guarda en el borrador del registro del sitio.
+   *
+   * Esta pantalla la reutiliza el registro de empresas de Ecuador, que tiene
+   * su propio flujo y **no** usa ese borrador. Guardándolo siempre, escribir
+   * un correo allí borraba lo que alguien tuviera a medias en `/registro`:
+   * sus actos, sus datos y su acompañante, en silencio.
+   *
+   * Por omisión sí, que es lo que necesita `/registro`.
+   */
+  savesDraft?: boolean;
+  /**
    * Se llama con el correo ya guardado en el navegador, cuando la animación de
    * guardado termina. Es la costura por donde entra lo siguiente: quién decide
    * qué pantalla toca es el orquestador, no esta.
@@ -80,7 +91,7 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
  * no espera a la red: el correo se guarda en el navegador y nada sale hacia el
  * servidor todavía, porque el registro no está completo hasta elegir el evento.
  */
-export function JoinScreen({ copy, onSaved }: Props) {
+export function JoinScreen({ copy, savesDraft = true, onSaved }: Props) {
   const [email, setEmail] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -104,7 +115,7 @@ export function JoinScreen({ copy, onSaved }: Props) {
 
     setError(null);
     setEmail(value);
-    saveJoinDraft({ email: value });
+    if (savesDraft) saveJoinDraft({ email: value });
 
     const objetivo = savedWidth(formRef.current);
     setWidth(formRef.current?.getBoundingClientRect().width ?? objetivo);
