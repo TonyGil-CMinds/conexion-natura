@@ -60,6 +60,46 @@
 }
 
 /**
+ * La «Á» de «Acompáñanos».
+ *
+ * Cubao **no trae la versal acentuada**: medido en el propio titular, `Á` da
+ * exactamente el mismo avance y la misma altura que `A` —62,9 y 63 a cuerpo de
+ * 100—, o sea que cae en la A pelada y la tilde desaparece. Así que la letra
+ * entera se sustituye por este glifo, como ya se sustituyen las «o».
+ *
+ * Va como **máscara y no como imagen**: el titular se pinta con `--fg` y cambia
+ * con el tema, mientras que el archivo trae su relleno fijado en el crema. Es la
+ * misma regla que los iconos de la cabecera.
+ *
+ * Las medidas no son redondas porque salen de cuadrar dos dibujos distintos.
+ * Medido: el cuerpo de la A ocupa 51,214 × 54,649 dentro del lienzo de 52×67
+ * —la tilde va encima, de 0 a 8—, y la «A» de la fuente tiene 0,61em de tinta,
+ * 0,63em de versal y 0,629em de avance.
+ *
+ * - **Caja**: el avance de la fuente, para que la palabra conserve su ritmo.
+ * - **Dibujo**: escalado para que el cuerpo de la A mida exactamente la tinta de
+ *   la fuente, 0,61 × 0,63em. De ahí 0,61 × 52/51,214 y 0,63 × 67/54,649.
+ * - **Sitio**: pegado abajo —el canto inferior del dibujo **es** la línea base—
+ *   y a 0,01em del borde izquierdo, que es lo que la fuente deja de margen.
+ *
+ * A la misma versal, el dibujo es un 3,2% más estrecho que la A de la fuente, y
+ * al lado de sus vecinas se notaba más ligera. Por eso el ancho y el alto se dan
+ * por separado en vez de con `contain`: estira el trazo un 3,4%, que en una
+ * fuente de palo tan maciza no se ve, y a cambio la letra pesa lo que debe. Si
+ * se prefiere respetar la proporción del archivo, basta con `mask-size: contain`.
+ */
+.aAccent {
+  display: inline-block;
+  width: 0.629em;
+  height: 0.772em;
+  background-color: currentColor;
+  mask-image: url('/icons/letter-a-accent.svg');
+  mask-size: 0.6194em 0.7724em;
+  mask-repeat: no-repeat;
+  mask-position: 0.01em bottom;
+}
+
+/**
  * Caja del correo: un campo y el botón dentro del mismo recuadro.
  *
  * El ancho va en `min(...)` mientras no se anima; al enviar, el componente le

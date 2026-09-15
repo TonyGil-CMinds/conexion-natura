@@ -40,6 +40,16 @@ const O_ICONS = [
 ] as const;
 
 /**
+ * Glifo de la «Á», que sustituye a la letra entera.
+ *
+ * Cubao no trae la versal acentuada —`Á` mide igual que `A`, así que cae en la
+ * A pelada— y «Acompáñanos» salía sin tilde. A diferencia de los iconos de las
+ * «o», este no es un adorno de marca sino una letra, así que va como máscara
+ * para tomar la tinta del titular; el detalle está en la hoja de estilos.
+ */
+const A_ACCENT = 'á';
+
+/**
  * Lo que dura el guardado en pantalla (ms).
  *
  * No es el tiempo que cuesta escribir en `localStorage` —eso es inmediato— sino
@@ -231,8 +241,11 @@ function Headline({ line1, line2, accent }: HeadlineProps) {
     let buffer = '';
 
     [...text].forEach((char, index) => {
-      const icon = char.toLowerCase() === 'o' ? takeIcon() : null;
-      if (!icon) {
+      const lower = char.toLowerCase();
+      const icon = lower === 'o' ? takeIcon() : null;
+      const isAccentedA = lower === A_ACCENT;
+
+      if (!icon && !isAccentedA) {
         buffer += char;
         return;
       }
@@ -240,17 +253,24 @@ function Headline({ line1, line2, accent }: HeadlineProps) {
         nodes.push(buffer);
         buffer = '';
       }
+
       nodes.push(
-        <Image
-          key={`${keyBase}-${index}`}
-          src={icon.src}
-          alt=""
-          width={62}
-          height={62}
-          className={styles.oIcon}
-          data-tone={icon.tone}
-          aria-hidden
-        />,
+        icon ? (
+          <Image
+            key={`${keyBase}-${index}`}
+            src={icon.src}
+            alt=""
+            width={62}
+            height={62}
+            className={styles.oIcon}
+            data-tone={icon.tone}
+            aria-hidden
+          />
+        ) : (
+          /* Una letra, no un icono: va como máscara para seguir la tinta del
+             titular, y el texto plano ya viaja en el `aria-label` del h1. */
+          <span key={`${keyBase}-${index}`} className={styles.aAccent} aria-hidden />
+        ),
       );
     });
 
