@@ -82,6 +82,18 @@ export function RegistrationFlow({ locale, copy }: Props) {
   }, [attendee, stage, pending]);
 
   /**
+   * Y al revés: si el registro **deja de existir**, se vuelve al principio.
+   *
+   * El proveedor comprueba contra la base el perfil que guardó el navegador,
+   * y puede vaciarlo un instante después de montar. Sin esto, el resumen se
+   * quedaba sin nada que pintar —solo se dibuja con `attendee`— y la pantalla
+   * se iba en blanco, sin manera de registrarse otra vez.
+   */
+  useEffect(() => {
+    if (!attendee && (stage === 'welcome' || stage === 'photoEdit')) setStage('join');
+  }, [attendee, stage]);
+
+  /**
    * Quien llega por el enlace de una invitación **no pasa por la pantalla del
    * correo**: su correo ya lo sabemos, y volver a pedírselo sería preguntar por
    * el dato que le trajo hasta aquí.

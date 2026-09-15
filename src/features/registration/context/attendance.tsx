@@ -1,6 +1,7 @@
 'use client';
 
 import type { EventChoice } from '../lib/attendee-input';
+import { verifyAttendee } from '../lib/lookup-attendee';
 import {
   createContext,
   useCallback,
@@ -99,25 +100,74 @@ const AttendanceContext = createContext<AttendanceState>({
  * del árbol: pasarlo por props obligaría a atravesar componentes que no tienen
  * nada que ver con el registro.
  *
- * **Es almacenamiento local, no una base de datos.** Guarda en `localStorage`
- * —no en `sessionStorage`— porque confirmar asistencia es un compromiso que debe
- * sobrevivir al cierre de la pestaña, al contrario que el loader. Cuando exista
- * el backend, este proveedor pasa a recibir el dato del servidor y lo único que
- * cambia es de dónde sale el estado inicial.
+ * Guarda en `localStorage` —no en `sessionStorage`— porque confirmar asistencia
+ * es un compromiso que debe sobrevivir al cierre de la pestaña, al contrario que
+ * el loader.
+ *
+ * Pero lo guardado es una **copia**, no la verdad: la fila de la base manda, y
+ * por eso al arrancar se comprueba contra ella (ver el efecto de abajo). Mientras
+ * esto era solo almacenamiento local, un registro borrado dejaba al navegador
+ * enseñando una confirmación que ya no existía.
  */
 export function AttendanceProvider({ children }: { children: React.ReactNode }) {
   const [attendee, setAttendee] = useState<Attendee | null>(null);
 
-  // Se lee después de montar y no en el estado inicial: en el servidor no hay
-  // `localStorage`, y devolver algo distinto en cliente rompería la hidratación.
+  /**
+   * Se lee después de montar y no en el estado inicial: en el servidor no hay
+   * `localStorage`, y devolver algo distinto en cliente rompería la hidratación.
+   *
+   * Y después de leerlo **se comprueba contra la base**. El navegador guarda una
+   * copia, no la verdad: si esa fila ya no existe —se borró, se limpió la base
+   * antes del evento— quien volvía seguía viendo su nombre en la cabecera y el
+   * resumen en `/registro`, sin forma de registrarse otra vez. Pasó de verdad.
+   *
+   * El orden importa: primero se pinta lo guardado y luego se corrige. Esperar a
+   * la red para enseñar el nombre haría parpadear «Regístrate» en cada carga a
+   * quien sí está registrado, que es el caso normal.
+   *
+   * Solo se borra con un **404**, que es el servidor diciendo que no está. Un
+   * fallo de red deja el perfil como estaba: nadie debe perder su confirmación
+   * por pasar por un túnel.
+   */
   useEffect(() => {
+    let stored: Attendee | null = null;
     try {
       for (const key of LEGACY_KEYS) window.localStorage.removeItem(key);
-      const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (stored) setAttendee(JSON.parse(stored) as Attendee);
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) stored = JSON.parse(raw) as Attendee;
     } catch {
       // Almacenamiento bloqueado o dato corrupto: se sigue sin confirmación.
     }
+    if (!stored?.email) return;
+    setAttendee(stored);
+
+    let cancelled = false;
+    void (async () => {
+      const check = await verifyAttendee(stored.email);
+      if (cancelled || check.status === 'unknown') return;
+
+      if (check.status === 'missing') {
+        setAttendee(null);
+        try {
+          window.localStorage.removeItem(STORAGE_KEY);
+        } catch {}
+        return;
+      }
+
+      /**
+       * Sigue estando: se adopta la versión del servidor. Además de confirmar,
+       * refresca lo que pudo cambiar sin pasar por aquí —que un invitado haya
+       * completado su registro, por ejemplo—.
+       */
+      setAttendee(check.attendee);
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(check.attendee));
+      } catch {}
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const confirm = useCallback((next: Attendee) => {
