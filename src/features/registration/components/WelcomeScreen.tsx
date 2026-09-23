@@ -1,7 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { PixelSprite } from '@/features/hero-creature';
 import { Toast } from '@/components/ui/Toast';
@@ -11,16 +10,13 @@ import type { Dictionary, Locale } from '@/i18n';
 import type { Attendee } from '../context/attendance';
 import { EVENT_OPTIONS } from '../config/event-options';
 import { addToCalendar, type CalendarTarget } from '../lib/calendar';
-import { downloadBadge, renderBadge, shareBadge } from '../lib/badge';
-import { ProfileCard } from './ProfileCard';
+import { shareLink } from '../lib/share-link';
 import styles from './WelcomeScreen.module.css';
 
 type Props = {
   locale: Locale;
   copy: Dictionary['registration']['welcome'];
   attendee: Attendee;
-  /** Lleva al paso de la fotografía para poner o cambiar el retrato. */
-  onEditPhoto?: () => void;
   /**
    * Vuelve al formulario con los datos ya puestos: nombre, organización,
    * rol, enlace y acompañante.
@@ -77,7 +73,7 @@ function PixelChevron() {
  * El ave de píxeles es la del hero, con su misma entrada y su misma repulsión al
  * puntero: cierra el recorrido donde empezó.
  */
-export function WelcomeScreen({ locale, copy, attendee, onEditPhoto, onEditDetails }: Props) {
+export function WelcomeScreen({ locale, copy, attendee, onEditDetails }: Props) {
   /**
    * Los actos que se marcaron, en el orden del diseño.
    *
@@ -95,8 +91,6 @@ export function WelcomeScreen({ locale, copy, attendee, onEditPhoto, onEditDetai
   const shown = events[Math.min(index, events.length - 1)];
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [isCardOpen, setIsCardOpen] = useState(false);
-  const [badge, setBadge] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
 
@@ -107,16 +101,6 @@ export function WelcomeScreen({ locale, copy, attendee, onEditPhoto, onEditDetai
    */
   const [isFieldActive, setIsFieldActive] = useState(false);
   useEffect(() => setIsFieldActive(true), []);
-
-  /**
-   * La tarjeta se cuelga del `body`, y eso solo puede hacerse ya en el cliente.
-   *
-   * Va ahí porque esta pantalla crea contexto de apilamiento —tiene `position` y
-   * `z-index` propios—, así que aquí dentro ningún `z-index` supera a la
-   * cabecera y la capa salía por debajo de ella.
-   */
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => setIsMounted(true), []);
 
   const { year, month, day } = SITE.event.date;
   const date = new Date(Date.UTC(year, month, day));
@@ -142,31 +126,6 @@ export function WelcomeScreen({ locale, copy, attendee, onEditPhoto, onEditDetai
     };
   }, [isCalendarOpen]);
 
-  useEffect(() => {
-    if (!isCardOpen) return;
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsCardOpen(false);
-    };
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [isCardOpen]);
-
-  /**
-   * La tarjeta se compone al abrirla y una sola vez: dibujarla al montar sería
-   * trabajo tirado para quien solo viene a mirar la fecha.
-   */
-  const openCard = useCallback(async () => {
-    setIsCardOpen(true);
-    if (badge) return;
-    const image = await renderBadge({
-      name: attendee.name,
-      surname: attendee.surname,
-      organization: attendee.organization,
-      photoUrl: attendee.photoUrl,
-    });
-    setBadge(image);
-  }, [attendee, badge]);
-
   function pickCalendar(target: CalendarTarget) {
     setIsCalendarOpen(false);
     addToCalendar(target, {
@@ -180,10 +139,33 @@ export function WelcomeScreen({ locale, copy, attendee, onEditPhoto, onEditDetai
     });
   }
 
+  /**
+   * Comparte **el enlace del registro**, no una imagen.
+   *
+   * Antes esto abría la credencial y compartía el PNG. Sin fotografía no hay
+   * credencial que compartir, y lo que de verdad sirve repartir es la puerta:
+   * quien reciba esto puede inscribirse.
+   */
+  /**
+   * El enlace sale de la **propia página** y no de `SITE_URL`.
+   *
+   * Dos razones, las dos medidas: `SITE_URL` resuelve en el cliente a
+   * `http://localhost:3000` porque la variable de Vercel no llega al navegador
+   * —solo se inlinean las `NEXT_PUBLIC_`—, así que en producción se habría
+   * compartido un enlace a localhost. Y se toma `pathname` sin la cadena de
+   * consulta: quien llegó por una invitación la lleva en la URL, y compartirla
+   * sería repartir el testigo que abre el registro de otra persona.
+   */
+  function registrationUrl() {
+    return `${window.location.origin}${window.location.pathname}`;
+  }
   async function share() {
-    if (!badge) return;
-    const result = await shareBadge(badge, { title: copy.shareTitle, text: copy.shareText });
+    const result = await shareLink(registrationUrl(), {
+      title: copy.shareTitle,
+      text: copy.shareText,
+    });
     if (result === 'copied') setToast(copy.copied);
+    else if (result === 'failed') setToast(copy.shareFailed);
   }
 
   return (
@@ -317,30 +299,9 @@ export function WelcomeScreen({ locale, copy, attendee, onEditPhoto, onEditDetai
             </AnimatePresence>
           </div>
 
-          <button type="button" className={styles.secondary} onClick={openCard}>
+          <button type="button" className={styles.secondary} onClick={share}>
             {copy.share}
           </button>
-
-          {/**
-           * Poner o cambiar el retrato **desde aquí**.
-           *
-           * Sin esto, quien se registró sin foto —o con una que no le gusta— se
-           * quedaba con la credencial así para siempre: el correo ya registrado
-           * lleva directo a esta pantalla y no hay vuelta al formulario.
-           *
-           * Sin foto es una llamada a la acción y no un enlace discreto: la
-           * credencial sale con el hueco del retrato vacío y eso hay que
-           * resolverlo, no ofrecerlo.
-           */}
-          {onEditPhoto && (
-            <button
-              type="button"
-              className={attendee.photoUrl ? styles.quiet : styles.secondary}
-              onClick={onEditPhoto}
-            >
-              {attendee.photoUrl ? copy.changePhoto : copy.addPhoto}
-            </button>
-          )}
 
           {/* Editar los datos. Discreto, como el de la fotografía: el
               estado de reposo de esta pantalla es mirar, no corregir. */}
@@ -374,71 +335,6 @@ export function WelcomeScreen({ locale, copy, attendee, onEditPhoto, onEditDetai
         </motion.div>
       </div>
 
-      {isMounted && createPortal(
-      <AnimatePresence>
-        {isCardOpen && (
-          <motion.div
-            className={styles.overlay}
-            role="dialog"
-            aria-modal="true"
-            aria-label={copy.cardTitle}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
-          >
-            <motion.div
-              className={styles.card}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 24 }}
-              transition={{ duration: 0.45, ease: EASE_OUT_EXPO }}
-            >
-              {badge ? (
-                <ProfileCard
-                  front={badge}
-                  back="/img/card-back.png"
-                  label={copy.cardTitle}
-                  flipLabel={copy.cardFlip}
-                />
-              ) : (
-                <p className={styles.preparing}>
-                  {copy.preparing}
-                  <span className={styles.loader} aria-hidden>
-                    {Array.from({ length: 9 }, (_, index) => (
-                      <span key={index} style={{ ['--cell' as string]: index }} />
-                    ))}
-                  </span>
-                </p>
-              )}
-
-              <div className={styles.cardActions}>
-                <button type="button" className={styles.primary} onClick={share} disabled={!badge}>
-                  {copy.shareCard}
-                </button>
-                <button
-                  type="button"
-                  className={styles.secondary}
-                  onClick={() => badge && downloadBadge(badge, `${attendee.name}-${attendee.surname}`)}
-                  disabled={!badge}
-                >
-                  {copy.download}
-                </button>
-                <button
-                  type="button"
-                  className={styles.close}
-                  onClick={() => setIsCardOpen(false)}
-                  aria-label={copy.close}
-                >
-                  <PixelChevron />
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>,
-      document.body,
-      )}
 
       <Toast message={toast} onDismiss={() => setToast(null)} />
     </motion.section>

@@ -16,12 +16,9 @@ import { useAttendance } from '../context/attendance';
 import { clearJoinDraft } from '../lib/join-draft';
 import { lookupAttendee } from '../lib/lookup-attendee';
 import { lookupInvitation } from '../lib/lookup-invitation';
-import { updatePhoto } from '../lib/update-photo';
-import { uploadPhoto } from '../lib/upload-photo';
 import { DetailsScreen } from './DetailsScreen';
 import { EventChoiceScreen } from './EventChoiceScreen';
 import { JoinScreen } from './JoinScreen';
-import { PhotoScreen } from './PhotoScreen';
 import { WelcomeScreen } from './WelcomeScreen';
 import styles from './RegistrationFlow.module.css';
 
@@ -35,7 +32,7 @@ type Props = {
  * Los pasos, en orden. `guest` solo se visita si se dijo que sí, y `welcome`
  * es el final —y también la vista de reposo de quien ya confirmó—.
  */
-type Stage = 'join' | 'choice' | 'details' | 'guest' | 'photo' | 'welcome' | 'photoEdit';
+type Stage = 'join' | 'choice' | 'details' | 'guest' | 'welcome';
 
 /**
  * Orquesta los pasos del registro.
@@ -90,7 +87,7 @@ export function RegistrationFlow({ locale, copy }: Props) {
    * se iba en blanco, sin manera de registrarse otra vez.
    */
   useEffect(() => {
-    if (!attendee && (stage === 'welcome' || stage === 'photoEdit')) setStage('join');
+    if (!attendee && stage === 'welcome') setStage('join');
   }, [attendee, stage]);
 
   /**
@@ -169,36 +166,20 @@ export function RegistrationFlow({ locale, copy }: Props) {
     setStage('details');
   }, []);
 
-  const handleDetails = useCallback((person: PersonDraft, bringsGuest: boolean) => {
-    const current = readJoinDraft();
-    if (current) draft.current = saveJoinDraft({ ...current, person, bringsGuest });
-    // Con invitado hay una segunda pasada por la misma pantalla —dos campos— y
-    // sin él la fotografía es lo único que falta.
-    setStage(bringsGuest ? 'guest' : 'photo');
-  }, []);
-
-  const handleGuest = useCallback((guest: GuestDraft) => {
-    const current = readJoinDraft();
-    if (current) draft.current = saveJoinDraft({ ...current, guest });
-    setStage('photo');
-  }, []);
-
   /**
-   * Confirmación final: sube la fotografía, si hay, y manda el registro entero.
+   * Manda el registro entero y salta a la bienvenida.
    *
-   * La subida va **aquí y no al elegir el archivo**: quien cambia de imagen tres
-   * veces no deja tres archivos huérfanos en el bucket. Y va antes del envío
-   * porque lo que la fila guarda es la URL, no el archivo.
+   * Se llama `sendRegistration` y no `handleConfirm` porque ya no lo dispara una
+   * pantalla concreta: lo llama el **último paso que haya**, que es la pasada del
+   * acompañante o la de los datos según se venga o no acompañado.
    *
-   * Si algo falla, se propaga: la pantalla lo cuenta y deja reintentar, y el
-   * borrador sigue en el navegador para que no haya que teclear otra vez.
+   * Lanza si algo falla: la pantalla que llamó lo recoge, lo cuenta y deja
+   * reintentar, y el borrador sigue en el navegador para no teclear otra vez.
    */
-  const handleConfirm = useCallback(
-    async (photo: Blob | null) => {
+  const sendRegistration = useCallback(
+    async () => {
       const current = readJoinDraft();
       if (!current?.person) throw new Error('Faltan datos del registro.');
-
-      const photoUrl = photo ? await uploadPhoto(photo) : null;
 
       const response = await fetch('/api/registro', {
         method: 'POST',
@@ -206,7 +187,6 @@ export function RegistrationFlow({ locale, copy }: Props) {
         body: JSON.stringify({
           email: current.email,
           ...current.person,
-          photoUrl,
           events: current.events ?? [],
           bringsGuest: current.bringsGuest === true,
           guest: current.guest ?? null,
@@ -231,6 +211,46 @@ export function RegistrationFlow({ locale, copy }: Props) {
     [confirm],
   );
 
+  /**
+   * Con acompañante queda una segunda pasada por la misma pantalla —sus dos
+   * datos—; sin él, aquí se acaba y se confirma.
+   *
+   * Antes faltaba siempre la fotografía, que era la que confirmaba. Al quitarla
+   * el envío sube al último paso que haya, y por eso este manejador espera:
+   * la pantalla mantiene su cargador hasta que el servidor conteste.
+   */
+  const handleDetails = useCallback(
+    async (person: PersonDraft, bringsGuest: boolean) => {
+      const current = readJoinDraft();
+      if (current) draft.current = saveJoinDraft({ ...current, person, bringsGuest });
+      if (bringsGuest) {
+        setStage('guest');
+        return;
+      }
+      await sendRegistration();
+    },
+    [sendRegistration],
+  );
+
+  const handleGuest = useCallback(
+    async (guest: GuestDraft) => {
+      const current = readJoinDraft();
+      if (current) draft.current = saveJoinDraft({ ...current, guest });
+      await sendRegistration();
+    },
+    [sendRegistration],
+  );
+
+  /**
+   * Confirmación final: sube la fotografía, si hay, y manda el registro entero.
+   *
+   * La subida va **aquí y no al elegir el archivo**: quien cambia de imagen tres
+   * veces no deja tres archivos huérfanos en el bucket. Y va antes del envío
+   * porque lo que la fila guarda es la URL, no el archivo.
+   *
+   * Si algo falla, se propaga: la pantalla lo cuenta y deja reintentar, y el
+   * borrador sigue en el navegador para que no haya que teclear otra vez.
+   */
   /**
    * Vuelve al formulario para corregir los datos de un registro ya guardado.
    *
@@ -262,23 +282,6 @@ export function RegistrationFlow({ locale, copy }: Props) {
     });
     setStage("details");
   }, [attendee]);
-  /**
-   * Cambia la fotografía de un registro que ya está guardado.
-   *
-   * Va por su propio camino y no reenviando el formulario: por el `POST` habría
-   * que mandar otra vez todos los campos, y desde aquí no se conocen los del
-   * acompañante —se borrarían—. La petición toca solo esa columna.
-   */
-  const handlePhotoEdit = useCallback(
-    async (photo: Blob | null) => {
-      if (!attendee || !photo) throw new Error('Falta la imagen.');
-      confirm(await updatePhoto(attendee.email, photo));
-      // Sin escalera: se vuelve a la pantalla de la que se salió.
-      setStage('welcome');
-    },
-    [attendee, confirm],
-  );
-
   return (
     <div className={styles.root}>
       {/**
@@ -331,18 +334,6 @@ export function RegistrationFlow({ locale, copy }: Props) {
           />
         )}
 
-        {stage === 'photo' && (
-          <PhotoScreen
-            key="photo"
-            copy={copy.photo}
-            /* La que ya está guardada: quien corrige un dato no tiene que
-               volver a subir la misma imagen. */
-            currentPhotoUrl={attendee?.photoUrl ?? null}
-            onConfirm={handleConfirm}
-            onBack={() => setStage(draft.current?.bringsGuest ? 'guest' : 'details')}
-          />
-        )}
-
         {/* Sin `attendee` no hay nada que enseñar: el estado llega con la
             respuesta del servidor, o del almacenamiento al montar. */}
         {stage === 'welcome' && attendee && (
@@ -351,21 +342,10 @@ export function RegistrationFlow({ locale, copy }: Props) {
             locale={locale}
             copy={copy.welcome}
             attendee={attendee}
-            onEditPhoto={() => setStage('photoEdit')}
             onEditDetails={handleEditDetails}
           />
         )}
 
-        {/* La misma pantalla de la foto, con otros rótulos y otro destino. */}
-        {stage === 'photoEdit' && attendee && (
-          <PhotoScreen
-            key="photoEdit"
-            copy={copy.photo}
-            mode="edit"
-            onConfirm={handlePhotoEdit}
-            onBack={() => setStage('welcome')}
-          />
-        )}
       </AnimatePresence>
 
       {pending && (

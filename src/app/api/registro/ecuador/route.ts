@@ -88,9 +88,13 @@ export async function POST(request: Request) {
   if (bringsGuest && !EMAIL.test(guestEmail)) {
     fields.guestEmail = 'Escribe un correo válido para tu acompañante.';
   }
-  // La fotografía es obligatoria: es la cara de la credencial.
+  /**
+   * La fotografía **ya no se pide**: el formulario la quitó y con ella la
+   * credencial. La columna se queda —las filas de antes conservan su retrato y
+   * borrarlas sería tirar algo que no molesta— pero nada la exige, y el cliente
+   * ya no la manda.
+   */
   const photoUrl = typeof raw.photoUrl === 'string' && raw.photoUrl ? raw.photoUrl : null;
-  if (!photoUrl) fields.photoUrl = 'Falta la fotografía.';
 
   if (Object.keys(fields).length) {
     return NextResponse.json({ error: 'Revisa los datos marcados.', fields }, { status: 422 });
@@ -105,15 +109,15 @@ export async function POST(request: Request) {
     tablePitch,
     guestName,
     guestEmail,
-    photoUrl,
     locale,
   };
 
   try {
     const registration = await prisma.ecuadorRegistration.upsert({
       where: { email },
-      update: data,
-      create: { email, ...data },
+      /* Sin retrato nuevo no se toca el que hubiera: `undefined` no escribe. */
+      update: { ...data, photoUrl: photoUrl ?? undefined },
+      create: { email, ...data, photoUrl },
       select: {
         id: true,
         fullName: true,

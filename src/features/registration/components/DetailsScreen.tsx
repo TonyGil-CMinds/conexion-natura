@@ -42,9 +42,15 @@ type Props = {
    * rechaza; aquí se dice **antes**, junto al campo y no al final del flujo.
    */
   ownEmail?: string;
-  onContinue?: (person: PersonDraft, bringsGuest: boolean) => void;
-  /** Se llama en la pasada del invitado, con sus dos datos. */
-  onGuest?: (guest: GuestDraft) => void;
+  /**
+   * Puede devolver una promesa: desde que no hay paso de fotografía, **esta**
+   * es la pantalla que confirma el registro cuando no hay acompañante, así que
+   * tiene que poder esperar al servidor y contar si algo falla.
+   */
+  onContinue?: (person: PersonDraft, bringsGuest: boolean) => void | Promise<void>;
+  /** Se llama en la pasada del invitado, con sus dos datos. Igual que arriba:
+   *  con acompañante, es esta pasada la que confirma. */
+  onGuest?: (guest: GuestDraft) => void | Promise<void>;
   /** Vuelve al paso anterior. Sin él, el botón no se pinta. */
   onBack?: () => void;
 };
@@ -136,8 +142,18 @@ export function DetailsScreen({
    * faltan», que con un campo relleno pero mal no decía nada útil.
    */
   const [notice, setNotice] = useState<string | null>(null);
+  /** Mientras el registro viaja al servidor. */
+  const [isSending, setIsSending] = useState(false);
 
   const isGuest = mode === 'guest';
+  /**
+   * Si al pulsar se **confirma** el registro en vez de pasar a otro paso.
+   *
+   * Lo sabe esta pantalla y no quien la monta: depende de la casilla del
+   * acompañante, que es estado de aquí dentro. Con acompañante queda su pasada;
+   * sin él —y en la pasada del acompañante— aquí se acaba.
+   */
+  const isLast = isGuest || !(canInvite && bringsGuest);
   /** Los campos de esta pasada. Cinco para uno mismo, dos para el invitado. */
   const fields: readonly string[] = isGuest ? GUEST_FIELDS : FIELDS;
   const labels = isGuest ? copy.guestFields : copy.fields;
@@ -148,6 +164,25 @@ export function DetailsScreen({
     else setPerson((current) => ({ ...current, [field]: value }));
     if (missing.includes(field)) setMissing((m) => m.filter((f) => f !== field));
     if (notice) setNotice(null);
+  }
+
+  /**
+   * Entrega el paso y, si esta pantalla es la última, espera al servidor.
+   *
+   * El fallo se cuenta aquí en vez de dejar la pantalla quieta: antes lo hacía
+   * el paso de la fotografía, que ya no existe, y sin esto un error de red
+   * dejaba el botón pulsado y a la persona sin saber qué pasó.
+   */
+  async function entregar(accion: () => void | Promise<void>) {
+    if (isSending) return;
+    setIsSending(true);
+    try {
+      await accion();
+    } catch {
+      setNotice(copy.failed);
+    } finally {
+      setIsSending(false);
+    }
   }
 
   function submit(event: FormEvent) {
@@ -180,7 +215,7 @@ export function DetailsScreen({
 
       setMissing([]);
       setNotice(null);
-      onGuest?.({ name: guest.name.trim(), email: guest.email.trim().toLowerCase() });
+      void entregar(() => onGuest?.({ name: guest.name.trim(), email: guest.email.trim().toLowerCase() }));
       return;
     }
 
@@ -198,7 +233,7 @@ export function DetailsScreen({
     ) as PersonDraft;
     trimmed.linkedin = normalizeLinkedIn(trimmed.linkedin);
     // Quien no puede invitar nunca trae invitado, pase lo que pase con el estado.
-    onContinue?.(trimmed, canInvite && bringsGuest);
+    void entregar(() => onContinue?.(trimmed, canInvite && bringsGuest));
   }
 
   return (
@@ -342,8 +377,20 @@ export function DetailsScreen({
         )}
 
         <motion.div className={styles.actions} variants={ITEM}>
-          <button type="submit" className={styles.submit}>
-            {copy.submit}
+          {/**
+           * El rótulo dice qué va a pasar: si después de esta pantalla no queda
+           * nada, pulsar **confirma el registro**, y llamarlo «Continuar» haría
+           * pensar que todavía hay un paso más.
+           */}
+          <button type="submit" className={styles.submit} disabled={isSending}>
+            {isSending ? copy.confirming : isLast ? copy.confirm : copy.submit}
+            {isSending && (
+              <span className={styles.loader} aria-hidden>
+                {Array.from({ length: 9 }, (_, index) => (
+                  <span key={index} style={{ ['--cell' as string]: index }} />
+                ))}
+              </span>
+            )}
           </button>
 
           <AnimatePresence initial={false}>

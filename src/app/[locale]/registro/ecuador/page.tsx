@@ -39,13 +39,7 @@ export default async function EcuadorRegistrationPage({ params }: Props) {
 
   return (
     <PageFrame hasColumnRules={false} hasEdgeRules={false} hideFooter locale={locale}>
-      <EcuadorRegistrationFlow
-        locale={locale}
-        copy={t.ecuador}
-        /* La pantalla de la fotografía es la del registro del sitio, así que su
-           copia viene de allí y no se duplica aquí. */
-        photoCopy={t.registration.photo}
-      />
+      <EcuadorRegistrationFlow locale={locale} copy={t.ecuador} />
     </PageFrame>
   );
 }

@@ -35,7 +35,12 @@ export type ParticipationDraft = {
 type Props = {
   copy: Dictionary['ecuador']['registration']['participation'];
   initial?: ParticipationDraft;
-  onContinue: (value: ParticipationDraft) => void;
+  /**
+   * Puede devolver una promesa: desde que no hay paso de fotografía, **esta**
+   * es la pantalla que confirma el registro, así que tiene que poder esperar
+   * al servidor y contar si algo falla.
+   */
+  onContinue: (value: ParticipationDraft) => void | Promise<void>;
   onBack: () => void;
 };
 
@@ -54,10 +59,13 @@ export function EcuadorParticipationScreen({ copy, initial, onContinue, onBack }
   const [chosen, setChosen] = useState<ParticipationKey | null>(initial?.participation ?? null);
   const [pitch, setPitch] = useState(initial?.tablePitch ?? '');
   const [error, setError] = useState<string | null>(null);
+  /** Mientras el registro viaja al servidor. */
+  const [isSending, setIsSending] = useState(false);
 
   const wantsTable = chosen !== null && needsPitch(chosen);
 
-  function submit() {
+  async function submit() {
+    if (isSending) return;
     if (!chosen) {
       setError(copy.needOne);
       return;
@@ -67,9 +75,16 @@ export function EcuadorParticipationScreen({ copy, initial, onContinue, onBack }
       return;
     }
     setError(null);
-    // Sin mesa no se arrastra lo que se llegó a escribir antes de cambiar de
-    // idea: lo que se guarda tiene que decir la verdad.
-    onContinue({ participation: chosen, tablePitch: wantsTable ? pitch.trim() : '' });
+    setIsSending(true);
+    try {
+      // Sin mesa no se arrastra lo que se llegó a escribir antes de cambiar de
+      // idea: lo que se guarda tiene que decir la verdad.
+      await onContinue({ participation: chosen, tablePitch: wantsTable ? pitch.trim() : '' });
+    } catch {
+      setError(copy.failed);
+    } finally {
+      setIsSending(false);
+    }
   }
 
   return (
@@ -197,8 +212,13 @@ export function EcuadorParticipationScreen({ copy, initial, onContinue, onBack }
         </AnimatePresence>
 
         <motion.div className={styles.actions} variants={ITEM}>
-          <button type="button" className={styles.submit} onClick={submit}>
-            {copy.submit}
+          <button
+            type="button"
+            className={styles.submit}
+            onClick={() => void submit()}
+            disabled={isSending}
+          >
+            {isSending ? copy.confirming : copy.submit}
           </button>
         </motion.div>
 

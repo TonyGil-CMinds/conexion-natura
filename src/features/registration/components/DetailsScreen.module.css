@@ -227,7 +227,16 @@
   margin-top: var(--space-4);
 }
 
+/**
+ * En flexible y no en bloque porque desde que esta pantalla puede ser la última
+ * —ya no hay paso de fotografía— el botón lleva cargador al lado del rótulo
+ * mientras el registro viaja al servidor.
+ */
 .submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
   width: 200px;
   min-height: 52px;
   border: 0;
@@ -243,6 +252,37 @@
 
 .submit:hover {
   filter: brightness(1.12);
+}
+
+.submit:disabled {
+  cursor: wait;
+}
+
+/* Cargador de píxeles, el mismo del primer paso y el de la fotografía. */
+.loader {
+  display: grid;
+  grid-template-columns: repeat(3, 5px);
+  gap: 3px;
+}
+
+.loader span {
+  width: 5px;
+  height: 5px;
+  background-color: currentColor;
+  opacity: 0.25;
+  animation: pixel-wave 1.1s linear infinite;
+  animation-delay: calc(var(--cell) * 0.09s);
+}
+
+@keyframes pixel-wave {
+  0%,
+  70%,
+  100% {
+    opacity: 0.25;
+  }
+  35% {
+    opacity: 1;
+  }
 }
 
 .submit:focus-visible {

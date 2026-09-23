@@ -16,6 +16,8 @@ export { uploadPhoto } from './lib/upload-photo';
  */
 export { renderBadge, downloadBadge, shareBadge, CEIBA_BADGE, type BadgeArt } from './lib/badge';
 export { addToCalendar, type CalendarTarget, type CalendarWhen } from './lib/calendar';
+/** Compartir un enlace. Lo usan las pantallas finales que ya no dan imagen. */
+export { shareLink, type ShareLinkResult } from './lib/share-link';
 export { ProfileCard } from './components/ProfileCard';
 export { readJoinDraft, saveJoinDraft, clearJoinDraft } from './lib/join-draft';
 export type { JoinDraft, PersonDraft } from './lib/join-draft';

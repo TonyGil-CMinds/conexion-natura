@@ -1,16 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import { EASE_OUT_EXPO } from '@/lib/motion';
 import {
-  CEIBA_BADGE,
-  ProfileCard,
   addToCalendar,
-  downloadBadge,
-  renderBadge,
-  shareBadge,
+  shareLink,
   type CalendarTarget,
   type CalendarWhen,
 } from '@/features/registration';
@@ -27,38 +23,29 @@ type Props = {
   copy: Dictionary['ecuador']['registration'];
   email: string;
   fullName: string;
-  organization: string;
   participation: ParticipationKey | null;
   guestName: string;
-  photoUrl: string | null;
   onEdit: () => void;
 };
 
 /**
  * Pantalla final del registro de empresas.
  *
- * Hace lo mismo que la del retiro y con las mismas piezas —la credencial se
- * compone en un lienzo, la tarjeta gira con el puntero, el calendario se elige y
- * no se impone— pero con el arte de la Natura500 Night, que es el acto al que se
- * viene: `CEIBA_BADGE`, el mismo que entrega `/registro`.
+ * Enseña lo que quedó guardado, deja corregirlo y da dos cosas que llevarse: la
+ * fecha al calendario y el enlace del registro para pasárselo a alguien.
  *
- * La credencial se compone **al pedirla** y no al entrar: es una imagen de 1290
- * píxeles de lado que hay que descargar y dibujar, y quien solo viene a
- * comprobar su registro no tiene por qué pagarla.
+ * Ya no hay credencial: al quitarse la fotografía no queda retrato con el que
+ * componerla, así que lo que se comparte es el enlace y no una imagen.
  */
 export function EcuadorDoneScreen({
   copy,
   email,
   fullName,
-  organization,
   participation,
   guestName,
-  photoUrl,
   onEdit,
 }: Props) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [isCardOpen, setIsCardOpen] = useState(false);
-  const [badge, setBadge] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
 
@@ -86,17 +73,6 @@ export function EcuadorDoneScreen({
     return () => clearTimeout(timer);
   }, [notice]);
 
-  const openCard = useCallback(async () => {
-    setIsCardOpen(true);
-    if (badge) return;
-    /**
-     * El nombre va entero en `name` y `surname` queda vacío: el lienzo los
-     * junta con un espacio y recorta, así que un nombre completo sale bien sin
-     * partirlo por donde no toca.
-     */
-    setBadge(await renderBadge({ name: fullName, surname: '', organization, photoUrl }));
-  }, [badge, fullName, organization, photoUrl]);
-
   function pickCalendar(target: CalendarTarget) {
     setIsCalendarOpen(false);
     addToCalendar(target, {
@@ -108,17 +84,32 @@ export function EcuadorDoneScreen({
     });
   }
 
+  /**
+   * Comparte **el enlace de este registro**, no una imagen: desde que no se
+   * pide fotografía no hay credencial, y lo que sirve repartir es la puerta
+   * para que otra empresa se inscriba.
+   */
+  /**
+   * El enlace sale de la **propia página** y no de `SITE_URL`.
+   *
+   * Dos razones, las dos medidas: `SITE_URL` resuelve en el cliente a
+   * `http://localhost:3000` porque la variable de Vercel no llega al navegador
+   * —solo se inlinean las `NEXT_PUBLIC_`—, así que en producción se habría
+   * compartido un enlace a localhost. Y se toma `pathname` sin la cadena de
+   * consulta: quien llegó por una invitación la lleva en la URL, y compartirla
+   * sería repartir el testigo que abre el registro de otra persona.
+   */
+  function registrationUrl() {
+    return `${window.location.origin}${window.location.pathname}`;
+  }
   async function share() {
-    if (!badge) return;
-    const result = await shareBadge(badge, {
+    const result = await shareLink(registrationUrl(), {
       title: copy.done.shareTitle,
       text: copy.done.shareText,
     });
-    if (result === 'shared') setNotice(copy.done.shared);
-    else if (result === 'copied') setNotice(copy.done.copied);
-    else setNotice(copy.done.shareFailed);
+    if (result === 'copied') setNotice(copy.done.copied);
+    else if (result === 'failed') setNotice(copy.done.shareFailed);
   }
-
   const firstName = fullName.trim().split(' ')[0];
 
   return (
@@ -216,8 +207,8 @@ export function EcuadorDoneScreen({
             </AnimatePresence>
           </div>
 
-          <button type="button" className={styles.secondary} onClick={openCard}>
-            {copy.done.card}
+          <button type="button" className={styles.secondary} onClick={share}>
+            {copy.done.share}
           </button>
         </div>
 
@@ -230,59 +221,6 @@ export function EcuadorDoneScreen({
           </a>
         </div>
       </div>
-
-      {/* La credencial, sobre la pantalla. */}
-      <AnimatePresence>
-        {isCardOpen && (
-          <motion.div
-            className={styles.cardLayer}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
-          >
-            <motion.div
-              className={styles.card}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 24 }}
-              transition={{ duration: 0.45, ease: EASE_OUT_EXPO }}
-            >
-              {badge ? (
-                <ProfileCard
-                  front={badge}
-                  back={CEIBA_BADGE.back}
-                  label={copy.done.cardTitle}
-                  flipLabel={copy.done.cardFlip}
-                />
-              ) : (
-                <p className={styles.preparing}>{copy.done.preparing}</p>
-              )}
-
-              <div className={styles.cardActions}>
-                <button type="button" className={styles.submit} onClick={share} disabled={!badge}>
-                  {copy.done.share}
-                </button>
-                <button
-                  type="button"
-                  className={styles.secondary}
-                  onClick={() => badge && downloadBadge(badge, fullName)}
-                  disabled={!badge}
-                >
-                  {copy.done.download}
-                </button>
-                <button
-                  type="button"
-                  className={styles.quiet}
-                  onClick={() => setIsCardOpen(false)}
-                >
-                  {copy.done.cardClose}
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Acuse de compartir. Va fuera del flujo: no debe mover la columna. */}
       <AnimatePresence>

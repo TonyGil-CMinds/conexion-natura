@@ -483,6 +483,13 @@ export const es = {
       required: 'Completa los datos que faltan',
       /** Un correo es un registro: invitarse a uno mismo no es posible. */
       guestSameEmail: 'El correo de tu acompañante no puede ser el tuyo',
+      /**
+       * El rótulo cuando esta pantalla es la última —sin acompañante— y pulsar
+       * confirma el registro en vez de pasar a otro paso.
+       */
+      confirm: 'Confirmar asistencia',
+      confirming: 'Confirmando',
+      failed: 'No se pudo confirmar. Inténtalo de nuevo.',
     },
 
     /** Último paso: la fotografía de la credencial y la confirmación. */
@@ -562,24 +569,22 @@ export const es = {
       calendarTitle: 'CEIBA Quito',
       calendarDescription:
         'Noche de Innovación e Inversión para la Biodiversidad y las Economías del Futuro.',
-      share: 'Compartir',
+      /**
+       * Compartir el **enlace del registro**, no una imagen: desde que no se
+       * pide fotografía no hay credencial, y lo que sirve repartir es la
+       * puerta para que otra persona se inscriba.
+       */
+      share: 'Compartir el registro',
       /** Con la credencial sin retrato, poner uno es lo que falta por hacer. */
       /** Cómo va el invitado, en la pantalla de quien lo invitó. */
       guestLabel: 'Tu invitado:',
       guestPending: 'Pendiente de completar su registro',
       guestConfirmed: 'Registro completado',
-      addPhoto: 'Añadir mi fotografía',
       editDetails: 'Editar mis datos',
-      changePhoto: 'Cambiar mi fotografía',
-      cardTitle: 'Tu tarjeta',
-      cardFlip: 'Haz clic para girarla',
-      preparing: 'Creando tu tarjeta',
-      shareCard: 'Compartir',
-      download: 'Descargar',
-      close: 'Cerrar',
-      shareTitle: 'Mi credencial CEIBA Quito',
-      shareText: 'Nos vemos en Quito, Ecuador.',
+      shareTitle: 'Natura500 Night · CEIBA Quito',
+      shareText: 'Te comparto el registro de la Natura500 Night: 5 de octubre de 2026 en Quito.',
       copied: 'Enlace copiado al portapapeles',
+      shareFailed: 'No se pudo compartir. Copia el enlace de la barra del navegador.',
     },
     eyebrowOpen: 'Quedan: 5 lugares',
     eyebrowConfirmed: 'Eres uno de los 100 invitados',
@@ -1468,7 +1473,9 @@ export const es = {
         pitchHint: 'Es lo que leemos para asignar los espacios disponibles.',
         pitchRequired: 'Cuéntanos qué presentarías',
         needOne: 'Elige cómo quieres participar',
-        submit: 'Continuar',
+        submit: 'Confirmar participación',
+        confirming: 'Confirmando',
+        failed: 'No se pudo confirmar. Inténtalo de nuevo.',
         back: 'Volver',
       },
 
@@ -1497,18 +1504,12 @@ export const es = {
         calendarDescription:
           'Noche de innovación e inversión para la biodiversidad y las economías del futuro, en el Jardín Botánico de Quito.',
         /** La credencial. */
-        card: 'Ver mi credencial',
-        cardTitle: 'Tu credencial',
-        cardFlip: 'Gira la tarjeta',
-        cardClose: 'Cerrar',
-        preparing: 'Preparando tu credencial',
-        download: 'Descargar',
-        share: 'Compartir',
+        /** Se comparte el enlace del registro, no una imagen. */
+        share: 'Compartir el registro',
         shareTitle: 'Natura500 Night · Quito 2026',
-        shareText: 'Nos vemos en la Natura500 Night el 5 de octubre de 2026 en Quito.',
-        shared: 'Credencial compartida',
+        shareText: 'Te comparto el registro de la Natura500 Night: 5 de octubre de 2026 en Quito.',
         copied: 'Enlace copiado',
-        shareFailed: 'No se pudo compartir. Descárgala y compártela tú.',
+        shareFailed: 'No se pudo compartir. Copia el enlace de la barra del navegador.',
       },
 
       failed: 'No se pudo guardar el registro. Inténtalo de nuevo.',
