@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { PageFrame } from '@/components/layout/PageFrame';
-import { EcuadorRegistrationFlow } from '@/features/ecuador';
+import { EcuadorClosedScreen, EcuadorRegistrationFlow } from '@/features/ecuador';
+import { ECUADOR } from '@/config/ecuador';
 import { getDictionary, isLocale } from '@/i18n';
 import { socialMeta } from '@/config/seo';
 
@@ -39,7 +40,16 @@ export default async function EcuadorRegistrationPage({ params }: Props) {
 
   return (
     <PageFrame hasColumnRules={false} hasEdgeRules={false} hideFooter locale={locale}>
-      <EcuadorRegistrationFlow locale={locale} copy={t.ecuador} />
+      {/**
+       * Cerrado enseña el aviso y no un 404: los correos de confirmación ya
+       * enviados apuntan aquí, y quien los abra merece leer qué pasó en vez de
+       * una página que no existe.
+       */}
+      {ECUADOR.isOpen ? (
+        <EcuadorRegistrationFlow locale={locale} copy={t.ecuador} />
+      ) : (
+        <EcuadorClosedScreen copy={t.ecuador.closed} locale={locale} />
+      )}
     </PageFrame>
   );
 }

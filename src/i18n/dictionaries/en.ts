@@ -183,16 +183,6 @@ export const en: Dictionary = {
         time: '19:00 — 21:00',
         title: 'Toast and connections cocktail',
       },
-      {
-        id: 'cultural',
-        time: '19:05 — 19:15',
-        title: 'Cultural performance',
-      },
-      {
-        id: 'dj',
-        time: '19:15 — 21:00',
-        title: 'DJ set',
-      },
     ],
   },
 
@@ -1285,6 +1275,15 @@ export const en: Dictionary = {
       saving: 'One moment...',
       note: 'Around 120 places, by invitation',
       invalid: 'Enter a valid email',
+    },
+
+    closed: {
+      headlineLine1: 'Registration',
+      headlineLine2: 'is closed',
+      body: 'The Natura500 Night is now full for companies and initiatives from Ecuador. Thank you for the interest: the response went well beyond the places available.',
+      note: 'If you already registered, your place is still held and you received the confirmation by email. There is nothing else you need to do.',
+      agenda: 'See the agenda',
+      contact: 'Write to us if you have questions',
     },
 
     registration: {

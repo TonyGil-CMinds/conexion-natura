@@ -11,6 +11,7 @@ import {
   needsPitch,
 } from '@/features/ecuador/config/participation-options';
 import { sendEcuadorConfirmation } from '@/features/ecuador/lib/confirmation-email';
+import { ECUADOR } from '@/config/ecuador';
 
 /**
  * Registro de empresas e iniciativas de Ecuador a la Natura500 Night.
@@ -42,6 +43,16 @@ function text(value: unknown, max = MAX_LENGTH) {
 const REQUIRED = ['fullName', 'organization'] as const;
 
 export async function POST(request: Request) {
+  /**
+   * Cerrado es cerrado también aquí. La pantalla ya no enseña el formulario,
+   * pero el `POST` sigue siendo una URL que cualquiera puede llamar a mano o
+   * una pestaña vieja reenviar: sin esto entrarían filas después de la fecha de
+   * corte y con su correo de confirmación, que nadie espera.
+   */
+  if (!ECUADOR.isOpen) {
+    return NextResponse.json({ error: 'El registro está cerrado.' }, { status: 403 });
+  }
+
   let body: unknown;
   try {
     body = await request.json();

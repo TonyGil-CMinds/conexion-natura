@@ -208,16 +208,6 @@ export const es = {
         time: '19:00 — 21:00',
         title: 'Brindis y cóctel de conexiones',
       },
-      {
-        id: 'cultural',
-        time: '19:05 — 19:15',
-        title: 'Demostración cultural',
-      },
-      {
-        id: 'dj',
-        time: '19:15 — 21:00',
-        title: 'DJ set',
-      },
     ],
   },
 
@@ -1449,6 +1439,21 @@ export const es = {
       saving: 'Espera un momento...',
       note: 'Aforo aproximado de 120 personas, por invitación',
       invalid: 'Escribe un correo válido',
+    },
+
+    /**
+     * Lo que se ve cuando el registro ya no admite gente (`ECUADOR.isOpen`).
+     * Sustituye al formulario entero, así que dice las tres cosas que hacen
+     * falta: que está cerrado, que quien ya se registró conserva su lugar, y a
+     * dónde ir ahora.
+     */
+    closed: {
+      headlineLine1: 'El registro',
+      headlineLine2: 'está cerrado',
+      body: 'Hemos completado el aforo de la Noche Natura500 para empresas e iniciativas de Ecuador. Gracias por el interés: la respuesta superó con mucho los lugares disponibles.',
+      note: 'Si ya te registraste, tu lugar sigue reservado y recibiste la confirmación por correo. No hace falta que hagas nada más.',
+      agenda: 'Ver la agenda',
+      contact: 'Escríbenos si tienes dudas',
     },
 
     registration: {

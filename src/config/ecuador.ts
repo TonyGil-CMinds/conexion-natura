@@ -11,6 +11,19 @@ import { SITE } from './site';
  */
 export const ECUADOR = {
   /**
+   * Si el registro admite gente. En `false` la página enseña el aviso de
+   * cerrado en vez del formulario **y** la ruta de la API rechaza los envíos:
+   * cerrar solo la pantalla dejaría el `POST` abierto para quien lo llame a
+   * mano, y entrarían filas después de la fecha de corte sin que nadie las
+   * espere.
+   *
+   * Es un interruptor y no un borrado de la ruta: volver a abrir es cambiar
+   * este `false`, y las confirmaciones ya enviadas siguen apuntando a una URL
+   * que existe.
+   */
+  isOpen: false,
+
+  /**
    * Las monedas giratorias de cada paso. Son las del registro del sitio: los
    * pasos son los mismos —datos, elección, fotografía— y dibujar otras tres
    * solo para esta ruta habría sido repetir el mismo objeto con otro trazo.
