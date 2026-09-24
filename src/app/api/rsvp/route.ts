@@ -17,12 +17,26 @@ import { approveWaitlist, listRegistrations } from '@/features/registration/lib/
  * y no hace nada: preferible a quedarse abierta por un despiste de despliegue.
  */
 
+/**
+ * Saca el token de la petición.
+ *
+ * Acepta `Authorization: Bearer <token>`, el mismo encabezado con el valor
+ * suelto, y `X-Rsvp-Token`. No es laxitud: quien llama es un constructor de
+ * aplicaciones ajeno, y el `Bearer ` que falta o sobra se ve idéntico a un token
+ * equivocado desde fuera —los dos son un 401—, así que costaba horas averiguar
+ * cuál de las dos cosas era. Ninguna de las tres formas afloja la comprobación:
+ * el valor tiene que coincidir igual.
+ */
+function leerToken(request: Request): string {
+  const auth = request.headers.get('authorization')?.trim() ?? '';
+  if (auth) return auth.toLowerCase().startsWith('bearer ') ? auth.slice(7).trim() : auth;
+  return request.headers.get('x-rsvp-token')?.trim() ?? '';
+}
+
 /** Compara en tiempo constante: una comparación normal filtra el token a tientas. */
-function tokenOk(header: string | null): boolean {
+function tokenOk(recibido: string): boolean {
   const esperado = process.env.CEIBA_RSVP_TOKEN;
   if (!esperado) return false;
-
-  const recibido = header?.startsWith('Bearer ') ? header.slice(7).trim() : '';
   if (!recibido) return false;
 
   const a = Buffer.from(recibido);
@@ -38,8 +52,24 @@ function guard(request: Request): NextResponse | null {
     console.error('[api/rsvp] falta CEIBA_RSVP_TOKEN: la ruta queda cerrada');
     return NextResponse.json({ error: 'El servidor no está configurado.' }, { status: 503 });
   }
-  if (!tokenOk(request.headers.get('authorization'))) {
-    return NextResponse.json({ error: 'No autorizado.' }, { status: 401 });
+  const recibido = leerToken(request);
+  if (!tokenOk(recibido)) {
+    /**
+     * `reason` distingue «no llegó ningún encabezado» de «llegó y no coincide»,
+     * que desde fuera se ven igual y no lo son: el primero suele ser la
+     * plataforma que llama sin pasar el encabezado, y el segundo un valor mal
+     * copiado. No dice nada del token esperado, solo de lo que llegó.
+     */
+    return NextResponse.json(
+      {
+        error: 'No autorizado.',
+        reason: recibido ? 'tokenMismatch' : 'missingHeader',
+        hint: recibido
+          ? 'Llegó un token pero no coincide. Revisa que no lleve comillas, espacios ni saltos de línea.'
+          : 'Manda Authorization: Bearer <token> o X-Rsvp-Token: <token>.',
+      },
+      { status: 401 },
+    );
   }
   return null;
 }
