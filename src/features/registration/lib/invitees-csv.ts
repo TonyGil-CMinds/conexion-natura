@@ -61,8 +61,39 @@ export function parseCsv(csv: string): string[][] {
   return filas.filter((f) => f.some((valor) => valor.trim()));
 }
 
-/** Las columnas que se esperan, en el orden del archivo del equipo. */
-const COLUMNAS = ['Nombre', 'Apellido', 'Cargo', 'Organization', 'Email', 'Sector', 'Tema'] as const;
+/**
+ * Las columnas que se buscan, cada una con los nombres que ha tenido.
+ *
+ * Son varios porque el archivo lo exporta una hoja del equipo y cada tanda
+ * viene con otros rótulos: una traía «Apellido» aparte y «Organization» en
+ * inglés, la siguiente el nombre entero en una sola columna y «Rol»,
+ * «Organización» y «Correo». Reconocerlos aquí evita retocar el CSV a mano cada
+ * vez, que es donde se cuelan los errores que no se ven hasta el evento.
+ *
+ * Solo el nombre y el correo son obligatorios: sin uno de los dos la fila no
+ * identifica a nadie. Lo demás enriquece pero puede faltar.
+ */
+const COLUMNAS = {
+  Nombre: { alias: ['nombre', 'nombres', 'nombre completo'], required: true },
+  Apellido: { alias: ['apellido', 'apellidos'], required: false },
+  Cargo: { alias: ['cargo', 'rol', 'puesto'], required: false },
+  Organization: { alias: ['organization', 'organizacion', 'organismo', 'institucion'], required: false },
+  Email: { alias: ['email', 'correo', 'correo electronico', 'e-mail'], required: true },
+  Sector: { alias: ['sector'], required: false },
+  Tema: { alias: ['tema'], required: false },
+} as const;
+
+type Columna = keyof typeof COLUMNAS;
+
+/** Sin tildes, sin mayúsculas y sin espacios de sobra: los rótulos vienen sucios. */
+function rotulo(valor: string): string {
+  return valor
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -87,15 +118,26 @@ export function readInvitees(csv: string): CsvResult {
   const filas = parseCsv(csv);
   if (!filas.length) return { rows: [], skipped: [] };
 
-  const cabecera = filas[0]!.map((c) => c.trim());
-  const faltan = COLUMNAS.filter((c) => !cabecera.includes(c));
+  const cabecera = filas[0]!.map(rotulo);
+
+  /** −1 cuando la columna no está, que para las opcionales es válido. */
+  const indices = Object.fromEntries(
+    (Object.keys(COLUMNAS) as Columna[]).map((clave) => [
+      clave,
+      cabecera.findIndex((c) => (COLUMNAS[clave].alias as readonly string[]).includes(c)),
+    ]),
+  ) as Record<Columna, number>;
+
+  const faltan = (Object.keys(COLUMNAS) as Columna[]).filter(
+    (c) => COLUMNAS[c].required && indices[c] < 0,
+  );
   if (faltan.length) {
     throw new Error(
       `El CSV no tiene las columnas esperadas: falta ${faltan.join(', ')}. ` +
-        `Se encontró: ${cabecera.join(', ')}.`,
+        `Se encontró: ${filas[0]!.map((c) => c.trim()).join(', ')}.`,
     );
   }
-  const indice = (nombre: (typeof COLUMNAS)[number]) => cabecera.indexOf(nombre);
+  const indice = (nombre: Columna) => indices[nombre];
 
   const rows: InviteeRow[] = [];
   const skipped: CsvResult['skipped'] = [];
@@ -103,8 +145,11 @@ export function readInvitees(csv: string): CsvResult {
 
   filas.slice(1).forEach((fila, i) => {
     const linea = i + 2;
-    const campo = (nombre: (typeof COLUMNAS)[number]) =>
-      (fila[indice(nombre)] ?? '').replace(/\s+/g, ' ').trim();
+    /** Una columna ausente vale cadena vacía, no `undefined`: se concatena. */
+    const campo = (nombre: Columna) => {
+      const i = indice(nombre);
+      return i < 0 ? '' : (fila[i] ?? '').replace(/\s+/g, ' ').trim();
+    };
 
     const email = campo('Email').toLowerCase();
     const fullName = `${campo('Nombre')} ${campo('Apellido')}`.replace(/\s+/g, ' ').trim();

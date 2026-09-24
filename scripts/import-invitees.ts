@@ -3,11 +3,16 @@
  *
  *   npm run lista:importar -- "ruta/al/archivo.csv"      # solo enseña qué haría
  *   npm run lista:importar -- "ruta/al/archivo.csv" --aplicar
+ *   npm run lista:importar -- "ruta/al/archivo.csv" --aplicar --sumar
  *
  * **Por omisión no escribe nada.** Enseña cuántas filas entrarían, cuáles
  * cambian y, sobre todo, **quién sobra**: la lista manda, así que reimportar un
  * archivo al que alguien ya no pertenece tiene que poder quitarlo. Borrar sin
  * enseñar antes qué se borra es la forma más rápida de perder invitaciones.
+ *
+ * `--sumar` es para cuando el archivo es **otra tanda** y no la lista entera:
+ * añade y actualiza, pero no borra a nadie. Sin él, lo que no está en el archivo
+ * sobra, que es lo correcto cuando el archivo es la lista completa.
  *
  * A quien ya reclamó su invitación —hay un registro colgado de ella— no se le
  * borra aunque desaparezca del archivo: eso dejaría a alguien confirmado sin
@@ -21,9 +26,13 @@ import { readInvitees } from '../src/features/registration/lib/invitees-csv';
 async function main() {
   const ruta = process.argv[2];
   const aplicar = process.argv.includes('--aplicar');
+  /** El archivo se suma a lo que ya hay en vez de sustituirlo. */
+  const sumar = process.argv.includes('--sumar');
 
   if (!ruta) {
-    console.error('Falta la ruta del CSV.\n  npm run lista:importar -- "archivo.csv" [--aplicar]');
+    console.error(
+      'Falta la ruta del CSV.\n  npm run lista:importar -- "archivo.csv" [--aplicar] [--sumar]',
+    );
     process.exitCode = 1;
     return;
   }
@@ -56,14 +65,20 @@ async function main() {
   console.log(`\nen la base ahora: ${actuales.length}`);
   console.log(`  nuevas:        ${nuevas.length}`);
   console.log(`  actualizadas:  ${cambian.length}`);
-  console.log(`  sobran:        ${sobran.length} (${sobranLibres.length} se borrarían, ${sobranReclamadas.length} no)`);
+  console.log(
+    sumar
+      ? `  fuera del archivo: ${sobran.length} (--sumar: no se borra ninguna)`
+      : `  sobran:        ${sobran.length} (${sobranLibres.length} se borrarían, ${sobranReclamadas.length} no)`,
+  );
 
   for (const i of nuevas.slice(0, 8)) console.log(`    + ${i.email} — ${i.fullName}`);
   if (nuevas.length > 8) console.log(`    + … y ${nuevas.length - 8} más`);
   for (const i of cambian.slice(0, 8)) console.log(`    ~ ${i.email} — ${i.fullName}`);
-  for (const i of sobranLibres.slice(0, 8)) console.log(`    - ${i.email} — ${i.fullName}`);
+  if (!sumar) {
+    for (const i of sobranLibres.slice(0, 8)) console.log(`    - ${i.email} — ${i.fullName}`);
+  }
 
-  if (sobranReclamadas.length) {
+  if (sobranReclamadas.length && !sumar) {
     console.log('\n⚠ estas ya no están en el archivo pero **alguien las reclamó**, así que se conservan:');
     for (const i of sobranReclamadas) console.log(`    ! ${i.email} — ${i.fullName} (registrado: ${i.attendee!.email})`);
   }
@@ -76,9 +91,9 @@ async function main() {
   for (const fila of rows) {
     await prisma.invitee.upsert({ where: { email: fila.email }, update: fila, create: fila });
   }
-  const { count } = await prisma.invitee.deleteMany({
-    where: { id: { in: sobranLibres.map((i) => i.id) } },
-  });
+  const { count } = sumar
+    ? { count: 0 }
+    : await prisma.invitee.deleteMany({ where: { id: { in: sobranLibres.map((i) => i.id) } } });
 
   console.log(`\n✅ lista actualizada: ${rows.length} filas escritas, ${count} borradas.`);
   console.log(`   total en la base: ${await prisma.invitee.count()}`);
