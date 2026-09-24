@@ -59,7 +59,6 @@ export async function approveWaitlist(
   await prisma.attendee.update({ where: { id: persona.id }, data: { status: 'CONFIRMED' } });
 
   /** El acompañante que esperaba con él. Hoy el formulario solo deja uno. */
-  let guest: ApproveResult extends { ok: true } ? never : never;
   let guestResult: (ApproveResult & { ok: true })['guest'] = null;
 
   for (const acompanante of persona.guests) {
@@ -94,7 +93,6 @@ export async function approveWaitlist(
     guestResult = { email: acompanante.email, status: 'PENDING', invite };
     break;
   }
-  void guest;
 
   let confirmation: { status: string; reason?: string } = { status: 'skipped', reason: 'noEmails' };
   if (sendEmails && !persona.confirmationSentAt) {
