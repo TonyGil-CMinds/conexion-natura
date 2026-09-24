@@ -1,6 +1,6 @@
 import { timingSafeEqual } from 'node:crypto';
 import { NextResponse } from 'next/server';
-import { approveWaitlist, listWaitlist } from '@/features/registration/lib/approve-waitlist';
+import { approveWaitlist, listRegistrations } from '@/features/registration/lib/approve-waitlist';
 
 /**
  * La lista de espera, para la app del equipo.
@@ -44,25 +44,63 @@ function guard(request: Request): NextResponse | null {
   return null;
 }
 
+/** `?estado=` en la URL, que es como lo va a escribir quien llame. */
+const ESTADOS = {
+  espera: 'WAITLIST',
+  confirmados: 'CONFIRMED',
+  pendientes: 'PENDING',
+} as const;
+
 export async function GET(request: Request) {
   const cerrado = guard(request);
   if (cerrado) return cerrado;
 
+  const pedido = new URL(request.url).searchParams.get('estado') ?? 'espera';
+  if (pedido !== 'todos' && !(pedido in ESTADOS)) {
+    return NextResponse.json(
+      { error: 'estado debe ser espera, confirmados, pendientes o todos.' },
+      { status: 400 },
+    );
+  }
+
   try {
-    const filas = await listWaitlist();
+    const filas = await listRegistrations(
+      pedido === 'todos' ? undefined : ESTADOS[pedido as keyof typeof ESTADOS],
+    );
     return NextResponse.json({
       count: filas.length,
-      waitlist: filas.map((f) => ({
+      /**
+       * `waitlist` se queda por compatibilidad: era el nombre cuando esto solo
+       * devolvía la espera, y ya hay cosas apuntando ahí.
+       */
+      registrations: filas.map((f) => ({
         email: f.email,
         name: f.name,
         surname: f.surname,
         organization: f.organization,
         role: f.role,
         events: f.events,
-        guest: f.guests[0] ? { name: f.guests[0].name, email: f.guests[0].email } : null,
+        status: f.status,
+        guest: f.guests[0]
+          ? { name: f.guests[0].name, email: f.guests[0].email, status: f.guests[0].status }
+          : null,
         noticeSent: Boolean(f.waitlistSentAt),
+        confirmationSent: Boolean(f.confirmationSentAt),
         registeredAt: f.createdAt.toISOString(),
       })),
+      waitlist: filas
+        .filter((f) => f.status === 'WAITLIST')
+        .map((f) => ({
+          email: f.email,
+          name: f.name,
+          surname: f.surname,
+          organization: f.organization,
+          role: f.role,
+          events: f.events,
+          guest: f.guests[0] ? { name: f.guests[0].name, email: f.guests[0].email } : null,
+          noticeSent: Boolean(f.waitlistSentAt),
+          registeredAt: f.createdAt.toISOString(),
+        })),
     });
   } catch (error) {
     console.error('[api/rsvp] no se pudo leer la lista de espera', error);

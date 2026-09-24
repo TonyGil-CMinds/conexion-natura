@@ -111,19 +111,31 @@ export async function approveWaitlist(
   return { ok: true, email: persona.email, confirmation, guest: guestResult };
 }
 
-/** Quién está esperando. Lo leen la consola y la app del equipo. */
-export async function listWaitlist() {
+/**
+ * Los registros. Lo leen la consola y la app del equipo.
+ *
+ * `status` omitido son todos. En cualquier caso **se devuelven solo los
+ * anfitriones**: quien entró como acompañante de otro no es una solicitud
+ * propia, y sale anidado en la fila de quien lo trajo. Si apareciera suelto, la
+ * lista contaría dos veces la misma decisión.
+ */
+export async function listRegistrations(status?: 'WAITLIST' | 'CONFIRMED' | 'PENDING') {
   const filas = await prisma.attendee.findMany({
-    where: { status: 'WAITLIST' },
+    where: status ? { status } : undefined,
     orderBy: { createdAt: 'asc' },
     select: {
       email: true, name: true, surname: true, organization: true, role: true,
-      events: true, bringsGuest: true, waitlistSentAt: true, createdAt: true,
+      events: true, bringsGuest: true, status: true,
+      waitlistSentAt: true, confirmationSentAt: true, createdAt: true,
       invitedById: true,
-      guests: { select: { name: true, email: true } },
+      guests: { select: { name: true, email: true, status: true } },
     },
   });
 
-  /** Quien entró como acompañante de otro no es una solicitud propia. */
   return filas.filter((f) => !f.invitedById);
+}
+
+/** Quién está esperando. Atajo del anterior, que es lo que mira el script. */
+export function listWaitlist() {
+  return listRegistrations('WAITLIST');
 }
