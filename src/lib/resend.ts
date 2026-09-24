@@ -20,6 +20,8 @@ const ENDPOINT = 'https://api.resend.com/emails';
 
 export type SendResult =
   | { status: 'sent'; id?: string }
+  /** No se intentó: la dirección no está permitida fuera del despliegue. */
+  | { status: 'skipped'; reason: 'notAllowed'; to: string }
   /** No se intentó: falta configuración. No es un fallo del proveedor. */
   | { status: 'skipped'; reason: 'missingConfig'; missing: readonly string[] }
   | { status: 'failed'; reason: string };
@@ -66,6 +68,40 @@ type Config = {
   /** Remitente tal cual: admite «Nombre <correo@dominio>» o el correo solo. */
   from: string;
 };
+
+/**
+ * Quién puede recibir correo **desde esta máquina**.
+ *
+ * Existe por un fallo que costó caro: probando el preregistro se mandaron
+ * confirmaciones de verdad a dos personas de la lista de invitados, porque en
+ * local la clave de Resend es la misma que en producción y nada lo impedía.
+ * `NODE_ENV` no servía de aviso: `next start` vale `production` también aquí.
+ *
+ * La señal fiable es `VERCEL`, que solo existe en el despliegue. Fuera de él
+ * **no se manda nada** salvo a las direcciones de `CEIBA_EMAIL_ALLOWLIST`.
+ *
+ * Se acepta una dirección entera (`yo@cminds.co`) o un sufijo (`@cminds.co`),
+ * separadas por comas. `delivered@resend.dev` entra siempre: es el buzón de
+ * pruebas del proveedor y no llega a ninguna persona.
+ */
+const ALWAYS_ALLOWED = ["delivered@resend.dev", "bounced@resend.dev", "complained@resend.dev"];
+
+function recipientAllowed(to: string): boolean {
+  // En el despliegue manda el sitio: ahí escribir a quien se registra es el fin.
+  if (process.env.VERCEL) return true;
+
+  const destino = to.trim().toLowerCase();
+  if (ALWAYS_ALLOWED.includes(destino)) return true;
+
+  const permitidos = (process.env.CEIBA_EMAIL_ALLOWLIST ?? "")
+    .split(",")
+    .map((x) => x.trim().toLowerCase())
+    .filter(Boolean);
+
+  return permitidos.some((permitido) =>
+    permitido.startsWith("@") ? destino.endsWith(permitido) : destino === permitido,
+  );
+}
 
 /**
  * Lee lo que hace falta para **esta** plantilla.
@@ -116,6 +152,18 @@ export async function sendTemplate({
   /** Cuál de las dos plantillas. Por omisión, la confirmación. */
   template?: TemplateName;
 }): Promise<SendResult> {
+  /**
+   * Primero la puerta, antes incluso de mirar la configuración: lo que no se
+   * puede mandar no se intenta.
+   */
+  if (!recipientAllowed(to)) {
+    console.warn(
+      `[resend] BLOQUEADO el envío a ${to}: fuera del despliegue solo se escribe a ` +
+        'CEIBA_EMAIL_ALLOWLIST. Añade ahí tu dirección si quieres probar de verdad.',
+    );
+    return { status: 'skipped', reason: 'notAllowed', to };
+  }
+
   const read = readConfig(template);
   if ('missing' in read) return { status: 'skipped', reason: 'missingConfig', missing: read.missing };
   const { apiKey, templateId, from } = read.config;

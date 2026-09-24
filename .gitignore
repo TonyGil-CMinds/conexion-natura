@@ -5,6 +5,10 @@ build
 # Secretos: la cadena de conexión de Prisma Postgres vive aquí.
 .env
 .env*.local
+# También el ejemplo: aquí se acabaron colando valores reales —los ids de las
+# plantillas de Resend y la URL del bucket— y un archivo versionado no es sitio
+# para eso. Los nombres de las variables se documentan en el README o se piden.
+.env.example
 .DS_Store
 *.tsbuildinfo
 next-env.d.ts
