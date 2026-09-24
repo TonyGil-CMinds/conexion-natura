@@ -49,6 +49,13 @@ export const TEMPLATES = {
    */
   ecuadorEs: 'CEIBA_EMAIL_TEMPLATE_ID_ECUADOR_ES',
   ecuadorEn: 'CEIBA_EMAIL_TEMPLATE_ID_ECUADOR_EN',
+  /**
+   * Lista de espera: quien se registra y no está en el preregistro. Es otro
+   * correo que la confirmación porque dice otra cosa —aquel promete un lugar
+   * y este no puede—, y una misma persona puede recibir los dos.
+   */
+  waitlistEs: 'CEIBA_EMAIL_TEMPLATE_ID_WAITLIST_ES',
+  waitlistEn: 'CEIBA_EMAIL_TEMPLATE_ID_WAITLIST_EN',
 } as const;
 
 export type TemplateName = keyof typeof TEMPLATES;

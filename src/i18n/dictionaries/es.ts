@@ -492,6 +492,34 @@ export const es = {
       failed: 'No se pudo confirmar. Inténtalo de nuevo.',
     },
 
+    /**
+     * «¿Eres tú?»: sale cuando el correo no está en la lista de preregistro
+     * pero el nombre y la organización coinciden con una invitación.
+     */
+    identity: {
+      step: 'Un momento',
+      headlineLine1: '¿Eres',
+      headlineLine2: 'tú?',
+      intro:
+        'Tu correo no aparece en la lista de invitados, pero hay una invitación a nombre de:',
+      yes: 'Sí, soy yo',
+      no: 'No, no soy yo',
+      confirming: 'Un momento...',
+      failed: 'No se pudo continuar. Inténtalo de nuevo.',
+    },
+
+    /**
+     * Lista de espera: quien se registra y no está en el preregistro. El
+     * aforo va por invitación, así que su lugar depende de que haya sitio.
+     */
+    waitlist: {
+      title: 'Estás en lista de espera',
+      body:
+        'Recibimos tu registro. El aforo de este encuentro es limitado y por invitación, así que revisaremos la disponibilidad y te escribiremos para confirmarte si hay lugar.',
+      /** Se añade cuando además viene acompañado: son dos lugares. */
+      withGuest: 'Tu acompañante queda en la lista contigo.',
+      emailNote: 'Te enviamos este mismo aviso por correo.',
+    },
     /** Último paso: la fotografía de la credencial y la confirmación. */
     photo: {
       step: 'Paso 3/3',
@@ -610,6 +638,8 @@ export const es = {
     save: 'Guardar cambios',
     cancel: 'Cancelar',
     confirmedCta: 'Asistencia confirmada',
+    /** Quien está en lista de espera: su lugar todavía no está. */
+    waitlistCta: 'En lista de espera',
     /** Acceso para quien ya se registró. */
     lookupLink: '¿Ya te has registrado? Haz click aquí',
     lookupTitle: 'Añade tu correo previamente confirmado',

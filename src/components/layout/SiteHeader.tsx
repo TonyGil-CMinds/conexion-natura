@@ -13,7 +13,7 @@ type Props = {
   locale: Locale;
   nav: Dictionary['nav'];
   header: Dictionary['header'];
-  cta: { label: string; confirmedLabel: string; note: string };
+  cta: { label: string; confirmedLabel: string; waitlistLabel: string; note: string };
 };
 
 /**

@@ -1,3 +1,12 @@
+/**
+ * Sin `server-only`: este módulo lo usan también los scripts —`npm run rsvp` al
+ * aprobar un lugar y `npm run mail:pending` al recuperar un envío fallido— y ese
+ * guardián solo existe dentro de Next, así que allí reventaría al importarlo.
+ * Lo que de verdad no puede llegar al navegador es la clave de Resend, y eso lo
+ * protege `src/lib/resend.ts`.
+ */
+import { prisma } from '@/lib/prisma';
+import { sendTemplate } from '@/lib/resend';
 import type { EventChoice } from './attendee-input';
 import {
   eventEmailDetails,
@@ -84,3 +93,60 @@ export function confirmationTemplateData({
     missing,
   };
 }
+
+/**
+ * Manda el correo de confirmación **una sola vez** por persona.
+ *
+ * La marca vive en la fila (`confirmationSentAt`) y no en memoria: reenviar el
+ * formulario corrige los datos y no debe repetir el correo, y si el envío falla
+ * la marca se queda nula, así que un intento posterior lo vuelve a probar.
+ *
+ * **Nunca lanza.** Devuelve qué pasó y ya. En este proyecto hubo un fallo caro
+ * justo por lo contrario: el registro se guardaba, el correo fallaba, el cliente
+ * lo leía como error y la gente se iba creyendo que no se había inscrito.
+ *
+ * Y **se omite si falta cualquier dato del evento**. Resend acepta y entrega un
+ * envío con variables ausentes —queda un hueco vacío en el texto, sin error—, así
+ * que esta puerta es lo único que impide anunciar el evento sin fecha.
+ */
+export async function sendConfirmation({
+  id,
+  email,
+  name,
+  surname,
+  events,
+}: {
+  id: string;
+  email: string;
+  name: string;
+  surname: string;
+  /** A qué actos va: la plantilla pinta un bloque por cada uno. */
+  events: readonly EventChoice[];
+}): Promise<{ status: 'sent' | 'skipped' | 'failed'; reason?: string }> {
+  const { data, missing } = confirmationTemplateData({ name, surname, events });
+
+  if (missing.length) {
+    console.error(
+      `[confirmación] correo omitido: faltan datos del evento (${missing.join(', ')})`,
+    );
+    return { status: 'skipped', reason: 'missingEventDetails' };
+  }
+
+  const result = await sendTemplate({ to: email, data });
+
+  if (result.status !== 'sent') {
+    const reason = 'missing' in result ? `${result.reason}: ${result.missing.join(', ')}` : result.reason;
+    console.error(`[confirmación] no se pudo enviar la confirmación — ${reason}`);
+    return { status: result.status, reason: result.reason };
+  }
+
+  try {
+    await prisma.attendee.update({ where: { id }, data: { confirmationSentAt: new Date() } });
+  } catch (error) {
+    // El correo salió; solo se perdió la marca, y eso se arregla reenviando
+    // pendientes. No es motivo para decir que el envío falló.
+    console.error('[confirmación] correo enviado pero no se pudo marcar', error);
+  }
+  return { status: 'sent' };
+}
+

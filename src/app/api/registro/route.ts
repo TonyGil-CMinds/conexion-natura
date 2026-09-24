@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
-import { parseAttendeeInput, type EventChoice } from '@/features/registration/lib/attendee-input';
-import { confirmationTemplateData } from '@/features/registration/lib/confirmation-email';
+import { parseAttendeeInput } from '@/features/registration/lib/attendee-input';
+import { sendConfirmation } from '@/features/registration/lib/confirmation-email';
 import { inviteTemplateData } from '@/features/registration/lib/invite-email';
+import { admit, type IdentityAnswer } from '@/features/registration/lib/admission';
+import { sendWaitlistNotice } from '@/features/registration/lib/waitlist-email';
 import { prisma } from '@/lib/prisma';
 import { sendTemplate } from '@/lib/resend';
 
@@ -36,6 +38,12 @@ const SELECT = {
    */
   bringsGuest: true,
   /**
+   * En qué situación está. Desde que el aforo va por invitación, la pantalla
+   * final cambia con esto: quien está en `WAITLIST` no ve «nos vemos» sino que
+   * su lugar está por confirmar.
+   */
+  status: true,
+  /**
    * El invitado y en qué punto está. La pantalla final de quien invita dice si
    * su invitado ya completó su registro o sigue pendiente, y sin eso quien
    * invita no tiene forma de saberlo.
@@ -45,62 +53,6 @@ const SELECT = {
 
 /** Tope de espera del correo. Pasado esto, el registro responde igual. */
 const EMAIL_TIMEOUT_MS = 8000;
-
-/**
- * Manda el correo de confirmación **una sola vez** por persona.
- *
- * La marca vive en la fila (`confirmationSentAt`) y no en memoria: reenviar el
- * formulario corrige los datos y no debe repetir el correo, y si el envío falla
- * la marca se queda nula, así que un intento posterior lo vuelve a probar.
- *
- * **Nunca lanza.** Devuelve qué pasó y ya. En este proyecto hubo un fallo caro
- * justo por lo contrario: el registro se guardaba, el correo fallaba, el cliente
- * lo leía como error y la gente se iba creyendo que no se había inscrito.
- *
- * Y **se omite si falta cualquier dato del evento**. Resend acepta y entrega un
- * envío con variables ausentes —queda un hueco vacío en el texto, sin error—, así
- * que esta puerta es lo único que impide anunciar el evento sin fecha.
- */
-async function sendConfirmation({
-  id,
-  email,
-  name,
-  surname,
-  events,
-}: {
-  id: string;
-  email: string;
-  name: string;
-  surname: string;
-  /** A qué actos va: la plantilla pinta un bloque por cada uno. */
-  events: readonly EventChoice[];
-}): Promise<{ status: 'sent' | 'skipped' | 'failed'; reason?: string }> {
-  const { data, missing } = confirmationTemplateData({ name, surname, events });
-
-  if (missing.length) {
-    console.error(
-      `[api/registro] correo omitido: faltan datos del evento (${missing.join(', ')})`,
-    );
-    return { status: 'skipped', reason: 'missingEventDetails' };
-  }
-
-  const result = await sendTemplate({ to: email, data });
-
-  if (result.status !== 'sent') {
-    const reason = 'missing' in result ? `${result.reason}: ${result.missing.join(', ')}` : result.reason;
-    console.error(`[api/registro] no se pudo enviar la confirmación — ${reason}`);
-    return { status: result.status, reason: result.reason };
-  }
-
-  try {
-    await prisma.attendee.update({ where: { id }, data: { confirmationSentAt: new Date() } });
-  } catch (error) {
-    // El correo salió; solo se perdió la marca, y eso se arregla reenviando
-    // pendientes. No es motivo para decir que el envío falló.
-    console.error('[api/registro] correo enviado pero no se pudo marcar', error);
-  }
-  return { status: 'sent' };
-}
 
 /**
  * Deja lista la invitación del acompañante y le manda su correo.
@@ -214,7 +166,61 @@ export async function POST(request: Request) {
   }
 
   const { email, guest, ...rest } = parsed.data;
+
+  /**
+   * Lo que el formulario diga sobre la pregunta de identidad: o reclama una
+   * invitación concreta, o dice que ya se le preguntó. Nada de esto se cree a
+   * ciegas —`admit` lo vuelve a comprobar contra la lista—, solo evita volver a
+   * preguntar lo mismo.
+   */
+  const raw = (body ?? {}) as Record<string, unknown>;
+  const answer: IdentityAnswer =
+    typeof raw.claimInviteeId === 'string' && raw.claimInviteeId
+      ? { claimInviteeId: raw.claimInviteeId }
+      : raw.identityChecked === true
+        ? { identityChecked: true }
+        : undefined;
+
   try {
+    /**
+     * Quién es esta persona **antes** de escribir nada: hace falta para dos
+     * cosas —no degradar a quien ya estaba confirmado y no volver a preguntarle
+     * por una invitación que ya tiene atada—.
+     */
+    const previo = await prisma.attendee.findUnique({
+      where: { email },
+      select: { status: true, inviteeId: true },
+    });
+
+    const veredicto = await admit(
+      { email, name: rest.name, surname: rest.surname, organization: rest.organization },
+      answer,
+      previo?.inviteeId ?? null,
+    );
+
+    /**
+     * Hay a quién parecerse y todavía no se le ha preguntado: **no se guarda
+     * nada**. Se devuelve la coincidencia para que la pantalla le pregunte si es
+     * ella, y el formulario vuelve con la respuesta.
+     */
+    if (veredicto.kind === 'identityCheck') {
+      return NextResponse.json({
+        identityCheck: {
+          inviteeId: veredicto.match.invitee.id,
+          fullName: veredicto.match.invitee.fullName,
+          organization: veredicto.match.invitee.organization,
+        },
+      });
+    }
+
+    /**
+     * A quien ya estaba confirmado no se le degrada nunca. Corregir un dato no
+     * puede sacar a nadie de la lista: si entró, entró.
+     */
+    const status =
+      previo?.status === 'CONFIRMED' || veredicto.kind === 'confirmed' ? 'CONFIRMED' : 'WAITLIST';
+    const inviteeId = veredicto.kind === 'confirmed' ? veredicto.inviteeId : null;
+
     const attendee = await prisma.attendee.upsert({
       where: { email },
       /**
@@ -231,11 +237,13 @@ export async function POST(request: Request) {
         ...rest,
         photoUrl: rest.photoUrl ?? undefined,
         events: rest.events.length ? rest.events : undefined,
-        status: 'CONFIRMED',
+        status,
         inviteToken: null,
+        /* Sin invitación nueva no se borra la que hubiera. */
+        inviteeId: inviteeId ?? undefined,
       },
-      create: { email, ...rest },
-      select: { ...SELECT, confirmationSentAt: true },
+      create: { email, ...rest, status, inviteeId },
+      select: { ...SELECT, confirmationSentAt: true, waitlistSentAt: true },
     });
 
     /**
@@ -251,7 +259,7 @@ export async function POST(request: Request) {
       status: 'skipped',
       reason: 'alreadySent',
     };
-    if (!attendee.confirmationSentAt) {
+    if (status === 'CONFIRMED' && !attendee.confirmationSentAt) {
       emailed = await Promise.race([
         sendConfirmation({
           id: attendee.id,
@@ -259,6 +267,27 @@ export async function POST(request: Request) {
           name: attendee.name,
           surname: attendee.surname,
           events: attendee.events,
+        }),
+        new Promise<{ status: 'failed'; reason: string }>((resolve) =>
+          setTimeout(() => resolve({ status: 'failed', reason: 'timeout' }), EMAIL_TIMEOUT_MS),
+        ),
+      ]);
+    }
+
+    /**
+     * Y a quien queda en espera, el aviso de que lo está. Con el mismo tope
+     * que la confirmación y por lo mismo: en serverless la instancia se congela
+     * al responder, así que una promesa suelta se quedaría a medias.
+     */
+    if (status === 'WAITLIST' && !attendee.waitlistSentAt) {
+      emailed = await Promise.race([
+        sendWaitlistNotice({
+          id: attendee.id,
+          email,
+          name: attendee.name,
+          surname: attendee.surname,
+          hasGuest: rest.bringsGuest === true,
+          locale: raw.locale === 'en' ? 'en' : 'es',
         }),
         new Promise<{ status: 'failed'; reason: string }>((resolve) =>
           setTimeout(() => resolve({ status: 'failed', reason: 'timeout' }), EMAIL_TIMEOUT_MS),
@@ -276,7 +305,26 @@ export async function POST(request: Request) {
       status: 'skipped',
       reason: 'noGuest',
     };
-    if (rest.bringsGuest && guest) {
+    /**
+     * **Solo si su anfitrión entra.** Quien está en lista de espera no puede
+     * repartir lugares que todavía no tiene: invitar a alguien a completar un
+     * registro que quizá no haya sería prometerle sitio en su nombre. Su
+     * acompañante queda a la espera con él, y la invitación sale cuando el
+     * equipo apruebe al anfitrión.
+     */
+    if (rest.bringsGuest && guest && status === 'WAITLIST') {
+      await prisma.attendee.upsert({
+        where: { email: guest.email },
+        update: { name: guest.name, invitedById: attendee.id, status: 'WAITLIST' },
+        create: {
+          email: guest.email,
+          name: guest.name,
+          status: 'WAITLIST',
+          invitedById: attendee.id,
+        },
+      });
+      invited = { status: 'skipped', reason: 'hostWaitlisted' };
+    } else if (rest.bringsGuest && guest) {
       invited = await Promise.race([
         inviteGuest({
           host: { id: attendee.id, name: attendee.name, surname: attendee.surname },

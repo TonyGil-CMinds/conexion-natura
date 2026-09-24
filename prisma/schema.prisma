@@ -45,6 +45,9 @@ enum EventChoice {
 enum AttendanceStatus {
   PENDING
   CONFIRMED
+  /// En lista de espera: se registró pero su correo no está en el preregistro,
+  /// así que su lugar depende de que haya sitio. Lo decide el equipo.
+  WAITLIST
 }
 
 /// Una persona en la lista. Puede estar **pendiente** —invitada por otra y sin
@@ -103,6 +106,21 @@ model Attendee {
   guests      Attendee[] @relation("Guests")
 
   confirmationSentAt DateTime?
+
+  /// Cuándo se le avisó de que está en lista de espera. Va aparte de
+  /// `confirmationSentAt` porque son dos correos distintos y alguien puede
+  /// recibir los dos: primero el de espera y, si se le aprueba, el de
+  /// confirmación.
+  waitlistSentAt DateTime?
+
+  /// A quién de la lista de preregistro corresponde, si a alguien.
+  ///
+  /// Se rellena de dos maneras: porque su correo estaba en la lista, o porque
+  /// se reconoció en la pantalla de «¿eres tú?» al coincidir nombre y
+  /// organización. Es lo que deja ver, al mirar la fila, por qué está
+  /// confirmada.
+  inviteeId String?   @unique
+  invitee   Invitee?  @relation(fields: [inviteeId], references: [id], onDelete: SetNull)
 
   /// Cada invitación admite un solo registro, de ahí el `@unique`.
   invitationId String?     @unique
@@ -244,6 +262,40 @@ model EcuadorRegistration {
   /// Cuándo salió el correo de confirmación. Nulo mientras no se haya enviado,
   /// que es lo que impide mandarlo dos veces al corregir el registro.
   confirmationSentAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+/// Lista de preregistro de la Natura500 Night y el Premio.
+///
+/// Es la lista de invitación que decide quién queda confirmado y quién pasa a
+/// lista de espera. Se siembra desde el CSV del equipo con
+/// `npm run lista:importar` y se puede editar a mano; el sitio solo la lee.
+///
+/// No se parte el nombre en dos: en el CSV de origen la columna «Apellido»
+/// trae a veces dos palabras —«Andrés Delgado»— así que el corte no es fiable y
+/// lo que se compara es el nombre completo.
+model Invitee {
+  id String @id @default(cuid())
+
+  /// El correo al que se envió la invitación, en minúsculas. Puede ser el de la
+  /// organización y no el de la persona: en la lista hay once así.
+  email String @unique
+
+  /// Nombre completo, tal como lo escribió el equipo.
+  fullName String
+  /// Cargo, organización y los dos campos de contexto que trae el CSV. Ninguno
+  /// decide nada: están para que quien mire la lista sepa de quién habla.
+  role         String @default("")
+  organization String @default("")
+  sector       String @default("")
+  topic        String @default("")
+
+  /// El registro que reclamó esta invitación, si alguno. Uno por invitación:
+  /// dos personas no pueden ocupar el mismo lugar.
+  attendee Attendee?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

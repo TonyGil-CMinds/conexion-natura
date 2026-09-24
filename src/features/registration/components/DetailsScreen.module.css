@@ -366,3 +366,63 @@
   text-transform: uppercase;
   color: color-mix(in srgb, var(--fg) 62%, transparent);
 }
+
+/* ——— Pantalla de «¿eres tú?» ——— */
+
+/**
+ * La invitación con la que se ha encajado, enmarcada.
+ *
+ * Va destacada y no como un párrafo más porque es lo único que hay que mirar
+ * para responder: son dos datos y la respuesta depende de reconocerlos.
+ */
+.identity {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border: 1px solid var(--accent-nav);
+  background-color: color-mix(in srgb, var(--accent-nav) 8%, transparent);
+}
+
+.identityName {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-schedule-title);
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.identityOrg {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-answer);
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--fg) 70%, transparent);
+}
+
+/**
+ * «No soy yo». Discreto frente al botón macizo: decir que sí es lo que se
+ * espera de quien llega aquí, y decir que no sigue el registro igualmente.
+ */
+.quiet {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: color-mix(in srgb, var(--fg) 62%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.quiet:hover {
+  color: var(--fg);
+}
+
+.quiet:disabled {
+  cursor: wait;
+}

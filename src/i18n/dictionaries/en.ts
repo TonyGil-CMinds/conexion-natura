@@ -427,6 +427,25 @@ export const en: Dictionary = {
       failed: 'Could not confirm. Please try again.',
     },
 
+    identity: {
+      step: 'One moment',
+      headlineLine1: 'Is this',
+      headlineLine2: 'you?',
+      intro:
+        'Your email is not on the guest list, but there is an invitation in the name of:',
+      yes: 'Yes, that is me',
+      no: 'No, that is not me',
+      confirming: 'One moment...',
+      failed: 'Could not continue. Please try again.',
+    },
+
+    waitlist: {
+      title: 'You are on the waiting list',
+      body:
+        'We have your registration. This gathering has limited capacity and is by invitation, so we will check availability and write to you to confirm whether there is a place.',
+      withGuest: 'Your guest is on the list with you.',
+      emailNote: 'We have sent you this same notice by email.',
+    },
     photo: {
       step: 'Step 3/3',
       headlineLine1: 'Almost',
@@ -517,6 +536,7 @@ export const en: Dictionary = {
     save: 'Save changes',
     cancel: 'Cancel',
     confirmedCta: 'Attendance confirmed',
+    waitlistCta: 'On the waiting list',
     lookupLink: 'Already registered? Click here',
     lookupTitle: 'Enter the email you registered with',
     lookupSubmit: 'Open my registration',

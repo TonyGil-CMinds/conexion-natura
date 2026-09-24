@@ -483,3 +483,33 @@
     justify-content: center;
   }
 }
+
+/**
+ * Aviso de lista de espera.
+ *
+ * Con filete a la izquierda y no en una caja: es una nota sobre lo que acaba de
+ * pasar, no un bloque más de la pantalla, y enmarcarla competía con la fecha
+ * grande que tiene encima.
+ */
+.waitlist {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-left: var(--space-5);
+  border-left: 2px solid var(--accent-nav);
+  text-align: left;
+}
+
+.waitlist p {
+  max-width: 42ch;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-answer);
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--fg) 78%, transparent);
+}
+
+.waitlistNote {
+  font-size: var(--text-note) !important;
+  color: color-mix(in srgb, var(--fg) 55%, transparent) !important;
+}

@@ -12,6 +12,8 @@ type Props = {
   copy: Dictionary['hero'];
   /** Rótulo del botón cuando ya hay asistencia confirmada. */
   confirmedCta: string;
+  /** Rótulo de quien está en lista de espera. */
+  waitlistCta: string;
 };
 
 /**
@@ -27,7 +29,7 @@ type Props = {
  *
  * Los filetes de la retícula los dibuja `PageFrame`.
  */
-export function Hero({ locale, copy, confirmedCta }: Props) {
+export function Hero({ locale, copy, confirmedCta, waitlistCta }: Props) {
   const { year, month, day } = SITE.event.date;
   const date = new Date(Date.UTC(year, month, day));
   const shortMonth = new Intl.DateTimeFormat(locale, { month: 'short', timeZone: 'UTC' }).format(date).replace('.', '');
@@ -68,6 +70,7 @@ export function Hero({ locale, copy, confirmedCta }: Props) {
           <RegistrationCta
             label={copy.ctaLabel}
             confirmedLabel={confirmedCta}
+            waitlistLabel={waitlistCta}
             href={localePath(locale, SITE.cta.href)}
             size="hero"
           />

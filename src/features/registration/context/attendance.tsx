@@ -36,6 +36,18 @@ export type Attendee = {
    */
   events?: EventChoice[];
   /**
+   * En qué situación está su registro.
+   *
+   * Desde que el aforo va por invitación, confirmarse no es automático: quien
+   * no está en la lista de preregistro queda en `WAITLIST` y su lugar depende
+   * de que el equipo revise si hay sitio. La pantalla final y el botón del
+   * sitio dicen cosas distintas según esto.
+   *
+   * Opcional porque un perfil guardado antes de que existiera no lo trae:
+   * quien lo lea debe suponer que está confirmado, que es como era entonces.
+   */
+  status?: 'PENDING' | 'CONFIRMED' | 'WAITLIST';
+  /**
    * Si dijo que viene acompañado.
    *
    * Opcional porque un perfil guardado en el navegador antes de que se

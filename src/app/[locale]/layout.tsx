@@ -141,7 +141,12 @@ export default async function RootLayout({ children, params }: LayoutProps) {
               locale={locale as Locale}
               nav={t.nav}
               header={t.header}
-              cta={{ label: t.hero.ctaLabel, confirmedLabel: t.registration.confirmedCta, note: t.hero.ctaNote }}
+              cta={{
+                label: t.hero.ctaLabel,
+                confirmedLabel: t.registration.confirmedCta,
+                waitlistLabel: t.registration.waitlistCta,
+                note: t.hero.ctaNote,
+              }}
             />
           </HeaderGate>
 

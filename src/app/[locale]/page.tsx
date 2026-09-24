@@ -28,7 +28,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {/* La portada es solo el hero: cabe en una pantalla y no continúa con el
           pie, que se reserva para las páginas por las que se navega. */}
       <PageFrame hideFooter locale={locale}>
-        <Hero locale={locale} copy={t.hero} confirmedCta={t.registration.confirmedCta} />
+        <Hero locale={locale} copy={t.hero} confirmedCta={t.registration.confirmedCta}
+        waitlistCta={t.registration.waitlistCta} />
       </PageFrame>
     </LoaderGate>
   );

@@ -15,7 +15,7 @@ type Props = {
   locale: Locale;
   labels: Dictionary['nav'];
   header: Dictionary['header'];
-  cta: { label: string; confirmedLabel: string; note: string };
+  cta: { label: string; confirmedLabel: string; waitlistLabel: string; note: string };
 };
 
 export function MobileMenu({ locale, labels, header, cta }: Props) {
@@ -157,8 +157,13 @@ export function MobileMenu({ locale, labels, header, cta }: Props) {
             </ul>
           </nav>
           <div className={styles.cta} data-menu-cta>
-            <RegistrationCta label={cta.label} confirmedLabel={cta.confirmedLabel}
-              href={localePath(locale, SITE.cta.href)} size="mobile" />
+            <RegistrationCta
+              label={cta.label}
+              confirmedLabel={cta.confirmedLabel}
+              waitlistLabel={cta.waitlistLabel}
+              href={localePath(locale, SITE.cta.href)}
+              size="mobile"
+            />
             <p className={styles.note}>{cta.note}</p>
           </div>
         </div>

@@ -18,6 +18,7 @@ import { lookupAttendee } from '../lib/lookup-attendee';
 import { lookupInvitation } from '../lib/lookup-invitation';
 import { DetailsScreen } from './DetailsScreen';
 import { EventChoiceScreen } from './EventChoiceScreen';
+import { IdentityScreen, type IdentityCheck } from './IdentityScreen';
 import { JoinScreen } from './JoinScreen';
 import { WelcomeScreen } from './WelcomeScreen';
 import styles from './RegistrationFlow.module.css';
@@ -32,7 +33,7 @@ type Props = {
  * Los pasos, en orden. `guest` solo se visita si se dijo que sí, y `welcome`
  * es el final —y también la vista de reposo de quien ya confirmó—.
  */
-type Stage = 'join' | 'choice' | 'details' | 'guest' | 'welcome';
+type Stage = 'join' | 'choice' | 'details' | 'guest' | 'identity' | 'welcome';
 
 /**
  * Orquesta los pasos del registro.
@@ -59,6 +60,12 @@ export function RegistrationFlow({ locale, copy }: Props) {
    * de esto, así que guardarlo en estado solo provocaría renders de más.
    */
   const draft = useRef<JoinDraft | null>(null);
+  /**
+   * La invitación con la que el servidor dice que encaja lo escrito, cuando el
+   * correo no está en la lista pero el nombre y la organización sí. Mientras
+   * esto tenga valor, **no hay nada guardado**: el registro espera la respuesta.
+   */
+  const [identity, setIdentity] = useState<IdentityCheck | null>(null);
 
   /**
    * Quien ya confirmó no vuelve a rellenar nada: entra directo a la bienvenida,
@@ -177,7 +184,7 @@ export function RegistrationFlow({ locale, copy }: Props) {
    * reintentar, y el borrador sigue en el navegador para no teclear otra vez.
    */
   const sendRegistration = useCallback(
-    async () => {
+    async (answer?: { claimInviteeId: string } | { identityChecked: true }) => {
       const current = readJoinDraft();
       if (!current?.person) throw new Error('Faltan datos del registro.');
 
@@ -190,12 +197,27 @@ export function RegistrationFlow({ locale, copy }: Props) {
           events: current.events ?? [],
           bringsGuest: current.bringsGuest === true,
           guest: current.guest ?? null,
+          locale,
+          ...answer,
         }),
       });
 
       const payload = (await response.json().catch(() => ({}))) as {
         attendee?: Parameters<typeof confirm>[0];
+        identityCheck?: IdentityCheck;
       };
+
+      /**
+       * El servidor no ha guardado nada: dice que lo escrito encaja con una
+       * invitación y hay que preguntarle a la persona si es ella. La pantalla se
+       * cambia **sin escalera**: es un paso más del formulario, no un final.
+       */
+      if (payload.identityCheck) {
+        setIdentity(payload.identityCheck);
+        setStage('identity');
+        return;
+      }
+
       if (!response.ok || !payload.attendee) throw new Error('No se pudo guardar el registro.');
 
       // La respuesta del servidor es la fuente de verdad, igual que antes.
@@ -208,7 +230,7 @@ export function RegistrationFlow({ locale, copy }: Props) {
        */
       setPending('welcome');
     },
-    [confirm],
+    [confirm, locale],
   );
 
   /**
@@ -334,6 +356,16 @@ export function RegistrationFlow({ locale, copy }: Props) {
           />
         )}
 
+        {stage === 'identity' && identity && (
+          <IdentityScreen
+            key="identity"
+            copy={copy.identity}
+            check={identity}
+            onClaim={() => sendRegistration({ claimInviteeId: identity.inviteeId })}
+            onReject={() => sendRegistration({ identityChecked: true })}
+          />
+        )}
+
         {/* Sin `attendee` no hay nada que enseñar: el estado llega con la
             respuesta del servidor, o del almacenamiento al montar. */}
         {stage === 'welcome' && attendee && (
@@ -341,6 +373,7 @@ export function RegistrationFlow({ locale, copy }: Props) {
             key="welcome"
             locale={locale}
             copy={copy.welcome}
+            waitlistCopy={copy.waitlist}
             attendee={attendee}
             onEditDetails={handleEditDetails}
           />

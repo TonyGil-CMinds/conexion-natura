@@ -16,6 +16,12 @@ import styles from './WelcomeScreen.module.css';
 type Props = {
   locale: Locale;
   copy: Dictionary['registration']['welcome'];
+  /**
+   * El aviso de lista de espera. Va aparte de `copy` porque no es una variante
+   * de la bienvenida sino otro mensaje: aquella dice «nos vemos» y este no puede
+   * prometer nada hasta que el equipo revise el aforo.
+   */
+  waitlistCopy: Dictionary['registration']['waitlist'];
   attendee: Attendee;
   /**
    * Vuelve al formulario con los datos ya puestos: nombre, organización,
@@ -73,7 +79,14 @@ function PixelChevron() {
  * El ave de píxeles es la del hero, con su misma entrada y su misma repulsión al
  * puntero: cierra el recorrido donde empezó.
  */
-export function WelcomeScreen({ locale, copy, attendee, onEditDetails }: Props) {
+export function WelcomeScreen({ locale, copy, waitlistCopy, attendee, onEditDetails }: Props) {
+  /**
+   * Quien no está en la lista de preregistro entra en espera: se le enseñan los
+   * datos del encuentro —para eso se registró— pero no el calendario ni el
+   * botón de compartir. Añadir a la agenda un acto al que quizá no vaya, o
+   * repartir su enlace, sería darle por hecho un lugar que todavía no tiene.
+   */
+  const enEspera = attendee.status === 'WAITLIST';
   /**
    * Los actos que se marcaron, en el orden del diseño.
    *
@@ -186,10 +199,21 @@ export function WelcomeScreen({ locale, copy, attendee, onEditDetails }: Props) 
           {copy.greeting} {attendee.name}
         </motion.p>
 
-        {/* El acto nombrado: quien va a los dos ve cuál está mirando. */}
-        <motion.p className={styles.soon} variants={ITEM}>
-          {copy.soonIn} <span>{copy.events[shown.id]}!</span>
-        </motion.p>
+        {/**
+         * En espera se cambia el mensaje entero, no solo el tono: prometer «nos
+         * vemos pronto» a quien todavía no tiene lugar es lo único que esta
+         * pantalla no puede hacer.
+         */}
+        {enEspera ? (
+          <motion.p className={styles.soon} variants={ITEM}>
+            <span>{waitlistCopy.title}</span>
+          </motion.p>
+        ) : (
+          /* El acto nombrado: quien va a los dos ve cuál está mirando. */
+          <motion.p className={styles.soon} variants={ITEM}>
+            {copy.soonIn} <span>{copy.events[shown.id]}!</span>
+          </motion.p>
+        )}
 
         {/**
          * Fecha con el paso al otro acto a un lado. La flecha apunta a donde se
@@ -257,11 +281,20 @@ export function WelcomeScreen({ locale, copy, attendee, onEditDetails }: Props) 
           {shown.schedule ?? copy.scheduleTbc}
         </motion.p>
 
+        {enEspera && (
+          <motion.div className={styles.waitlist} variants={ITEM}>
+            <p>{waitlistCopy.body}</p>
+            {attendee.bringsGuest && <p>{waitlistCopy.withGuest}</p>}
+            <p className={styles.waitlistNote}>{waitlistCopy.emailNote}</p>
+          </motion.div>
+        )}
+
         <motion.div className={styles.actions} variants={ITEM}>
           {/**
            * El calendario se elige, no se impone: el `.ics` vale para todos pero
            * en Google —que es la mayoría— obliga a descargar e importar a mano.
            */}
+          {!enEspera && (
           <div className={styles.calendar} ref={calendarRef}>
             <button
               type="button"
@@ -298,10 +331,13 @@ export function WelcomeScreen({ locale, copy, attendee, onEditDetails }: Props) 
               )}
             </AnimatePresence>
           </div>
+          )}
 
-          <button type="button" className={styles.secondary} onClick={share}>
-            {copy.share}
-          </button>
+          {!enEspera && (
+            <button type="button" className={styles.secondary} onClick={share}>
+              {copy.share}
+            </button>
+          )}
 
           {/* Editar los datos. Discreto, como el de la fotografía: el
               estado de reposo de esta pantalla es mirar, no corregir. */}

@@ -59,6 +59,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           <RegistrationCta
             label={copy.ctaLabel}
             confirmedLabel={t.registration.confirmedCta}
+            waitlistLabel={t.registration.waitlistCta}
             href={localePath(locale, cta.href)}
             size="compact"
           />
