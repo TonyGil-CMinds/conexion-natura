@@ -189,21 +189,46 @@ export async function POST(request: Request) {
      */
     const previo = await prisma.attendee.findUnique({
       where: { email },
-      select: { status: true, inviteeId: true },
+      select: {
+        status: true,
+        inviteeId: true,
+        /**
+         * Quién lo invitó, si alguien. Es lo que decide si esta persona tiene
+         * que pasar por la lista o no.
+         */
+        invitedBy: { select: { status: true } },
+      },
     });
 
-    const veredicto = await admit(
-      { email, name: rest.name, surname: rest.surname, organization: rest.organization },
-      answer,
-      previo?.inviteeId ?? null,
-    );
+    /**
+     * **Quien viene invitado no pasa por la lista de preregistro.**
+     *
+     * Su entrada no es estar en la lista: es la invitación de alguien que sí
+     * estaba, y que al invitarlo gastó su acompañante. Preguntarle a él otra vez
+     * por la lista lo mandaba a lista de espera —su correo no está ahí, y no
+     * tiene por qué—, con lo que recibía el enlace para confirmar su asistencia
+     * y, nada más confirmarla, un correo diciéndole que está en espera.
+     *
+     * Hereda el estado de quien lo invitó, que es lo que ya decidía el registro
+     * del anfitrión: si el anfitrión quedó en espera, su acompañante espera con
+     * él y no recibe siquiera la invitación.
+     */
+    const anfitrion = previo?.invitedBy ?? null;
+
+    const veredicto = anfitrion
+      ? null
+      : await admit(
+          { email, name: rest.name, surname: rest.surname, organization: rest.organization },
+          answer,
+          previo?.inviteeId ?? null,
+        );
 
     /**
      * Hay a quién parecerse y todavía no se le ha preguntado: **no se guarda
      * nada**. Se devuelve la coincidencia para que la pantalla le pregunte si es
      * ella, y el formulario vuelve con la respuesta.
      */
-    if (veredicto.kind === 'identityCheck') {
+    if (veredicto?.kind === 'identityCheck') {
       return NextResponse.json({
         identityCheck: {
           inviteeId: veredicto.match.invitee.id,
@@ -218,8 +243,16 @@ export async function POST(request: Request) {
      * puede sacar a nadie de la lista: si entró, entró.
      */
     const status =
-      previo?.status === 'CONFIRMED' || veredicto.kind === 'confirmed' ? 'CONFIRMED' : 'WAITLIST';
-    const inviteeId = veredicto.kind === 'confirmed' ? veredicto.inviteeId : null;
+      previo?.status === 'CONFIRMED' ||
+      /* Invitado: entra si entró quien lo invitó. */
+      (anfitrion ? anfitrion.status !== 'WAITLIST' : veredicto!.kind === 'confirmed')
+        ? 'CONFIRMED'
+        : 'WAITLIST';
+    /**
+     * La invitación de la lista solo se ata a quien la reclama. Un acompañante
+     * no gasta ninguna: su sitio salió del de su anfitrión.
+     */
+    const inviteeId = veredicto?.kind === 'confirmed' ? veredicto.inviteeId : null;
 
     const attendee = await prisma.attendee.upsert({
       where: { email },
