@@ -63,6 +63,7 @@
 .characterInner { display: inline-block; will-change: transform; }
 
 /* Sin movimiento no hay nada que recortar ni que esperar. */
+
 @media (prefers-reduced-motion: reduce) {
   .character { overflow: visible; }
   .characterInner { transform: none !important; will-change: auto; }
@@ -140,23 +141,79 @@
   .dateDivider { width: 38px; }
 }
 @media (max-width: 640px) {
-  .root { --hero-height: max(720px, 100dvh); }
-  .lockup { top: clamp(115px, 16svh, 150px); width: 92%; }
-  .claim { font-size: 9.5vw; margin-top: 12px; }
-  .bird { width: min(100vw, 440px); bottom: 80px; margin-left: 15px; }
+  .root {
+    --hero-height: max(720px, 100dvh);
+    /**
+     * Dónde arranca el rótulo, en un solo sitio: la fecha se cuelga de él y
+     * necesita la misma medida para quedarse pegada a cualquier ancho.
+     */
+    --lockup-top: clamp(72px, 10svh, 112px);
+  }
+  .lockup { top: var(--lockup-top); width: 92%; }
+  .claim { font-size: 9.5vw; margin-top: 10px; }
+
   /**
-   * El árbol sube hasta despejar la llamada. En ancho no se tocan, pero en
-   * estrecho caía justo detrás del botón, y el botón es del **mismo lima** que
-   * el árbol en la paleta por defecto: la caja desaparecía y solo quedaba el
-   * rótulo flotando. Sigue estando entero por detrás del ave, que es su sitio.
+   * La fecha sube y se centra **debajo del rótulo**, que es donde la pide el
+   * diseño en estrecho —en ancho vive abajo a la derecha—.
+   *
+   * Se ancla con la medida real del rótulo y no a ojo: el alto del logotipo
+   * sale de su proporción (254/915 = 0,2776 de su ancho) y a eso se le suma el
+   * claim con su interlínea. Calculado, sigue pegada al rótulo en cualquier
+   * pantalla; a ojo, se despegaba o se montaba encima según el ancho.
    */
-  .pixels { width: 115%; height: 420px; bottom: 112px; }
-  .action { flex-direction: column; left: 24px; right: 24px; bottom: max(24px, env(safe-area-inset-bottom)); gap: 10px; }
+  .date {
+    top: calc(var(--lockup-top) + 92vw * 0.2776 + 10px + 10.45vw + 2.5vw);
+    right: auto;
+    bottom: auto;
+    left: 0;
+    width: 100%;
+    justify-content: center;
+    gap: 3.5vw;
+    font-size: 9.5vw;
+    /* Sin recuadro: en la referencia la fecha va suelta sobre el fondo. */
+    background: none;
+    padding: 0;
+  }
+  .dateDivider { width: 7vw; height: 7vw; }
+
+  /**
+   * El ave y su árbol ocupan la franja que queda entre la fecha y la llamada.
+   * El árbol acaba por encima del botón a propósito: en la paleta por defecto
+   * los dos son del mismo lima y, solapados, la caja del botón desaparecía.
+   */
+  /* 46vw y no más: por encima, el pico cruzaba la fecha en pantallas de 844. */
+  .bird { width: min(46vw, 210px); bottom: 96px; margin-left: 8px; }
+  .pixels { width: 92%; height: 260px; bottom: 150px; }
+
+  /**
+   * El botón arriba y el aviso debajo, como en la referencia. Va escrito y no
+   * heredado de `--quito-action-direction`: esa variable cambia con la paleta,
+   * y el orden en estrecho es el mismo en todas.
+   */
+  .action {
+    flex-direction: column-reverse;
+    align-items: center;
+    left: 24px;
+    right: 24px;
+    bottom: max(24px, env(safe-area-inset-bottom));
+    gap: 12px;
+  }
   .cta { width: 100%; min-height: 64px; }
   .note { font-size: 12px; }
-  .date { bottom: 130px; right: 24px; gap: 8px; font-size: 24px; background: var(--bg); padding: 6px; }
-  .dateDivider { width: 28px; height: 28px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .cta { transition: none; }
+}
+
+/**
+ * Pantallas estrechas **y cortas**.
+ *
+ * La fecha se ancla arriba —cuelga del rótulo— y el ave abajo, así que cuanto
+ * menos alto hay, más se acercan: en un teléfono de 640 el pico cruzaba los
+ * números. El ave y su árbol menguan hasta despejarla, sin tocar la relación
+ * entre el árbol y el botón, que es la que no puede romperse.
+ */
+@media (max-width: 640px) and (max-height: 700px) {
+  .bird { width: min(42vw, 180px); bottom: 96px; }
+  .pixels { width: 80%; height: 210px; bottom: 140px; }
 }

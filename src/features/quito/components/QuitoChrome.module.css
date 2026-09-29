@@ -167,6 +167,24 @@
   display: flex;
 }
 
+/**
+ * En pantalla ancha **cada fila es una fila**, sin envolver.
+ *
+ * El diseño agrupa los logotipos por sentido y el reflujo lo deshacía: a la
+ * medida anterior, Tàngara se descolgaba sola a una tercera línea y la fila de
+ * cinco parecía de cuatro. El hueco se ajusta a la vez, porque es lo que hacía
+ * que no cupieran —medido: 899 px de fila contra 876 disponibles—.
+ *
+ * Por debajo de 900 px sigue envolviendo: ahí no caben y partirlas es lo que
+ * toca.
+ */
+@media (min-width: 900px) {
+  .networkRow {
+    flex-wrap: nowrap;
+    gap: clamp(1.5rem, 3vw, 3rem);
+  }
+}
+
 .networkLogo {
   width: auto;
   height: clamp(28px, 3.2vw, 44px);
