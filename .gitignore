@@ -19,3 +19,7 @@ next-env.d.ts
 
 # Cliente de Prisma: se regenera con `prisma generate` (postinstall).
 /generated
+
+# Andamio de verificación: scripts de un solo uso en la raíz.
+tmp-*.js
+tmp-*.mjs
