@@ -351,3 +351,31 @@ html[data-quito-palette='pink'] .networkLogo[data-on='dark'] {
   text-wrap: balance;
 }
 .hosts .network { padding-bottom: clamp(36px, 5vw, 64px); }
+
+@media (min-width: 901px) {
+  .hosts {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(48px, 8vh, 96px);
+    padding-block: clamp(64px, 10vh, 112px);
+  }
+
+  .hosts .partnersBlock { padding-block: 0; }
+
+  .hosts .network {
+    width: 100%;
+    max-width: none;
+    padding-bottom: 0;
+    gap: clamp(40px, 7vh, 80px);
+  }
+
+  .hosts .networkLogo {
+    height: clamp(36px, 4.4vw, 64px);
+  }
+
+  .hosts .networkRow:last-child .networkLogo {
+    height: clamp(28px, 3.2vw, 46px);
+  }
+}
