@@ -185,9 +185,19 @@
   }
 }
 
+/**
+ * El alto va en variable y no en la propiedad para que cada logotipo pueda
+ * apartarse de la medida común con `--logo-scale`, sin que quien la fija tenga
+ * que repetir el `clamp` de su grupo.
+ *
+ * Igualar por alto reparte bien entre proporciones parecidas y mal cuando una
+ * se sale: un logotipo cinco veces más ancho que alto acaba midiendo el doble
+ * que sus vecinos aunque mida lo mismo de alto.
+ */
 .networkLogo {
+  --logo-height: clamp(28px, 3.2vw, 44px);
   width: auto;
-  height: clamp(28px, 3.2vw, 44px);
+  height: calc(var(--logo-height) * var(--logo-scale, 1));
   object-fit: contain;
 }
 
@@ -202,13 +212,17 @@
   justify-items: center;
 }
 
+/**
+ * El rótulo va a color pleno y no atenuado: nombra el papel de quienes están
+ * debajo, que es información y no una nota al pie. Apagado se leía como un
+ * apartado de segunda y era justo lo contrario de lo que hace la sección.
+ */
 .networkGroupTitle {
   margin: 0;
   color: var(--fg);
-  font: 400 clamp(11px, 1.1vw, 14px)/1.2 var(--font-mono);
-  letter-spacing: 0.14em;
+  font: 700 clamp(14px, 1.7vw, 22px)/1.2 var(--font-mono);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  opacity: 0.65;
 }
 
 /**
@@ -225,7 +239,7 @@
 }
 
 .networkRow[data-group='support'] .networkLogo {
-  height: clamp(20px, 2.3vw, 30px);
+  --logo-height: clamp(20px, 2.3vw, 30px);
 }
 
 /**
@@ -236,7 +250,7 @@
  * anfitrionas se comían la sección.
  */
 .networkRow[data-group='through'] .networkLogo {
-  height: clamp(24px, 2.8vw, 36px);
+  --logo-height: clamp(24px, 2.8vw, 36px);
 }
 
 /**
@@ -406,14 +420,14 @@ html[data-quito-palette='pink'] .networkLogo[data-on='dark'] {
   }
 
   .hosts .networkLogo {
-    height: clamp(36px, 4.4vw, 64px);
+    --logo-height: clamp(36px, 4.4vw, 64px);
   }
 
   .hosts .networkRow[data-group='through'] .networkLogo {
-    height: clamp(30px, 3.6vw, 52px);
+    --logo-height: clamp(30px, 3.6vw, 52px);
   }
 
   .hosts .networkRow[data-group='support'] .networkLogo {
-    height: clamp(28px, 3.2vw, 46px);
+    --logo-height: clamp(28px, 3.2vw, 46px);
   }
 }

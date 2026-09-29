@@ -121,7 +121,17 @@ export const QUITO = {
         { src: '/partners/logo-socios-quito-natura500.svg', alt: 'natura500', width: 113, height: 66 },
         { src: '/partners/logo-socios-quito-fondoverde.svg', onDark: '/partners/logo-socios-light-fondoverde.svg', alt: 'Fondo Verde Catalítico', width: 231, height: 58 },
         { src: '/partners/logo-socios-cminds.svg', onDark: '/partners/logo-socios-cminds-light.svg', alt: 'C Minds', width: 118, height: 28 },
-        { src: '/partners/logo-socios-bid.svg', onDark: '/partners/logo-socios-bid-light.svg', alt: 'IDB Lab', width: 123, height: 25 },
+        /**
+         * El BID en español, que es el idioma del acto. El archivo llegó solo
+         * en blanco: la versión clara se sacó de él con la tinta del original
+         * en inglés (`#001D09`).
+         *
+         * `scale` le quita un tercio de alto. Es el más apaisado de todos —cinco
+         * de ancho por uno de alto—, así que igualar alturas lo dejaba midiendo
+         * 258 px y encabezando la fila por encima de las anfitrionas: igualar
+         * por alto solo reparte bien entre proporciones parecidas.
+         */
+        { src: '/partners/logo-socios-es-bidlab.svg', onDark: '/partners/logo-socios-light-es-bidlab.svg', alt: 'BID Lab', width: 308, height: 62, scale: 0.68 },
       ],
     },
     /** «Con el apoyo de»: quienes acompañan. Es el grupo largo y va más pequeño. */
