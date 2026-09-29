@@ -134,90 +134,93 @@
      máscara: una máscara lo dejaría de un solo color. */
 }
 
-/* Los dos grupos de logotipos: quién lidera y quién financia. */
-.partners {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 60px;
-  width: 100%;
-  max-width: var(--content-max);
-  margin-inline: auto;
-  padding: 0 var(--quito-gutter) 132px;
-}
-
-.partnerGroup {
-  display: grid;
-  justify-items: start;
-  gap: var(--space-5);
-}
-
-.partnerLabel {
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: var(--text-note);
-  font-weight: 700;
-  letter-spacing: var(--tracking-eyebrow);
-  text-transform: uppercase;
-  color: var(--fg);
-}
-
-.partnerList {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: clamp(1.5rem, 3vw, 2.75rem);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.partnerLogo {
-  width: auto;
-  max-width: 100%;
-  height: 46px;
-  object-fit: contain;
-}
-
 /* Banda inferior: lockup, aviso legal y redes. */
 
 /**
- * La red de socios: dos filas que se reparten solas.
+ * El muro de socios: tres filas declaradas, cada una centrada y con su propio
+ * reflujo en pantalla estrecha.
  *
  * Los logotipos se igualan **por alto** y no por ancho, que es como se lee una
- * fila de marcas: cada una conserva su proporción y ninguna pesa más que otra
- * por ser más larga. El ancho sale de `auto`, así que la proporción real de
- * cada SVG manda.
+ * fila de marcas: cada uno conserva su proporción y ninguno pesa más que otro
+ * por ser más largo.
  */
 .network {
+  display: grid;
+  gap: clamp(1.5rem, 3.6vw, 3rem);
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 var(--quito-gutter) clamp(3rem, 7vw, 6rem);
+}
+
+.networkRow {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: clamp(1.75rem, 4.5vw, 4rem);
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 0 var(--quito-gutter) clamp(3rem, 7vw, 6rem);
+  margin: 0;
+  padding: 0;
   list-style: none;
 }
 
-.network li {
+.networkRow li {
   display: flex;
 }
 
 .networkLogo {
   width: auto;
-  height: clamp(30px, 3.4vw, 46px);
+  height: clamp(28px, 3.2vw, 44px);
   object-fit: contain;
-  /* La misma corrección de tinta que el resto: en las paletas oscuras los
-     logotipos vienen en negro y hay que invertirlos. */
+}
+
+/**
+ * La última fila —quien lidera y quien financia— va más pequeña, como en el
+ * diseño: son marcas institucionales, acompañan y no encabezan. Es además lo
+ * que hace que las seis quepan en una línea: a la altura de las otras filas se
+ * partían en cinco y una.
+ */
+.networkRow:last-child {
+  gap: clamp(1.5rem, 3.4vw, 3rem);
+}
+
+.networkRow:last-child .networkLogo {
+  height: clamp(20px, 2.3vw, 30px);
+}
+
+/**
+ * Sin versión oficial para fondo oscuro, se blanquea el mismo archivo. Es peor
+ * —aplana los colores— pero es lo único que hay para esos.
+ */
+.networkLogo[data-filtered] {
   filter: var(--quito-partner-filter);
+}
+
+/**
+ * Cuál de las dos versiones se ve. Se decide en CSS y no en JavaScript porque
+ * la paleta se escribe en el HTML antes de hidratar: eligiendo en el cliente se
+ * vería un cuadro con la equivocada.
+ */
+.networkLogo[data-on='dark'] {
+  display: none;
+}
+
+html[data-quito-palette='blue'] .networkLogo[data-on='light'],
+html[data-quito-palette='pink'] .networkLogo[data-on='light'] {
+  display: none;
+}
+
+html[data-quito-palette='blue'] .networkLogo[data-on='dark'],
+html[data-quito-palette='pink'] .networkLogo[data-on='dark'] {
+  display: block;
 }
 
 @media (max-width: 640px) {
   .network {
-    gap: clamp(1.25rem, 6vw, 2rem);
     padding-inline: 24px;
+  }
+
+  .networkRow {
+    gap: clamp(1.25rem, 6vw, 2rem);
   }
 }
 
@@ -301,20 +304,8 @@
     text-align: center;
   }
 
-  .partnerGroup {
-    justify-items: center;
-  }
-
-  .partnerList {
-    justify-content: center;
-  }
 }
 
-.partnerGroup:first-child .partnerList li:first-child .partnerLogo { width: 200px; height: auto; }
-.partnerGroup:last-child .partnerList { gap: 30px; }
-.partnerGroup:last-child .partnerLogo { height: auto; width: 90px; }
-.partnerGroup:last-child .partnerList li:first-child .partnerLogo { width: 110px; }
-.partnerGroup:last-child .partnerList li:nth-child(3) .partnerLogo { width: 48px; }
 .barNav a { font-weight: 700; }
 
 .desktopLocale { --accent-nav-ink: var(--quito-active); }
@@ -323,4 +314,4 @@
   .desktopLocale, .barNav { display: none; }
 }
 
-.partnerLogo, .bottomBrandMark, .partnersDivider { filter: var(--quito-partner-filter); }
+.bottomBrandMark, .partnersDivider { filter: var(--quito-partner-filter); }

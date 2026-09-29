@@ -69,26 +69,43 @@ export const QUITO = {
 
 
   /**
-   * Los socios de esta convocatoria, en el orden del diseño: cuatro arriba y
-   * cinco abajo, sin rótulo de grupo.
+   * El muro de socios del pie, **en filas explícitas** y sin rótulo de grupo.
    *
-   * Van **aparte** de PARTNER_GROUPS y no dentro: aquellos dicen quién lidera y
-   * quién financia —son dos roles con su rótulo— y estos son la red que
-   * acompaña. Meterlos en el mismo sitio habría obligado a inventarles un rol.
+   * Las filas van declaradas y no al azar del reflujo porque el diseño las
+   * agrupa por sentido —la red de la convocatoria arriba, quien lidera y
+   * financia abajo— y dejándolo al ancho disponible se mezclaban. Cada fila
+   * sigue envolviendo por su cuenta en pantalla estrecha.
    *
-   * Las medidas son las naturales de cada SVG: el alto lo iguala el CSS, y el
+   * `onDark` es la versión para las paletas oscuras (azul y rosa). Donde la hay
+   * se monta el archivo oficial en vez de blanquear el otro con un filtro: el
+   * filtro aplana los dos colores de NaturaTech y convierte las banderas de
+   * Suecia y Francia en un rectángulo blanco. Donde no la hay, sigue el filtro.
+   *
+   * Las medidas son las naturales de cada SVG: el alto lo iguala el CSS y el
    * ancho tiene que salir de la proporción real o el logotipo se deforma.
    */
-  partners: [
-    { src: '/partners/logo-socios-quito-ntl.svg', alt: 'NaturaTech LAC', width: 141, height: 52 },
-    { src: '/partners/logo-socios-quito-redimpacto.svg', alt: 'Red de Impacto', width: 303, height: 81 },
-    /* El archivo se llama «impaquito» pero el logotipo es el de Latimpacto. */
-    { src: '/partners/logo-socios-quito-impaquito.svg', alt: 'Latimpacto', width: 189, height: 51 },
-    { src: '/partners/logo-socios-quito-natura500.svg', alt: 'natura500', width: 113, height: 66 },
-    { src: '/partners/logo-socios-quito-fondoverde.svg', alt: 'Fondo Verde Catalítico', width: 231, height: 58 },
-    { src: '/partners/logo-socios-quito-startuplab.svg', alt: 'StartupLab.mx', width: 185, height: 46 },
-    { src: '/partners/logo-socios-quito-trulab.svg', alt: 'truLab', width: 116, height: 50 },
-    { src: '/partners/logo-socios-quito-tangara.svg', alt: 'Tàngara', width: 145, height: 56 },
+  partnerRows: [
+    [
+      { src: '/partners/logo-socios-quito-ntl.svg', onDark: '/partners/logo-socios-light-ntl.svg', alt: 'NaturaTech LAC', width: 141, height: 52 },
+      { src: '/partners/logo-socios-quito-redimpacto.svg', onDark: '/partners/logo-socios-light-redimpacto.svg', alt: 'Red de Impacto', width: 303, height: 81 },
+      /* El archivo se llama «impaquito» pero el logotipo es el de Latimpacto. */
+      { src: '/partners/logo-socios-quito-impaquito.svg', alt: 'Latimpacto', width: 189, height: 51 },
+    ],
+    [
+      { src: '/partners/logo-socios-quito-natura500.svg', alt: 'natura500', width: 113, height: 66 },
+      { src: '/partners/logo-socios-quito-fondoverde.svg', onDark: '/partners/logo-socios-light-fondoverde.svg', alt: 'Fondo Verde Catalítico', width: 231, height: 58 },
+      { src: '/partners/logo-socios-quito-startuplab.svg', alt: 'StartupLab.mx', width: 185, height: 46 },
+      { src: '/partners/logo-socios-quito-trulab.svg', alt: 'truLab', width: 116, height: 50 },
+      { src: '/partners/logo-socios-quito-tangara.svg', alt: 'Tàngara', width: 145, height: 56 },
+    ],
+    [
+      { src: '/partners/logo-socios-bid.svg', onDark: '/partners/logo-socios-bid-light.svg', alt: 'IDB Lab', width: 123, height: 25 },
+      { src: '/partners/logo-socios-cminds.svg', onDark: '/partners/logo-socios-cminds-light.svg', alt: 'C Minds', width: 118, height: 28 },
+      { src: '/partners/logo-socios-suecia.svg', onDark: '/partners/logo-socios-light-suecia.svg', alt: 'Sweden Sverige', width: 62, height: 19 },
+      { src: '/partners/logo-socios-francia.svg', onDark: '/partners/logo-socios-light-france.svg', alt: 'Gouvernement français', width: 57, height: 30 },
+      { src: '/partners/logo-socios-amazonia.svg', onDark: '/partners/logo-socios-amazonia-light.svg', alt: 'Amazónia', width: 31, height: 26 },
+      { src: '/partners/logo-socios-cc.svg', onDark: '/partners/logo-socios-cc-light.svg', alt: 'Climate Collective', width: 58, height: 19 },
+    ],
   ],
 
   /** El pie: la ballena del cierre, la foto de sala y el lockup pequeño. */

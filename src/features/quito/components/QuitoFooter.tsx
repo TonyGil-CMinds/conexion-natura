@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { SOCIAL_MARKS, type SocialNetwork } from '@/components/ui/social-marks';
 import { QUITO } from '@/config/quito';
-import { FOOTER, PARTNER_GROUPS, SITE } from '@/config/site';
+import { FOOTER, SITE } from '@/config/site';
 import { localePath, type Dictionary, type Locale } from '@/i18n';
 import { QuitoJoinCta } from './QuitoJoinCta';
 import { Reveal } from './Reveal';
@@ -95,49 +95,54 @@ export function QuitoFooter({ locale, copy }: Props) {
         </div>
       </Reveal>
 
-      <Reveal>
-        <div className={styles.partners}>
-          {PARTNER_GROUPS.map((group) => (
-            <div key={group.key} className={styles.partnerGroup}>
-              <p className={styles.partnerLabel}>{t.partners[group.key]}</p>
-              <ul className={styles.partnerList}>
-                {group.logos.map((logo) => (
-                  <li key={logo.alt}>
-                    <Image
-                      src={logo.onLight}
-                      alt={logo.alt}
-                      width={logo.width}
-                      height={logo.height}
-                      className={styles.partnerLogo}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </Reveal>
-
       {/**
-       * La red que acompaña, debajo de quién lidera y quién financia. Va sin
-       * rótulo de grupo a propósito: aquellos dos nombran un rol —y por eso lo
-       * llevan escrito—, y esto es el conjunto, que se lee sin que nadie lo
-       * anuncie.
+       * El muro de socios: la red de la convocatoria y, en la última fila,
+       * quien lidera y quien financia. **Sin rótulos de grupo**, que es como lo
+       * pide el diseño: se lee como un conjunto.
        */}
       <Reveal>
-        <ul className={styles.network}>
-          {QUITO.partners.map((partner) => (
-            <li key={partner.alt}>
-              <Image
-                src={partner.src}
-                alt={partner.alt}
-                width={partner.width}
-                height={partner.height}
-                className={styles.networkLogo}
-              />
-            </li>
+        <div className={styles.network}>
+          {QUITO.partnerRows.map((row, index) => (
+            <ul key={index} className={styles.networkRow}>
+              {row.map((logo) => (
+                <li key={logo.alt}>
+                  {/**
+                   * Donde hay versión oficial para fondo oscuro se montan las
+                   * **dos** y el CSS esconde la que no toca. Elegir en
+                   * JavaScript enseñaría un cuadro con la equivocada: la paleta
+                   * se decide en el propio HTML, antes de hidratar.
+                   */}
+                  <Image
+                    src={logo.src}
+                    alt={logo.alt}
+                    width={logo.width}
+                    height={logo.height}
+                    className={styles.networkLogo}
+                    /**
+                     * `light` solo cuando hay pareja que la sustituya en las
+                     * paletas oscuras. Sin pareja va como `both` —se ve
+                     * siempre— y se blanquea con el filtro: marcándola `light`
+                     * se escondía en oscuro y no quedaba nada que pintar.
+                     */
+                    data-on={'onDark' in logo ? 'light' : 'both'}
+                    data-filtered={'onDark' in logo ? undefined : true}
+                  />
+                  {'onDark' in logo && (
+                    <Image
+                      src={logo.onDark}
+                      alt=""
+                      width={logo.width}
+                      height={logo.height}
+                      className={styles.networkLogo}
+                      data-on="dark"
+                      aria-hidden
+                    />
+                  )}
+                </li>
+              ))}
+            </ul>
           ))}
-        </ul>
+        </div>
       </Reveal>
 
       <div className={styles.bottomBand}>

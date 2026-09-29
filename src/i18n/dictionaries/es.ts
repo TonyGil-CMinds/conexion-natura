@@ -1647,10 +1647,7 @@ export const es = {
       partnersTitleLine1: 'Conoce a',
       partnersTitleLine2a: 'Nuestros',
       partnersTitleLine2b: 'Socios',
-      partners: {
-        led: 'Liderada por',
-        funding: 'Financiada por',
-      },
+
       legal: {
         terms: 'Términos y condiciones',
         privacy: 'Aviso de privacidad',

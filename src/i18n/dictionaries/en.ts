@@ -1444,10 +1444,7 @@ export const en: Dictionary = {
       partnersTitleLine1: 'Meet our',
       partnersTitleLine2a: 'Partners',
       partnersTitleLine2b: 'And allies',
-      partners: {
-        led: 'Led by',
-        funding: 'Funded by',
-      },
+
       legal: {
         terms: 'Terms and conditions',
         privacy: 'Privacy notice',
