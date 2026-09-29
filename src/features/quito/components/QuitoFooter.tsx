@@ -61,7 +61,7 @@ export function QuitoFooter({ locale, copy, showHosts = true }: Props) {
         </div>
       </Reveal>
 
-      {showHosts && <QuitoHosts copy={t} />}
+      {showHosts && <QuitoHosts copy={t} locale={locale} />}
 
       <div className={styles.bottomBand}>
         <div className={styles.bottom}>

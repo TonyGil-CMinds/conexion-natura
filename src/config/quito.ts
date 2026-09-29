@@ -122,16 +122,28 @@ export const QUITO = {
         { src: '/partners/logo-socios-quito-fondoverde.svg', onDark: '/partners/logo-socios-light-fondoverde.svg', alt: 'Fondo Verde Catalítico', width: 231, height: 58 },
         { src: '/partners/logo-socios-cminds.svg', onDark: '/partners/logo-socios-cminds-light.svg', alt: 'C Minds', width: 118, height: 28 },
         /**
-         * El BID en español, que es el idioma del acto. El archivo llegó solo
-         * en blanco: la versión clara se sacó de él con la tinta del original
-         * en inglés (`#001D09`).
+         * El **único logotipo que cambia con el idioma**: el banco tiene marca
+         * propia en cada uno y no es una traducción del rótulo, así que no vale
+         * poner una y dar la otra por entendida.
          *
-         * `scale` le quita un tercio de alto. Es el más apaisado de todos —cinco
-         * de ancho por uno de alto—, así que igualar alturas lo dejaba midiendo
-         * 258 px y encabezando la fila por encima de las anfitrionas: igualar
-         * por alto solo reparte bien entre proporciones parecidas.
+         * Por eso va como mapa por idioma y no como archivo suelto: quien pinta
+         * elige, y las dos versiones traen sus propias medidas porque no son el
+         * mismo dibujo escalado.
+         *
+         * `scale` les quita un tercio de alto a las dos. Es el más apaisado de
+         * todos —cinco de ancho por uno de alto—, así que igualar alturas lo
+         * dejaba midiendo 258 px y encabezando la fila por encima de las
+         * anfitrionas: igualar por alto solo reparte bien entre proporciones
+         * parecidas.
          */
-        { src: '/partners/logo-socios-es-bidlab.svg', onDark: '/partners/logo-socios-light-es-bidlab.svg', alt: 'BID Lab', width: 308, height: 62, scale: 0.68 },
+        {
+          byLocale: {
+            /** El español llegó solo en blanco; la versión clara se sacó de él
+             *  con la tinta del original en inglés (`#001D09`). */
+            es: { src: '/partners/logo-socios-es-bidlab.svg', onDark: '/partners/logo-socios-light-es-bidlab.svg', alt: 'BID Lab', width: 308, height: 62, scale: 0.68 },
+            en: { src: '/partners/logo-socios-bid.svg', onDark: '/partners/logo-socios-bid-light.svg', alt: 'IDB Lab', width: 123, height: 25, scale: 0.68 },
+          },
+        },
       ],
     },
     /** «Con el apoyo de»: quienes acompañan. Es el grupo largo y va más pequeño. */

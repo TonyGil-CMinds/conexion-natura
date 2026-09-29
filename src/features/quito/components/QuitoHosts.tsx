@@ -1,21 +1,40 @@
 import Image from 'next/image';
 import { QUITO } from '@/config/quito';
-import type { Dictionary } from '@/i18n';
+import type { Dictionary, Locale } from '@/i18n';
 import type { CSSProperties } from 'react';
 import { Reveal } from './Reveal';
 import styles from './QuitoChrome.module.css';
 
 /**
  * La excepción de tamaño de un logotipo, si la tiene, como variable CSS.
- *
- * Se pregunta con `in` y no por el valor porque la configuración va `as const`:
- * a quien no la lleva le falta la propiedad entera, no vale `undefined`.
  */
-function escala(logo: object): CSSProperties | undefined {
-  return 'scale' in logo ? ({ '--logo-scale': logo.scale } as CSSProperties) : undefined;
+function escala(logo: Logo): CSSProperties | undefined {
+  return logo.scale === undefined ? undefined : ({ '--logo-scale': logo.scale } as CSSProperties);
 }
 
-export function QuitoHosts({ copy }: { copy: Dictionary['quito']['footer'] }) {
+/**
+ * El logotipo que toca para este idioma.
+ *
+ * Casi todos son uno solo; el del banco tiene marca propia en cada idioma y
+ * llega como mapa. Se resuelve aquí, antes de pintar, para que el resto del
+ * componente no tenga que saber que existe la excepción.
+ */
+type Logo = {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  /** La versión oficial para paletas oscuras, donde la hay. */
+  onDark?: string;
+  /** Su apartado de la medida común del grupo, donde lo hay. */
+  scale?: number;
+};
+
+function delIdioma(entrada: Logo | { byLocale: Record<Locale, Logo> }, locale: Locale): Logo {
+  return 'byLocale' in entrada ? entrada.byLocale[locale] : entrada;
+}
+
+export function QuitoHosts({ copy, locale }: { copy: Dictionary['quito']['footer']; locale: Locale }) {
   return (
     <section className={styles.hosts} aria-labelledby="quito-hosts-title">
       <div className={styles.partnersBlock}>
@@ -35,7 +54,9 @@ export function QuitoHosts({ copy }: { copy: Dictionary['quito']['footer'] }) {
                 </h3>
               )}
               <ul className={styles.networkRow} data-group={group.key}>
-              {group.logos.map((logo) => (
+              {group.logos.map((entrada) => {
+                const logo = delIdioma(entrada, locale);
+                return (
                 <li key={logo.alt}>
                   {/**
                    * Donde hay versión oficial para fondo oscuro se montan las
@@ -61,10 +82,10 @@ export function QuitoHosts({ copy }: { copy: Dictionary['quito']['footer'] }) {
                      * siempre— y se blanquea con el filtro: marcándola `light`
                      * se escondía en oscuro y no quedaba nada que pintar.
                      */
-                    data-on={'onDark' in logo ? 'light' : 'both'}
-                    data-filtered={'onDark' in logo ? undefined : true}
+                    data-on={logo.onDark ? 'light' : 'both'}
+                    data-filtered={logo.onDark ? undefined : true}
                   />
-                  {'onDark' in logo && (
+                  {logo.onDark && (
                     <Image
                       src={logo.onDark}
                       alt=""
@@ -78,7 +99,8 @@ export function QuitoHosts({ copy }: { copy: Dictionary['quito']['footer'] }) {
                     />
                   )}
                 </li>
-              ))}
+                );
+              })}
               </ul>
             </div>
           ))}

@@ -48,7 +48,7 @@ export default async function QuitoPage({ params }: Props) {
     <LoaderGate preload={Object.values(QUITO.hero).map((asset) => asset.src)}>
       <QuitoChrome locale={locale} copy={t.quito} header={t.header} hasHero hasJoin>
         <QuitoHero locale={locale} copy={t.quito.hero} joinCopy={t.quito.join} />
-        <QuitoHosts copy={t.quito.footer} />
+        <QuitoHosts copy={t.quito.footer} locale={locale} />
         <QuitoAbout copy={t.quito.about} />
         <QuitoForum locale={locale} copy={t.quito.forum} />
       </QuitoChrome>
