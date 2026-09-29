@@ -283,7 +283,7 @@ export const en: Dictionary = {
         id: 'horario',
         question: 'What are the hours?',
         answer:
-          'The event runs from 5:00 PM to 9:00 PM. Attendee check-in opens at 4:30 PM.',
+          'The event runs from 5:30 PM to 9:00 PM. Attendee check-in opens at 5:00 PM.',
       },
       {
         id: 'organiza',
@@ -1442,7 +1442,7 @@ export const en: Dictionary = {
       items: [
         {
           id: 'recorrido',
-          time: '17:00 — 18:00',
+          time: '17:30 — 18:00',
           title: 'Living tour',
           description:
             'Welcome drink, music, visuals from the territories, products, demos and first connections.',

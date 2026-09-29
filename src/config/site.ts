@@ -14,7 +14,7 @@ export const SITE = {
     /** Igual en los dos idiomas. */
     place: 'Quito, Ecuador',
     /** Las horas se escriben igual; la nota del registro previo va traducida. */
-    scheduleLabel: '17:00 — 21:00',
+    scheduleLabel: '17:30 — 21:00',
     venue: {
       name: 'Jardín Botánico de Quito',
       /** Búsqueda y no coordenada: sin la dirección exacta, el buscador de Maps
@@ -27,7 +27,7 @@ export const SITE = {
      * Antes iba en UTC, que es el mismo instante pero no la misma lectura: cada
      * calendario lo traducía a la zona de quien lo abría, y a alguien en Ciudad
      * de México la invitación le decía «4:00 pm». Correcto y confuso a la vez.
-     * Con la zona explícita, la entrada dice 5:00 pm de Quito para todo el
+     * Con la zona explícita, la entrada dice 5:30 pm de Quito para todo el
      * mundo, que es la hora a la que hay que estar en la puerta.
      *
      * Ecuador continental no tiene horario de verano, así que el desplazamiento
@@ -35,7 +35,7 @@ export const SITE = {
      */
     calendar: {
       kind: 'time',
-      start: '20261005T170000',
+      start: '20261005T173000',
       end: '20261005T210000',
       timeZone: 'America/Guayaquil',
       offset: '-0500',

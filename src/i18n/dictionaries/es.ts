@@ -322,7 +322,7 @@ export const es = {
         id: 'horario',
         question: '¿Cuál será el horario?',
         answer:
-          'El evento tendrá lugar de 5:00 PM a 9:00 PM. El registro de asistentes comenzará a partir de las 4:30 PM.',
+          'El evento tendrá lugar de 5:30 PM a 9:00 PM. El registro de asistentes comenzará a partir de las 5:00 PM.',
       },
       {
         id: 'organiza',
@@ -1653,7 +1653,7 @@ export const es = {
       items: [
         {
           id: 'recorrido',
-          time: '17:00 — 18:00',
+          time: '17:30 — 18:00',
           title: 'Recorrido vivo',
           description:
             'Bebida de bienvenida, música, visuales territoriales, productos, demostraciones y primeras conexiones.',
