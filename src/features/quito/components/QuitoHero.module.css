@@ -41,7 +41,25 @@
   line-height: 1.1;
   white-space: nowrap;
 }
-.character { display: inline-block; }
+/**
+ * La caja que recorta. El relleno de abajo con el margen negativo que lo
+ * compensa es lo que deja sitio a los rasgos que bajan de la línea base: sin
+ * él, el recorte se los comía con la letra ya colocada.
+ */
+.character {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+.characterInner { display: inline-block; will-change: transform; }
+
+/* Sin movimiento no hay nada que recortar ni que esperar. */
+@media (prefers-reduced-motion: reduce) {
+  .character { overflow: visible; }
+  .characterInner { transform: none !important; will-change: auto; }
+}
 .pixels {
   position: absolute;
   z-index: 0;

@@ -2,8 +2,10 @@ import type { Metadata } from 'next';
 import type { Locale } from '@/i18n';
 
 /**
- * Imágenes de compartir. Son **dos** porque son dos actos: la del sitio y la de
- * la micropágina del retiro, que tiene su propia identidad.
+ * Imágenes de compartir, una por identidad: la del sitio, la de la micropágina
+ * del retiro y la de la sección de Quito. Cada una se comparte por su cuenta, y
+ * repartirlas todas con la portada del sitio enseñaría algo que no es lo que se
+ * abre al pulsar.
  *
  * Van como ruta relativa: `metadataBase` —que el layout raíz fija en `SITE_URL`—
  * las convierte en absolutas, que es lo que exigen las redes.
@@ -11,9 +13,10 @@ import type { Locale } from '@/i18n';
 export const OG_IMAGES = {
   site: '/og-image.png',
   tanusas: '/og-image-tanusas.png',
+  quito: '/og-image.ceibaquito.png',
 } as const;
 
-/** Medida real de los dos archivos. Va aquí para no leerla en cada página. */
+/** Medida real de los tres archivos. Va aquí para no leerla en cada página. */
 const OG_SIZE = { width: 1280, height: 720 };
 
 /** El idioma, en la forma que espera Open Graph. */

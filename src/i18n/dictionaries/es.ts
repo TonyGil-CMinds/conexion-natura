@@ -36,8 +36,13 @@ export const es = {
     },
     quito: {
       title: 'Welcome to Quito',
+      /**
+       * Es lo que se lee al compartir el enlace, así que dice las cuatro cosas
+       * que deciden si alguien abre: qué es, cuándo, dónde y por qué ahí. El
+       * cupo va al final porque es lo que mueve a pulsar, no lo que explica.
+       */
       description:
-        'Una nueva etapa para NaturaTech LAC: la noche del 5 de octubre de 2026 en Quito, después del GET Forum.',
+        'Una noche de innovación e inversión para la biodiversidad y las economías del futuro. 5 de octubre de 2026 en el Jardín Botánico de Quito, al cierre del GET Forum. Aforo limitado, por invitación.',
     },
     ecuador: {
       title: 'Registro · Empresas de Ecuador',

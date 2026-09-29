@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 import { gsap } from '@/lib/gsap';
-import { createRandom } from '@/lib/random';
+
 import { useHasEntered } from '@/features/loader';
 import { QUITO } from '@/config/quito';
 import type { Dictionary, Locale } from '@/i18n';
@@ -34,19 +34,32 @@ export function QuitoHero({ locale, copy, joinCopy }: Props) {
       const characters = root.querySelectorAll('[data-claim-character]');
       const bird = root.querySelector('[data-hero-bird]');
       if (!hasEntered) {
-        gsap.set(characters, { opacity: 0, yPercent: 110 });
+        gsap.set(characters, { yPercent: 120 });
         return;
       }
-      const random = createRandom(Number(document.documentElement.dataset.quitoSeed) || 5105);
-      const order = Array.from({ length: characters.length }, (_, index) => index);
-      for (let i = order.length - 1; i > 0; i -= 1) {
-        const j = Math.floor(random() * (i + 1));
-        [order[i], order[j]] = [order[j], order[i]];
-      }
-      gsap.fromTo(characters, { opacity: 0, yPercent: 110 }, {
-        opacity: 1, yPercent: 0, duration: 0.7, ease: 'power3.out',
-        stagger: (index: number) => order[index] * 0.035,
-      });
+      /**
+       * Entrada del rótulo, letra a letra y **en orden de lectura**.
+       *
+       * Cada letra sube desde debajo de su propia caja, que la recorta: no
+       * aparece, **asoma**. Por eso no lleva opacidad —el recorte ya hace la
+       * revelación— y por eso el orden es de izquierda a derecha y no sorteado:
+       * el sorteo se leía como ruido, y lo que se está leyendo es una frase.
+       *
+       * `expo.out` arranca de golpe y frena largo: es lo que da una entrada
+       * rápida que aun así aterriza suave. El desfase es corto a propósito —la
+       * frase entera cabe en menos de un segundo— para que no se convierta en
+       * una espera antes de poder leer.
+       */
+      gsap.fromTo(
+        characters,
+        { yPercent: 120 },
+        {
+          yPercent: 0,
+          duration: 0.55,
+          ease: 'expo.out',
+          stagger: { each: 0.022, from: 'start' },
+        },
+      );
       gsap.fromTo(bird, { opacity: 0, y: 50 }, {
         opacity: 1, y: 0, duration: 1.1, ease: 'power3.out', delay: 0.2,
       });
@@ -63,9 +76,16 @@ export function QuitoHero({ locale, copy, joinCopy }: Props) {
           </h1>
           <p className={styles.claim} aria-label={copy.claimAlt}>
             <span aria-hidden>
+              {/**
+               * Dos capas por letra: la de fuera recorta y la de dentro se
+               * mueve. Es el recorte el que revela, as\u00ed que la letra puede
+               * empezar **fuera** de su caja en vez de transparente.
+               */}
               {Array.from(copy.claimAlt.toUpperCase()).map((character, index) => (
-                <span key={index} className={styles.character} data-claim-character>
-                  {character === ' ' ? '\u00a0' : character}
+                <span key={index} className={styles.character}>
+                  <span className={styles.characterInner} data-claim-character>
+                    {character === ' ' ? '\u00a0' : character}
+                  </span>
                 </span>
               ))}
             </span>

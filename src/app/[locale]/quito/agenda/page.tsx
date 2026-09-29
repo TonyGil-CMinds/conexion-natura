@@ -8,7 +8,7 @@ import { PAGES } from '@/config/pages';
 import type { AgendaItem } from '@/config/agenda';
 import { SITE } from '@/config/site';
 import { getDictionary, isLocale } from '@/i18n';
-import { socialMeta } from '@/config/seo';
+import { OG_IMAGES, socialMeta } from '@/config/seo';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -25,6 +25,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       locale,
       siteName: t.meta.siteName,
+      // La suya: la sección tiene identidad propia dentro del sitio, y al
+      // compartirla la portada del sitio enseñaría otra cosa.
+      image: OG_IMAGES.quito,
     }),
   };
 }

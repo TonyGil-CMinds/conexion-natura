@@ -35,7 +35,7 @@ export const en: Dictionary = {
     quito: {
       title: 'Welcome to Quito',
       description:
-        'A new stage for NaturaTech LAC: the night of 5 October 2026 in Quito, right after GET Forum.',
+        'A night of innovation and investment for biodiversity and the economies of the future. 5 October 2026 at the Jardín Botánico de Quito, closing GET Forum. Limited capacity, by invitation.',
     },
     ecuador: {
       title: 'Registration · Ecuadorian companies',
