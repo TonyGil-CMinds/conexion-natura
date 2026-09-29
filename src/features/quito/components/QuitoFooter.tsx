@@ -6,26 +6,18 @@ import { FOOTER, SITE } from '@/config/site';
 import { localePath, type Dictionary, type Locale } from '@/i18n';
 import { QuitoJoinCta } from './QuitoJoinCta';
 import { Reveal } from './Reveal';
+import { QuitoHosts } from './QuitoHosts';
 import styles from './QuitoChrome.module.css';
 import closing from './QuitoClosing.module.css';
 
 type Props = {
   locale: Locale;
   copy: Dictionary['quito'];
+  showHosts?: boolean;
 };
 
-/**
- * Pie de la sección de Quito.
- *
- * Es más largo que el del sitio y lleva otro orden: la ballena y la despedida,
- * la foto de sala a sangre, la llamada a los socios y solo entonces los
- * logotipos y la banda legal. Va aquí entero —y no repartido entre la página y
- * el pie— para que las rutas de dentro acaben igual que la portada.
- *
- * Es **de servidor**: son imágenes y enlaces. Lo único que necesita cliente son
- * las entradas por scroll, y eso lo aporta `Reveal` envolviendo cada bloque.
- */
-export function QuitoFooter({ locale, copy }: Props) {
+/** Cierre de Quito; las organizaciones se muestran arriba en la portada. */
+export function QuitoFooter({ locale, copy, showHosts = true }: Props) {
   const t = copy.footer;
 
   return (
@@ -69,81 +61,7 @@ export function QuitoFooter({ locale, copy }: Props) {
         </div>
       </Reveal>
 
-      <Reveal>
-        <div className={styles.partnersBlock}>
-          <h2 className={styles.partnersTitle}>
-            <span className={styles.partnersLine}>{t.partnersTitleLine1}</span>
-            {/**
-             * El glifo cae **entre** las dos palabras de la segunda línea, que es
-             * donde lo pide el diseño, así que la línea se compone a mano en vez
-             * de dejar que el texto reflote.
-             */}
-            <span className={styles.partnersLine}>
-              {t.partnersTitleLine2a}
-              <Image
-                src={QUITO.footer.divider.src}
-                alt=""
-                width={QUITO.footer.divider.width}
-                height={QUITO.footer.divider.height}
-                className={styles.partnersDivider}
-                aria-hidden
-              />
-              {t.partnersTitleLine2b}
-            </span>
-          </h2>
-
-        </div>
-      </Reveal>
-
-      {/**
-       * El muro de socios: la red de la convocatoria y, en la última fila,
-       * quien lidera y quien financia. **Sin rótulos de grupo**, que es como lo
-       * pide el diseño: se lee como un conjunto.
-       */}
-      <Reveal>
-        <div className={styles.network}>
-          {QUITO.partnerRows.map((row, index) => (
-            <ul key={index} className={styles.networkRow}>
-              {row.map((logo) => (
-                <li key={logo.alt}>
-                  {/**
-                   * Donde hay versión oficial para fondo oscuro se montan las
-                   * **dos** y el CSS esconde la que no toca. Elegir en
-                   * JavaScript enseñaría un cuadro con la equivocada: la paleta
-                   * se decide en el propio HTML, antes de hidratar.
-                   */}
-                  <Image
-                    src={logo.src}
-                    alt={logo.alt}
-                    width={logo.width}
-                    height={logo.height}
-                    className={styles.networkLogo}
-                    /**
-                     * `light` solo cuando hay pareja que la sustituya en las
-                     * paletas oscuras. Sin pareja va como `both` —se ve
-                     * siempre— y se blanquea con el filtro: marcándola `light`
-                     * se escondía en oscuro y no quedaba nada que pintar.
-                     */
-                    data-on={'onDark' in logo ? 'light' : 'both'}
-                    data-filtered={'onDark' in logo ? undefined : true}
-                  />
-                  {'onDark' in logo && (
-                    <Image
-                      src={logo.onDark}
-                      alt=""
-                      width={logo.width}
-                      height={logo.height}
-                      className={styles.networkLogo}
-                      data-on="dark"
-                      aria-hidden
-                    />
-                  )}
-                </li>
-              ))}
-            </ul>
-          ))}
-        </div>
-      </Reveal>
+      {showHosts && <QuitoHosts copy={t} />}
 
       <div className={styles.bottomBand}>
         <div className={styles.bottom}>

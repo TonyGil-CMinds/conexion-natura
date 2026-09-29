@@ -1607,10 +1607,10 @@ export const es = {
     },
 
     forum: {
-      kicker: 'Después del GET Forum',
+      kicker: 'En el marco del GET Forum',
       title: 'Reuniremos a líderes',
       body:
-        'Una noche para hacer tangible lo que estas nuevas economías y soluciones detrás de Natura500 pueden ser alrededor de naturaleza, industria y capital.',
+        'Un encuentro multisectorial con las personas que hacen posibles las industrias verdes y azules en América Latina y el Caribe. Una noche para conocer sus iniciativas, intercambiar experiencias y conectar emprendimiento, inversión, industria y naturaleza.',
       ctaLabel: 'Ver agenda completa',
       /** Un rótulo por imagen; las claves son las de `QUITO.forum`. */
       captions: {
@@ -1693,9 +1693,7 @@ export const es = {
        * El rótulo de los socios va partido porque el glifo cae **entre** las dos
        * palabras de la segunda línea, y eso no se puede dejar al reflujo.
        */
-      partnersTitleLine1: 'Conoce a',
-      partnersTitleLine2a: 'Nuestros',
-      partnersTitleLine2b: 'Socios',
+      hostsTitle: 'Conoce a las organizaciones anfitrionas',
 
       legal: {
         terms: 'Términos y condiciones',

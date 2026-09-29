@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { LoaderGate } from '@/features/loader';
 import { QUITO } from '@/config/quito';
 import { notFound } from 'next/navigation';
-import { QuitoAbout, QuitoChrome, QuitoForum, QuitoHero } from '@/features/quito';
+import { QuitoAbout, QuitoChrome, QuitoForum, QuitoHero, QuitoHosts } from '@/features/quito';
 import { getDictionary, isLocale } from '@/i18n';
 import { OG_IMAGES, socialMeta } from '@/config/seo';
 
@@ -48,6 +48,7 @@ export default async function QuitoPage({ params }: Props) {
     <LoaderGate preload={Object.values(QUITO.hero).map((asset) => asset.src)}>
       <QuitoChrome locale={locale} copy={t.quito} header={t.header} hasHero hasJoin>
         <QuitoHero locale={locale} copy={t.quito.hero} joinCopy={t.quito.join} />
+        <QuitoHosts copy={t.quito.footer} />
         <QuitoAbout copy={t.quito.about} />
         <QuitoForum locale={locale} copy={t.quito.forum} />
       </QuitoChrome>

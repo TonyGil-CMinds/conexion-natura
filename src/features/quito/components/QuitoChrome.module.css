@@ -333,3 +333,21 @@ html[data-quito-palette='pink'] .networkLogo[data-on='dark'] {
 }
 
 .bottomBrandMark, .partnersDivider { filter: var(--quito-partner-filter); }
+
+.hosts {
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-top: clamp(36px, 5vw, 64px);
+}
+.hosts .partnersBlock { padding-block: 0 40px; }
+.hostsTitle {
+  max-width: 26ch;
+  margin: 0;
+  color: var(--fg);
+  font: 700 clamp(24px, 3.4vw, 48px)/1.15 var(--font-mono);
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.hosts .network { padding-bottom: clamp(36px, 5vw, 64px); }

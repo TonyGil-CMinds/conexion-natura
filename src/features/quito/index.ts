@@ -8,3 +8,5 @@ export { QuitoHero } from './components/QuitoHero';
 export { QuitoAbout } from './components/QuitoAbout';
 export { QuitoForum } from './components/QuitoForum';
 export { Reveal } from './components/Reveal';
+
+export { QuitoHosts } from './components/QuitoHosts';

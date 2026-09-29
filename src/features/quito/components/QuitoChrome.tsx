@@ -96,14 +96,14 @@ export function QuitoChrome({
            */}
           <>
             <main>{children}</main>
-            <QuitoFooter locale={locale} copy={copy} />
+            <QuitoFooter locale={locale} copy={copy} showHosts={!hasHero} />
           </>
         </QuitoExperience>
       ) : (
         <>
           {barra}
           <main>{children}</main>
-          <QuitoFooter locale={locale} copy={copy} />
+          <QuitoFooter locale={locale} copy={copy} showHosts={!hasHero} />
         </>
       )}
     </div>

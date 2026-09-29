@@ -1417,10 +1417,10 @@ export const en: Dictionary = {
     },
 
     forum: {
-      kicker: 'After GET Forum',
+      kicker: 'As part of GET Forum',
       title: 'We will gather leaders',
       body:
-        'A night to make tangible what these new economies and the solutions behind Natura500 can be around nature, industry and capital.',
+        'A cross-sector gathering with the people making green and blue industries possible in Latin America and the Caribbean. An evening to discover their initiatives, exchange experiences and connect entrepreneurship, investment, industry and nature.',
       ctaLabel: 'See full agenda',
       captions: {
         stories: 'Stories',
@@ -1473,9 +1473,7 @@ export const en: Dictionary = {
     footer: {
       farewellLead: 'See you in',
       ctaLabel: 'Register now',
-      partnersTitleLine1: 'Meet our',
-      partnersTitleLine2a: 'Partners',
-      partnersTitleLine2b: 'And allies',
+      hostsTitle: 'Meet the host organisations',
 
       legal: {
         terms: 'Terms and conditions',
