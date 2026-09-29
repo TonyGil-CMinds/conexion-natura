@@ -85,12 +85,20 @@ export function RegistrationFlow({
    * inicializador y no en un efecto: en un efecto se vería un cuadro con la
    * pantalla del correo antes de saltarla.
    *
-   * Si además ese correo ya tenía registro, quien lo consultó ya llamó a
-   * `confirm`, así que `attendee` está puesto y manda el resumen.
+   * **El resumen solo sale si es el resumen de ese correo.** El registro
+   * guardado en el navegador sobrevive a la pestaña, así que quien ya confirmó
+   * en este equipo lo lleva encima; sin comparar, escribir un correo distinto
+   * devolvía la pantalla del anterior y no había manera de empezar uno nuevo
+   * —que es justo lo que se estaba pidiendo al escribirlo—.
    */
+  /** Si lo guardado en el navegador es de este mismo correo. */
+  const isOwnRecord =
+    initialEmail !== undefined &&
+    attendee?.email.trim().toLowerCase() === initialEmail.trim().toLowerCase();
+
   const [stage, setStage] = useState<Stage>(() => {
     if (!initialEmail) return 'join';
-    return attendee ? 'welcome' : 'details';
+    return isOwnRecord ? 'welcome' : 'details';
   });
   /** Pantalla a la que se va mientras la escalera está en marcha. */
   const [pending, setPending] = useState<Stage | null>(null);
@@ -107,9 +115,17 @@ export function RegistrationFlow({
    * registro salía sin destinatario.
    */
   useEffect(() => {
-    if (!initialEmail || attendee) return;
+    if (!initialEmail || isOwnRecord) return;
+    /**
+     * El borrador anterior solo se hereda **si era de este mismo correo**. Si
+     * era de otra persona —quedó a medias, o se entró a corregir y se abandonó—
+     * el formulario habría salido con su nombre puesto, y quien está
+     * registrándose es otra.
+     */
+    const previo = readJoinDraft();
+    const mismo = previo?.email.trim().toLowerCase() === initialEmail.trim().toLowerCase();
     draft.current = saveJoinDraft({
-      ...(readJoinDraft() ?? {}),
+      ...(mismo ? previo : {}),
       email: initialEmail,
       events: fixedEvents ? [...fixedEvents] : undefined,
     });
@@ -414,7 +430,7 @@ export function RegistrationFlow({
             /* Con el correo dado fuera no hay pantalla anterior a la que
                volver: el enlace no se pinta. */
             onBack={
-              initialEmail && !attendee
+              initialEmail && !isOwnRecord
                 ? undefined
                 : () => setStage(attendee ? 'welcome' : fixedEvents ? 'join' : 'choice')
             }
