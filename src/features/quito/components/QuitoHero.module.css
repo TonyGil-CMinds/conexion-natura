@@ -1,5 +1,12 @@
 .root {
-  --hero-height: max(700px, 100svh);
+  /**
+   * `dvh` y no `svh`: `svh` es por definición el alto **más pequeño** del
+   * viewport —el que queda con la barra del navegador desplegada—, así que en
+   * cuanto la barra se retrae el hero se queda corto y asoma una franja de la
+   * sección siguiente por debajo. Con `dvh` el hero acompaña a lo que de verdad
+   * se ve.
+   */
+  --hero-height: max(700px, 100dvh);
   position: relative;
   height: var(--hero-height);
   margin-top: calc(var(--header-height) * -1);
@@ -133,11 +140,17 @@
   .dateDivider { width: 38px; }
 }
 @media (max-width: 640px) {
-  .root { --hero-height: max(720px, 100svh); }
+  .root { --hero-height: max(720px, 100dvh); }
   .lockup { top: clamp(115px, 16svh, 150px); width: 92%; }
   .claim { font-size: 9.5vw; margin-top: 12px; }
   .bird { width: min(100vw, 440px); bottom: 80px; margin-left: 15px; }
-  .pixels { width: 115%; height: 420px; bottom: 25px; }
+  /**
+   * El árbol sube hasta despejar la llamada. En ancho no se tocan, pero en
+   * estrecho caía justo detrás del botón, y el botón es del **mismo lima** que
+   * el árbol en la paleta por defecto: la caja desaparecía y solo quedaba el
+   * rótulo flotando. Sigue estando entero por detrás del ave, que es su sitio.
+   */
+  .pixels { width: 115%; height: 420px; bottom: 112px; }
   .action { flex-direction: column; left: 24px; right: 24px; bottom: max(24px, env(safe-area-inset-bottom)); gap: 10px; }
   .cta { width: 100%; min-height: 64px; }
   .note { font-size: 12px; }

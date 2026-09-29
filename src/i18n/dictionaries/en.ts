@@ -6,10 +6,10 @@ import type { Dictionary } from '../index';
  */
 export const en: Dictionary = {
   meta: {
-    siteName: 'CEIBA Quito',
+    siteName: 'CEIBA',
     home: {
       title:
-        'CEIBA Quito - A Night of Innovation and Investment for Biodiversity and the Economies of the Future',
+        'CEIBA - A Night of Innovation and Investment for Biodiversity and the Economies of the Future',
       description:
         'A forum on innovation and investment for biodiversity and the economies of the future. October 5, 2026, Quito, Ecuador.',
     },

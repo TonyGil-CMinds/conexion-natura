@@ -8,10 +8,10 @@
 export const es = {
   meta: {
     /** Sufijo de los títulos de página. */
-    siteName: 'CEIBA Quito',
+    siteName: 'CEIBA',
     home: {
       title:
-        'CEIBA Quito - Noche de Innovación e Inversión para la Biodiversidad y las Economías del Futuro',
+        'CEIBA - Noche de Innovación e Inversión para la Biodiversidad y las Economías del Futuro',
       description:
         'Foro de innovación e inversión para la biodiversidad y las economías del futuro. 05 de octubre de 2026, Quito, Ecuador.',
     },
