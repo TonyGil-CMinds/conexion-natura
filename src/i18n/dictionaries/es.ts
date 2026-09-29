@@ -1597,7 +1597,7 @@ export const es = {
     },
 
     about: {
-      kicker: 'Una nueva etapa para NaturaTech LAC',
+      kicker: 'Un Side Event del GET FORUM 2026',
       title: 'Construir las condiciones alrededor de las soluciones innovadoras',
       body:
         'Quito será un momento importante para hacer visible lo que ya está emergiendo y conectar esas soluciones con el ecosistema regional de emprendimiento, inversión y desarrollo que reunirá GET Forum.',
@@ -1647,7 +1647,6 @@ export const es = {
       partnersTitleLine1: 'Conoce a',
       partnersTitleLine2a: 'Nuestros',
       partnersTitleLine2b: 'Socios',
-      partnersCta: 'Nuestros socios',
       partners: {
         led: 'Liderada por',
         funding: 'Financiada por',

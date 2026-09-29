@@ -1407,7 +1407,7 @@ export const en: Dictionary = {
     },
 
     about: {
-      kicker: 'A new stage for NaturaTech LAC',
+      kicker: 'A Side Event of the GET FORUM 2026',
       title: 'Building the conditions around innovative solutions',
       body:
         'Quito will be a key moment to make visible what is already emerging, and to connect those solutions with the regional ecosystem of entrepreneurship, investment and development that GET Forum will bring together.',
@@ -1444,7 +1444,6 @@ export const en: Dictionary = {
       partnersTitleLine1: 'Meet our',
       partnersTitleLine2a: 'Partners',
       partnersTitleLine2b: 'And allies',
-      partnersCta: 'Our partners',
       partners: {
         led: 'Led by',
         funding: 'Funded by',

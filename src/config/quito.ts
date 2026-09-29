@@ -67,6 +67,30 @@ export const QUITO = {
     { key: 'flavors', src: '/hero/img-saboreslocales.png', width: 1080, height: 1080, side: 'start' },
   ],
 
+
+  /**
+   * Los socios de esta convocatoria, en el orden del diseño: cuatro arriba y
+   * cinco abajo, sin rótulo de grupo.
+   *
+   * Van **aparte** de PARTNER_GROUPS y no dentro: aquellos dicen quién lidera y
+   * quién financia —son dos roles con su rótulo— y estos son la red que
+   * acompaña. Meterlos en el mismo sitio habría obligado a inventarles un rol.
+   *
+   * Las medidas son las naturales de cada SVG: el alto lo iguala el CSS, y el
+   * ancho tiene que salir de la proporción real o el logotipo se deforma.
+   */
+  partners: [
+    { src: '/partners/logo-socios-quito-ntl.svg', alt: 'NaturaTech LAC', width: 141, height: 52 },
+    { src: '/partners/logo-socios-quito-redimpacto.svg', alt: 'Red de Impacto', width: 303, height: 81 },
+    /* El archivo se llama «impaquito» pero el logotipo es el de Latimpacto. */
+    { src: '/partners/logo-socios-quito-impaquito.svg', alt: 'Latimpacto', width: 189, height: 51 },
+    { src: '/partners/logo-socios-quito-natura500.svg', alt: 'natura500', width: 113, height: 66 },
+    { src: '/partners/logo-socios-quito-fondoverde.svg', alt: 'Fondo Verde Catalítico', width: 231, height: 58 },
+    { src: '/partners/logo-socios-quito-startuplab.svg', alt: 'StartupLab.mx', width: 185, height: 46 },
+    { src: '/partners/logo-socios-quito-trulab.svg', alt: 'truLab', width: 116, height: 50 },
+    { src: '/partners/logo-socios-quito-tangara.svg', alt: 'Tàngara', width: 145, height: 56 },
+  ],
+
   /** El pie: la ballena del cierre, la foto de sala y el lockup pequeño. */
   footer: {
     whale: { src: '/img/footer-image.png', width: 764, height: 356 },

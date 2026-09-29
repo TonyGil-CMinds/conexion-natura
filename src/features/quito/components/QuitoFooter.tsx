@@ -92,9 +92,6 @@ export function QuitoFooter({ locale, copy }: Props) {
             </span>
           </h2>
 
-          <Link href={localePath(locale, '/#socios')} className={styles.partnersCta}>
-            {t.partnersCta}
-          </Link>
         </div>
       </Reveal>
 
@@ -119,6 +116,28 @@ export function QuitoFooter({ locale, copy }: Props) {
             </div>
           ))}
         </div>
+      </Reveal>
+
+      {/**
+       * La red que acompaña, debajo de quién lidera y quién financia. Va sin
+       * rótulo de grupo a propósito: aquellos dos nombran un rol —y por eso lo
+       * llevan escrito—, y esto es el conjunto, que se lee sin que nadie lo
+       * anuncie.
+       */}
+      <Reveal>
+        <ul className={styles.network}>
+          {QUITO.partners.map((partner) => (
+            <li key={partner.alt}>
+              <Image
+                src={partner.src}
+                alt={partner.alt}
+                width={partner.width}
+                height={partner.height}
+                className={styles.networkLogo}
+              />
+            </li>
+          ))}
+        </ul>
       </Reveal>
 
       <div className={styles.bottomBand}>

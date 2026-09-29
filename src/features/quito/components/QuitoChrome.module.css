@@ -134,33 +134,6 @@
      máscara: una máscara lo dejaría de un solo color. */
 }
 
-.partnersCta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 66px;
-  width: min(414px, 100%);
-  max-width: 100%;
-  padding-inline: var(--space-8);
-  background-color: var(--accent);
-  color: var(--quito-button-ink);
-  font-family: var(--font-mono);
-  font-size: clamp(1rem, 1.6vw, 1.25rem);
-  letter-spacing: var(--tracking-cta);
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: filter var(--duration-fast) var(--ease-out-expo);
-}
-
-.partnersCta:hover {
-  filter: brightness(1.08);
-}
-
-.partnersCta:focus-visible {
-  outline: 2px solid var(--fg);
-  outline-offset: 3px;
-}
-
 /* Los dos grupos de logotipos: quién lidera y quién financia. */
 .partners {
   display: flex;
@@ -207,6 +180,47 @@
 }
 
 /* Banda inferior: lockup, aviso legal y redes. */
+
+/**
+ * La red de socios: dos filas que se reparten solas.
+ *
+ * Los logotipos se igualan **por alto** y no por ancho, que es como se lee una
+ * fila de marcas: cada una conserva su proporción y ninguna pesa más que otra
+ * por ser más larga. El ancho sale de `auto`, así que la proporción real de
+ * cada SVG manda.
+ */
+.network {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.75rem, 4.5vw, 4rem);
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 var(--quito-gutter) clamp(3rem, 7vw, 6rem);
+  list-style: none;
+}
+
+.network li {
+  display: flex;
+}
+
+.networkLogo {
+  width: auto;
+  height: clamp(30px, 3.4vw, 46px);
+  object-fit: contain;
+  /* La misma corrección de tinta que el resto: en las paletas oscuras los
+     logotipos vienen en negro y hay que invertirlos. */
+  filter: var(--quito-partner-filter);
+}
+
+@media (max-width: 640px) {
+  .network {
+    gap: clamp(1.25rem, 6vw, 2rem);
+    padding-inline: 24px;
+  }
+}
+
 .bottomBand {
   border-top: 1px solid var(--rule);
 }
