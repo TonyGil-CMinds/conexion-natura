@@ -13,8 +13,12 @@ type Props = {
   peopleLabel: string;
   /** Fecha abreviada del distintivo, ya traducida. */
   dateLabel: string;
-  /** La fila que abre el programa: el Premio, antes de la noche y en otra sede. */
-  feature: { name: string; time: string; venue: string };
+  /**
+   * La fila que abre el programa: el Premio, antes de la noche y en otra sede.
+   * Es **opcional**: la sección de Quito publica su propio programa, y allí el
+   * Premio no entra.
+   */
+  feature?: { name: string; time: string; venue: string };
   /**
    * La sede de la noche, que es la de **todos** los momentos menos el Premio.
    *
@@ -104,6 +108,8 @@ export function Schedule({
 
   /** La fila destacada se busca igual que las demás: por su texto. */
   const showsFeature = useMemo(() => {
+    /* Sin fila destacada no hay nada que buscar ni que pintar. */
+    if (!feature) return false;
     const needle = normalize(query.trim());
     if (!needle) return true;
     const text = normalize([feature.name, feature.time, feature.venue].join(' '));
@@ -138,7 +144,7 @@ export function Schedule({
              * —tiene hora y sede— pero con su propio rótulo, así que va como
              * fila destacada y no como una fila más con un título de texto.
              */}
-            {showsFeature && (
+            {feature && showsFeature && (
               <li className={`${styles.item} ${styles.feature}`} id={AGENDA_FEATURE.id}>
                 <p className={styles.time}>{feature.time}</p>
 

@@ -44,10 +44,14 @@ export default async function QuitoAgendaPage({ params }: Props) {
   if (!isLocale(locale)) notFound();
   const t = getDictionary(locale);
   const { cover, coverSeed } = PAGES.agenda;
-  const {
-    items, intro, hostLabel, peopleLabel, empty, dateLabel, feature,
-    searchLabel, searchPlaceholder, searchEmpty,
-  } = t.agenda;
+  /**
+   * Los rótulos salen de `agenda` —son la misma pieza en las dos rutas— y los
+   * momentos de `quito.agenda`: esta sección publica su propio programa, sin la
+   * fila del Premio, que abre el otro.
+   */
+  const { intro, hostLabel, peopleLabel, empty, dateLabel, searchLabel, searchPlaceholder, searchEmpty } =
+    t.agenda;
+  const items = t.quito.agenda.items;
 
   /* Mientras los ponentes no se revelan, los créditos se quitan aquí y no al
      pintar: `Schedule` es de cliente, así que lo que reciba viaja en el HTML. */
@@ -71,7 +75,6 @@ export default async function QuitoAgendaPage({ params }: Props) {
           hostLabel={hostLabel}
           peopleLabel={peopleLabel}
           dateLabel={dateLabel}
-          feature={feature}
           venue={SITE.event.venue.name}
           searchLabel={searchLabel}
           searchPlaceholder={searchPlaceholder}

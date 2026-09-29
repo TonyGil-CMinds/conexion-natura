@@ -1438,6 +1438,38 @@ export const en: Dictionary = {
         'Here is the registration for CEIBA - Welcome to Quito: 5 October 2026 in Quito.',
     },
 
+    agenda: {
+      items: [
+        {
+          id: 'recorrido',
+          time: '17:30 — 18:00',
+          title: 'Living tour',
+          description:
+            'Welcome drink, music, visuals from the territories, products, demos and first connections.',
+        },
+        {
+          id: 'bienvenida',
+          time: '18:00 — 18:10',
+          title: 'Welcome from the host organisations',
+          description:
+            'A welcome from NaturaTech LAC, CEIBA, Natura500, Latimpacto, Red de Impacto Latam and IMPAQTO.',
+        },
+        {
+          id: 'fireside',
+          time: '18:10 — 18:40',
+          title: 'Fireside chat',
+          description:
+            'One question about the industry each of them represents. With Natura500, Latimpacto, Red de Impacto Latam and IMPAQTO.',
+          host: { name: 'Constanza Gómez Mont' },
+        },
+        {
+          id: 'coctel',
+          time: '18:40 — 21:00',
+          title: 'Cocktail and connections',
+        },
+      ],
+    },
+
     footer: {
       farewellLead: 'See you in',
       ctaLabel: 'Register now',

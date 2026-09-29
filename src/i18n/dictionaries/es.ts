@@ -1637,6 +1637,55 @@ export const es = {
         'Te comparto el registro de CEIBA - Welcome to Quito: 5 de octubre de 2026 en Quito.',
     },
 
+    /**
+     * El programa de esta sección.
+     *
+     * Es **otro** que el de `/agenda`: aquella publica el programa largo y esta
+     * el que cerró la organización para la noche, con cuatro momentos. Van por
+     * separado a propósito —lo decidió el equipo— y por eso aquí tampoco entra
+     * la fila del Premio, que abre el otro.
+     *
+     * Lo que no cambia —los rótulos de las funciones, la fecha del distintivo,
+     * el buscador— se sigue leyendo de `agenda`: son la misma pieza y traducirla
+     * dos veces es tener dos sitios donde corregir una errata.
+     */
+    agenda: {
+      items: [
+        {
+          id: 'recorrido',
+          time: '17:30 — 18:00',
+          title: 'Recorrido vivo',
+          description:
+            'Bebida de bienvenida, música, visuales territoriales, productos, demostraciones y primeras conexiones.',
+        },
+        {
+          id: 'bienvenida',
+          time: '18:00 — 18:10',
+          title: 'Bienvenida de las organizaciones anfitrionas',
+          description:
+            'Bienvenida desde NaturaTech LAC, CEIBA, Natura500, Latimpacto, Red de Impacto Latam e IMPAQTO.',
+        },
+        {
+          /**
+           * Quienes intervienen van nombrados por su organización y no por su
+           * nombre: el documento todavía dice «emprendedor de Natura500» y
+           * publicar un nombre sin confirmar es peor que no ponerlo.
+           */
+          id: 'fireside',
+          time: '18:10 — 18:40',
+          title: 'Fireside chat',
+          description:
+            'Una pregunta sobre la industria que cada quien representa. Participan Natura500, Latimpacto, Red de Impacto Latam e IMPAQTO.',
+          host: { name: 'Constanza Gómez Mont' },
+        },
+        {
+          id: 'coctel',
+          time: '18:40 — 21:00',
+          title: 'Cóctel y conexiones',
+        },
+      ],
+    },
+
     footer: {
       farewellLead: 'Nos vemos en',
       ctaLabel: 'Regístrate ahora',
