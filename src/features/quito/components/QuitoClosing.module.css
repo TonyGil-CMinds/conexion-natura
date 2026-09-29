@@ -1,0 +1,72 @@
+/**
+ * Cierre: la ballena, la despedida y la última llamada. Es el remate de todas
+ * las rutas de la sección, así que va dentro del pie.
+ */
+
+.root {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: 26px;
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding: clamp(4rem, 10vw, 9rem) var(--quito-gutter) 64px;
+  text-align: center;
+}
+
+.whale {
+  display: block;
+  width: min(100%, 760px);
+  margin-bottom: 18px;
+  height: auto;
+}
+
+.farewell {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(0.875rem, 1.5625vw, 1.25rem);
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.place {
+  font-weight: 700;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 66px;
+  width: min(414px, calc(100vw - 48px));
+  padding-inline: var(--space-8);
+  background-color: var(--accent);
+  color: var(--quito-button-ink);
+  font-family: var(--font-mono);
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  letter-spacing: var(--tracking-cta);
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: filter var(--duration-fast) var(--ease-out-expo);
+}
+
+.cta:hover {
+  filter: brightness(1.08);
+}
+
+.cta:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+  .root {
+    padding-inline: 24px;
+  }
+
+  .cta {
+    max-width: 100%;
+  }
+}

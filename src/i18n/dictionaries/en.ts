@@ -32,6 +32,11 @@ export const en: Dictionary = {
       title: 'Registration',
       description: 'Confirm your attendance at CEIBA Quito.',
     },
+    quito: {
+      title: 'Welcome to Quito',
+      description:
+        'A new stage for NaturaTech LAC: the night of 5 October 2026 in Quito, right after GET Forum.',
+    },
     ecuador: {
       title: 'Registration · Ecuadorian companies',
       description:
@@ -1372,6 +1377,82 @@ export const en: Dictionary = {
       },
 
       failed: 'Could not save your registration. Please try again.',
+    },
+  },
+
+  quito: {
+    nav: {
+      label: 'Quito navigation',
+      about: 'About',
+      agenda: 'Agenda',
+      speakers: 'Speakers',
+      register: 'Register',
+    },
+
+    join: {
+      cta: 'Register now',
+      emailLabel: 'Your email address',
+      emailPlaceholder: 'Your email address',
+      emailSubmit: 'Continue',
+      emailChecking: 'Checking...',
+      emailInvalid: 'Enter a valid email',
+    },
+
+    hero: {
+      wordmarkAlt: 'CEIBA',
+      claimAlt: 'Welcome to Quito',
+      ctaLabel: 'Register now',
+      ctaNote: 'Limited capacity',
+      countdownLabel: 'Days to Conexión500',
+    },
+
+    about: {
+      kicker: 'A new stage for NaturaTech LAC',
+      title: 'Building the conditions around innovative solutions',
+      body:
+        'Quito will be a key moment to make visible what is already emerging, and to connect those solutions with the regional ecosystem of entrepreneurship, investment and development that GET Forum will bring together.',
+      marquee: 'A weave',
+      pauseMarquee: 'Pause the ribbon',
+      playMarquee: 'Resume the ribbon',
+    },
+
+    forum: {
+      kicker: 'After GET Forum',
+      title: 'We will gather leaders',
+      body:
+        'A night to make tangible what these new economies and the solutions behind Natura500 can be around nature, industry and capital.',
+      ctaLabel: 'See full agenda',
+      captions: {
+        stories: 'Stories',
+        ventures: 'Bioventures',
+        flavors: 'Local flavours',
+      },
+    },
+
+    registration: {
+      step: 'Step 1/2',
+      stepGuest: 'Step 2/2',
+      eventName: 'CEIBA - Welcome to Quito',
+      shareTitle: 'CEIBA - Welcome to Quito',
+      shareText:
+        'Here is the registration for CEIBA - Welcome to Quito: 5 October 2026 in Quito.',
+    },
+
+    footer: {
+      farewellLead: 'See you in',
+      ctaLabel: 'Register now',
+      partnersTitleLine1: 'Meet our',
+      partnersTitleLine2a: 'Partners',
+      partnersTitleLine2b: 'And allies',
+      partnersCta: 'Our partners',
+      partners: {
+        led: 'Led by',
+        funding: 'Funded by',
+      },
+      legal: {
+        terms: 'Terms and conditions',
+        privacy: 'Privacy notice',
+      },
     },
   },
 };

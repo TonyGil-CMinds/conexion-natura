@@ -7,19 +7,27 @@ import { ThemedImage } from '@/components/ui/ThemedImage';
 import { RegistrationCta } from '@/features/registration';
 import { NAV_LINKS, SITE } from '@/config/site';
 import { LocaleSwitch } from './LocaleSwitch';
+import type { NavItem } from './PrimaryNav';
 import { localePath, type Dictionary, type Locale } from '@/i18n';
 import { gsap } from '@/lib/gsap';
 import styles from './MobileMenu.module.css';
 
 type Props = {
   locale: Locale;
+  items?: NavItem[];
+  homeHref?: string;
+  registrationHref?: string;
+  light?: boolean;
   labels: Dictionary['nav'];
   header: Dictionary['header'];
   cta: { label: string; confirmedLabel: string; waitlistLabel: string; note: string };
 };
 
-export function MobileMenu({ locale, labels, header, cta }: Props) {
+export function MobileMenu({ locale, labels, header, cta, items, homeHref = '/', registrationHref = SITE.cta.href, light = false }: Props) {
   const pathname = usePathname();
+  const links = items ?? NAV_LINKS.map((link) => ({
+    ...link, href: localePath(locale, link.href), label: labels[link.key],
+  }));
   const dialogRef = useRef<HTMLDialogElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -116,14 +124,14 @@ export function MobileMenu({ locale, labels, header, cta }: Props) {
         aria-label={header.openMenu} aria-expanded={isOpen} aria-controls="mobile-navigation" aria-haspopup="dialog">
         <span className={styles.burgerIcon} aria-hidden />
       </button>
-      <dialog ref={dialogRef} id="mobile-navigation" className={styles.dialog} aria-label={labels.ariaLabel}
+      <dialog ref={dialogRef} id="mobile-navigation" className={styles.dialog} data-light={light || undefined} aria-label={labels.ariaLabel}
         onCancel={(event) => { event.preventDefault(); close(); }}
         onClick={(event) => {
           const anchor = (event.target as HTMLElement).closest('a');
           if (anchor && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey && event.button === 0) close();
         }}>
         <div className={styles.topbar}>
-          <Link href={localePath(locale, '/')} aria-label={`${SITE.name} — ${header.home}`}>
+          <Link href={localePath(locale, homeHref)} aria-label={`${SITE.name} — ${header.home}`}>
             <ThemedImage dark="/brand/icon-dark-ceibaquito.svg" light="/brand/icon-light-ceibaquito.svg"
               alt={SITE.name} width={123} height={27} />
           </Link>
@@ -144,12 +152,12 @@ export function MobileMenu({ locale, labels, header, cta }: Props) {
 
           <nav aria-label={labels.ariaLabel}>
             <ul className={styles.links}>
-              {NAV_LINKS.filter((link) => link.key !== 'register').map((link) => {
-                const href = localePath(locale, link.href);
+              {links.filter((link) => link.key !== 'register').map((link) => {
+                const href = link.href;
                 return (
                   <li key={link.key} className={styles.mask}>
                     <Link href={href} className={styles.link} aria-current={pathname === href ? 'page' : undefined}>
-                      <span data-menu-label>{labels[link.key]}</span>
+                      <span data-menu-label>{link.label}</span>
                     </Link>
                   </li>
                 );
@@ -161,7 +169,7 @@ export function MobileMenu({ locale, labels, header, cta }: Props) {
               label={cta.label}
               confirmedLabel={cta.confirmedLabel}
               waitlistLabel={cta.waitlistLabel}
-              href={localePath(locale, SITE.cta.href)}
+              href={localePath(locale, registrationHref)}
               size="mobile"
             />
             <p className={styles.note}>{cta.note}</p>

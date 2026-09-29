@@ -125,17 +125,17 @@ export const PARTNER_GROUPS = [
   {
     key: 'led',
     logos: [
-      { src: '/partners/logo-socios-bid-light.svg', alt: 'IDB Lab', width: 123, height: 25 },
-      { src: '/partners/logo-socios-cminds-light.svg', alt: 'C Minds', width: 118, height: 28 },
+      { onDark: '/partners/logo-socios-bid-light.svg', onLight: '/partners/logo-socios-bid.svg', alt: 'IDB Lab', width: 123, height: 25 },
+      { onDark: '/partners/logo-socios-cminds-light.svg', onLight: '/partners/logo-socios-cminds.svg', alt: 'C Minds', width: 118, height: 28 },
     ],
   },
   {
     key: 'funding',
     logos: [
-      { src: '/partners/logo-socios-suecia-light.svg', alt: 'Sweden Sverige', width: 62, height: 19 },
-      { src: '/partners/logo-socios-francia-light.svg', alt: 'Gouvernement français', width: 57, height: 30 },
-      { src: '/partners/logo-socios-amazonia-light.svg', alt: 'Amazonía', width: 31, height: 26 },
-      { src: '/partners/logo-socios-cc-light.svg', alt: 'Climate Collective', width: 58, height: 19 },
+      { onDark: '/partners/logo-socios-suecia-light.svg', onLight: '/partners/logo-socios-suecia.svg', alt: 'Sweden Sverige', width: 62, height: 19 },
+      { onDark: '/partners/logo-socios-francia-light.svg', onLight: '/partners/logo-socios-francia.svg', alt: 'Gouvernement français', width: 57, height: 30 },
+      { onDark: '/partners/logo-socios-amazonia-light.svg', onLight: '/partners/logo-socios-amazonia.svg', alt: 'Amazonía', width: 31, height: 26 },
+      { onDark: '/partners/logo-socios-cc-light.svg', onLight: '/partners/logo-socios-cc.svg', alt: 'Climate Collective', width: 58, height: 19 },
     ],
   },
 ] as const;

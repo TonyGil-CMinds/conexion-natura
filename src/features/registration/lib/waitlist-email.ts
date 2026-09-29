@@ -1,7 +1,7 @@
 import 'server-only';
 import { prisma } from '@/lib/prisma';
 import { sendTemplate } from '@/lib/resend';
-import { eventEmailDetails } from './event-email-details';
+import { eventEmailDetails, type EmailOrigin } from './event-email-details';
 
 /**
  * Aviso de lista de espera.
@@ -32,10 +32,17 @@ type Input = {
   /** Si trae acompañante: también queda en espera, y el correo lo dice. */
   hasGuest: boolean;
   locale: 'es' | 'en';
+  /** Desde qué puerta se registró: decide a dónde llevan los enlaces. */
+  origin?: EmailOrigin;
 };
 
-export function waitlistTemplateData({ name, surname, hasGuest }: Omit<Input, 'id' | 'email' | 'locale'>) {
-  const { details } = eventEmailDetails();
+export function waitlistTemplateData({
+  name,
+  surname,
+  hasGuest,
+  origin = 'site',
+}: Omit<Input, 'id' | 'email' | 'locale'>) {
+  const { details } = eventEmailDetails(origin);
   return {
     username: `${name} ${surname}`.trim(),
     /**
@@ -53,10 +60,10 @@ export function waitlistTemplateData({ name, surname, hasGuest }: Omit<Input, 'i
   };
 }
 
-export async function sendWaitlistNotice({ id, email, name, surname, hasGuest, locale }: Input) {
+export async function sendWaitlistNotice({ id, email, name, surname, hasGuest, locale, origin }: Input) {
   const result = await sendTemplate({
     to: email,
-    data: waitlistTemplateData({ name, surname, hasGuest }),
+    data: waitlistTemplateData({ name, surname, hasGuest, origin }),
     template: locale === 'en' ? 'waitlistEn' : 'waitlistEs',
   });
 

@@ -5,6 +5,12 @@
 :root {
   /* Paleta de marca */
   --color-white: #fffff4;
+  --color-quito-surface: #F9FFE1;
+  --quito-palette-ink: #003f24;
+  --quito-button: #a2d500;
+  --quito-button-ink: #003f24;
+  --quito-active: #00b000;
+  --quito-partner-filter: none;
   --color-dark: #001d09;
   /**
    * Fondo de la interfaz. Es un rol distinto de `--color-dark`: ese sigue siendo
@@ -304,8 +310,17 @@
   }
 }
 
-/* Tema claro — el del hero. */
-[data-theme='light'] {
+/**
+ * Tema claro — el del hero.
+ *
+ * `[data-quito]` entra aquí porque esa sección va **siempre** en claro, con
+ * tema o sin él. Se resuelve redefiniendo los roles en su envoltorio y no
+ * escribiendo `data-theme` en `<html>`: eso habría que hacerlo en un efecto,
+ * después del primer pintado, y la página se vería un cuadro en oscuro antes de
+ * corregirse. Al ser los mismos roles, ningún componente de dentro se entera.
+ */
+[data-theme='light'],
+[data-quito] {
   --bg: var(--color-light);
   --fg: var(--color-dark);
   /**
@@ -326,4 +341,33 @@
   --credit-host: var(--color-green-brand);
   --rule: color-mix(in srgb, var(--fg) 14%, transparent);
   --rule-vertical: color-mix(in srgb, var(--fg) 6%, transparent);
+}
+
+[data-quito] {
+  --quito-ink: var(--quito-palette-ink);
+  --bg: var(--color-quito-surface);
+  --fg: var(--quito-ink);
+  --accent: var(--quito-button);
+  --accent-ink: var(--quito-ink);
+  --accent-nav-ink: var(--quito-ink);
+}
+
+html[data-quito-palette='blue'] {
+  --quito-action-direction: column;
+  --color-quito-surface: #005BE8;
+  --quito-palette-ink: #F9FFE1;
+  --quito-button: #F62FA2;
+  --quito-button-ink: #fff;
+  --quito-active: #d0ff00;
+  --quito-partner-filter: brightness(0) invert(1);
+}
+html[data-quito-palette='pink'] {
+  --quito-action-direction: column;
+  --color-quito-surface: #F62FA2;
+  --quito-palette-ink: #F9FFE1;
+  --quito-active: #d0ff00;
+  --quito-partner-filter: brightness(0) invert(1);
+}
+[data-quito] {
+  --rule: color-mix(in srgb, var(--fg) 25%, transparent);
 }

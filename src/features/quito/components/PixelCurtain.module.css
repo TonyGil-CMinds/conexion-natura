@@ -1,0 +1,37 @@
+/**
+ * Cortina de píxeles. Las celdas son del color del fondo de la página: no son
+ * una capa de color propio, son el fondo que todavía no se ha retirado.
+ */
+
+.root {
+  position: relative;
+  overflow: hidden;
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  pointer-events: none;
+}
+
+.cell {
+  background-color: var(--bg);
+  /**
+   * Cada celda se va por su cuenta y con una transición corta: larga, la
+   * cortina se sentía pegajosa al subir, que es cuando vuelve a cerrarse.
+   */
+  transition: opacity 0.22s var(--ease-out-expo);
+}
+
+.cell[data-gone='true'] {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cell {
+    transition: none;
+  }
+}

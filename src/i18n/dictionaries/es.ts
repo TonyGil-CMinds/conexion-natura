@@ -34,6 +34,11 @@ export const es = {
       title: 'Registro',
       description: 'Confirma tu asistencia a CEIBA Quito.',
     },
+    quito: {
+      title: 'Welcome to Quito',
+      description:
+        'Una nueva etapa para NaturaTech LAC: la noche del 5 de octubre de 2026 en Quito, después del GET Forum.',
+    },
     ecuador: {
       title: 'Registro · Empresas de Ecuador',
       description:
@@ -1548,6 +1553,104 @@ export const es = {
       },
 
       failed: 'No se pudo guardar el registro. Inténtalo de nuevo.',
+    },
+  },
+  /**
+   * Sección `/quito`: otra puerta al mismo acto, con su propia piel. Lo que no
+   * depende del idioma —assets, rutas, semillas— vive en `src/config/quito.ts`.
+   */
+  quito: {
+    nav: {
+      label: 'Navegación de Quito',
+      about: 'Acerca de',
+      agenda: 'Agenda',
+      speakers: 'Speakers',
+      register: 'Regístrate',
+    },
+
+    /**
+     * El botón que se convierte en el campo del correo. Es la única puerta al
+     * registro de esta sección: aquí no hay pantalla que pida el correo, así que
+     * el rótulo del botón y el del campo viven juntos.
+     */
+    join: {
+      cta: 'Regístrate ahora',
+      emailLabel: 'Tu correo electrónico',
+      emailPlaceholder: 'Tu correo electrónico',
+      emailSubmit: 'Continuar',
+      emailChecking: 'Comprobando...',
+      emailInvalid: 'Escribe un correo válido',
+    },
+
+    hero: {
+      /** Los dos rótulos van como imagen: son logotipos, no texto compuesto. */
+      wordmarkAlt: 'CEIBA',
+      claimAlt: 'Welcome to Quito',
+      ctaLabel: 'Regístrate ahora',
+      ctaNote: 'Cupo limitado',
+      countdownLabel: 'Días para Conexión500',
+    },
+
+    about: {
+      kicker: 'Una nueva etapa para NaturaTech LAC',
+      title: 'Construir las condiciones alrededor de las soluciones innovadoras',
+      body:
+        'Quito será un momento importante para hacer visible lo que ya está emergiendo y conectar esas soluciones con el ecosistema regional de emprendimiento, inversión y desarrollo que reunirá GET Forum.',
+      marquee: 'Un tejido',
+      pauseMarquee: 'Pausar la cinta',
+      playMarquee: 'Reanudar la cinta',
+    },
+
+    forum: {
+      kicker: 'Después del GET Forum',
+      title: 'Reuniremos a líderes',
+      body:
+        'Una noche para hacer tangible lo que estas nuevas economías y soluciones detrás de Natura500 pueden ser alrededor de naturaleza, industria y capital.',
+      ctaLabel: 'Ver agenda completa',
+      /** Un rótulo por imagen; las claves son las de `QUITO.forum`. */
+      captions: {
+        stories: 'Historias',
+        ventures: 'Bioemprendimientos',
+        flavors: 'Sabores locales',
+      },
+    },
+
+    /**
+     * El registro de esta sección.
+     *
+     * Es el mismo registro que el del sitio —misma tabla, mismo correo, mismo
+     * portero contra la lista de preregistro— y aquí solo vive lo que se dice
+     * distinto: el acto se anuncia con el nombre de esta puerta.
+     */
+    registration: {
+      /** Un paso menos que en /registro: aquí no se elige acto. */
+      step: 'Paso 1/2',
+      stepGuest: 'Paso 2/2',
+      eventName: 'CEIBA - Welcome to Quito',
+      shareTitle: 'CEIBA - Welcome to Quito',
+      shareText:
+        'Te comparto el registro de CEIBA - Welcome to Quito: 5 de octubre de 2026 en Quito.',
+    },
+
+    footer: {
+      farewellLead: 'Nos vemos en',
+      ctaLabel: 'Regístrate ahora',
+      /**
+       * El rótulo de los socios va partido porque el glifo cae **entre** las dos
+       * palabras de la segunda línea, y eso no se puede dejar al reflujo.
+       */
+      partnersTitleLine1: 'Conoce a',
+      partnersTitleLine2a: 'Nuestros',
+      partnersTitleLine2b: 'Socios',
+      partnersCta: 'Nuestros socios',
+      partners: {
+        led: 'Liderada por',
+        funding: 'Financiada por',
+      },
+      legal: {
+        terms: 'Términos y condiciones',
+        privacy: 'Aviso de privacidad',
+      },
     },
   },
 } as const;

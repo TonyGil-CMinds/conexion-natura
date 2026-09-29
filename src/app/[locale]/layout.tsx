@@ -9,6 +9,7 @@ import { LOCALES, getDictionary, isLocale, type Locale } from '@/i18n';
 import { socialMeta } from '@/config/seo';
 import { SITE_URL } from '@/config/urls';
 import '@/styles/globals.css';
+import { QUITO_PALETTE_SCRIPT } from '@/config/quito-palette';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -74,7 +75,7 @@ export const viewport: Viewport = {
  * pestaña y —si no— que está a punto de verse. Va como script en línea porque
  * leerlo desde React llega tarde: el loader habría aparecido durante un cuadro.
  *
- * `data-loader-pending` solo se pone en la portada, que es la única ruta con
+ * `data-loader-pending` se activa en las portadas de la raíz y Quito con
  * loader: comprobarlo por `pathname` evita esconder la cabecera en las demás.
  * Quien lo quita es `LoaderGate` cuando la malla ya tapa la pantalla.
  */
@@ -86,7 +87,7 @@ const LOADER_FLAG_SCRIPT = [
   // `\/` es solo `/`, y el patrón llegaba roto al HTML. Un `split` no tiene
   // escapes que perder. La portada es el único segmento y mide dos letras.
   "else{var s=location.pathname.split('/').filter(Boolean);",
-  "if(s.length===1&&s[0].length===2){h.setAttribute('data-loader-pending','1')}}",
+  "if(s[0]?.length===2&&(s.length===1||(s.length===2&&s[1]==='quito'))){h.setAttribute('data-loader-pending','1')}}",
   '}catch(e){}',
 ].join('');
 
@@ -123,6 +124,7 @@ export default async function RootLayout({ children, params }: LayoutProps) {
       suppressHydrationWarning
     >
       <body>
+        <script dangerouslySetInnerHTML={{ __html: QUITO_PALETTE_SCRIPT }} />
         <script dangerouslySetInnerHTML={{ __html: LOADER_FLAG_SCRIPT }} />
         <style dangerouslySetInnerHTML={{ __html: HEADER_HIDDEN_STYLE }} />
 

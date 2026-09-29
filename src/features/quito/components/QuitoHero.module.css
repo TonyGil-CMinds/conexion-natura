@@ -1,0 +1,131 @@
+.root {
+  --hero-height: max(700px, 100svh);
+  position: relative;
+  height: var(--hero-height);
+  margin-top: calc(var(--header-height) * -1);
+  background: var(--bg);
+  color: var(--fg);
+  isolation: isolate;
+  overflow: clip;
+}
+.inner {
+  position: relative;
+  width: 100%;
+  max-width: var(--content-max);
+  height: 100%;
+  margin-inline: auto;
+}
+.lockup {
+  position: absolute;
+  top: clamp(120px, 16.2svh, 170px);
+  left: 50%;
+  width: min(72vw, 110svh, 1051px);
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 1;
+}
+.wordmark { width: 100%; margin: 0; }
+.wordmarkShape {
+  display: block;
+  width: 100%;
+  aspect-ratio: 915 / 254;
+  background: currentColor;
+  mask: url('/hero/logo-ceiba.svg') center / contain no-repeat;
+}
+.claim {
+  margin: 8px -4% 0;
+  max-width: none;
+  font-family: var(--font-cubao), sans-serif;
+  font-size: min(7.65vw, 11.7svh, 112px);
+  font-weight: 400;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.character { display: inline-block; }
+.pixels {
+  position: absolute;
+  z-index: 0;
+  bottom: -260px;
+  left: 50%;
+  width: min(60vw, 740px);
+  height: 580px;
+  transform: translateX(-50%);
+  background: #a2d500;
+  mask: url('/hero/quito-pixel-tree.svg') center / contain no-repeat;
+}
+.bird {
+  position: absolute;
+  z-index: 2;
+  width: min(var(--quito-bird-width, 41vw), 66svh, 600px);
+  left: 50%;
+  bottom: -130px;
+  margin-left: min(3vw, 40px);
+  translate: -50% 0;
+  pointer-events: none;
+}
+.bird img { display: block; width: 100%; height: auto; }
+.action {
+  position: absolute;
+  z-index: 3;
+  left: var(--quito-gutter);
+  bottom: clamp(40px, 7.3svh, 80px);
+  display: flex;
+  flex-direction: var(--quito-action-direction, column-reverse);
+  gap: 14px;
+}
+.note { margin: 0; font: 700 14px/1.4 var(--font-mono); text-transform: uppercase; }
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70px;
+  padding: 18px 32px;
+  width: 272px;
+  max-width: 100%;
+  background: var(--quito-button);
+  color: var(--quito-button-ink);
+  font: 700 18px/1.3 var(--font-mono);
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 180ms ease, filter 180ms ease;
+}
+.cta:hover { transform: translateY(-3px); filter: brightness(1.06); }
+.cta:focus-visible { outline: 2px solid var(--fg); outline-offset: 5px; }
+.date {
+  position: absolute;
+  z-index: 3;
+  right: var(--quito-gutter);
+  bottom: clamp(58px, 9svh, 96px);
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  font: 400 clamp(32px, 3.75vw, 54px)/1 var(--font-mono);
+  text-align: center;
+}
+.dateDivider {
+  width: 58px;
+  height: 44px;
+  background: #a2d500;
+  mask: url('/tanusas/asset-divider-yellow.svg') center / contain no-repeat;
+}
+@media (max-width: 900px) {
+  .cta { width: 230px; font-size: 16px; }
+  .date { gap: 12px; font-size: 32px; }
+  .dateDivider { width: 38px; }
+}
+@media (max-width: 640px) {
+  .root { --hero-height: max(720px, 100svh); }
+  .lockup { top: clamp(115px, 16svh, 150px); width: 92%; }
+  .claim { font-size: 9.5vw; margin-top: 12px; }
+  .bird { width: min(100vw, 440px); bottom: 80px; margin-left: 15px; }
+  .pixels { width: 115%; height: 420px; bottom: 25px; }
+  .action { flex-direction: column; left: 24px; right: 24px; bottom: max(24px, env(safe-area-inset-bottom)); gap: 10px; }
+  .cta { width: 100%; min-height: 64px; }
+  .note { font-size: 12px; }
+  .date { bottom: 130px; right: 24px; gap: 8px; font-size: 24px; background: var(--bg); padding: 6px; }
+  .dateDivider { width: 28px; height: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta { transition: none; }
+}

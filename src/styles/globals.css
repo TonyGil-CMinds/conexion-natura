@@ -75,3 +75,7 @@ p {
     transition-duration: 0.01ms !important;
   }
 }
+
+html:has([data-page-surface='quito']) {
+  background: var(--color-quito-surface);
+}

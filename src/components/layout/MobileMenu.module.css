@@ -164,3 +164,8 @@
     display: grid;
   }
 }
+
+.dialog[data-light] {
+  --fg: var(--quito-ink);
+  --accent-nav-ink: var(--quito-active);
+}

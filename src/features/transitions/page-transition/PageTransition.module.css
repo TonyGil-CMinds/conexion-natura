@@ -1,4 +1,7 @@
 .root {
-  /* Sin estilos de caja: solo es el punto donde se escuchan los clics. */
-  display: contents;
+  display: block;
+}
+.root[data-page-surface='quito'] {
+  min-height: 100svh;
+  background: var(--color-quito-surface);
 }

@@ -1,0 +1,7 @@
+/**
+ * El registro ocupa la pantalla entera bajo la barra, como en `/registro`: es
+ * un cambio de pantalla completo y no un formulario al final de la página.
+ */
+.root {
+  min-height: calc(100dvh - var(--header-height));
+}

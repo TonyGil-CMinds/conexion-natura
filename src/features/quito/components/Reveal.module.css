@@ -1,0 +1,29 @@
+/**
+ * Entrada por scroll. La hoja solo actúa sobre lo que el cliente ha marcado como
+ * listo: sin `data-ready` no esconde nada, que es lo que evita que un fallo de
+ * JavaScript deje media página en blanco.
+ */
+
+.root[data-ready] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.7s var(--ease-out-expo),
+    transform 0.7s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0s);
+  will-change: opacity, transform;
+}
+
+.root[data-ready][data-in] {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root[data-ready] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

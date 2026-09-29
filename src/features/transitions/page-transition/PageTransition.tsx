@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { EASE_OUT_EXPO } from '@/lib/motion';
 import styles from './PageTransition.module.css';
 
@@ -27,6 +27,8 @@ const ENTER_DURATION = 0.5;
 export function PageTransition({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
+  const isQuito = pathname.split('/')[2] === 'quito';
+  const reducedMotion = useReducedMotion();
   const [isExiting, setIsExiting] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -66,6 +68,8 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
       event.preventDefault();
+      if (timerRef.current) clearTimeout(timerRef.current);
+      router.prefetch(href);
       setIsExiting(true);
       // La navegación se dispara por temporizador y no desde el final de la
       // animación: si ese callback no llega —y no llegaba—, la salida deja la
@@ -88,14 +92,14 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
   }, [onClick]);
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-page-surface={isQuito ? 'quito' : undefined}>
       <motion.div
         // La clave cambia con la ruta, y eso es lo que dispara la entrada.
         key={pathname}
-        initial={{ opacity: 0, y: 10 }}
-        animate={isExiting ? { opacity: 0, y: -8 } : { opacity: 1, y: 0 }}
+        initial={reducedMotion ? false : { opacity: 0, y: isQuito ? 0 : 10 }}
+        animate={isExiting ? { opacity: 0, y: isQuito || reducedMotion ? 0 : -8 } : { opacity: 1, y: 0 }}
         transition={{
-          duration: isExiting ? EXIT_DURATION : ENTER_DURATION,
+          duration: reducedMotion ? 0 : isExiting ? EXIT_DURATION : ENTER_DURATION,
           ease: EASE_OUT_EXPO,
         }}
       >

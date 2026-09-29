@@ -174,6 +174,11 @@ export async function POST(request: Request) {
    * preguntar lo mismo.
    */
   const raw = (body ?? {}) as Record<string, unknown>;
+  /**
+   * Desde qué puerta se registró. Solo cambia a dónde llevan los enlaces del
+   * correo: el acto es el mismo y la fila también, así que no se guarda.
+   */
+  const origin = raw.origin === 'quito' ? 'quito' : 'site';
   const answer: IdentityAnswer =
     typeof raw.claimInviteeId === 'string' && raw.claimInviteeId
       ? { claimInviteeId: raw.claimInviteeId }
@@ -300,6 +305,7 @@ export async function POST(request: Request) {
           name: attendee.name,
           surname: attendee.surname,
           events: attendee.events,
+          origin,
         }),
         new Promise<{ status: 'failed'; reason: string }>((resolve) =>
           setTimeout(() => resolve({ status: 'failed', reason: 'timeout' }), EMAIL_TIMEOUT_MS),
@@ -321,6 +327,7 @@ export async function POST(request: Request) {
           surname: attendee.surname,
           hasGuest: rest.bringsGuest === true,
           locale: raw.locale === 'en' ? 'en' : 'es',
+          origin,
         }),
         new Promise<{ status: 'failed'; reason: string }>((resolve) =>
           setTimeout(() => resolve({ status: 'failed', reason: 'timeout' }), EMAIL_TIMEOUT_MS),

@@ -28,9 +28,9 @@ export function SiteFooter({ locale }: { locale: Locale }) {
               <p className={styles.partnerLabel}>{copy.partners[group.key]}</p>
               <ul className={styles.partnerList}>
                 {group.logos.map((logo) => (
-                  <li key={logo.src}>
+                  <li key={logo.alt}>
                     <Image
-                      src={logo.src}
+                      src={logo.onDark}
                       alt={logo.alt}
                       width={logo.width}
                       height={logo.height}

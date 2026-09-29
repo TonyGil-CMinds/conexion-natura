@@ -17,7 +17,8 @@
   max-width: none;
   text-align: center;
   font-family: var(--font-mono);
-  font-size: var(--text-note);
+  font-size: var(--countdown-font-size, var(--text-note));
+  font-weight: var(--countdown-weight, 400);
   letter-spacing: var(--tracking-caption);
   text-transform: uppercase;
   color: var(--fg);
@@ -36,9 +37,10 @@
   /* Escala desde la base para que la lupa no levante la cifra de la regla. */
   transform-origin: bottom center;
   font-family: var(--font-mono);
-  font-size: var(--text-note);
+  font-size: var(--countdown-font-size, var(--text-note));
+  font-weight: var(--countdown-weight, 400);
   line-height: 1;
-  color: color-mix(in srgb, var(--fg) 55%, transparent);
+  color: var(--countdown-day-color, color-mix(in srgb, var(--fg) 55%, transparent));
   transition: color var(--duration-fast) var(--ease-out-expo);
 }
 
@@ -55,7 +57,7 @@
   /* Ocho marcas por día: el paso sale de dividir el ancho de día entre ocho. */
   background-image: repeating-linear-gradient(
     to right,
-    color-mix(in srgb, var(--fg) 35%, transparent) 0 1px,
+    var(--countdown-tick-color, color-mix(in srgb, var(--fg) 35%, transparent)) 0 1px,
     transparent 1px 8px
   );
   /* La retícula se ancla al marcador, no al borde: así las marcas caen sobre las
@@ -91,7 +93,7 @@
 
 @media (max-width: 640px) {
   .label {
-    display: none;
+    display: var(--countdown-label-display, none);
   }
 
   .scale {

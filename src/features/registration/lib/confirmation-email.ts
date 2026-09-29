@@ -10,6 +10,7 @@ import { sendTemplate } from '@/lib/resend';
 import type { EventChoice } from './attendee-input';
 import {
   eventEmailDetails,
+  type EmailOrigin,
   type EventEmailDetails,
   type EventEmailField,
 } from './event-email-details';
@@ -69,15 +70,18 @@ export function confirmationTemplateData({
   name,
   surname,
   events = [],
+  origin = 'site',
 }: {
   name: string;
   surname: string;
   events?: readonly EventChoice[];
+  /** Desde qué puerta se registró: decide a dónde llevan los enlaces. */
+  origin?: EmailOrigin;
 }): {
   data: ConfirmationTemplateData;
   missing: readonly EventEmailField[];
 } {
-  const { details, missing } = eventEmailDetails();
+  const { details, missing } = eventEmailDetails(origin);
 
   const night = events.includes('NIGHT');
   const award = events.includes('AWARD');
@@ -115,6 +119,7 @@ export async function sendConfirmation({
   name,
   surname,
   events,
+  origin = 'site',
 }: {
   id: string;
   email: string;
@@ -122,8 +127,10 @@ export async function sendConfirmation({
   surname: string;
   /** A qué actos va: la plantilla pinta un bloque por cada uno. */
   events: readonly EventChoice[];
+  /** Desde qué puerta se registró: decide a dónde llevan los enlaces. */
+  origin?: EmailOrigin;
 }): Promise<{ status: 'sent' | 'skipped' | 'failed'; reason?: string }> {
-  const { data, missing } = confirmationTemplateData({ name, surname, events });
+  const { data, missing } = confirmationTemplateData({ name, surname, events, origin });
 
   if (missing.length) {
     console.error(

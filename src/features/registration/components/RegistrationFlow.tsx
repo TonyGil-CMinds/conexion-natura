@@ -27,6 +27,29 @@ type Props = {
   /** Idioma de la ruta: la bienvenida abrevia el mes con él. */
   locale: Locale;
   copy: Dictionary['registration'];
+  /**
+   * Actos ya decididos. Con esto **no se pregunta**: se salta la pantalla de
+   * elección y se registra directo a lo que diga esta lista.
+   *
+   * Lo usa la sección de Quito, que es una puerta a un solo acto: allí elegir no
+   * es una decisión, es un trámite con una sola respuesta posible.
+   */
+  fixedEvents?: readonly EventChoice[];
+  /**
+   * Desde dónde se registra. Viaja al servidor y de ahí al correo, que es lo
+   * único que cambia entre las dos puertas: los enlaces de la confirmación
+   * llevan a la sección por la que se entró y no siempre a la portada.
+   */
+  origin?: 'site' | 'quito';
+  /**
+   * Correo ya conocido: **se salta la pantalla que lo pide**.
+   *
+   * Lo usa la sección de Quito, donde el correo se escribe en el botón que se
+   * convierte en campo, así que volver a pedirlo sería preguntar por el dato que
+   * acaba de darse. Quien llega con esto entra directo a los datos —o a su
+   * resumen, si ese correo ya tenía registro—.
+   */
+  initialEmail?: string;
 };
 
 /**
@@ -49,9 +72,26 @@ type Stage = 'join' | 'choice' | 'details' | 'guest' | 'identity' | 'welcome';
  * hacia el servidor hasta que el registro esté completo: quien cierra la pestaña
  * a mitad no deja una fila a medias.
  */
-export function RegistrationFlow({ locale, copy }: Props) {
+export function RegistrationFlow({
+  locale,
+  copy,
+  fixedEvents,
+  origin = 'site',
+  initialEmail,
+}: Props) {
   const { attendee, confirm } = useAttendance();
-  const [stage, setStage] = useState<Stage>('join');
+  /**
+   * Con el correo ya dado no se empieza por pedirlo. Se calcula en el
+   * inicializador y no en un efecto: en un efecto se vería un cuadro con la
+   * pantalla del correo antes de saltarla.
+   *
+   * Si además ese correo ya tenía registro, quien lo consultó ya llamó a
+   * `confirm`, así que `attendee` está puesto y manda el resumen.
+   */
+  const [stage, setStage] = useState<Stage>(() => {
+    if (!initialEmail) return 'join';
+    return attendee ? 'welcome' : 'details';
+  });
   /** Pantalla a la que se va mientras la escalera está en marcha. */
   const [pending, setPending] = useState<Stage | null>(null);
   /**
@@ -60,6 +100,22 @@ export function RegistrationFlow({ locale, copy }: Props) {
    * de esto, así que guardarlo en estado solo provocaría renders de más.
    */
   const draft = useRef<JoinDraft | null>(null);
+
+  /**
+   * Con el correo ya dado, el borrador se siembra aquí: el resto del flujo lo
+   * lee de ahí —el envío final saca de él el correo y los actos— y sin esto el
+   * registro salía sin destinatario.
+   */
+  useEffect(() => {
+    if (!initialEmail || attendee) return;
+    draft.current = saveJoinDraft({
+      ...(readJoinDraft() ?? {}),
+      email: initialEmail,
+      events: fixedEvents ? [...fixedEvents] : undefined,
+    });
+    // Solo al montar: después manda lo que se vaya guardando en cada paso.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   /**
    * La invitación con la que el servidor dice que encaja lo escrito, cuando el
    * correo no está en la lista pero el nombre y la organización sí. Mientras
@@ -120,14 +176,16 @@ export function RegistrationFlow({ locale, copy }: Props) {
         // El nombre llega de quien invitó; el apellido lo pondrá él mismo.
         person: { name: invited.name, surname: '', organization: '', role: '', linkedin: '' },
         fromInvitation: true,
+        // Con el acto decidido, el invitado tampoco elige.
+        events: fixedEvents ? [...fixedEvents] : undefined,
       });
-      setStage('choice');
+      setStage(fixedEvents ? 'details' : 'choice');
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [attendee]);
+  }, [attendee, fixedEvents]);
 
   /**
    * Del correo salen dos caminos.
@@ -154,9 +212,22 @@ export function RegistrationFlow({ locale, copy }: Props) {
         return;
       }
 
+      /**
+       * Con el acto ya decidido no hay nada que elegir: se guarda en el borrador
+       * y se entra directo a los datos. Se escribe aquí y no al enviar para que
+       * el resto del flujo —volver atrás, corregir, el resumen— lea el acto del
+       * mismo sitio que siempre.
+       */
+      if (fixedEvents) {
+        const current = readJoinDraft();
+        if (current) draft.current = saveJoinDraft({ ...current, events: [...fixedEvents] });
+        setPending('details');
+        return;
+      }
+
       setPending('choice');
     },
-    [confirm],
+    [confirm, fixedEvents],
   );
 
   /**
@@ -194,10 +265,11 @@ export function RegistrationFlow({ locale, copy }: Props) {
         body: JSON.stringify({
           email: current.email,
           ...current.person,
-          events: current.events ?? [],
+          events: current.events ?? (fixedEvents ? [...fixedEvents] : []),
           bringsGuest: current.bringsGuest === true,
           guest: current.guest ?? null,
           locale,
+          origin,
           ...answer,
         }),
       });
@@ -230,7 +302,7 @@ export function RegistrationFlow({ locale, copy }: Props) {
        */
       setPending('welcome');
     },
-    [confirm, locale],
+    [confirm, locale, fixedEvents, origin],
   );
 
   /**
@@ -339,7 +411,13 @@ export function RegistrationFlow({ locale, copy }: Props) {
             onContinue={handleDetails}
             /* Quien está corrigiendo vuelve a su resumen, no a la elección de
                acto: no entró por ahí. */
-            onBack={() => setStage(attendee ? 'welcome' : 'choice')}
+            /* Con el correo dado fuera no hay pantalla anterior a la que
+               volver: el enlace no se pinta. */
+            onBack={
+              initialEmail && !attendee
+                ? undefined
+                : () => setStage(attendee ? 'welcome' : fixedEvents ? 'join' : 'choice')
+            }
           />
         )}
 

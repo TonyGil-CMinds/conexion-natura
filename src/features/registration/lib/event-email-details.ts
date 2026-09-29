@@ -75,7 +75,19 @@ export const EVENT_EMAIL_FIELDS = Object.keys(EVENT_EMAIL) as readonly EventEmai
  * espacios— es igual de fácil que olvidar una variable de entorno, y Resend
  * entrega el correo con el hueco en blanco sin quejarse.
  */
-export function eventEmailDetails(): {
+/**
+ * Desde qué puerta se registró. Solo cambia a dónde llevan los dos enlaces del
+ * correo, porque el acto es el mismo: quien entró por `/quito` vuelve a `/quito`
+ * y no a la portada, que le enseñaría un sitio que no reconoce.
+ */
+export type EmailOrigin = 'site' | 'quito';
+
+const QUITO_LINKS = {
+  agenda_url: 'https://ceiba.naturatech.org/es/quito/agenda',
+  sitio_web_url: 'https://ceiba.naturatech.org/es/quito',
+} as const satisfies Partial<EventEmailDetails>;
+
+export function eventEmailDetails(origin: EmailOrigin = 'site'): {
   details: EventEmailDetails;
   missing: readonly EventEmailField[];
 } {
@@ -83,7 +95,11 @@ export function eventEmailDetails(): {
   const missing: EventEmailField[] = [];
 
   for (const field of EVENT_EMAIL_FIELDS) {
-    const value = EVENT_EMAIL[field].trim();
+    const value = (
+      origin === 'quito' && field in QUITO_LINKS
+        ? QUITO_LINKS[field as keyof typeof QUITO_LINKS]
+        : EVENT_EMAIL[field]
+    ).trim();
     details[field] = value;
     if (!value) missing.push(field);
   }
