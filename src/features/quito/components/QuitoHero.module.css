@@ -140,80 +140,151 @@
   .date { gap: 12px; font-size: 32px; }
   .dateDivider { width: 38px; }
 }
+/**
+ * En estrecho el hero deja de ser una caja con las piezas colocadas a mano y
+ * pasa a ser una **columna**: rótulo, fecha, ave y llamada, en ese orden y
+ * repartiendo el alto que haya.
+ *
+ * Arregla las dos cosas a la vez. Antes el alto era `max(720px, 100dvh)`, así
+ * que en un teléfono corto el hero medía más que la pantalla y la llamada —con
+ * su «cupo limitado»— caía por debajo del pliegue. Y el ave iba a una medida
+ * fija, que en las pantallas con sitio de sobra dejaba un socavón entre la
+ * fecha y el árbol.
+ *
+ * Ahora el alto es el de la pantalla y el ave es la pieza elástica: se queda
+ * con todo lo que sobre. Nada se cruza ni se sale porque no hay nada colocado
+ * por coordenadas, y no hay que cuadrarlo teléfono por teléfono.
+ */
 @media (max-width: 640px) {
   .root {
-    --hero-height: max(720px, 100dvh);
+    --hero-height: 100dvh;
     /**
-     * Dónde arranca el rótulo, en un solo sitio: la fecha se cuelga de él y
-     * necesita la misma medida para quedarse pegada a cualquier ancho.
+     * Cuánto se monta la llamada sobre el ave. Está aquí y no repetido en cada
+     * regla porque lo usan dos: el margen negativo de la llamada y el canto
+     * inferior del árbol, que tiene que quedarse **por encima** del botón. En
+     * la paleta por defecto los dos son del mismo lima, y solapados la caja del
+     * botón desaparece.
      */
-    --lockup-top: clamp(72px, 10svh, 112px);
+    --action-overlap: clamp(28px, 8.5vh, 76px);
   }
-  .lockup { top: var(--lockup-top); width: 92%; }
-  .claim { font-size: 9.5vw; margin-top: 10px; }
+
+  .inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(6px, 1.4vh, 18px);
+    height: 100%;
+    /* Arriba, el hueco de la barra, que va superpuesta. */
+    padding: calc(var(--header-height) + clamp(4px, 1.6vh, 22px)) 24px
+      max(16px, env(safe-area-inset-bottom));
+  }
 
   /**
-   * La fecha sube y se centra **debajo del rótulo**, que es donde la pide el
-   * diseño en estrecho —en ancho vive abajo a la derecha—.
-   *
-   * Se ancla con la medida real del rótulo y no a ojo: el alto del logotipo
-   * sale de su proporción (254/915 = 0,2776 de su ancho) y a eso se le suma el
-   * claim con su interlínea. Calculado, sigue pegada al rótulo en cualquier
-   * pantalla; a ojo, se despegaba o se montaba encima según el ancho.
+   * El orden lo pone el CSS porque en el HTML la fecha va la última —cuando
+   * todo se colocaba por coordenadas daba igual— y en columna caía debajo de
+   * la llamada. Se numeran los cuatro para no dejarlo a medias.
    */
+  .lockup {
+    position: static;
+    order: 1;
+    /* El rótulo es lo más alto del bloque: se acota por alto como los tipos. */
+    width: min(100%, 62vh);
+    transform: none;
+  }
+  /**
+   * Los tipos se acotan **por ancho y por alto**. Con solo el ancho, en un
+   * teléfono corto el rótulo y la fecha se comían el sitio y el ave quedaba en
+   * un sello de cien píxeles. El alto también manda aquí.
+   */
+  .claim { font-size: min(9.5vw, 5.4vh); margin-top: 8px; }
+
   .date {
-    top: calc(var(--lockup-top) + 92vw * 0.2776 + 10px + 10.45vw + 2.5vw);
-    right: auto;
-    bottom: auto;
-    left: 0;
+    position: static;
+    order: 2;
     width: 100%;
     justify-content: center;
     gap: 3.5vw;
-    font-size: 9.5vw;
+    font-size: min(9.5vw, 5.4vh);
     /* Sin recuadro: en la referencia la fecha va suelta sobre el fondo. */
     background: none;
     padding: 0;
   }
-  .dateDivider { width: 7vw; height: 7vw; }
+  .dateDivider { width: min(7vw, 4vh); height: min(7vw, 4vh); }
 
   /**
-   * El ave y su árbol ocupan la franja que queda entre la fecha y la llamada.
-   * El árbol acaba por encima del botón a propósito: en la paleta por defecto
-   * los dos son del mismo lima y, solapados, la caja del botón desaparecía.
+   * El ave se queda con el alto sobrante y crece hasta llenarlo. El árbol va
+   * detrás **como pseudoelemento suyo** y no como el hermano suelto de
+   * siempre: así lo sigue sin tener que recolocarlo, que era de donde salían
+   * los choques con el botón.
    */
-  /* 46vw y no más: por encima, el pico cruzaba la fecha en pantallas de 844. */
-  .bird { width: min(46vw, 210px); bottom: 96px; margin-left: 8px; }
-  .pixels { width: 92%; height: 260px; bottom: 150px; }
+  .bird {
+    position: relative;
+    order: 3;
+    z-index: 2;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    left: auto;
+    bottom: auto;
+    margin-left: 0;
+    translate: none;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .bird img {
+    width: auto;
+    height: 100%;
+    max-width: 86%;
+    object-fit: contain;
+    object-position: bottom center;
+  }
+
+  .bird::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    top: 4%;
+    bottom: calc(var(--action-overlap) + 10px);
+    width: min(104%, 460px);
+    transform: translateX(-50%);
+    background: #a2d500;
+    mask: url('/hero/quito-pixel-tree.svg') center bottom / contain no-repeat;
+  }
+
+  /* El de siempre sobra: en estrecho el árbol lo dibuja el bloque del ave. */
+  .pixels { display: none; }
 
   /**
    * El botón arriba y el aviso debajo, como en la referencia. Va escrito y no
    * heredado de `--quito-action-direction`: esa variable cambia con la paleta,
    * y el orden en estrecho es el mismo en todas.
    */
+  /**
+   * La llamada se **monta** sobre la parte baja del ave con un margen
+   * negativo, que es como está en la referencia: así el ave se queda con más
+   * alto en vez de compartirlo. Lleva `position: relative` solo para que el
+   * `z-index` cuente y quede por delante.
+   */
   .action {
+    position: relative;
+    z-index: 3;
+    order: 4;
+    margin-top: calc(var(--action-overlap) * -1);
     flex-direction: column-reverse;
     align-items: center;
-    left: 24px;
-    right: 24px;
-    bottom: max(24px, env(safe-area-inset-bottom));
-    gap: 12px;
+    width: 100%;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    gap: 10px;
   }
-  .cta { width: 100%; min-height: 64px; }
+  .cta { width: 100%; min-height: 60px; }
   .note { font-size: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .cta { transition: none; }
 }
 
-/**
- * Pantallas estrechas **y cortas**.
- *
- * La fecha se ancla arriba —cuelga del rótulo— y el ave abajo, así que cuanto
- * menos alto hay, más se acercan: en un teléfono de 640 el pico cruzaba los
- * números. El ave y su árbol menguan hasta despejarla, sin tocar la relación
- * entre el árbol y el botón, que es la que no puede romperse.
- */
-@media (max-width: 640px) and (max-height: 700px) {
-  .bird { width: min(42vw, 180px); bottom: 96px; }
-  .pixels { width: 80%; height: 210px; bottom: 140px; }
-}
