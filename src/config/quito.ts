@@ -84,8 +84,23 @@ export const QUITO = {
    * Las medidas son las naturales de cada SVG: el alto lo iguala el CSS y el
    * ancho tiene que salir de la proporción real o el logotipo se deforma.
    */
-  partnerRows: [
-    [
+  /**
+   * Los grupos no son filas: son **papeles**, y cada uno dice el suyo encima.
+   *
+   * Antes eran tres filas sin nombre y el reparto se leía como un orden de
+   * importancia. Nombrarlos cambia lo que significan: quién recibe en su casa,
+   * a través de quién llega el acto y quién lo acompaña. Por eso la clave entra
+   * en el diccionario en vez de escribirse aquí: el rótulo se traduce, el
+   * reparto no.
+   *
+   * El primero no lleva rótulo propio: lo nombra el titular de la sección
+   * («Conoce a las organizaciones anfitrionas»), y repetirlo sería decirlo dos
+   * veces seguidas.
+   */
+  partnerGroups: [
+    {
+      key: 'hosts',
+      logos: [
       { src: '/partners/logo-socios-quito-ntl.svg', onDark: '/partners/logo-socios-light-ntl.svg', alt: 'NaturaTech LAC', width: 141, height: 52 },
       { src: '/partners/logo-socios-quito-redimpacto.svg', onDark: '/partners/logo-socios-light-redimpacto.svg', alt: 'Red de Impacto', width: 303, height: 81 },
       /* El archivo se llama «impaquito» pero el logotipo es el de Latimpacto. */
@@ -97,22 +112,31 @@ export const QUITO = {
        * el blanco como `src` no quedaba nada que ver sobre la paleta clara.
        */
       { src: '/partners/logo-socios-quito-impaqto.svg', onDark: '/partners/logo-socios-light-impaqto.svg', alt: 'IMPAQTO', width: 59, height: 56 },
-    ],
-    [
-      { src: '/partners/logo-socios-quito-natura500.svg', alt: 'natura500', width: 113, height: 66 },
-      { src: '/partners/logo-socios-quito-fondoverde.svg', onDark: '/partners/logo-socios-light-fondoverde.svg', alt: 'Fondo Verde Catalítico', width: 231, height: 58 },
-      { src: '/partners/logo-socios-quito-startuplab.svg', alt: 'StartupLab.mx', width: 185, height: 46 },
-      { src: '/partners/logo-socios-quito-trulab.svg', alt: 'truLab', width: 116, height: 50 },
-      { src: '/partners/logo-socios-quito-tangara.svg', alt: 'Tàngara', width: 145, height: 56 },
-    ],
-    [
-      { src: '/partners/logo-socios-bid.svg', onDark: '/partners/logo-socios-bid-light.svg', alt: 'IDB Lab', width: 123, height: 25 },
-      { src: '/partners/logo-socios-cminds.svg', onDark: '/partners/logo-socios-cminds-light.svg', alt: 'C Minds', width: 118, height: 28 },
-      { src: '/partners/logo-socios-suecia.svg', onDark: '/partners/logo-socios-light-suecia.svg', alt: 'Sweden Sverige', width: 62, height: 19 },
-      { src: '/partners/logo-socios-francia.svg', onDark: '/partners/logo-socios-light-france.svg', alt: 'Gouvernement français', width: 57, height: 30 },
-      { src: '/partners/logo-socios-amazonia.svg', onDark: '/partners/logo-socios-amazonia-light.svg', alt: 'Amazónia', width: 31, height: 26 },
-      { src: '/partners/logo-socios-cc.svg', onDark: '/partners/logo-socios-cc-light.svg', alt: 'Climate Collective', width: 58, height: 19 },
-    ],
+      ],
+    },
+    /** «A través de»: por cuya vía llega el acto. */
+    {
+      key: 'through',
+      logos: [
+        { src: '/partners/logo-socios-quito-natura500.svg', alt: 'natura500', width: 113, height: 66 },
+        { src: '/partners/logo-socios-quito-fondoverde.svg', onDark: '/partners/logo-socios-light-fondoverde.svg', alt: 'Fondo Verde Catalítico', width: 231, height: 58 },
+        { src: '/partners/logo-socios-cminds.svg', onDark: '/partners/logo-socios-cminds-light.svg', alt: 'C Minds', width: 118, height: 28 },
+        { src: '/partners/logo-socios-bid.svg', onDark: '/partners/logo-socios-bid-light.svg', alt: 'IDB Lab', width: 123, height: 25 },
+      ],
+    },
+    /** «Con el apoyo de»: quienes acompañan. Es el grupo largo y va más pequeño. */
+    {
+      key: 'support',
+      logos: [
+        { src: '/partners/logo-socios-quito-startuplab.svg', alt: 'StartupLab.mx', width: 185, height: 46 },
+        { src: '/partners/logo-socios-quito-trulab.svg', alt: 'truLab', width: 116, height: 50 },
+        { src: '/partners/logo-socios-quito-tangara.svg', alt: 'Tàngara', width: 145, height: 56 },
+        { src: '/partners/logo-socios-suecia.svg', onDark: '/partners/logo-socios-light-suecia.svg', alt: 'Sweden Sverige', width: 62, height: 19 },
+        { src: '/partners/logo-socios-francia.svg', onDark: '/partners/logo-socios-light-france.svg', alt: 'Gouvernement français', width: 57, height: 30 },
+        { src: '/partners/logo-socios-amazonia.svg', onDark: '/partners/logo-socios-amazonia-light.svg', alt: 'Amazónia', width: 31, height: 26 },
+        { src: '/partners/logo-socios-cc.svg', onDark: '/partners/logo-socios-cc-light.svg', alt: 'Climate Collective', width: 58, height: 19 },
+      ],
+    },
   ],
 
   /** El pie: la ballena del cierre, la foto de sala y el lockup pequeño. */

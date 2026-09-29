@@ -192,16 +192,39 @@
 }
 
 /**
- * La última fila —quien lidera y quien financia— va más pequeña, como en el
- * diseño: son marcas institucionales, acompañan y no encabezan. Es además lo
- * que hace que las seis quepan en una línea: a la altura de las otras filas se
- * partían en cinco y una.
+ * Cada grupo es su rótulo y sus logotipos, uno debajo del otro. El hueco entre
+ * los dos es menor que el que separa un grupo del siguiente: así el rótulo se
+ * lee pegado a lo que nombra y no flotando entre dos bloques.
  */
-.networkRow:last-child {
+.networkGroup {
+  display: grid;
+  gap: clamp(0.75rem, 1.6vw, 1.25rem);
+  justify-items: center;
+}
+
+.networkGroupTitle {
+  margin: 0;
+  color: var(--fg);
+  font: 400 clamp(11px, 1.1vw, 14px)/1.2 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+/**
+ * El grupo de apoyo va más pequeño, como en el diseño: son quienes acompañan y
+ * no encabezan. Es además lo que hace que quepan todos en una línea: a la
+ * altura de los otros grupos se partían.
+ *
+ * Se apunta por `data-group` y no por `:last-child`: el orden de los grupos es
+ * decisión del contenido, y atado a la posición un grupo nuevo al final se
+ * llevaría el tamaño pequeño sin que nadie lo hubiera pedido.
+ */
+.networkRow[data-group='support'] {
   gap: clamp(1.5rem, 3.4vw, 3rem);
 }
 
-.networkRow:last-child .networkLogo {
+.networkRow[data-group='support'] .networkLogo {
   height: clamp(20px, 2.3vw, 30px);
 }
 
@@ -375,7 +398,7 @@ html[data-quito-palette='pink'] .networkLogo[data-on='dark'] {
     height: clamp(36px, 4.4vw, 64px);
   }
 
-  .hosts .networkRow:last-child .networkLogo {
+  .hosts .networkRow[data-group='support'] .networkLogo {
     height: clamp(28px, 3.2vw, 46px);
   }
 }

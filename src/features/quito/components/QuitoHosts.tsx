@@ -12,9 +12,19 @@ export function QuitoHosts({ copy }: { copy: Dictionary['quito']['footer'] }) {
       </div>
       <Reveal>
         <div className={styles.network}>
-          {QUITO.partnerRows.map((row, index) => (
-            <ul key={index} className={styles.networkRow}>
-              {row.map((logo) => (
+          {QUITO.partnerGroups.map((group) => (
+            <div key={group.key} className={styles.networkGroup}>
+              {/**
+               * El grupo de anfitrionas no repite rótulo: lo nombra el titular
+               * de la sección, que está justo encima.
+               */}
+              {group.key !== 'hosts' && (
+                <h3 className={styles.networkGroupTitle}>
+                  {copy.partnerGroups[group.key as keyof typeof copy.partnerGroups]}
+                </h3>
+              )}
+              <ul className={styles.networkRow} data-group={group.key}>
+              {group.logos.map((logo) => (
                 <li key={logo.alt}>
                   {/**
                    * Donde hay versión oficial para fondo oscuro se montan las
@@ -50,7 +60,8 @@ export function QuitoHosts({ copy }: { copy: Dictionary['quito']['footer'] }) {
                   )}
                 </li>
               ))}
-            </ul>
+              </ul>
+            </div>
           ))}
         </div>
       </Reveal>

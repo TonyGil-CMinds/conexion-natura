@@ -1474,6 +1474,10 @@ export const en: Dictionary = {
       farewellLead: 'See you in',
       ctaLabel: 'Register now',
       hostsTitle: 'Meet the host organisations',
+      partnerGroups: {
+        through: 'Through',
+        support: 'With the support of',
+      },
 
       legal: {
         terms: 'Terms and conditions',

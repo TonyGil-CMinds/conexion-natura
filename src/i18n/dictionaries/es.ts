@@ -1694,6 +1694,15 @@ export const es = {
        * palabras de la segunda línea, y eso no se puede dejar al reflujo.
        */
       hostsTitle: 'Conoce a las organizaciones anfitrionas',
+      /**
+       * El papel de cada grupo de logotipos. El de las anfitrionas no está
+       * porque ya lo dice `hostsTitle`, justo encima: ponerlo sería decirlo dos
+       * veces seguidas.
+       */
+      partnerGroups: {
+        through: 'A través de',
+        support: 'Con el apoyo de',
+      },
 
       legal: {
         terms: 'Términos y condiciones',
