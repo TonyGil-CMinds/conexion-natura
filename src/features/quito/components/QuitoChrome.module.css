@@ -229,6 +229,17 @@
 }
 
 /**
+ * Tres tamaños para tres papeles, de mayor a menor: anfitrionas, a través de,
+ * con el apoyo de. El orden importa más que las cifras —quien recibe en su casa
+ * encabeza— y sin este escalón el grupo de en medio salía más grande que el
+ * primero: C Minds e IDB Lab venían de la fila chica y a la altura de las
+ * anfitrionas se comían la sección.
+ */
+.networkRow[data-group='through'] .networkLogo {
+  height: clamp(24px, 2.8vw, 36px);
+}
+
+/**
  * Sin versión oficial para fondo oscuro, se blanquea el mismo archivo. Es peor
  * —aplana los colores— pero es lo único que hay para esos.
  */
@@ -396,6 +407,10 @@ html[data-quito-palette='pink'] .networkLogo[data-on='dark'] {
 
   .hosts .networkLogo {
     height: clamp(36px, 4.4vw, 64px);
+  }
+
+  .hosts .networkRow[data-group='through'] .networkLogo {
+    height: clamp(30px, 3.6vw, 52px);
   }
 
   .hosts .networkRow[data-group='support'] .networkLogo {
