@@ -56,6 +56,16 @@ export const TEMPLATES = {
    * correo que la confirmación porque dice otra cosa —aquel promete un lugar
    * y este no puede—, y una misma persona puede recibir los dos.
    */
+  /**
+   * El aviso de la sección de Quito a quienes ya tienen su lugar dado.
+   *
+   * Es otro correo que la confirmación de `/registro`: aquella la dispara el
+   * propio registro al completarse, y este se manda a mano a una lista que
+   * entró por fuera del formulario. Por eso tiene su propia plantilla y su
+   * propia marca de envío.
+   */
+  quitoEs: 'CEIBA_EMAIL_TEMPLATE_ID_QUITO_ES',
+  quitoEn: 'CEIBA_EMAIL_TEMPLATE_ID_QUITO_EN',
   waitlistEs: 'CEIBA_EMAIL_TEMPLATE_ID_WAITLIST_ES',
   waitlistEn: 'CEIBA_EMAIL_TEMPLATE_ID_WAITLIST_EN',
 } as const;
