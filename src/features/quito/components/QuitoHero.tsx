@@ -106,7 +106,7 @@ export function QuitoHero({ locale, copy, joinCopy }: Props) {
         </div>
         <div className={styles.eventDetails}>
           <p className={styles.eventMeta}>
-            <span>17:30</span><span aria-hidden> | </span><span>{QUITO.event.venue.name}</span>
+            <span>{QUITO.event.scheduleLabel.split(' ')[0]}</span><span aria-hidden> | </span><span>{QUITO.event.venue.name}</span>
           </p>
         <time className={styles.date} dateTime={date.toISOString().slice(0, 10)} aria-label={dateLabel}>
           <span aria-hidden>{String(day).padStart(2, '0')}<br />{monthLabel}</span>

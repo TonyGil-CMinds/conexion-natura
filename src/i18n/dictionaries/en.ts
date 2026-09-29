@@ -1442,7 +1442,7 @@ export const en: Dictionary = {
       items: [
         {
           id: 'recorrido',
-          time: '17:30 — 18:00',
+          time: '17:00 — 18:00',
           title: 'Living tour',
           description:
             'Welcome drink, music, visuals from the territories, products, demos and first connections.',

@@ -1653,7 +1653,7 @@ export const es = {
       items: [
         {
           id: 'recorrido',
-          time: '17:30 — 18:00',
+          time: '17:00 — 18:00',
           title: 'Recorrido vivo',
           description:
             'Bebida de bienvenida, música, visuales territoriales, productos, demostraciones y primeras conexiones.',

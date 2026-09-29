@@ -14,7 +14,7 @@ export const SITE = {
     /** Igual en los dos idiomas. */
     place: 'Quito, Ecuador',
     /** Las horas se escriben igual; la nota del registro previo va traducida. */
-    scheduleLabel: '5:00 pm — 9:00 pm',
+    scheduleLabel: '17:00 — 21:00',
     venue: {
       name: 'Jardín Botánico de Quito',
       /** Búsqueda y no coordenada: sin la dirección exacta, el buscador de Maps
