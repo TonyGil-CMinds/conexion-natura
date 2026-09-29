@@ -90,6 +90,13 @@ export const QUITO = {
       { src: '/partners/logo-socios-quito-redimpacto.svg', onDark: '/partners/logo-socios-light-redimpacto.svg', alt: 'Red de Impacto', width: 303, height: 81 },
       /* El archivo se llama «impaquito» pero el logotipo es el de Latimpacto. */
       { src: '/partners/logo-socios-quito-impaquito.svg', alt: 'Latimpacto', width: 189, height: 51 },
+      /**
+       * IMPAQTO, el que sí lleva ese nombre. El original solo vino en blanco, así
+       * que la versión clara es ese archivo tal cual y la oscura se sacó de él
+       * cambiando el relleno a la tinta de los demás logotipos (`#171717`): con
+       * el blanco como `src` no quedaba nada que ver sobre la paleta clara.
+       */
+      { src: '/partners/logo-socios-quito-impaqto.svg', onDark: '/partners/logo-socios-light-impaqto.svg', alt: 'IMPAQTO', width: 59, height: 56 },
     ],
     [
       { src: '/partners/logo-socios-quito-natura500.svg', alt: 'natura500', width: 113, height: 66 },
