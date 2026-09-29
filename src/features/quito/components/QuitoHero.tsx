@@ -104,11 +104,16 @@ export function QuitoHero({ locale, copy, joinCopy }: Props) {
             que lo pida, así que esta es la puerta al registro. */}
         <QuitoJoinCta copy={joinCopy} autoOpen />
         </div>
+        <div className={styles.eventDetails}>
+          <p className={styles.eventMeta}>
+            <span>17:30</span><span aria-hidden> | </span><span>{QUITO.event.venue.name}</span>
+          </p>
         <time className={styles.date} dateTime={date.toISOString().slice(0, 10)} aria-label={dateLabel}>
           <span aria-hidden>{String(day).padStart(2, '0')}<br />{monthLabel}</span>
           <span className={styles.dateDivider} aria-hidden />
           <span aria-hidden>{String(year).slice(0, 2)}<br />{String(year).slice(2)}</span>
         </time>
+        </div>
       </div>
     </section>
   );

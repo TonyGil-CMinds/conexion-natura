@@ -118,12 +118,24 @@
 }
 .cta:hover { transform: translateY(-3px); filter: brightness(1.06); }
 .cta:focus-visible { outline: 2px solid var(--fg); outline-offset: 5px; }
-.date {
+.eventDetails {
   position: absolute;
   z-index: 3;
   right: var(--quito-gutter);
   bottom: clamp(58px, 9svh, 96px);
+  width: min(34vw, 360px);
+  text-align: center;
+}
+.eventMeta {
+  margin: 0 0 20px;
+  font: 700 clamp(11px, 1vw, 14px)/1.5 var(--font-mono);
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.eventMeta span:last-child { display: inline-block; }
+.date {
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 22px;
   font: 400 clamp(32px, 3.75vw, 54px)/1 var(--font-mono);
@@ -198,9 +210,14 @@
    */
   .claim { font-size: min(9.5vw, 5.4vh); margin-top: 8px; }
 
-  .date {
+  .eventDetails {
     position: static;
     order: 2;
+    width: 100%;
+    z-index: 3;
+  }
+  .eventMeta { margin-bottom: 12px; font-size: 11px; }
+  .date {
     width: 100%;
     justify-content: center;
     gap: 3.5vw;
