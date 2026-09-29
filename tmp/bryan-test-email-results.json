@@ -1,0 +1,17 @@
+[
+  {
+    "template": "waitlistEs",
+    "status": "sent",
+    "id": "01a0eeca-e3bc-726c-beb1-dcded4cd2874"
+  },
+  {
+    "template": "confirmation",
+    "status": "sent",
+    "id": "01a0eeca-e8e8-77da-9ca8-cc7d8651e9d8"
+  },
+  {
+    "template": "invite",
+    "status": "sent",
+    "id": "01a0eeca-ee0e-745c-b278-809d1b9be808"
+  }
+]
