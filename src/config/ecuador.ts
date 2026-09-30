@@ -21,7 +21,7 @@ export const ECUADOR = {
    * este `false`, y las confirmaciones ya enviadas siguen apuntando a una URL
    * que existe.
    */
-  isOpen: false,
+  isOpen: true,
 
   /**
    * Las monedas giratorias de cada paso. Son las del registro del sitio: los
