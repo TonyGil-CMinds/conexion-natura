@@ -322,7 +322,7 @@ export const es = {
         id: 'horario',
         question: '¿Cuál será el horario?',
         answer:
-          'El evento tendrá lugar de 6:30 PM a 9:00 PM. El registro de asistentes comenzará a partir de las 6:00 PM.',
+          'El evento tendrá lugar de 6:30 PM a 10:00 PM. El registro de asistentes comenzará a partir de las 6:00 PM.',
       },
       {
         id: 'organiza',

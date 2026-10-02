@@ -14,7 +14,7 @@ export const SITE = {
     /** Igual en los dos idiomas. */
     place: 'Quito, Ecuador',
     /** Las horas se escriben igual; la nota del registro previo va traducida. */
-    scheduleLabel: '18:30 — 21:00',
+    scheduleLabel: '18:30 — 22:00',
     venue: {
       name: 'Jardín Botánico de Quito',
       /** Búsqueda y no coordenada: sin la dirección exacta, el buscador de Maps
@@ -36,7 +36,7 @@ export const SITE = {
     calendar: {
       kind: 'time',
       start: '20261005T183000',
-      end: '20261005T210000',
+      end: '20261005T220000',
       timeZone: 'America/Guayaquil',
       offset: '-0500',
     },
