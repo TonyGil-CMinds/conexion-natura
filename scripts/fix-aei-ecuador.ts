@@ -8,84 +8,83 @@
  * como script y no a mano contra la base para que quede qué se tocó y por qué,
  * y para poder verlo antes de escribir.
  *
- * Tres cosas:
+ * Dos cosas:
  *
  * 1. El correo de la titular pasa a `gerenciaproyecto@aei.network`. **Es la
  *    clave del registro**, así que esto no es editar un campo: es mover la fila
  *    a otra identidad. Por eso se comprueba antes que la dirección nueva no
  *    exista ya, o el cambio chocaría contra el índice único.
- * 2. El acompañante deja de ser Emilio Erráez y pasa a ser Mauricio Pujupat.
- * 3. Se añade una segunda fila para los dos cupos que pidieron: Javier Dias con
- *    Guillermina Anaguachi de acompañante.
+ * 2. Sofía va con **tres acompañantes**: sale Emilio Erráez y entran Mauricio
+ *    Pujupat, Javier Dias y Guillermina Anaguachi.
+ *
+ * **Los tres caben en un solo campo porque el acompañante es texto, no una
+ * fila.** El modelo guarda `guestName` y `guestEmail` sueltos a propósito: aquí
+ * nadie completa un registro propio ni lleva credencial, es un dato de aforo. Lo
+ * que no cabe es un correo por cabeza, y por eso `guestEmail` se queda vacío en
+ * vez de llevar el de uno de los tres y dar a entender que es de todos.
  *
  * **Las cédulas no se guardan.** El modelo no tiene dónde ponerlas y no hacen
  * falta para el registro: son para el control de acceso de la sede, que es otro
  * sistema. Inventar una columna para un dato que el sitio no usa sería guardar
  * identificación personal sin motivo.
  *
- * **No manda ningún correo.** La fila nueva nace sin marca de confirmación, que
- * es la verdad: nadie le ha escrito. Avisar es otro acto y va por su cuenta.
+ * **No manda ningún correo.** Avisar es otro acto y va por su cuenta.
  */
 import 'dotenv/config';
 import { prisma } from '../src/lib/prisma';
 
-/** La fila que ya existe, por el correo con el que se registró. */
-const ACTUAL = 'consultor1@aei.network';
+/** Los correos con los que la fila pudo quedarse, de más viejo a más nuevo. */
+const POSIBLES = ['gerenciaproyecto@aei.network', 'consultor1@aei.network'] as const;
 
 const TITULAR = {
   email: 'gerenciaproyecto@aei.network',
   fullName: 'Sofía Villacís',
-  guestName: 'Mauricio Pujupat',
-  /**
-   * Vacío a propósito: la petición no trae el correo de Mauricio. Mejor el hueco
-   * que una dirección inventada, y el acompañante no completa registro propio
-   * —es un dato de aforo—, así que la fila es válida sin él.
-   */
+  /** Los tres, en el orden en que los pidió la organización. */
+  guestName: 'Mauricio Pujupat, Javier Dias, Guillermina Anaguachi',
+  /** Vacío a propósito: son tres personas y el campo es uno. */
   guestEmail: '',
 } as const;
 
-const SEGUNDA = {
-  email: 'amazonia@aei.network',
-  fullName: 'Javier Dias',
-  guestName: 'Guillermina Anaguachi',
-  /** Lo mismo: la captura de la petición se corta antes de su correo. */
-  guestEmail: '',
-} as const;
+/**
+ * Una fila que se creó por leer la petición como dos registros y que no lo era:
+ * los dos cupos de más son acompañantes de Sofía, no una inscripción aparte. Se
+ * borra si está.
+ */
+const SOBRA = 'amazonia@aei.network';
 
 async function main() {
   const aplicar = process.argv.includes('--aplicar');
 
-  const fila = await prisma.ecuadorRegistration.findUnique({ where: { email: ACTUAL } });
+  let fila = null;
+  for (const email of POSIBLES) {
+    fila = await prisma.ecuadorRegistration.findUnique({ where: { email } });
+    if (fila) break;
+  }
   if (!fila) {
-    console.error(`No hay registro con ${ACTUAL}. Nada que corregir.`);
+    console.error(`No hay registro de AEI con ninguno de: ${POSIBLES.join(', ')}.`);
     process.exitCode = 1;
     return;
   }
 
-  // El correo es único: si el nuevo ya existe, el cambio rompería el índice.
+  // El correo es único: si el nuevo ya lo tiene otra fila, el cambio lo rompería.
   const choque = await prisma.ecuadorRegistration.findUnique({ where: { email: TITULAR.email } });
-  const yaSegunda = await prisma.ecuadorRegistration.findUnique({ where: { email: SEGUNDA.email } });
+  const dobleta = await prisma.ecuadorRegistration.findUnique({ where: { email: SOBRA } });
 
   console.log('fila actual:');
   console.log(`  ${fila.email}  ${fila.fullName}  (${fila.organization})`);
-  console.log(`  acompañante: ${fila.guestName || '(ninguno)'} <${fila.guestEmail || 'sin correo'}>`);
+  console.log(`  acompañantes: ${fila.guestName || '(ninguno)'}`);
 
   console.log('\nquedaría así:');
   console.log(`  ${TITULAR.email}  ${TITULAR.fullName}`);
-  console.log(`  acompañante: ${TITULAR.guestName} <${TITULAR.guestEmail || 'SIN CORREO — falta el dato'}>`);
+  console.log(`  acompañantes: ${TITULAR.guestName}`);
+  console.log(`  participación: ${fila.participation} · 4 personas en total`);
 
-  console.log('\nfila nueva:');
-  console.log(`  ${SEGUNDA.email}  ${SEGUNDA.fullName}  (${fila.organization})`);
-  console.log(`  acompañante: ${SEGUNDA.guestName} <${SEGUNDA.guestEmail || 'SIN CORREO — falta el dato'}>`);
-  console.log(`  participación: ${fila.participation} · sin marca de confirmación`);
+  if (dobleta) console.log(`\nse borraría la fila de más: ${SOBRA} (${dobleta.fullName})`);
 
   if (choque && choque.id !== fila.id) {
     console.error(`\n❌ ${TITULAR.email} ya está usado por otro registro (${choque.fullName}). No se toca nada.`);
     process.exitCode = 1;
     return;
-  }
-  if (yaSegunda) {
-    console.log(`\n⚠️  ${SEGUNDA.email} ya existe (${yaSegunda.fullName}): se actualizaría en vez de crearse.`);
   }
 
   if (!aplicar) {
@@ -103,21 +102,7 @@ async function main() {
     },
   });
 
-  await prisma.ecuadorRegistration.upsert({
-    where: { email: SEGUNDA.email },
-    update: { fullName: SEGUNDA.fullName, guestName: SEGUNDA.guestName, guestEmail: SEGUNDA.guestEmail },
-    create: {
-      email: SEGUNDA.email,
-      fullName: SEGUNDA.fullName,
-      /** Los mismos que la fila de la que salen: es la misma mesa. */
-      organization: fila.organization,
-      participation: fila.participation,
-      tablePitch: fila.tablePitch,
-      guestName: SEGUNDA.guestName,
-      guestEmail: SEGUNDA.guestEmail,
-      locale: fila.locale,
-    },
-  });
+  if (dobleta) await prisma.ecuadorRegistration.delete({ where: { email: SOBRA } });
 
   console.log('\n✅ hecho.');
   console.log(`   registros de Ecuador: ${await prisma.ecuadorRegistration.count()}`);
