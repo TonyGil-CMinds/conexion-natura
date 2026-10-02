@@ -1700,7 +1700,6 @@ export const es = {
        * veces seguidas.
        */
       partnerGroups: {
-        hosts: 'Organizaciones anfitrionas',
         through: 'A través de',
         support: 'Con el apoyo de',
       },

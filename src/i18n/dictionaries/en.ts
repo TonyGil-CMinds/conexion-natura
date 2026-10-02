@@ -1475,7 +1475,6 @@ export const en: Dictionary = {
       ctaLabel: 'Register now',
       hostsTitle: 'Meet the host organisations',
       partnerGroups: {
-        hosts: 'Host organisations',
         through: 'Through',
         support: 'With the support of',
       },
