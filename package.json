@@ -17,6 +17,7 @@
     "db:remove": "tsx scripts/remove-attendee.ts",
     "mail:verify": "tsx scripts/verify-resend.ts",
     "mail:verify:send": "tsx scripts/verify-resend.ts",
+    "ecuador:aei": "tsx scripts/fix-aei-ecuador.ts",
     "mail:hora": "tsx scripts/send-time-change.ts",
     "mail:hora:send": "tsx scripts/send-time-change.ts --enviar",
     "mail:quito": "tsx scripts/send-quito-update.ts",
