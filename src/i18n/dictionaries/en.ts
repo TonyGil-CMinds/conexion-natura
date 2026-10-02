@@ -121,14 +121,14 @@ export const en: Dictionary = {
     items: [
       {
         id: 'recorrido',
-        time: '17:00 — 17:25',
+        time: '18:00 — 18:25',
         title: 'Living tour',
         description:
           'Welcome drink, music, visuals from the territories, products, demos and first connections.',
       },
       {
         id: 'apertura',
-        time: '17:30 — 17:37',
+        time: '18:30 — 18:37',
         title: 'Opening: why we are here',
         description: 'A welcome from NaturaTech LAC, CEIBA and Natura500.',
         host: {
@@ -138,7 +138,7 @@ export const en: Dictionary = {
       },
       {
         id: 'territorio',
-        time: '17:40 — 17:45',
+        time: '18:40 — 18:45',
         title: 'Prosperity begins in the territory',
         host: { name: 'Constanza Gómez Mont' },
         people: [
@@ -147,7 +147,7 @@ export const en: Dictionary = {
       },
       {
         id: 'historias',
-        time: '17:47 — 18:17',
+        time: '18:47 — 19:17',
         title: 'Natura500 stories',
         description:
           'Three innovators tell their story: what set them on this path, what they dream of achieving and how they relate to nature.',
@@ -155,7 +155,7 @@ export const en: Dictionary = {
       },
       {
         id: 'idea-spark-inversion',
-        time: '18:20 — 18:30',
+        time: '19:20 — 19:30',
         title: 'Idea Spark: investing in companies that change the story',
         description:
           'What are the new business models for? Which paradigm are we moving through, and how does it look from the investor’s side?',
@@ -167,7 +167,7 @@ export const en: Dictionary = {
       },
       {
         id: 'idea-spark-industria',
-        time: '18:32 — 18:42',
+        time: '19:32 — 19:42',
         title: 'Idea Spark: from solution to industry',
         host: { name: 'Carolina Proaño', role: 'CEIBA' },
         people: [
@@ -177,7 +177,7 @@ export const en: Dictionary = {
       },
       {
         id: 'continente',
-        time: '18:45 — 18:55',
+        time: '19:45 — 19:55',
         title: 'The continent we want to live in',
         description:
           'What if Latin America and the Caribbean decided to build the future with —not at the expense of— what is alive?',
@@ -185,7 +185,7 @@ export const en: Dictionary = {
       },
       {
         id: 'brindis',
-        time: '19:00 — 21:00',
+        time: '20:00 — 22:00',
         title: 'Toast and connections cocktail',
       },
     ],
@@ -1442,21 +1442,21 @@ export const en: Dictionary = {
       items: [
         {
           id: 'recorrido',
-          time: '17:30 — 18:00',
+          time: '18:30 — 19:00',
           title: 'Living tour',
           description:
             'Welcome drink, music, visuals from the territories, products, demos and first connections.',
         },
         {
           id: 'bienvenida',
-          time: '18:00 — 18:10',
+          time: '19:00 — 19:10',
           title: 'Welcome from the host organisations',
           description:
             'A welcome from NaturaTech LAC, CEIBA, Natura500, Latimpacto, Red de Impacto Latam and IMPAQTO.',
         },
         {
           id: 'fireside',
-          time: '18:10 — 18:40',
+          time: '19:10 — 19:40',
           title: 'Fireside chat',
           description:
             'One question about the industry each of them represents. With Natura500, Latimpacto, Red de Impacto Latam and IMPAQTO.',
@@ -1464,7 +1464,7 @@ export const en: Dictionary = {
         },
         {
           id: 'coctel',
-          time: '18:40 — 21:00',
+          time: '19:40 — 22:00',
           title: 'Cocktail and connections',
         },
       ],

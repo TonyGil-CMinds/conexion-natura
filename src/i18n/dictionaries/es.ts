@@ -151,14 +151,14 @@ export const es = {
     items: [
       {
         id: 'recorrido',
-        time: '17:00 — 17:25',
+        time: '18:00 — 18:25',
         title: 'Recorrido vivo',
         description:
           'Bebida de bienvenida, música, visuales territoriales, productos, demostraciones y primeras conexiones.',
       },
       {
         id: 'apertura',
-        time: '17:30 — 17:37',
+        time: '18:30 — 18:37',
         title: 'Apertura: por qué estamos aquí',
         description: 'Bienvenida desde NaturaTech LAC, CEIBA y Natura500.',
         host: {
@@ -168,7 +168,7 @@ export const es = {
       },
       {
         id: 'territorio',
-        time: '17:40 — 17:45',
+        time: '18:40 — 18:45',
         title: 'La prosperidad comienza en el territorio',
         host: { name: 'Constanza Gómez Mont' },
         people: [
@@ -177,7 +177,7 @@ export const es = {
       },
       {
         id: 'historias',
-        time: '17:47 — 18:17',
+        time: '18:47 — 19:17',
         title: 'Historias Natura500',
         description:
           'Tres innovadores cuentan su historia: qué les llevó a iniciar este camino, qué sueñan lograr y cómo es su relación con la naturaleza.',
@@ -185,7 +185,7 @@ export const es = {
       },
       {
         id: 'idea-spark-inversion',
-        time: '18:20 — 18:30',
+        time: '19:20 — 19:30',
         title: 'Idea Spark: invertir en empresas que cambian la historia',
         description:
           '¿Cuál es el propósito de los nuevos modelos de negocio? ¿Qué paradigma estamos transitando y cómo se vive desde el lado del inversionista?',
@@ -197,7 +197,7 @@ export const es = {
       },
       {
         id: 'idea-spark-industria',
-        time: '18:32 — 18:42',
+        time: '19:32 — 19:42',
         title: 'Idea Spark: de solución a industria',
         host: { name: 'Carolina Proaño', role: 'CEIBA' },
         people: [
@@ -207,7 +207,7 @@ export const es = {
       },
       {
         id: 'continente',
-        time: '18:45 — 18:55',
+        time: '19:45 — 19:55',
         title: 'El continente que queremos habitar',
         description:
           '¿Qué pasaría si América Latina y el Caribe decidieran construir el futuro con —y no a costa de— lo que está vivo?',
@@ -215,7 +215,7 @@ export const es = {
       },
       {
         id: 'brindis',
-        time: '19:00 — 21:00',
+        time: '20:00 — 22:00',
         title: 'Brindis y cóctel de conexiones',
       },
     ],
@@ -1653,14 +1653,14 @@ export const es = {
       items: [
         {
           id: 'recorrido',
-          time: '17:30 — 18:00',
+          time: '18:30 — 19:00',
           title: 'Recorrido vivo',
           description:
             'Bebida de bienvenida, música, visuales territoriales, productos, demostraciones y primeras conexiones.',
         },
         {
           id: 'bienvenida',
-          time: '18:00 — 18:10',
+          time: '19:00 — 19:10',
           title: 'Bienvenida de las organizaciones anfitrionas',
           description:
             'Bienvenida desde NaturaTech LAC, CEIBA, Natura500, Latimpacto, Red de Impacto Latam e IMPAQTO.',
@@ -1672,7 +1672,7 @@ export const es = {
            * publicar un nombre sin confirmar es peor que no ponerlo.
            */
           id: 'fireside',
-          time: '18:10 — 18:40',
+          time: '19:10 — 19:40',
           title: 'Fireside chat',
           description:
             'Una pregunta sobre la industria que cada quien representa. Participan Natura500, Latimpacto, Red de Impacto Latam e IMPAQTO.',
@@ -1680,7 +1680,7 @@ export const es = {
         },
         {
           id: 'coctel',
-          time: '18:40 — 21:00',
+          time: '19:40 — 22:00',
           title: 'Cóctel y conexiones',
         },
       ],
