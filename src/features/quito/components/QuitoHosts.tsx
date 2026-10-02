@@ -30,8 +30,27 @@ type Logo = {
   scale?: number;
 };
 
-function delIdioma(entrada: Logo | { byLocale: Record<Locale, Logo> }, locale: Locale): Logo {
+/** Una entrada tal como está escrita: un logotipo, o uno por idioma. */
+type Entrada = (Logo | { byLocale: Record<Locale, Logo> }) & { newRow?: boolean };
+
+function delIdioma(entrada: Entrada, locale: Locale): Logo {
   return 'byLocale' in entrada ? entrada.byLocale[locale] : entrada;
+}
+
+/**
+ * Parte un grupo en las filas que pida su configuración.
+ *
+ * Un grupo es casi siempre una fila. Cuando lleva tantos logotipos que en una
+ * sola no se leen, la entrada donde tiene que cortarse va marcada con `newRow`:
+ * el corte es decisión de diseño y no del ancho de cada pantalla.
+ */
+function enFilas(logos: readonly Entrada[]): Entrada[][] {
+  const filas: Entrada[][] = [];
+  for (const entrada of logos) {
+    if (!filas.length || entrada.newRow) filas.push([]);
+    filas[filas.length - 1]!.push(entrada);
+  }
+  return filas;
 }
 
 export function QuitoHosts({ copy, locale }: { copy: Dictionary['quito']['footer']; locale: Locale }) {
@@ -53,8 +72,9 @@ export function QuitoHosts({ copy, locale }: { copy: Dictionary['quito']['footer
                   {copy.partnerGroups[group.key as keyof typeof copy.partnerGroups]}
                 </h3>
               )}
-              <ul className={styles.networkRow} data-group={group.key}>
-              {group.logos.map((entrada) => {
+              {enFilas(group.logos).map((fila, i) => (
+              <ul key={i} className={styles.networkRow} data-group={group.key}>
+              {fila.map((entrada) => {
                 const logo = delIdioma(entrada, locale);
                 return (
                 <li key={logo.alt}>
@@ -102,6 +122,7 @@ export function QuitoHosts({ copy, locale }: { copy: Dictionary['quito']['footer
                 );
               })}
               </ul>
+              ))}
             </div>
           ))}
         </div>

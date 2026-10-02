@@ -153,7 +153,15 @@ export const QUITO = {
         { src: '/partners/logo-socios-francia.svg', onDark: '/partners/logo-socios-light-france.svg', alt: 'Gouvernement français', width: 57, height: 30 },
         { src: '/partners/logo-socios-amazonia.svg', onDark: '/partners/logo-socios-amazonia-light.svg', alt: 'Amazónia', width: 31, height: 26 },
         { src: '/partners/logo-socios-cc.svg', onDark: '/partners/logo-socios-cc-light.svg', alt: 'Climate Collective', width: 58, height: 19 },
-        { src: '/partners/logo-socios-quito-startuplab.svg', alt: 'StartupLab.mx', width: 185, height: 46 },
+        /**
+         * `newRow` parte el grupo en dos filas a partir de aquí.
+         *
+         * Va marcado y no se deja al reflujo: ocho logotipos en una línea caben,
+         * pero quedan tan pequeños que no se leen, y dónde parte el navegador
+         * depende del ancho de cada pantalla. El corte es decisión de diseño, así
+         * que se escribe.
+         */
+        { src: '/partners/logo-socios-quito-startuplab.svg', alt: 'StartupLab.mx', width: 185, height: 46, newRow: true },
         { src: '/partners/logo-socios-quito-trulab.svg', alt: 'truLab', width: 116, height: 50 },
         { src: '/partners/logo-socios-quito-tangara.svg', alt: 'Tàngara', width: 145, height: 56 },
       ],
