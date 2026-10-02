@@ -151,6 +151,67 @@ function readConfig(template: TemplateName): { config: Config } | { missing: rea
  * («¡Nos vemos en Quito!»). Lo mismo pasaría con `reply_to`. `from` sí va,
  * porque el envío lo exige y está configurado a propósito.
  */
+/**
+ * Manda un correo cuyo **HTML viene del repositorio**, sin plantilla de Resend.
+ *
+ * Existe porque una plantilla en el panel es contenido fuera del control de
+ * versiones: no se revisa en un diff, no puede leer `SITE.event`, y corregirla
+ * por API tropieza con validaciones que el propio panel no documenta. Para un
+ * aviso puntual —un cambio de hora, una cancelación— sale más barato que el
+ * HTML viva aquí.
+ *
+ * Pasa por la **misma puerta** que los envíos con plantilla: fuera del
+ * despliegue solo se escribe a `CEIBA_EMAIL_ALLOWLIST`. Saltársela aquí habría
+ * dejado un segundo camino al mundo real sin la lección ya aprendida.
+ *
+ * El asunto **sí** va en el envío: sin plantilla detrás, no hay de dónde
+ * sacarlo.
+ */
+export async function sendHtml({
+  to,
+  subject,
+  html,
+  text,
+}: {
+  to: string;
+  subject: string;
+  html: string;
+  /** La versión en texto plano. Sin ella los filtros puntúan peor el mensaje. */
+  text?: string;
+}): Promise<SendResult> {
+  if (!recipientAllowed(to)) {
+    console.warn(
+      `[resend] BLOQUEADO el envío a ${to}: fuera del despliegue solo se escribe a ` +
+        'CEIBA_EMAIL_ALLOWLIST. Añade ahí tu dirección si quieres probar de verdad.',
+    );
+    return { status: 'skipped', reason: 'notAllowed', to };
+  }
+
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const from = process.env.CEIBA_EMAIL_FROM?.trim();
+  const missing = [
+    ...(apiKey ? [] : ['RESEND_API_KEY']),
+    ...(from ? [] : ['CEIBA_EMAIL_FROM']),
+  ];
+  if (missing.length) return { status: 'skipped', reason: 'missingConfig', missing };
+
+  try {
+    const response = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from, to, subject, html, ...(text ? { text } : {}) }),
+    });
+    if (!response.ok) {
+      const detail = await response.text().catch(() => '');
+      return { status: 'failed', reason: `HTTP ${response.status}: ${detail || 'sin cuerpo'}` };
+    }
+    const payload = (await response.json().catch(() => null)) as { id?: string } | null;
+    return { status: 'sent', id: payload?.id };
+  } catch (error) {
+    return { status: 'failed', reason: error instanceof Error ? error.message : String(error) };
+  }
+}
+
 export async function sendTemplate({
   to,
   data,

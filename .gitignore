@@ -23,3 +23,6 @@ next-env.d.ts
 # Andamio de verificación: scripts de un solo uso en la raíz.
 tmp-*.js
 tmp-*.mjs
+
+# Material de trabajo para revisar correos y capturas: no es del proyecto.
+tmp/
