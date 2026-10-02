@@ -45,14 +45,14 @@ export function QuitoHosts({ copy, locale }: { copy: Dictionary['quito']['footer
           {QUITO.partnerGroups.map((group) => (
             <div key={group.key} className={styles.networkGroup}>
               {/**
-               * El grupo de anfitrionas no repite rótulo: lo nombra el titular
-               * de la sección, que está justo encima.
+               * Los tres grupos llevan rótulo, también el de anfitrionas. Antes
+               * se lo ahorraba porque lo nombraba el titular de la sección, pero
+               * sin él los otros dos parecían apartados de una lista cuya
+               * primera parte no se llamaba de ninguna manera.
                */}
-              {group.key !== 'hosts' && (
-                <h3 className={styles.networkGroupTitle}>
-                  {copy.partnerGroups[group.key as keyof typeof copy.partnerGroups]}
-                </h3>
-              )}
+              <h3 className={styles.networkGroupTitle}>
+                {copy.partnerGroups[group.key as keyof typeof copy.partnerGroups]}
+              </h3>
               <ul className={styles.networkRow} data-group={group.key}>
               {group.logos.map((entrada) => {
                 const logo = delIdioma(entrada, locale);

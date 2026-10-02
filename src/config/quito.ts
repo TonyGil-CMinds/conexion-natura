@@ -121,6 +121,12 @@ export const QUITO = {
         { src: '/partners/logo-socios-quito-natura500.svg', alt: 'natura500', width: 113, height: 66 },
         { src: '/partners/logo-socios-quito-fondoverde.svg', onDark: '/partners/logo-socios-light-fondoverde.svg', alt: 'Fondo Verde Catalítico', width: 231, height: 58 },
         { src: '/partners/logo-socios-cminds.svg', onDark: '/partners/logo-socios-cminds-light.svg', alt: 'C Minds', width: 118, height: 28 },
+      ],
+    },
+    /** «Con el apoyo de»: quienes acompañan. Es el grupo largo y va más pequeño. */
+    {
+      key: 'support',
+      logos: [
         /**
          * El **único logotipo que cambia con el idioma**: el banco tiene marca
          * propia en cada uno y no es una traducción del rótulo, así que no vale
@@ -130,33 +136,26 @@ export const QUITO = {
          * elige, y las dos versiones traen sus propias medidas porque no son el
          * mismo dibujo escalado.
          *
-         * `scale` les quita un tercio de alto a las dos. Es el más apaisado de
-         * todos —cinco de ancho por uno de alto—, así que igualar alturas lo
-         * dejaba midiendo 258 px y encabezando la fila por encima de las
-         * anfitrionas: igualar por alto solo reparte bien entre proporciones
-         * parecidas.
+         * Aquí **no lleva `scale`**, al revés que cuando estaba en «a través de»:
+         * aquel grupo va grande y este pequeño, así que el alto común ya lo deja
+         * a la medida de sus vecinos. El apartado corregía un problema del grupo
+         * anterior, no del logotipo.
          */
         {
           byLocale: {
             /** El español llegó solo en blanco; la versión clara se sacó de él
              *  con la tinta del original en inglés (`#001D09`). */
-            es: { src: '/partners/logo-socios-es-bidlab.svg', onDark: '/partners/logo-socios-light-es-bidlab.svg', alt: 'BID Lab', width: 308, height: 62, scale: 0.68 },
-            en: { src: '/partners/logo-socios-bid.svg', onDark: '/partners/logo-socios-bid-light.svg', alt: 'IDB Lab', width: 123, height: 25, scale: 0.68 },
+            es: { src: '/partners/logo-socios-es-bidlab.svg', onDark: '/partners/logo-socios-light-es-bidlab.svg', alt: 'BID Lab', width: 308, height: 62 },
+            en: { src: '/partners/logo-socios-bid.svg', onDark: '/partners/logo-socios-bid-light.svg', alt: 'IDB Lab', width: 123, height: 25 },
           },
         },
-      ],
-    },
-    /** «Con el apoyo de»: quienes acompañan. Es el grupo largo y va más pequeño. */
-    {
-      key: 'support',
-      logos: [
-        { src: '/partners/logo-socios-quito-startuplab.svg', alt: 'StartupLab.mx', width: 185, height: 46 },
-        { src: '/partners/logo-socios-quito-trulab.svg', alt: 'truLab', width: 116, height: 50 },
-        { src: '/partners/logo-socios-quito-tangara.svg', alt: 'Tàngara', width: 145, height: 56 },
         { src: '/partners/logo-socios-suecia.svg', onDark: '/partners/logo-socios-light-suecia.svg', alt: 'Sweden Sverige', width: 62, height: 19 },
         { src: '/partners/logo-socios-francia.svg', onDark: '/partners/logo-socios-light-france.svg', alt: 'Gouvernement français', width: 57, height: 30 },
         { src: '/partners/logo-socios-amazonia.svg', onDark: '/partners/logo-socios-amazonia-light.svg', alt: 'Amazónia', width: 31, height: 26 },
         { src: '/partners/logo-socios-cc.svg', onDark: '/partners/logo-socios-cc-light.svg', alt: 'Climate Collective', width: 58, height: 19 },
+        { src: '/partners/logo-socios-quito-startuplab.svg', alt: 'StartupLab.mx', width: 185, height: 46 },
+        { src: '/partners/logo-socios-quito-trulab.svg', alt: 'truLab', width: 116, height: 50 },
+        { src: '/partners/logo-socios-quito-tangara.svg', alt: 'Tàngara', width: 145, height: 56 },
       ],
     },
   ],
