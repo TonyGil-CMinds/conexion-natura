@@ -5,8 +5,12 @@ import { findInviteeMatch, type Candidate, type InviteeMatch } from './invitee-m
 /**
  * Quién entra confirmado y quién a lista de espera.
  *
- * El aforo es por invitación, así que el registro ya no confirma a cualquiera:
- * decide contra la lista de preregistro. Tres caminos, de más a menos seguro:
+ * **Mientras falte gente para llenar la sala, entra todo el que llega.** La
+ * lista de preregistro no desaparece: sigue diciendo de quién es cada
+ * invitación, pero deja de ser la puerta. Al llegar al aforo vuelve a serlo.
+ *
+ * Con la sala llena, decide contra la lista. Tres caminos, de más a menos
+ * seguro:
  *
  * 1. **Su correo está en la lista.** Confirmado, sin más preguntas.
  * 2. **No está, pero el nombre y la organización coinciden** con alguien de la
@@ -33,6 +37,32 @@ export type IdentityAnswer =
   /** Dijo que no, o ya se le preguntó: no hay que volver a preguntar. */
   | { identityChecked: true }
   | undefined;
+
+/**
+ * Cuánta gente entra sin preguntar nada.
+ *
+ * Mientras haya menos de este número con plaza, **el registro confirma a todo
+ * el que llegue**: la lista de preregistro deja de decidir y pasa a ser solo lo
+ * que ata a cada quien su invitación. Al alcanzarlo, la puerta vuelve a ser la
+ * de antes y quien no esté en la lista va a la espera.
+ *
+ * Es una decisión de aforo y no una regla del código, así que vive aquí arriba
+ * y se cambia con un número.
+ */
+const AFORO_ABIERTO = 170;
+
+/**
+ * Cuántas personas tienen plaza ahora mismo.
+ *
+ * Cuenta **filas de asistente**, no registros: quien trae acompañante ocupa dos
+ * sitios en la sala, y el aforo es de sillas. Los pendientes no cuentan —todavía
+ * no han completado su registro— pero cuando lo completen heredan el estado de
+ * quien les invitó y entran a sumar, que es lo correcto: su sitio ya estaba
+ * reservado por el anfitrión.
+ */
+async function conPlaza(): Promise<number> {
+  return prisma.attendee.count({ where: { status: 'CONFIRMED' } });
+}
 
 /**
  * Decide el estado de un registro.
@@ -72,6 +102,23 @@ export async function admit(
 
   /** Ya tenía invitación atada de un registro anterior: se respeta. */
   if (currentInviteeId) return { kind: 'confirmed', inviteeId: currentInviteeId };
+
+  /**
+   * Mientras sobre sitio, entra todo el mundo.
+   *
+   * Va **después** de mirar la lista para que quien esté en ella siga saliendo
+   * con su invitación atada: el aforo cambia quién entra, no a quién pertenece
+   * cada invitación.
+   *
+   * Y va **antes** de la pregunta de identidad porque esa pregunta solo existía
+   * para decidir la entrada. Con la puerta abierta, preguntarle a alguien si es
+   * quien parece sería hacerle justificar algo que ya no se le pide.
+   *
+   * La cuenta se hace al vuelo y no se cachea: dos registros a la vez podrían
+   * colarse en el 169 y dejar 171. A esta escala eso es un asiento de más, no un
+   * problema; una reserva atómica costaría una transacción por registro.
+   */
+  if ((await conPlaza()) < AFORO_ABIERTO) return { kind: 'confirmed', inviteeId: null };
 
   /** 2. Dijo «sí, soy yo». Se vuelve a comprobar aquí: el cliente no decide. */
   if (answer && 'claimInviteeId' in answer) {
