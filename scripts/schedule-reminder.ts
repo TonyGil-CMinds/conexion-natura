@@ -80,6 +80,15 @@ async function cancelar() {
 async function main() {
   if (process.argv.includes('--cancelar')) return cancelar();
   const programar = process.argv.includes('--programar');
+  /**
+   * Manda ya, en vez de dejarlo para la hora.
+   *
+   * Hace falta porque la lista crece: entre programar la cola y la hora de
+   * salida se registró gente que no iba en ella, y pasada esa hora ya no hay
+   * nada que programar. Es el mismo correo a los mismos criterios; lo único
+   * que cambia es que sale ahora.
+   */
+  const ahoraMismo = process.argv.includes('--ahora');
 
   const ahora = new Date();
   const faltan = (CUANDO.getTime() - ahora.getTime()) / 3600e3;
@@ -100,8 +109,8 @@ async function main() {
   console.log(`ya programados     : ${confirmados.length - destinatarios.length}`);
   console.log(`se programarían    : ${destinatarios.length}`);
 
-  if (faltan <= 0) {
-    console.error('\n❌ La hora de salida ya pasó. Cambia CUANDO_QUITO o manda el correo ya.');
+  if (faltan <= 0 && !ahoraMismo) {
+    console.error('\n❌ La hora de salida ya pasó. Usa --ahora para mandarlo en el momento.');
     process.exitCode = 1;
     return;
   }
@@ -110,7 +119,7 @@ async function main() {
     console.log('\nPrimeros diez:');
     for (const a of destinatarios.slice(0, 10)) console.log(`  · ${tratamiento(a.name)} <${a.email}>`);
     if (destinatarios.length > 10) console.log(`  · … y ${destinatarios.length - 10} más`);
-    console.log('\nNo se programó nada. Añade --programar para hacerlo.');
+    console.log(`\nNo se ${ahoraMismo ? 'envió' : 'programó'} nada. Añade --programar para hacerlo.`);
     return;
   }
 
@@ -125,7 +134,10 @@ async function main() {
   let bien = 0;
   for (const a of destinatarios) {
     const { subject, html, text } = reminderEmail({ name: tratamiento(a.name), locale: 'es' });
-    const r = await sendHtml({ to: a.email, subject, html, text, scheduledAt: CUANDO.toISOString() });
+    const r = await sendHtml({
+      to: a.email, subject, html, text,
+      ...(ahoraMismo ? {} : { scheduledAt: CUANDO.toISOString() }),
+    });
 
     if (r.status === 'sent' && r.id) {
       /**
@@ -134,7 +146,7 @@ async function main() {
        * él sería peor que no tenerlo.
        */
       const actual = leerRegistro();
-      actual[a.email] = { id: r.id, cuando: CUANDO.toISOString() };
+      actual[a.email] = { id: r.id, cuando: ahoraMismo ? new Date().toISOString() : CUANDO.toISOString() };
       escribirRegistro(actual);
       bien += 1;
       console.log(`  ✅ ${a.email}`);
@@ -144,8 +156,8 @@ async function main() {
   }
 
   console.log(`\nprogramados: ${bien} de ${destinatarios.length}`);
-  console.log(`saldrán el ${CUANDO_QUITO.replace('T', ' ')} hora de Quito.`);
-  console.log('Para retirarlos: npm run mail:recordatorio:cancel');
+  console.log(ahoraMismo ? 'enviados en el momento.' : `saldrán el ${CUANDO_QUITO.replace('T', ' ')} hora de Quito.`);
+  if (!ahoraMismo) console.log('Para retirarlos: npm run mail:recordatorio:cancel');
   if (bien < destinatarios.length) process.exitCode = 1;
 }
 

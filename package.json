@@ -19,6 +19,7 @@
     "mail:verify:send": "tsx scripts/verify-resend.ts",
     "mail:recordatorio": "tsx scripts/schedule-reminder.ts",
     "mail:recordatorio:send": "tsx scripts/schedule-reminder.ts --programar",
+    "mail:recordatorio:now": "tsx scripts/schedule-reminder.ts --programar --ahora",
     "mail:recordatorio:cancel": "tsx scripts/schedule-reminder.ts --cancelar",
     "lista:alta": "tsx scripts/add-attendees.ts",
     "asistente:restaurar": "tsx scripts/restore-demoted-attendee.ts",

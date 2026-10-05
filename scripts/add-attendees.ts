@@ -56,6 +56,13 @@ const GENTE = [
     organization: 'Impacta - Emprendimiento Sostenible',
     role: 'Coordinadora de Aceleración',
   },
+  {
+    email: 'sergio@eatableadventures.com',
+    name: 'Sergio',
+    surname: 'Zuñiga',
+    organization: 'Eatable Adventures',
+    role: 'VP Latam',
+  },
 ] as const;
 
 async function main() {
