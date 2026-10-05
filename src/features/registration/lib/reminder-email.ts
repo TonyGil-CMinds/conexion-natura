@@ -30,7 +30,7 @@ const COPY = {
     subject: 'Nos vemos hoy — CEIBA | Welcome to Quito',
     preheader: 'Hoy a las 18:30 en la Rotonda del Jardín Botánico, junto al orquideario.',
     heroAlt: 'CEIBA Welcome to Quito',
-    saludo: '¡Hola!',
+    saludo: { antes: '¡Hola ', despues: '!' },
     entrada: {
       antes: 'Nos entusiasma mucho recibirles en ',
       fuerte: 'CEIBA | Welcome to Quito este lunes 5 de octubre en el marco del GET Forum.',
@@ -77,7 +77,7 @@ const COPY = {
     subject: 'See you today — CEIBA | Welcome to Quito',
     preheader: 'Today at 18:30 at the Jardín Botánico rotunda, next to the orchid house.',
     heroAlt: 'CEIBA Welcome to Quito',
-    saludo: 'Hello!',
+    saludo: { antes: 'Hello ', despues: '!' },
     entrada: {
       antes: 'We are delighted to welcome you to ',
       fuerte: 'CEIBA | Welcome to Quito this Monday 5 October, as part of the GET Forum.',
@@ -119,7 +119,7 @@ const COPY = {
 
 /** Una celda de texto del cuerpo, con la medida que comparten todas. */
 function parrafo(contenido: string, extra = ''): string {
-  return `<tr><td align="left" bgcolor="${COLOR.fondo}" style="padding:0 40px 20px;font-family:${FUENTE};font-size:13px;line-height:22px;letter-spacing:0.06em;color:${COLOR.crema};text-transform:uppercase;${extra}">${contenido}</td></tr>`;
+  return `<tr><td align="left" bgcolor="${COLOR.fondo}" style="padding:0 40px 20px;font-family:${FUENTE};font-size:14px;line-height:23px;letter-spacing:0.01em;color:${COLOR.crema};${extra}">${contenido}</td></tr>`;
 }
 
 /** Lo mismo, con una parte en lima: el resalte cae a mitad de frase. */
@@ -162,7 +162,7 @@ export function reminderEmail({
     <img src="${hero}" width="600" alt="${esc(t.heroAlt)}" style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;text-decoration:none;">
   </td></tr>
 
-  ${parrafo(`${esc(t.saludo)} <span style="color:${COLOR.lima};">${nombre}</span>`, 'padding-top:36px;')}
+  ${parrafo(`${esc(t.saludo.antes)}<span style="color:${COLOR.lima};">${nombre}</span>${esc(t.saludo.despues)}`, 'padding-top:36px;')}
   ${parrafo(`${esc(t.entrada.antes)}<strong style="color:${COLOR.lima};">${esc(t.entrada.fuerte)}</strong>`)}
   ${parrafo(esc(t.detalles), 'padding-bottom:30px;')}
 
@@ -176,7 +176,7 @@ export function reminderEmail({
   <!-- El aviso del cambio, enmarcado: es lo único que alguien podría no saber ya. -->
   <tr><td bgcolor="${COLOR.fondo}" style="padding:0 40px 30px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-      <tr><td align="center" style="border:1px solid ${AVISO};padding:16px 20px;font-family:${FUENTE};font-size:12px;line-height:20px;letter-spacing:0.06em;color:${COLOR.crema};text-transform:uppercase;">
+      <tr><td align="center" style="border:1px solid ${AVISO};padding:16px 20px;font-family:${FUENTE};font-size:13px;line-height:21px;letter-spacing:0.01em;color:${COLOR.crema};">
         <span style="color:${AVISO};">&#9888;</span> ${esc(t.aviso)}
       </td></tr>
     </table>
@@ -226,7 +226,7 @@ export function reminderEmail({
 </html>`;
 
   const text = [
-    `${t.saludo} ${name.trim()}`,
+    `${t.saludo.antes}${name.trim()}${t.saludo.despues}`,
     '',
     `${t.entrada.antes}${t.entrada.fuerte}`,
     '',
