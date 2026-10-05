@@ -172,12 +172,21 @@ export async function sendHtml({
   subject,
   html,
   text,
+  scheduledAt,
 }: {
   to: string;
   subject: string;
   html: string;
   /** La versión en texto plano. Sin ella los filtros puntúan peor el mensaje. */
   text?: string;
+  /**
+   * Cuándo sale, en ISO-8601 con zona. Sin esto sale ya.
+   *
+   * Lo guarda el proveedor, no esta máquina: un correo programado para mañana
+   * a las siete no puede depender de que un portátil siga encendido. Se puede
+   * parar con `cancelScheduled` mientras no haya salido.
+   */
+  scheduledAt?: string;
 }): Promise<SendResult> {
   if (!recipientAllowed(to)) {
     console.warn(
@@ -199,7 +208,11 @@ export async function sendHtml({
     const response = await fetch(ENDPOINT, {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from, to, subject, html, ...(text ? { text } : {}) }),
+      body: JSON.stringify({
+        from, to, subject, html,
+        ...(text ? { text } : {}),
+        ...(scheduledAt ? { scheduled_at: scheduledAt } : {}),
+      }),
     });
     if (!response.ok) {
       const detail = await response.text().catch(() => '');
@@ -262,5 +275,28 @@ export async function sendTemplate({
   } catch (error) {
     // Red caída, DNS, timeout del propio fetch: sigue sin ser cosa del registro.
     return { status: 'failed', reason: error instanceof Error ? error.message : String(error) };
+  }
+}
+
+/**
+ * Retira un correo **programado** que todavía no ha salido.
+ *
+ * Es la contrapartida de `scheduledAt`: programar un envío a mucha gente sin
+ * poder pararlo sería dejar una bala en el aire. Un correo ya enviado no se
+ * puede retirar —el proveedor responde 422— y eso es correcto: lo que está en
+ * la bandeja de alguien ya no es nuestro.
+ */
+export async function cancelScheduled(id: string): Promise<{ ok: true } | { ok: false; reason: string }> {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  if (!apiKey) return { ok: false, reason: 'falta RESEND_API_KEY' };
+  try {
+    const response = await fetch(`${ENDPOINT}/${id}/cancel`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    if (response.ok) return { ok: true };
+    return { ok: false, reason: `HTTP ${response.status}: ${(await response.text().catch(() => '')) || 'sin cuerpo'}` };
+  } catch (error) {
+    return { ok: false, reason: error instanceof Error ? error.message : String(error) };
   }
 }
