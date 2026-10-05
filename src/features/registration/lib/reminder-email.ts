@@ -15,6 +15,7 @@
  */
 import { SITE } from '@/config/site';
 import { COLOR, FUENTE, IMG, esc, type EmailLocale } from './email-shell';
+import { EVENT_EMAIL } from './event-email-details';
 
 /** Los dos rótulos propios de este correo. */
 const ROTULO = {
@@ -24,6 +25,9 @@ const ROTULO = {
 
 /** El ámbar del aviso. Es el del glifo que ya separa secciones en estos correos. */
 const AVISO = '#fecc0c';
+
+/** El mismo mapa que da la confirmación: una sede, un enlace. */
+const MAPA = EVENT_EMAIL.natura_venue_url;
 
 const COPY = {
   es: {
@@ -36,14 +40,15 @@ const COPY = {
       fuerte: 'CEIBA | Welcome to Quito este lunes 5 de octubre en el marco del GET Forum.',
     },
     detalles: 'Les compartimos algunos detalles importantes para tener a la mano:',
-    rotuloHora: 'Horario',
-    aviso: 'Importante: hemos realizado un ajuste en el horario de inicio.',
-    sede: 'Rotonda del Jardín Botánico de Quito, junto al orquideario',
+    rotuloHora: '🕡 Hora',
+    aviso: '⚠️ Importante: hemos realizado un ajuste en el horario de inicio.',
+    sede: '📍 Lugar: Rotonda del Jardín Botánico de Quito, junto al orquideario',
+    mapa: 'Google Maps',
     llegada: [
       'Consideren aproximadamente 3-5 minutos caminando desde la entrada principal del Jardín Botánico.',
       'Se permitirá el ingreso a automóviles hasta la boletería. Si van en Uber, indiquen a sus conductores que entren y no los dejen en la avenida. Una vez dentro verán la señalética del evento. ¡Tendremos sombrillas por si son necesarias!',
     ],
-    cta: 'Ver agenda completa',
+    cta: '🌿 Agenda completa',
     ctaUrl: 'https://ceiba.naturatech.org/es/quito/agenda',
     preguntaAlt: '¿Qué encontrarán en CEIBA | Welcome to Quito?',
     /**
@@ -64,11 +69,11 @@ const COPY = {
       ],
       [
         'CEIBA Welcome to Quito es convocado por ',
-        'NaturaTech LAC – Natura500 (BID Lab y C Minds), Red de Impacto Latam, Latimpacto e IMPAQTO, a través del Fondo Verde Catalítico.',
+        'NaturaTech LAC – Natura500 (BID Lab y C Minds), Red de Impacto LATAM, Latimpacto e IMPAQTO, a través del Fondo Verde Catalítico.',
         '',
       ],
     ],
-    despedida: 'Nos vemos en el Jardín Botánico.',
+    despedida: 'Nos vemos en el Jardín Botánico. 🌿🥂',
     sitio: 'Visita nuestro sitio web',
     sitioUrl: 'https://ceiba.naturatech.org/es/quito',
     legal: '2026 CEIBA Quito. Todos los derechos reservados.',
@@ -83,14 +88,15 @@ const COPY = {
       fuerte: 'CEIBA | Welcome to Quito this Monday 5 October, as part of the GET Forum.',
     },
     detalles: 'Here are a few details worth keeping to hand:',
-    rotuloHora: 'Schedule',
-    aviso: 'Important: we have adjusted the start time.',
-    sede: 'Rotunda of the Jardín Botánico de Quito, next to the orchid house',
+    rotuloHora: '🕡 Time',
+    aviso: '⚠️ Important: we have adjusted the start time.',
+    sede: '📍 Venue: Rotunda of the Jardín Botánico de Quito, next to the orchid house',
+    mapa: 'Google Maps',
     llegada: [
       'Allow roughly 3-5 minutes on foot from the main entrance of the Jardín Botánico.',
       'Cars may drive in as far as the ticket office. If you come by Uber, ask your driver to go in rather than drop you on the avenue. Once inside you will see the event signage. We will have umbrellas on hand if they are needed.',
     ],
-    cta: 'See the full agenda',
+    cta: '🌿 Full agenda',
     ctaUrl: 'https://ceiba.naturatech.org/en/quito/agenda',
     preguntaAlt: 'What will you find at CEIBA | Welcome to Quito?',
     cuerpo: [
@@ -106,11 +112,11 @@ const COPY = {
       ],
       [
         'CEIBA Welcome to Quito is convened by ',
-        'NaturaTech LAC – Natura500 (BID Lab and C Minds), Red de Impacto Latam, Latimpacto and IMPAQTO, through the Fondo Verde Catalítico.',
+        'NaturaTech LAC – Natura500 (BID Lab and C Minds), Red de Impacto LATAM, Latimpacto and IMPAQTO, through the Fondo Verde Catalítico.',
         '',
       ],
     ],
-    despedida: 'See you at the Jardín Botánico.',
+    despedida: 'See you at the Jardín Botánico. 🌿🥂',
     sitio: 'Visit our website',
     sitioUrl: 'https://ceiba.naturatech.org/en/quito',
     legal: '2026 CEIBA Quito. All rights reserved.',
@@ -177,12 +183,12 @@ export function reminderEmail({
   <tr><td bgcolor="${COLOR.fondo}" style="padding:0 40px 30px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
       <tr><td align="center" style="border:1px solid ${AVISO};padding:16px 20px;font-family:${FUENTE};font-size:13px;line-height:21px;letter-spacing:0.01em;color:${COLOR.crema};">
-        <span style="color:${AVISO};">&#9888;</span> ${esc(t.aviso)}
+        ${esc(t.aviso)}
       </td></tr>
     </table>
   </td></tr>
 
-  <tr><td align="center" bgcolor="${COLOR.fondo}" style="padding:0 40px 22px;font-family:${FUENTE};font-size:13px;line-height:22px;letter-spacing:0.14em;color:${COLOR.lima};text-transform:uppercase;font-weight:bold;">${esc(t.sede)}</td></tr>
+  <tr><td align="center" bgcolor="${COLOR.fondo}" style="padding:0 40px 22px;font-family:${FUENTE};font-size:14px;line-height:23px;letter-spacing:0.01em;color:${COLOR.lima};font-weight:bold;">${esc(t.sede)} <a href="${MAPA}" style="color:${COLOR.lima};text-decoration:underline;">(${esc(t.mapa)})</a></td></tr>
 
   ${t.llegada.map((linea) => parrafo(`<em>${esc(linea)}</em>`)).join('\n  ')}
 
@@ -235,7 +241,7 @@ export function reminderEmail({
     `${t.rotuloHora}: ${horario}`,
     t.aviso,
     '',
-    t.sede,
+    `${t.sede} — ${MAPA}`,
     ...t.llegada,
     '',
     `${t.cta}: ${t.ctaUrl}`,
