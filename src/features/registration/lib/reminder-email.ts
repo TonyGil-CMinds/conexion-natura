@@ -34,7 +34,7 @@ const MAPA = "https://www.google.com/maps/place/Quito+Botanical+Gardens/@-0.1863
 
 const COPY = {
   es: {
-    subject: 'Nos vemos hoy — CEIBA | Welcome to Quito',
+    subject: '¡Nos vemos hoy! - CEIBA | Welcome to Quito',
     preheader: 'Hoy a las 18:30 en la Rotonda del Jardín Botánico, junto al orquideario.',
     heroAlt: 'CEIBA Welcome to Quito',
     saludo: { antes: '¡Hola ', despues: '!' },
@@ -82,7 +82,7 @@ const COPY = {
     legal: '2026 CEIBA Quito. Todos los derechos reservados.',
   },
   en: {
-    subject: 'See you today — CEIBA | Welcome to Quito',
+    subject: 'See you today! - CEIBA | Welcome to Quito',
     preheader: 'Today at 18:30 at the Jardín Botánico rotunda, next to the orchid house.',
     heroAlt: 'CEIBA Welcome to Quito',
     saludo: { antes: 'Hello ', despues: '!' },
