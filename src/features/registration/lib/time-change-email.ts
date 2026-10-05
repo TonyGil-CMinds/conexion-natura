@@ -20,28 +20,16 @@
  * en `public/`, para que no dependa de que el sitio esté desplegado.
  */
 import { SITE } from '@/config/site';
+import { COLOR, FUENTE, IMG, esc, type EmailLocale } from './email-shell';
 
-/** De dónde cuelgan las imágenes. Las del hero siguen donde las dejó el diseño. */
-const IMG = {
-  heroEs: 'https://mcusercontent.com/73a5afa0f163735b559a0e740/images/6941e5d8-f063-de49-763e-c61a3b834a76.png',
-  heroEn: 'https://mcusercontent.com/73a5afa0f163735b559a0e740/images/777bca92-190b-55ab-aa46-339a59264efa.png',
-  divider: 'https://mcusercontent.com/73a5afa0f163735b559a0e740/images/95218239-eb88-8cd5-afda-04d6005a04fc.png',
-  footer: 'https://mcusercontent.com/73a5afa0f163735b559a0e740/images/e880242d-1f40-e147-81b3-cd5f698ea08e.png',
-  /** Rasterizado del SVG original: Gmail no pinta SVG. */
-  hora: 'https://pub-afc673f5a0d34c36ac2107c949e8a854.r2.dev/email/hora-1830.png',
-} as const;
+export type { EmailLocale };
 
-/** Muestreados de los propios archivos, no copiados a ojo de la maqueta. */
-const COLOR = {
-  fondo: '#151d17',
-  crema: '#f9ffe1',
-  lima: '#d0ff00',
-  tinta: '#151d17',
-} as const;
-
-const FUENTE = "Arial, 'Helvetica Neue', Helvetica, sans-serif";
-
-export type EmailLocale = 'es' | 'en';
+/**
+ * El rótulo de la hora, propio de este correo: llegó en SVG y se rasterizó al
+ * doble de tamaño porque Gmail no pinta SVG. Vive en R2 y no en `public/` para
+ * no depender de que el sitio esté desplegado.
+ */
+const HORA = 'https://pub-afc673f5a0d34c36ac2107c949e8a854.r2.dev/email/hora-1830.png';
 
 const COPY = {
   es: {
@@ -88,18 +76,6 @@ const COPY = {
     legal: '2026 CEIBA Quito. All rights reserved.',
   },
 } as const;
-
-/**
- * Escapa lo que viene de fuera. El nombre lo escribió una persona en un
- * formulario: un `&` suelto rompe el HTML y un `<` abre la puerta a algo peor.
- */
-function esc(valor: string): string {
-  return valor
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
 
 /** Una celda de texto del cuerpo, con la medida y el color que comparten todas. */
 function parrafo(contenido: string, extra = ''): string {
@@ -166,7 +142,7 @@ export function timeChangeEmail({
 
   <!-- La hora, rasterizada: el original venía en SVG y Gmail no lo pinta. -->
   <tr><td align="center" bgcolor="${COLOR.fondo}" style="padding:0 40px 18px;font-size:0;line-height:0;">
-    <img src="${IMG.hora}" width="183" alt="18:30" style="display:block;width:183px;height:auto;border:0;outline:none;">
+    <img src="${HORA}" width="183" alt="18:30" style="display:block;width:183px;height:auto;border:0;outline:none;">
   </td></tr>
 
   <tr><td align="center" bgcolor="${COLOR.fondo}" style="padding:0 40px 8px;font-family:${FUENTE};font-size:13px;line-height:20px;letter-spacing:0.1em;color:${COLOR.crema};text-transform:uppercase;font-weight:bold;">${esc(t.fecha)}. ${esc(horario)} ECT</td></tr>
