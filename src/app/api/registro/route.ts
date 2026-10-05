@@ -233,6 +233,20 @@ export async function POST(request: Request) {
      * nada**. Se devuelve la coincidencia para que la pantalla le pregunte si es
      * ella, y el formulario vuelve con la respuesta.
      */
+    /**
+     * **Lleno.** No se guarda nada y se dice por qué.
+     *
+     * Solo frena a quien no estuviera ya dentro: quien ya tiene su plaza puede
+     * seguir corrigiendo sus datos, que cerrar el registro no es cerrarle la
+     * puerta a quien ya entró.
+     */
+    if (veredicto?.kind === 'full' && previo?.status !== 'CONFIRMED') {
+      return NextResponse.json(
+        { error: 'El registro está cerrado: se completó el aforo del encuentro.' },
+        { status: 403 },
+      );
+    }
+
     if (veredicto?.kind === 'identityCheck') {
       return NextResponse.json({
         identityCheck: {

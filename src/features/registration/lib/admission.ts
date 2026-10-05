@@ -28,7 +28,15 @@ export type Admission =
   /** Hay que preguntarle si es quien parece. Nada se ha guardado. */
   | { kind: 'identityCheck'; match: InviteeMatch }
   /** A la espera de que el equipo revise si hay sitio. */
-  | { kind: 'waitlist' };
+  | { kind: 'waitlist' }
+  /**
+   * No cabe nadie más: el registro está cerrado.
+   *
+   * Es distinto de `waitlist`. Aquella decía «te apuntamos y ya veremos»;
+   * esta dice que no hay nada que ver. No se guarda ninguna fila, porque
+   * guardar un registro que nadie va a atender es prometer sin decirlo.
+   */
+  | { kind: 'full' };
 
 /** Lo que el formulario puede mandar sobre la pregunta de identidad. */
 export type IdentityAnswer =
@@ -43,8 +51,11 @@ export type IdentityAnswer =
  *
  * Mientras haya menos de este número con plaza, **el registro confirma a todo
  * el que llegue**: la lista de preregistro deja de decidir y pasa a ser solo lo
- * que ata a cada quien su invitación. Al alcanzarlo, la puerta vuelve a ser la
- * de antes y quien no esté en la lista va a la espera.
+ * que ata a cada quien su invitación.
+ *
+ * Al alcanzarlo **el registro se cierra**. Quien tenga invitación sigue
+ * entrando —su sitio se le prometió antes de que nadie contara sillas—; quien
+ * llegue sin ella recibe un «no cabe» y no se guarda su fila.
  *
  * Es una decisión de aforo y no una regla del código, así que vive aquí arriba
  * y se cambia con un número.
@@ -118,7 +129,9 @@ export async function admit(
    * colarse en el 169 y dejar 171. A esta escala eso es un asiento de más, no un
    * problema; una reserva atómica costaría una transacción por registro.
    */
-  if ((await conPlaza()) < AFORO_ABIERTO) return { kind: 'confirmed', inviteeId: null };
+  const ocupadas = await conPlaza();
+  if (ocupadas < AFORO_ABIERTO) return { kind: 'confirmed', inviteeId: null };
+
 
   /** 2. Dijo «sí, soy yo». Se vuelve a comprobar aquí: el cliente no decide. */
   if (answer && 'claimInviteeId' in answer) {
@@ -129,9 +142,9 @@ export async function admit(
     /**
      * Lo que mandó no encaja con lo escrito: puede ser un formulario editado a
      * mano, o que haya cambiado el nombre después de ver la pregunta. No se
-     * discute, se manda a la espera.
+     * discute: con la sala llena, no entra.
      */
-    return { kind: 'waitlist' };
+    return { kind: 'full' };
   }
 
   /** 3. Todavía no se le ha preguntado y hay a quién parecerse. */
@@ -140,7 +153,14 @@ export async function admit(
     if (match) return { kind: 'identityCheck', match };
   }
 
-  return { kind: 'waitlist' };
+  /**
+   * Ni sitio ni invitación: **cerrado**.
+   *
+   * Antes aquí se mandaba a lista de espera. Se cambió al llenarse el aforo:
+   * apuntar a alguien en una lista que nadie va a revisar el mismo día del
+   * acto es prometer sin decirlo. Es más honesto decirle que no cabe.
+   */
+  return { kind: 'full' };
 }
 
 /** Busca coincidencia contra la lista, saltándose las ya reclamadas. */
