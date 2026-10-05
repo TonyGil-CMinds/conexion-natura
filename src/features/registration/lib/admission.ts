@@ -63,6 +63,27 @@ export type IdentityAnswer =
 const AFORO_ABIERTO = 170;
 
 /**
+ * Si el registro admite gente nueva.
+ *
+ * En `false` **no entra nadie**: ni quien llega de la calle ni quien figura en
+ * la lista de preregistro. Es el cierre de verdad, por encima del aforo, para
+ * cuando ya no se quiere un asistente más aunque sobren sillas.
+ *
+ * Dos cosas siguen pasando, y no son un olvido:
+ *
+ * - **Quien ya está dentro puede corregir sus datos.** Cerrar el registro no
+ *   es cerrarle la puerta a quien ya entró; de eso se encarga la ruta, que
+ *   solo frena a quien no estuviera confirmado.
+ * - **Quien fue invitado como acompañante puede completar lo suyo.** Su fila
+ *   ya existe y su sitio ya lo gastó quien le invitó: no es un registro nuevo,
+ *   es uno a medias. Ese camino ni siquiera pasa por aquí.
+ *
+ * Es un interruptor y no un borrado de la ruta: volver a abrir es cambiar este
+ * `false`, y los enlaces ya enviados siguen llevando a una página que existe.
+ */
+const REGISTRO_ABIERTO = false;
+
+/**
  * Cuántas personas tienen plaza ahora mismo.
  *
  * Cuenta **filas de asistente**, no registros: quien trae acompañante ocupa dos
@@ -86,6 +107,13 @@ export async function admit(
   answer: IdentityAnswer,
   currentInviteeId: string | null,
 ): Promise<Admission> {
+  /**
+   * Cerrado es cerrado. Va lo primero, antes incluso de leer la lista de
+   * preregistro: cuando ya no se admite a nadie, tener invitación no cambia
+   * nada y consultarla solo serviría para dar una esperanza que no hay.
+   */
+  if (!REGISTRO_ABIERTO) return { kind: 'full' };
+
   const email = candidate.email.trim().toLowerCase();
 
   /** 1. El camino corto: su correo está en la lista. */

@@ -242,7 +242,7 @@ export async function POST(request: Request) {
      */
     if (veredicto?.kind === 'full' && previo?.status !== 'CONFIRMED') {
       return NextResponse.json(
-        { error: 'El registro está cerrado: se completó el aforo del encuentro.' },
+        { error: 'El registro está cerrado.' },
         { status: 403 },
       );
     }
