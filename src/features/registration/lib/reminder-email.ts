@@ -15,7 +15,6 @@
  */
 import { SITE } from '@/config/site';
 import { COLOR, FUENTE, IMG, esc, type EmailLocale } from './email-shell';
-import { EVENT_EMAIL } from './event-email-details';
 
 /** Los dos rótulos propios de este correo. */
 const ROTULO = {
@@ -26,8 +25,12 @@ const ROTULO = {
 /** El ámbar del aviso. Es el del glifo que ya separa secciones en estos correos. */
 const AVISO = '#fecc0c';
 
-/** El mismo mapa que da la confirmación: una sede, un enlace. */
-const MAPA = EVENT_EMAIL.natura_venue_url;
+/**
+ * El punto exacto en el mapa. Es más preciso que el que lleva la confirmación
+ * —aquel busca el jardín por nombre y este cae en sus coordenadas—, así que no
+ * sale de `EVENT_EMAIL`: quien llega hoy necesita la puerta, no la ciudad.
+ */
+const MAPA = "https://www.google.com/maps/place/Quito+Botanical+Gardens/@-0.186365,-78.4881043,17z/data=!3m1!4b1!4m6!3m5!1s0x91d59a7cee1632ad:0x262771090c6976fc!8m2!3d-0.186365!4d-78.4855294!16s%2Fg%2F1hc0gm_6c?entry=tts&g_ep=EgoyMDI2MDkzMC4wIPu8ASoASAFQAw%3D%3D&skid=6c9645bc-6e36-4efd-b6f4-6d7447b2dbbd";
 
 const COPY = {
   es: {
@@ -146,6 +149,8 @@ export function reminderEmail({
   const hero = locale === 'es' ? IMG.heroEs : IMG.heroEn;
   const nombre = esc(name.trim());
   const horario = SITE.event.scheduleLabel;
+  /** En un atributo HTML un `&` suelto no es un `&`: hay que escaparlo. */
+  const hrefMapa = MAPA.replace(/&/g, '&amp;');
 
   const html = `<!doctype html>
 <html lang="${locale}">
@@ -188,7 +193,7 @@ export function reminderEmail({
     </table>
   </td></tr>
 
-  <tr><td align="center" bgcolor="${COLOR.fondo}" style="padding:0 40px 22px;font-family:${FUENTE};font-size:14px;line-height:23px;letter-spacing:0.01em;color:${COLOR.lima};font-weight:bold;">${esc(t.sede)} <a href="${MAPA}" style="color:${COLOR.lima};text-decoration:underline;">(${esc(t.mapa)})</a></td></tr>
+  <tr><td align="center" bgcolor="${COLOR.fondo}" style="padding:0 40px 22px;font-family:${FUENTE};font-size:14px;line-height:23px;letter-spacing:0.01em;color:${COLOR.lima};font-weight:bold;"><a href="${hrefMapa}" style="color:${COLOR.lima};text-decoration:underline;">${esc(t.sede)} (${esc(t.mapa)})</a></td></tr>
 
   ${t.llegada.map((linea) => parrafo(`<em>${esc(linea)}</em>`)).join('\n  ')}
 
