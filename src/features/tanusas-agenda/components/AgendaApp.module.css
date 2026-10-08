@@ -39,9 +39,10 @@
 .backLink { display: inline-flex; align-items: center; gap: var(--space-2); align-self: start; font-size: 11px; color: var(--agenda-muted); text-decoration: none; text-transform: uppercase; }
 .backLink:hover { color: var(--accent-nav-ink); }
 .eyebrow { margin: 0; font-size: 10px; letter-spacing: 0.1em; line-height: 1.6; text-transform: uppercase; color: var(--accent-nav-ink); }
-.intro h1 { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); margin: var(--space-4) 0 var(--space-3); font-size: clamp(2.2rem, 3.7vw, 3.5rem); font-weight: 400; line-height: 1.05; letter-spacing: -0.07em; text-transform: uppercase; }
+.intro h1, .programHead h2, .workshopHead h1, .dialogHeader h2 { font-family: var(--font-menu); text-wrap: balance; overflow-wrap: anywhere; }
+.intro h1 { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); margin: var(--space-4) 0 var(--space-3); font-size: clamp(2.2rem, 3.7vw, 3.5rem); font-weight: 400; line-height: 1.1; letter-spacing: 0.01em; text-transform: uppercase; }
 .intro > p:last-child { margin: 0; color: var(--agenda-muted); font-size: var(--text-sm); line-height: 1.7; }
-.titleMark { font-size: 48px; font-weight: 400; color: var(--accent-nav-ink); }
+.titleMark { flex: none; font-family: var(--font-mono); font-size: 48px; font-weight: 400; color: var(--accent-nav-ink); }
 .dayTabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); }
 .dayTabs button { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); padding: var(--space-4); border: 1px solid var(--rule); color: var(--fg); background: transparent; text-align: left; }
 .dayTabs button > span:first-child { font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
@@ -79,7 +80,7 @@
 .desktopNote { margin: 0; color: var(--agenda-muted); font-size: 10px; }
 .program { min-width: 0; }
 .programHead { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4); padding-top: var(--space-2); padding-bottom: var(--space-5); border-bottom: 1px solid var(--rule); }
-.programHead h2 { max-width: 25ch; margin: var(--space-3) 0 0; font-size: clamp(1.35rem, 2.3vw, 2rem); line-height: 1.35; font-weight: 400; text-transform: uppercase; letter-spacing: -0.04em; }
+.programHead h2 { max-width: 25ch; margin: var(--space-3) 0 0; font-size: clamp(1.35rem, 2.3vw, 2rem); line-height: 1.15; font-weight: 400; text-transform: uppercase; letter-spacing: 0.01em; }
 .count { flex: none; margin-top: 4px; padding: 5px 8px; border: 1px solid var(--rule); color: var(--agenda-muted); font-size: 10px; }
 .filters { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-5) 0 var(--space-6); }
 .filters button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 40px; padding: 8px 14px; border: 1px solid var(--rule); border-radius: 99px; background: transparent; color: var(--agenda-muted); font-size: 11px; }
@@ -138,7 +139,7 @@
 @keyframes sheetIn { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
 .dialogSurface { min-height: 100%; }
 .dialogHeader { position: sticky; top: 0; z-index: 2; display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-5); padding: 28px 32px; border-bottom: 1px solid var(--rule); background: var(--bg); }
-.dialogHeader h2 { margin: 5px 0 0; font-size: 21px; font-weight: 400; line-height: 1.45; text-transform: uppercase; }
+.dialogHeader h2 { margin: 5px 0 0; font-size: 28px; font-weight: 400; line-height: 1.2; letter-spacing: 0.01em; text-transform: uppercase; }
 .dialogBody { display: flex; flex-direction: column; gap: 28px; padding: 28px 32px max(40px, env(safe-area-inset-bottom)); }
 .dialogBody h3 { margin: 0 0 14px; font-size: 17px; line-height: 1.6; font-weight: 400; }
 .dialogBody hr { width: 100%; border: 0; border-top: 1px solid var(--rule); margin: 0; }
@@ -198,7 +199,7 @@
 .downloadFeedback button { border: 0; background: transparent; color: var(--fg); }
 .workshop { max-width: 1060px; margin-inline: auto; }
 .workshopHead { max-width: 760px; margin: 0 0 48px; }
-.workshopHead h1 { margin: 20px 0; font-size: clamp(2.75rem, 6vw, 5rem); line-height: 1.1; font-weight: 400; text-transform: uppercase; letter-spacing: -0.055em; }
+.workshopHead h1 { margin: 20px 0; font-size: clamp(2.75rem, 6vw, 5rem); line-height: 1.1; font-weight: 400; text-transform: uppercase; letter-spacing: 0.01em; }
 .workshopHead .lede { font-size: 18px; }
 .workshopProgress { display: flex; align-items: center; gap: 24px; margin: 28px 0 16px; }
 .workshopProgress > span { flex: none; color: var(--accent-nav-ink); font-size: 30px; }
@@ -279,7 +280,7 @@
   .dock > button > svg { width: 19px; height: 19px; }
   .dialog { inset: auto 0 0; width: 100%; height: 92dvh; max-height: 92dvh; border: 1px solid var(--rule); border-radius: 16px 16px 0 0; }
   .dialogHeader { padding: 20px; gap: 16px; }
-  .dialogHeader h2 { font-size: 17px; }
+  .dialogHeader h2 { font-size: 24px; }
   .dialogBody { padding: 24px 20px max(30px, env(safe-area-inset-bottom)); gap: 24px; }
   .dialog .iconButton { width: 36px; height: 36px; }
   .setting { gap: 14px; flex-wrap: wrap; }
