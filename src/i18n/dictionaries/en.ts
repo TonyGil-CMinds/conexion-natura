@@ -1070,7 +1070,7 @@ export const en: Dictionary = {
         salon: 'Main room',
         playa: 'Beach',
         restaurante: 'Restaurant',
-        casaPrincipal: 'Leaving from the main house',
+        casaPrincipal: 'Departure from the Main House',
         bv: 'BV',
       },
       moments: {
@@ -1110,11 +1110,11 @@ export const en: Dictionary = {
         libreTarde: { title: 'Free', text: 'Your own time.' },
         caminata: {
           title: 'Walk to the trail',
-          text: 'We leave the main house for the trail. It takes about an hour, depending on what we find along the way. Bring insect repellent.',
+          text: 'Bring insect repellent. We leave for the trail from the Main House. Duration: approximately one hour, depending on the interactions along the way.',
         },
         cenaChef: {
           title: 'Dinner with chef Rodrigo Pacheco',
-          text: 'Dinner by and with the chef, closing the day, at BV.',
+          text: 'Dinner at BV, from 19:00 to approximately 21:30, by and with chef Rodrigo Pacheco.',
         },
         bloque6: { title: 'Block 6 · Principles', text: 'A conversation at sunrise, on the beach.' },
         desayunoSabado: { title: 'Breakfast', text: 'At the restaurant.' },

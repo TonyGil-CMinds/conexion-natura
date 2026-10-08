@@ -1221,7 +1221,7 @@ export const es = {
         salon: 'Salón',
         playa: 'Playa',
         restaurante: 'Restaurante',
-        casaPrincipal: 'Salida desde la casa principal',
+        casaPrincipal: 'Salida desde la Casa Principal',
         bv: 'BV',
       },
       moments: {
@@ -1261,11 +1261,11 @@ export const es = {
         libreTarde: { title: 'Libre', text: 'Tiempo propio.' },
         caminata: {
           title: 'Caminata al sendero',
-          text: 'Salimos de la casa principal hacia el sendero. Dura una hora aproximada: depende de lo que vayamos encontrando. Lleva repelente.',
+          text: 'Lleva repelente. Salimos al sendero desde la Casa Principal. Duración: una hora aproximadamente, según las interacciones.',
         },
         cenaChef: {
           title: 'Cena con el chef Rodrigo Pacheco',
-          text: 'Cena por y con el chef, de cierre del día, en BV.',
+          text: 'Cena en BV, de 19:00 a 21:30 aproximadamente, por y con el chef Rodrigo Pacheco.',
         },
         bloque6: { title: 'Bloque 6 · Principios', text: 'Una conversación al amanecer, en la playa.' },
         desayunoSabado: { title: 'Desayuno', text: 'En el restaurante.' },
