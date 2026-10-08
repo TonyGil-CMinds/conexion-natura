@@ -62,7 +62,16 @@
  */
 .bar {
   position: sticky;
-  top: 0;
+  /**
+   * Debajo de la tira del directo, no encima de ella.
+   *
+   * El alto lo publica la propia tira en `--tanusas-live-h`: las dos se pegan
+   * arriba, y con las dos en `top: 0` la de arriba tapaba los rótulos de esta
+   * y solo dejaba asomar el zigzag del enlace actual. El valor por omisión es
+   * cero, que es lo que vale antes de que la tira se monte y en las rutas
+   * donde no la hay.
+   */
+  top: var(--tanusas-live-h, 0px);
   z-index: var(--z-header);
   height: var(--tanusas-bar);
   /**

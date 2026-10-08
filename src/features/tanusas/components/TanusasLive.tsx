@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { EASE_OUT_EXPO } from '@/lib/motion';
 import type { Dictionary } from '@/i18n';
@@ -25,6 +26,34 @@ type Momentos = Dictionary['tanusas']['agenda']['moments'];
  */
 export function TanusasLive({ copy }: Props) {
   const directo = useLiveAgenda();
+  const caja = useRef<HTMLDivElement>(null);
+
+  /**
+   * Publica su alto en `--tanusas-live-h`.
+   *
+   * Las dos barras se pegan arriba, y sin esto se montarían una sobre otra:
+   * la tira tapaba los rótulos de la navegación y solo asomaba el zigzag.
+   * Se mide en vez de escribir el número porque el alto cambia —en estrecho
+   * la tira pierde una línea— y un valor fijo dejaría un hueco o un solape.
+   */
+  useEffect(() => {
+    const el = caja.current;
+    const raiz = document.documentElement;
+    if (!el) {
+      raiz.style.setProperty('--tanusas-live-h', '0px');
+      return;
+    }
+    const medir = () => {
+      raiz.style.setProperty('--tanusas-live-h', `${Math.round(el.getBoundingClientRect().height)}px`);
+    };
+    medir();
+    const observador = new ResizeObserver(medir);
+    observador.observe(el);
+    return () => {
+      observador.disconnect();
+      raiz.style.setProperty('--tanusas-live-h', '0px');
+    };
+  }, [directo]);
   const { activos, alternar, avisar } = useNotificador();
 
   useAvisoPrevio(directo, (momento) => {
@@ -40,7 +69,7 @@ export function TanusasLive({ copy }: Props) {
   const inminente = directo.faltan !== null && directo.faltan <= AVISO_MINUTOS;
 
   return (
-    <div className={styles.bar} data-state={directo.estado} data-soon={inminente || undefined}>
+    <div ref={caja} className={styles.bar} data-state={directo.estado} data-soon={inminente || undefined}>
       <div className={styles.inner}>
         {/* El punto que late: es lo que dice «esto es ahora» sin leerlo. */}
         <span className={styles.badge}>
