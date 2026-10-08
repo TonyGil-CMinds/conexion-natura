@@ -1,116 +1,116 @@
-'use client';
+﻿'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { EASE_OUT_EXPO } from '@/lib/motion';
+import { useRef, useState, type KeyboardEvent } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import type { Dictionary } from '@/i18n';
 import { momentosOrdenados, type TanusasDayKey } from '@/config/tanusas-schedule';
 import { useLiveAgenda } from '../hooks/useLiveAgenda';
-import styles from './Tanusas.module.css';
+import styles from './TanusasAgenda.module.css';
 
 type Props = { copy: Dictionary['tanusas']['agenda'] };
+type IconName = 'bloque' | 'pausa' | 'traslado' | 'libre' | 'pin' | 'clock' | 'fire' | 'sun';
 
-type Momentos = Dictionary['tanusas']['agenda']['moments'];
-type Lugares = Dictionary['tanusas']['agenda']['lugares'];
+function AgendaIcon({ name }: { name: IconName }) {
+  const paths: Record<IconName, string> = {
+    bloque: 'M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z',
+    pausa: 'M4 8h12v7a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z M16 9h2a3 3 0 0 1 0 6h-2 M7 3v2 M12 3v2',
+    traslado: 'M4 7h15m-4-4 4 4-4 4 M20 17H5m4-4-4 4 4 4',
+    libre: 'M5 19C1 9 9 4 20 4c0 11-5 19-15 15Z M5 19 15 9 M11 13v-4 M11 13h4',
+    pin: 'M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z M14 10a2 2 0 1 1-4 0 2 2 0 0 1 4 0',
+    clock: 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0 M12 6v6l4 2',
+    fire: 'M12 2c2 6-3 6-1 10 2-1 3-3 3-5 6 5 8 13-2 15C1 20 4 11 7 8c-1 4 1 5 2 5-1-5 3-6 3-11Z',
+    sun: 'M3 17h18 M6 17a6 6 0 0 1 12 0 M12 3v4 M3 8l3 3 M21 8l-3 3 M2 21h20',
+  };
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]} /></svg>;
+}
 
-/**
- * Los tres días del taller, uno a la vez, con el momento en curso marcado.
- *
- * En pestañas y no en una lista continua porque el programa es largo y lo que
- * hace falta es comparar días, no leerlos del tirón.
- *
- * **La pestaña que se abre la decide el reloj**, no el orden: quien entra el
- * viernes por la mañana quiere ver el viernes. Pero en cuanto alguien toca una
- * pestaña, manda esa persona: el reloj deja de mover la vista bajo sus pies.
- */
+const momentos = momentosOrdenados();
+
 export function TanusasAgenda({ copy }: Props) {
   const directo = useLiveAgenda();
-  const momentos = momentosOrdenados();
-
+  const reducedMotion = useReducedMotion();
   const [elegido, setElegido] = useState<TanusasDayKey | null>(null);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const dia = elegido ?? directo?.diaVisible ?? copy.days[0]!.key;
   const index = Math.max(0, copy.days.findIndex((d) => d.key === dia));
   const current = copy.days[index]!;
-
   const delDia = momentos.filter((m) => m.day === dia);
 
-  /** Lleva a la vista el momento en curso, pero solo la primera vez. */
-  const filaActual = useRef<HTMLDivElement | null>(null);
-  const yaCentrado = useRef(false);
-  useEffect(() => {
-    if (yaCentrado.current || !filaActual.current || elegido) return;
-    yaCentrado.current = true;
-    filaActual.current.scrollIntoView({ block: 'nearest' });
-  }, [elegido, directo?.actual?.key]);
+  function navigateTabs(event: KeyboardEvent<HTMLButtonElement>, from: number) {
+    const next = event.key === 'ArrowRight' ? (from + 1) % copy.days.length
+      : event.key === 'ArrowLeft' ? (from + copy.days.length - 1) % copy.days.length
+      : event.key === 'Home' ? 0 : event.key === 'End' ? copy.days.length - 1 : null;
+    if (next === null) return;
+    event.preventDefault();
+    setElegido(copy.days[next]!.key as TanusasDayKey);
+    tabs.current[next]?.focus();
+  }
 
   return (
-    <>
-      <div className={styles.dayTabs} role="tablist" aria-label={copy.title}>
+    <div className={styles.agenda}>
+      <div className={styles.tabs} role="tablist" aria-label={copy.title}>
         {copy.days.map((item, i) => (
-          <button
-            key={item.key}
-            type="button"
-            role="tab"
-            id={`tanusas-dia-${i}`}
-            className={styles.dayTab}
-            aria-selected={i === index}
-            aria-controls={`tanusas-panel-${i}`}
-            data-live={directo?.actual?.day === item.key || undefined}
-            onClick={() => setElegido(item.key as TanusasDayKey)}
-          >
-            {item.tab}
+          <button key={item.key} type="button" role="tab" id={`tanusas-dia-${i}`}
+            ref={(node) => { tabs.current[i] = node; }}
+            className={styles.tab} aria-selected={i === index} tabIndex={i === index ? 0 : -1}
+            aria-controls={`tanusas-panel-${i}`} onKeyDown={(event) => navigateTabs(event, i)}
+            onClick={() => setElegido(item.key as TanusasDayKey)}>
+            <span className={styles.tabNumber}>{copy.ui.day} 0{i + 1}</span>
+            <span className={styles.tabLabel}>{item.tab}<span className={styles.tabArrow} aria-hidden="true">↗</span></span>
+            <span className={styles.tabTheme}>{copy.ui.themes[i]}</span>
           </button>
         ))}
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={current.key}
-          id={`tanusas-panel-${index}`}
-          role="tabpanel"
-          aria-labelledby={`tanusas-dia-${index}`}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.32, ease: EASE_OUT_EXPO }}
-        >
-          <p className={styles.dayTitle}>{current.title}</p>
+      {copy.days.map((item, i) => (
+        <div key={item.key} id={`tanusas-panel-${i}`} role="tabpanel" hidden={i !== index}
+          aria-labelledby={`tanusas-dia-${i}`} tabIndex={0} className={styles.panel}>
+          {i === index && <motion.div initial={reducedMotion ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }} transition={{ duration: reducedMotion ? 0 : 0.22 }}>
+            <div className={styles.dayHead}>
+              <div>
+                <p className={styles.eyebrow}>{copy.ui.month} 2026 · {delDia.length} {copy.ui.activities}</p>
+                <h3 className={styles.dayTitle}>{current.title}</h3>
+              </div>
+              <span className={styles.timezone}><AgendaIcon name="clock" />{copy.live.ecuador} · UTC−5</span>
+            </div>
 
-          <dl className={styles.rows}>
-            {delDia.map((m) => {
-              const texto = copy.moments[m.key as keyof Momentos];
-              const enCurso = directo?.actual?.key === m.key;
-              const pasado = directo ? m.hasta <= new Date() : false;
-              const lugar = m.lugar ? copy.lugares[m.lugar as keyof Lugares] : null;
-
-              return (
-                <div
-                  key={m.key}
-                  ref={enCurso ? filaActual : undefined}
-                  className={styles.row}
-                  data-live={enCurso || undefined}
-                  data-past={pasado && !enCurso ? true : undefined}
-                  data-tone={m.tono}
-                >
-                  <dt className={styles.rowLabel}>
-                    {m.start}
-                    <span className={styles.rowDash}>–</span>
-                    {m.end}
-                  </dt>
-                  <dd className={styles.rowValue}>
-                    <span className={styles.rowTitle}>
-                      {texto.title}
-                      {enCurso && <span className={styles.rowLive}>{copy.live.badge}</span>}
-                    </span>
-                    <span className={styles.rowText}>{texto.text}</span>
-                    {lugar && <span className={styles.rowPlace}>{lugar}</span>}
-                  </dd>
-                </div>
-              );
-            })}
-          </dl>
-        </motion.div>
-      </AnimatePresence>
-    </>
+            <ol className={styles.timeline}>
+              {delDia.map((m) => {
+                const texto = copy.moments[m.key as keyof typeof copy.moments];
+                const enCurso = directo?.actual?.key === m.key;
+                const siguiente = directo?.siguiente?.key === m.key;
+                const lugar = m.lugar ? copy.lugares[m.lugar as keyof typeof copy.lugares] : null;
+                const outcome = copy.ui.outcomes[m.key as keyof typeof copy.ui.outcomes];
+                const duration = (m.hasta.getTime() - m.desde.getTime()) / 60_000;
+                const icon = m.key === 'raices' ? 'fire' : m.key === 'amanecer' || m.key === 'bloque6' ? 'sun' : m.tono;
+                return (
+                  <li key={m.key} className={styles.moment} data-tone={m.tono} data-live={enCurso || undefined} aria-current={enCurso ? 'step' : undefined}>
+                    <div className={styles.time}>
+                      <time dateTime={m.desde.toISOString()}>{m.start}</time>
+                      <span className={styles.timeEnd}>— {m.end}</span>
+                    </div>
+                    <span className={styles.marker}><AgendaIcon name={icon} /></span>
+                    <div className={styles.card}>
+                      <div className={styles.meta}>
+                        <span className={styles.chip}>{copy.ui.categories[m.tono]}</span>
+                        {m.key === 'amanecer' && <span className={styles.optional}>{copy.ui.optional}</span>}
+                        <span className={styles.duration}>{duration} min</span>
+                        {enCurso && <span className={styles.live}><span />{copy.live.badge}</span>}
+                        {siguiente && !enCurso && <span className={styles.next}>{copy.live.next}</span>}
+                      </div>
+                      <h4 className={styles.momentTitle}>{texto.title}</h4>
+                      <p className={styles.description}>{texto.text}</p>
+                      {outcome && <p className={styles.outcome}><span>{copy.ui.outcome}</span>{outcome}</p>}
+                      {lugar && <span className={styles.place}><AgendaIcon name="pin" />{lugar}</span>}
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+          </motion.div>}
+        </div>
+      ))}
+    </div>
   );
 }

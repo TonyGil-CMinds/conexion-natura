@@ -1,0 +1,443 @@
+/**
+ * La agenda del taller: tres pestañas y una línea de tiempo por día.
+ *
+ * La línea de tiempo vive sobre el fondo de la página, no en tarjetas con
+ * fondo propio: debajo pasa la fotografía de la sección y cualquier relleno
+ * opaco la cortaría en rectángulos. Lo que separa una fila de otra es el
+ * filete y el hueco, no una caja.
+ */
+
+.agenda {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(var(--space-6), 4vw, var(--space-10));
+}
+
+/* ——— Pestañas de día ——— */
+
+/**
+ * Cada pestaña dice tres cosas —el número, el día y de qué va— porque son solo
+ * tres y hay sitio: así se elige por el contenido y no por la fecha.
+ */
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 92px;
+  padding: var(--space-5) var(--space-6);
+  border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
+  background: transparent;
+  color: var(--fg);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-expo),
+    background-color var(--duration-fast) var(--ease-out-expo);
+}
+
+.tab:hover {
+  border-color: color-mix(in srgb, var(--fg) 45%, transparent);
+}
+
+/**
+ * La abierta se marca con el acento y un relleno muy bajo. No se rellena del
+ * todo a propósito: con tres pestañas grandes, una sólida pesaba más que el
+ * programa que hay debajo.
+ */
+.tab[aria-selected='true'] {
+  border-color: var(--accent-nav);
+  background: color-mix(in srgb, var(--accent-nav) 10%, transparent);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--accent-nav);
+  outline-offset: 3px;
+}
+
+.tabNumber {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.tabLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+
+.tab[aria-selected='true'] .tabLabel {
+  color: var(--accent-nav-ink);
+}
+
+.tabArrow {
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity var(--duration-fast) var(--ease-out-expo),
+    transform var(--duration-fast) var(--ease-out-expo);
+}
+
+.tab[aria-selected='true'] .tabArrow,
+.tab:hover .tabArrow {
+  opacity: 0.7;
+  transform: translateX(0);
+}
+
+.tabTheme {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: 1.45;
+  opacity: 0.6;
+}
+
+/* ——— Cabecera del día ——— */
+
+.panel:focus-visible {
+  outline: 2px solid var(--accent-nav);
+  outline-offset: 6px;
+}
+
+.dayHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--rule);
+}
+
+.eyebrow {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.dayTitle {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-answer);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--accent-nav-ink);
+}
+
+/** La zona horaria se dice una vez por día, no en cada fila. */
+.timezone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+.timezone svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ——— Línea de tiempo ——— */
+
+/**
+ * Tres columnas: la hora, el hilo con su marca, y lo que pasa.
+ *
+ * El hilo es un borde del propio elemento y no un pseudoelemento absoluto: así
+ * se corta solo donde acaba la lista, sin tener que saber su alto.
+ */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.moment {
+  --moment-accent: var(--color-aqua);
+  display: grid;
+  grid-template-columns: minmax(84px, 110px) 28px minmax(0, 1fr);
+  gap: var(--space-5);
+  padding-block: var(--space-6);
+}
+
+.time {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15em;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--fg);
+  white-space: nowrap;
+}
+
+.timeEnd {
+  font-size: var(--text-caption);
+  opacity: 0.75;
+}
+
+/** La marca sobre el hilo. El hilo lo dibuja su borde izquierdo. */
+.marker {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.marker::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: calc(-1 * var(--space-6) * 2);
+  left: 50%;
+  width: 1px;
+  background: var(--rule);
+}
+
+.moment:last-child .marker::before {
+  bottom: auto;
+  height: 22px;
+}
+
+.marker svg {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  padding: 5px;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--moment-accent);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.chip,
+.optional,
+.duration,
+.next {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.chip {
+  padding: 0.2em 0.6em;
+  border: 1px solid color-mix(in srgb, var(--fg) 24%, transparent);
+  border-radius: 999px;
+  color: var(--moment-accent);
+  border-color: color-mix(in srgb, var(--moment-accent) 45%, transparent);
+}
+
+.optional {
+  padding: 0.2em 0.6em;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--fg) 10%, transparent);
+  opacity: 0.7;
+}
+
+.duration {
+  opacity: 0.75;
+}
+
+.next {
+  color: var(--accent-nav-ink);
+  opacity: 0.85;
+}
+
+/** «En vivo»: el mismo rosa que la tira de arriba, porque es la misma palabra. */
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.2em 0.6em;
+  border-radius: 999px;
+  background: var(--tanusas-live);
+  color: var(--color-dark);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.live span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: latidoFila 2s ease-in-out infinite;
+}
+
+@keyframes latidoFila {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.momentTitle {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(1rem, 1.5vw, 1.1875rem);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.description {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--fg) 78%, transparent);
+}
+
+/**
+ * Con qué se sale del bloque. Va con filete al canto y no como otro párrafo:
+ * es la única línea de la fila que dice un compromiso, no una descripción.
+ */
+.outcome {
+  margin: 0;
+  padding-inline-start: var(--space-4);
+  border-inline-start: 2px solid color-mix(in srgb, var(--accent-nav) 60%, transparent);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--fg) 72%, transparent);
+}
+
+.outcome span {
+  display: block;
+  font-family: var(--font-mono);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent-nav-ink);
+  opacity: 0.8;
+}
+
+.place {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.place svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* ——— Estados ——— */
+
+/**
+ * Las pausas y los traslados pesan menos que el trabajo: es lo que deja ver la
+ * forma del día de un vistazo. No se esconden, se apagan.
+ */
+.moment[data-tone='bloque'] { --moment-accent: var(--accent-nav); }
+.moment[data-tone='pausa'] { --moment-accent: var(--color-yellow); }
+.moment[data-tone='traslado'] { --moment-accent: var(--color-light); }
+
+/** Lo que está ocurriendo: el acento sube a la marca y a la hora. */
+.moment[data-live] .marker svg {
+  border-color: var(--tanusas-live);
+  color: var(--tanusas-live);
+}
+
+.moment[data-live] .time {
+  color: var(--tanusas-live);
+}
+
+.moment[data-live] .card {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live span {
+    animation: none;
+  }
+
+  .tab, .tabArrow {
+    transition: none;
+  }
+}
+
+/* ——— Estrecho ——— */
+
+/**
+ * Por debajo de 760 px la hora sube sobre el texto y el hilo desaparece: tres
+ * columnas en un móvil dejan el texto en una tira de treinta caracteres.
+ */
+@media (max-width: 760px) {
+  .tabs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .tab {
+    min-height: 72px;
+    padding: var(--space-3) var(--space-2);
+  }
+
+  .tabLabel { font-size: clamp(0.75rem, 3vw, 1rem); letter-spacing: 0; }
+  .tabNumber { font-size: 0.625rem; }
+  .tabTheme, .tabArrow { display: none; }
+  .meta { gap: var(--space-2); }
+  .momentTitle { font-size: 1rem; }
+  .description { font-size: 0.875rem; }
+
+  .moment {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+    padding-block: var(--space-5);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .moment:last-child {
+    border-bottom: 0;
+  }
+
+  .time {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.4em;
+  }
+
+  .marker {
+    display: none;
+  }
+}

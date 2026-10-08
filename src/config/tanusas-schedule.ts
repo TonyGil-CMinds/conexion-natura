@@ -48,13 +48,13 @@ export const TANUSAS_SCHEDULE = [
   // Jueves 8
   { key: 'llegada', day: 'jueves', start: '18:00', end: '19:00', tono: 'traslado' },
   { key: 'caminar', day: 'jueves', start: '19:00', end: '19:15', tono: 'traslado' },
-  { key: 'cenaJueves', day: 'jueves', start: '19:15', end: '20:15', tono: 'pausa' },
-  { key: 'raices', day: 'jueves', start: '20:30', end: '21:30', tono: 'bloque', lugar: 'fogata' },
+  { key: 'cenaJueves', day: 'jueves', start: '19:15', end: '20:15', tono: 'pausa', lugar: 'restaurante' },
+  { key: 'raices', day: 'jueves', start: '13:07', end: '14:07', tono: 'bloque', lugar: 'fogata' },
 
   // Viernes 9
   { key: 'amanecer', day: 'viernes', start: '06:00', end: '06:50', tono: 'libre' },
-  { key: 'desayunoViernes', day: 'viernes', start: '07:15', end: '08:00', tono: 'pausa' },
-  { key: 'trasladoSalon', day: 'viernes', start: '08:00', end: '08:20', tono: 'traslado' },
+  { key: 'desayunoViernes', day: 'viernes', start: '07:15', end: '08:00', tono: 'pausa', lugar: 'restaurante' },
+  { key: 'trasladoSalon', day: 'viernes', start: '08:00', end: '08:20', tono: 'traslado', lugar: 'salon' },
   { key: 'bloque1', day: 'viernes', start: '08:20', end: '09:20', tono: 'bloque', lugar: 'salon' },
   { key: 'bloque2', day: 'viernes', start: '09:20', end: '10:40', tono: 'bloque', lugar: 'salon' },
   { key: 'cafe', day: 'viernes', start: '10:40', end: '11:00', tono: 'pausa' },

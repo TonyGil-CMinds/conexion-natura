@@ -1217,6 +1217,7 @@ export const es = {
         fogata: 'Fogata · Playa',
         salon: 'Salón',
         playa: 'Playa',
+        restaurante: 'Restaurante',
       },
       moments: {
         llegada: { title: 'Llegada', text: 'Recepción y acomodo en Tanusas.' },
@@ -1224,38 +1225,38 @@ export const es = {
         cenaJueves: { title: 'Cena', text: 'Primera mesa compartida del taller.' },
         raices: {
           title: 'Raíces · Fogata · Apertura del círculo',
-          text: 'El territorio y la intención. Una ronda: ¿qué te hace pensar que necesitamos evolucionar la manera en que movilizamos y conectamos capital con los territorios? Cada persona trae un bloqueo real y una condición necesaria.',
+          text: 'El territorio y la intención: imaginar y probar una arquitectura de capital para la integridad ecológica y la BioProsperidad. ¿Qué tendría que cambiar para que el capital habilite transformaciones territoriales integrales, resilientes y de largo plazo?',
         },
         amanecer: { title: 'Amanecer', text: 'Actividad opcional antes del día de trabajo.' },
         desayunoViernes: { title: 'Desayuno', text: 'En el restaurante.' },
         trasladoSalon: { title: 'Traslado y acomodo', text: 'Nos instalamos en el salón.' },
         bloque1: {
           title: 'Bloque 1 · Contexto',
-          text: '¿Qué transformación territorial estamos tratando de habilitar? Capital stacking, secuenciación y orquestación: ¿existe una función de coordinación que hoy nadie está cumpliendo?',
+          text: '¿Qué transformación territorial estamos tratando de habilitar? Combinación, secuenciación y orquestación de capital: explorar una capa de coordinación que conecte capacidades y capital existente, sin necesariamente administrar un fondo propio.',
         },
         bloque2: {
           title: 'Bloque 2 · Del concepto al territorio',
-          text: '¿Qué tendría que financiar una arquitectura integral? ¿Podemos tener una transformación integral sin crear un único instrumento financiero integral?',
+          text: '¿Qué tendría que financiar una arquitectura integral? Integrar la trayectoria de transformación, aunque el capital se despliegue modularmente, partiendo de las prioridades del territorio y de la recirculación del valor.',
         },
         cafe: { title: 'Café', text: 'Pausa.' },
         bloque3: {
           title: 'Bloque 3 · La unidad de valor',
-          text: '¿Qué significa que el capital haya funcionado? Retención de valor, integridad ecosistémica, capacidad adaptativa, gobernanza, interoperabilidad y reciprocidad.',
+          text: '¿Qué significa que el capital haya funcionado? Retención y recirculación de valor, integridad ecosistémica, capacidad adaptativa, gobernanza, interoperabilidad y reciprocidad. ¿Qué variables son medibles y pueden orientar decisiones de capital?',
         },
         bloque4: {
           title: 'Bloque 4 · De lo territorial a lo regional',
-          text: 'Qué se regionaliza y qué permanece territorial, y bajo qué criterio. Arquitectura v.01: funciones, criterios y tres capacidades regionales prioritarias.',
+          text: 'Qué se regionaliza y qué permanece territorial. Compartir infraestructura cuando reduzca fricción o amplíe capacidades y acceso a capital, sin desplazar la gobernanza ni las prioridades del territorio.',
         },
         comida: { title: 'Comida', text: 'Pausa larga.' },
         libreViernes: { title: 'Tiempo libre', text: 'Para respirar antes del bloque de la tarde.' },
         bloque5: {
           title: 'Bloque 5 · Arquitectura regional',
-          text: '¿Qué modelo es viable construir y probar en doce meses, y cuál debería ser la ambición a cinco años? ¿Quién paga por esta infraestructura y quién la mantiene?',
+          text: '¿Qué modelo es viable construir y probar? Identificar capacidades existentes, dónde una nueva arquitectura aportaría valor y qué debe demostrar para sostenerse. ¿Quién paga por esta infraestructura y quién la mantiene?',
         },
         libreTarde: { title: 'Libre', text: 'Tiempo propio.' },
         caminata: { title: 'Caminata guiada', text: 'Con Rodrigo, por el bosque comestible.' },
         cenaChef: { title: 'Cena con el chef Rodrigo Pacheco', text: 'Cena por y con el chef, de cierre del día.' },
-        bloque6: { title: 'Bloque 6 · Principios', text: 'Al amanecer, en la playa: de cinco a siete principios.' },
+        bloque6: { title: 'Bloque 6 · Principios', text: 'Una conversación al amanecer, en la playa.' },
         desayunoSabado: { title: 'Desayuno', text: 'En el restaurante.' },
         reflexiones: { title: 'Reflexiones del día anterior', text: 'Qué se asentó durante la noche.' },
         bloque7: {
@@ -1264,10 +1265,45 @@ export const es = {
         },
         bloque8: {
           title: 'Bloque 8 · Experimentos de doce meses',
-          text: 'Diseño de dos o tres experimentos con hipótesis, capital, socio, evidencia y criterio de avance.',
+          text: 'Prueba de viabilidad regional: fricción reducida, oportunidades preparadas, capital movilizado, diversidad de fuentes, adicionalidad, retención de valor territorial y componentes reutilizables.',
         },
         siguientes: { title: 'Siguientes pasos', text: 'Qué hace cada quien al bajar de la montaña.' },
         cierre: { title: 'Cierre', text: 'Fin del taller.' },
+      },
+      /**
+       * Rótulos de la propia agenda: lo que no es ni un momento ni una hora,
+       * sino la manera de presentarlos. Va aparte de `moments` porque son
+       * palabras de la interfaz y no contenido del programa.
+       */
+      ui: {
+        day: 'Día',
+        month: 'Octubre',
+        activities: 'momentos',
+        optional: 'Opcional',
+        outcome: 'Resultado',
+        /** Una línea por día, en el orden de las pestañas. */
+        themes: ['Llegar y abrir el círculo', 'Construir la arquitectura', 'Decidir y cerrar'],
+        /** Qué clase de momento es cada fila. */
+        categories: {
+          bloque: 'Trabajo',
+          pausa: 'Mesa',
+          traslado: 'Traslado',
+          libre: 'Libre',
+        },
+        /**
+         * Con qué se sale de cada bloque. Solo los tienen los momentos de
+         * trabajo: una cena no produce un entregable, y poner uno sería
+         * inventarlo.
+         */
+        outcomes: {
+          raices: 'Un bloqueo real y una condición necesaria por persona.',
+          bloque1: 'Un problema común acordado.',
+          bloque2: 'Las funciones que la arquitectura tendría que financiar o conectar.',
+          bloque4: 'Arquitectura v.01: funciones, criterios y tres capacidades regionales.',
+          bloque5: 'El MVP de doce meses y la ambición a cinco años.',
+          bloque6: 'De cinco a siete principios.',
+          bloque8: 'Una ficha por experimento, con hipótesis, capital, socio, evidencia y gate.',
+        },
       },
       /** La tira de «en directo» del principio de la página. */
       live: {
