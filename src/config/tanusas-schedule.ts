@@ -49,7 +49,7 @@ export const TANUSAS_SCHEDULE = [
   { key: 'llegada', day: 'jueves', start: '18:00', end: '19:00', tono: 'traslado' },
   { key: 'caminar', day: 'jueves', start: '19:00', end: '19:15', tono: 'traslado' },
   { key: 'cenaJueves', day: 'jueves', start: '19:15', end: '20:15', tono: 'pausa', lugar: 'restaurante' },
-  { key: 'raices', day: 'jueves', start: '13:07', end: '14:07', tono: 'bloque', lugar: 'fogata' },
+  { key: 'raices', day: 'jueves', start: '20:30', end: '21:30', tono: 'bloque', lugar: 'fogata' },
 
   // Viernes 9
   { key: 'amanecer', day: 'viernes', start: '06:00', end: '06:50', tono: 'libre' },
