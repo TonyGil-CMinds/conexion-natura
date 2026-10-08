@@ -131,7 +131,11 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
 
   return <LayoutGroup id="tanusas-agenda"><div className={styles.root}>
     <header className={styles.header}>
-      <Link className={styles.brand} href={`/${locale}/tanusas`} aria-label={copy.back}>
+      {/**
+        * El logotipo lleva al sitio y ya no a la micropágina: esa dirección
+        * redirige aquí, así que pulsarlo no habría movido nada.
+        */}
+      <Link className={styles.brand} href={`/${locale}`} aria-label={copy.home}>
         <ThemedImage dark={TANUSAS.media.logo.onDark} light={TANUSAS.media.logo.onLight} width={TANUSAS.media.logo.width} height={TANUSAS.media.logo.height} alt="CEIBA · Tanusas" priority />
       </Link>
       <span className={styles.headerTitle}>TANUSAS <span>/</span> 2026</span>
@@ -154,7 +158,6 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
       }}>
       {view === 'agenda' ? <div className={styles.layout}>
         <aside className={styles.sidebar}>
-          <Link href={`/${locale}/tanusas`} className={styles.backLink}><AgendaIcon name="back" />{copy.back}</Link>
           <div className={styles.intro}><h1>{copy.title}</h1><p>{copy.subtitle}</p></div>
           <div className={styles.dayTabs} role="tablist" aria-label={copy.dayAgenda}>
             {agenda.days.map((item, i) => <button type="button" key={item.key} id={`app-day-${i}`} role="tab" data-day={item.key} aria-selected={dayIndex === i} aria-controls={`app-panel-${i}`} tabIndex={dayIndex === i ? 0 : -1}

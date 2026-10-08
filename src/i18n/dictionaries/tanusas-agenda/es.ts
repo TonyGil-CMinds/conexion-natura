@@ -6,6 +6,7 @@ export const agendaAppEs = {
   eyebrow: 'CEIBA · NaturaTech LAC',
   subtitle: 'Tres días para imaginar lo que sigue.',
   back: 'Volver a Tanusas',
+  home: 'Ir al sitio de CEIBA',
   open: 'Abrir agenda interactiva',
   date: '08 — 10 OCT 2026',
   location: 'Tanusas, Ecuador',

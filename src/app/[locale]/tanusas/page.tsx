@@ -1,49 +1,22 @@
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { PageFrame } from '@/components/layout/PageFrame';
-import { TanusasPage } from '@/features/tanusas';
-import { getDictionary, isLocale } from '@/i18n';
-import { OG_IMAGES, socialMeta } from '@/config/seo';
+import { notFound, redirect } from 'next/navigation';
+import { isLocale } from '@/i18n';
 
 type Props = { params: Promise<{ locale: string }> };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params;
-  if (!isLocale(locale)) return {};
-  const t = getDictionary(locale);
-  const { title, description } = t.meta.tanusas;
-  return {
-    title,
-    description,
-    ...socialMeta({
-      title: `${title} - ${t.meta.siteName}`,
-      description,
-      locale,
-      siteName: t.meta.siteName,
-      // La suya: el retiro tiene identidad propia dentro del sitio.
-      image: OG_IMAGES.tanusas,
-    }),
-  };
-}
-
 /**
- * Micropágina del retiro del Consejo CEIBA en Tanusas.
+ * `/tanusas` lleva ahora a la agenda.
  *
- * Sin filetes de retícula —ni interiores ni de contenedor— y **sin pie**: es una
- * invitación que se lee de arriba abajo y acaba en su propio cierre, así que el
- * pie del sitio repetiría una llamada a la acción que no es la de esta página.
- * La cabecera del sitio **se retira** aquí (`HeaderGate`) y la sustituye la barra
- * propia de la micropágina: su navegación es interna, y dos barras serían dos
- * navegaciones compitiendo. El logotipo de la suya sigue llevando al sitio.
+ * Mientras el taller ocurre, quien abre esta dirección no viene a leer la
+ * invitación —ya la aceptó y está en Tanusas— sino a ver qué toca ahora. La
+ * micropágina sigue en el repositorio y vuelve cambiando este redirigir por lo
+ * que había: su componente, `TanusasPage`, no se ha tocado.
+ *
+ * Es temporal a propósito. Un 308 se queda cacheado en el navegador de quien lo
+ * siga y la dirección quedaría quemada para siempre; `redirect()` manda un 307,
+ * que no se guarda.
  */
 export default async function TanusasRoute({ params }: Props) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  const t = getDictionary(locale);
-
-  return (
-    <PageFrame hasColumnRules={false} hasEdgeRules={false} hideFooter locale={locale}>
-      <TanusasPage copy={t.tanusas} locale={locale} header={t.header} photo={t.registration.photo} />
-    </PageFrame>
-  );
+  redirect(`/${locale}/tanusas/agenda`);
 }
