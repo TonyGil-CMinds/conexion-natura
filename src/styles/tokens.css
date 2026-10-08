@@ -20,6 +20,15 @@
    * y el punto que late, que es lo que dice que algo está pasando ahora.
    */
   --tanusas-live: #f62fa2;
+
+  /**
+   * El naranja de «a continuación».
+   *
+   * Dice lo contrario que el rosa: todavía no, falta poco. Van juntos porque
+   * son los dos estados de la misma tira, y se eligieron por contraste medido
+   * sobre la tinta oscura —6,48 el naranja, 4,79 el rosa—, no por gusto.
+   */
+  --tanusas-next: #fb7a1e;
   --color-dark: #001d09;
   /**
    * Fondo de la interfaz. Es un rol distinto de `--color-dark`: ese sigue siendo

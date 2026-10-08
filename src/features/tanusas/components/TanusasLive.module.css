@@ -6,13 +6,53 @@
  * opaco y no translúcido —debajo pasan fotos y vídeo— y por eso el alto es el
  * mínimo que cabe sin apretar.
  */
+/**
+ * Los dos colores de la tira.
+ *
+ * **Rosa cuando algo está ocurriendo, naranja cuando está a punto.** Es el
+ * fondo entero el que cambia, no solo una palabra: alguien que mira el móvil de
+ * reojo entre dos conversaciones no lee «en vivo», ve un color.
+ *
+ * La tinta pasa a oscura en los dos. Medido sobre el rosa, el texto oscuro da
+ * 4,79 de contraste y el crema 3,49: con el crema, el rótulo que importa se
+ * quedaba por debajo del mínimo legible.
+ *
+ * Terminado el taller vuelve al oscuro de siempre: ya no hay nada que anunciar,
+ * y un color encendido sobre un dato muerto es ruido.
+ */
 .bar {
+  --tira-fondo: #0b0f0c;
+  --tira-tinta: #f3f7ef;
+  /** El color del punto y de la palabra. Sobre fondo de color es la tinta. */
+  --tira-marca: var(--tanusas-live);
+
   position: sticky;
   top: 0;
   z-index: calc(var(--z-header) + 1);
-  background: #0b0f0c;
-  color: #f3f7ef;
-  border-bottom: 1px solid color-mix(in srgb, var(--accent-nav) 28%, transparent);
+  background: var(--tira-fondo);
+  color: var(--tira-tinta);
+  border-bottom: 1px solid color-mix(in srgb, var(--tira-tinta) 22%, transparent);
+  transition:
+    background-color var(--duration-base) var(--ease-out-expo),
+    color var(--duration-base) var(--ease-out-expo);
+}
+
+.bar[data-state='enCurso'] {
+  --tira-fondo: var(--tanusas-live);
+  --tira-tinta: #151d17;
+  --tira-marca: #151d17;
+}
+
+/**
+ * «A continuación» es todo lo que no ha empezado todavía: el rato entre dos
+ * momentos y también las horas previas al taller. Los dos dicen lo mismo —falta
+ * para lo siguiente— así que llevan el mismo color.
+ */
+.bar[data-state='entre'],
+.bar[data-state='antes'] {
+  --tira-fondo: var(--tanusas-next);
+  --tira-tinta: #151d17;
+  --tira-marca: #151d17;
 }
 
 .inner {
@@ -35,14 +75,14 @@
   font-size: var(--text-caption);
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
-  color: var(--tanusas-live);
+  color: var(--tira-marca);
 }
 
 .dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--tanusas-live);
+  background: var(--tira-marca);
 }
 
 /**
@@ -109,21 +149,25 @@
 }
 
 /** La cuenta atrás solo aparece cuando falta poco, y entonces manda. */
+/**
+ * La cuenta atrás se invierte: tinta de fondo y el color de la tira encima. Un
+ * tercer color sobre un fondo ya encendido no se distingue de la propia tira.
+ */
 .countdown {
   flex-shrink: 0;
   padding: 0.3em 0.7em;
   border-radius: 999px;
-  background: var(--accent-nav);
-  color: #0b0f0c;
+  background: var(--tira-tinta);
+  color: var(--tira-fondo);
   font-family: var(--font-mono);
   font-size: var(--text-caption);
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
 }
 
-/** Cuando el aviso es inminente, la tira entera lo dice. */
+/** Cuando el aviso es inminente, el canto se marca. */
 .bar[data-soon] {
-  border-bottom-color: var(--accent-nav);
+  border-bottom-color: color-mix(in srgb, var(--tira-tinta) 60%, transparent);
 }
 
 .sound {
@@ -133,7 +177,7 @@
   flex-shrink: 0;
   min-height: 36px;
   padding-inline: 0.8em;
-  border: 1px solid color-mix(in srgb, #f3f7ef 26%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tira-tinta) 34%, transparent);
   border-radius: 999px;
   background: transparent;
   color: inherit;
@@ -145,8 +189,8 @@
 }
 
 .sound[aria-pressed='true'] {
-  border-color: var(--accent-nav);
-  color: var(--accent-nav);
+  border-color: var(--tira-tinta);
+  background: color-mix(in srgb, var(--tira-tinta) 14%, transparent);
 }
 
 .soundIcon {
@@ -157,13 +201,13 @@
 /** El avance del momento en curso, al pie de la tira. */
 .track {
   height: 2px;
-  background: color-mix(in srgb, #f3f7ef 12%, transparent);
+  background: color-mix(in srgb, var(--tira-tinta) 16%, transparent);
 }
 
 .fill {
   height: 100%;
   transform-origin: left center;
-  background: var(--accent-nav);
+  background: var(--tira-tinta);
   transition: transform 0.6s linear;
 }
 
