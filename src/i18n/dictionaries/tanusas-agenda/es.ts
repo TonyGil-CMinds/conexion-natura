@@ -46,7 +46,7 @@ export const agendaAppEs = {
   inboxEmpty: 'Un espacio para lo que sigue.', inboxHint: 'Activa los recordatorios y aparecerán aquí antes de cada momento y al comenzar.',
   settingsTitle: 'A tu ritmo', settingsIntro: 'Elige cómo quieres acompañar estos tres días.',
   reminders: 'Recordatorios de agenda', reminderHint: 'Un aviso antes de cada momento y otro al empezar.',
-  advance: 'Anticipación', sound: 'Sonido suave', soundHint: 'Dos notas breves para volver a la conversación.',
+  advance: 'Anticipación', sound: 'Sonido de notificación', soundHint: 'Reproduce el sonido de la agenda con cada aviso.',
   browser: 'Notificaciones del navegador', browserHint: 'También fuera de esta pestaña, si el navegador lo permite.',
   enableBrowser: 'Dar permiso', browserGranted: 'Permiso concedido', browserDenied: 'Permiso bloqueado. Puedes cambiarlo en los ajustes de tu navegador.',
   browserUnsupported: 'Este navegador no admite notificaciones. Los avisos dentro de la agenda siguen disponibles.',

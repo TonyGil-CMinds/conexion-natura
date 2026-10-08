@@ -40,7 +40,7 @@ export const agendaAppEn: Copy = {
   inboxHint: 'Enable reminders and alerts will appear here before each moment and as it starts.',
   settingsTitle: 'At your pace', settingsIntro: 'Choose how to accompany these three days.',
   reminders: 'Agenda reminders', reminderHint: 'An alert before each moment and another when it starts.',
-  advance: 'Remind me ahead', sound: 'Gentle sound', soundHint: 'Two brief notes to return to the conversation.',
+  advance: 'Remind me ahead', sound: 'Notification sound', soundHint: 'Play the agenda sound with each alert.',
   browser: 'Browser notifications', browserHint: 'Outside this tab too, when your browser supports it.',
   enableBrowser: 'Grant permission', browserGranted: 'Permission granted',
   browserDenied: 'Permission blocked. You can change this in your browser settings.',

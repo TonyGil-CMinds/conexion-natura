@@ -9,6 +9,7 @@ import { NOTEBOOK_KEY, parseNotebook, type AgendaNotice, type Notebook } from '.
 type Copy = Dictionary['tanusas']['agendaApp'];
 type Props = { data: Notebook; ready: boolean; update: (change: (value: Notebook) => Notebook) => Notebook; copy: Copy; titles: Dictionary['tanusas']['agenda']['moments']; locale: Locale };
 const moments = momentosOrdenados();
+const notificationSound = '/tanusas/notification.mp3';
 
 export function noticeText(notice: AgendaNotice, copy: Copy, titles: Props['titles']) {
   return {
@@ -22,40 +23,69 @@ export function useAgendaAlerts({ data, ready, update, copy, titles, locale }: P
   const [permission, setPermission] = useState<NotificationPermission | 'unsupported'>('default');
   const [toast, setToast] = useState<AgendaNotice | null>(null);
   const audio = useRef<AudioContext | null>(null);
+  const audioBuffer = useRef<Promise<AudioBuffer> | null>(null);
+  const audioSource = useRef<AudioBufferSourceNode | null>(null);
+  const soundEnabled = useRef(data.settings.sound);
+  soundEnabled.current = data.settings.sound;
   const seen = useRef(new Set<string>());
+
+  const loadAudio = useCallback((ctx: AudioContext) => {
+    audioBuffer.current ??= fetch(notificationSound)
+      .then((response) => {
+        if (!response.ok) throw new Error('Notification audio unavailable');
+        return response.arrayBuffer();
+      })
+      .then((bytes) => ctx.decodeAudioData(bytes))
+      .catch((error: unknown) => { audioBuffer.current = null; throw error; });
+    return audioBuffer.current;
+  }, []);
 
   const unlockAudio = useCallback(async () => {
     try {
       audio.current ??= new AudioContext();
       if (audio.current.state === 'suspended') await audio.current.resume();
+      void loadAudio(audio.current).catch(() => undefined);
     } catch { /* In-app alerts still work if audio is unavailable. */ }
-  }, []);
+  }, [loadAudio]);
 
   const play = useCallback(() => {
     const ctx = audio.current;
     if (!ctx || ctx.state !== 'running') return;
-    [880, 1320].forEach((frequency, i) => {
-      const oscillator = ctx.createOscillator();
-      const gain = ctx.createGain();
-      const start = ctx.currentTime + i * 0.2;
-      oscillator.frequency.value = frequency;
-      gain.gain.setValueAtTime(0, start);
-      gain.gain.linearRampToValueAtTime(0.12, start + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.18);
-      oscillator.connect(gain).connect(ctx.destination);
-      oscillator.start(start); oscillator.stop(start + 0.2);
-    });
-  }, []);
+    void loadAudio(ctx).then((buffer) => {
+      if (!soundEnabled.current || audio.current !== ctx || ctx.state !== 'running') return;
+      audioSource.current?.stop();
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(ctx.destination);
+      source.onended = () => {
+        source.disconnect();
+        if (audioSource.current === source) audioSource.current = null;
+      };
+      audioSource.current = source;
+      source.start();
+    }).catch(() => { /* A failed sound must not prevent the notification. */ });
+  }, [loadAudio]);
 
   useEffect(() => {
     const refresh = () => setPermission(typeof Notification === 'undefined' ? 'unsupported' : Notification.permission);
     refresh();
     window.addEventListener('focus', refresh);
-    return () => { window.removeEventListener('focus', refresh); void audio.current?.close(); audio.current = null; };
+    return () => {
+      window.removeEventListener('focus', refresh);
+      audioSource.current?.stop();
+      audioSource.current = null;
+      void audio.current?.close().catch(() => undefined);
+      audio.current = null;
+      audioBuffer.current = null;
+    };
   }, []);
 
   useEffect(() => {
-    if (!data.settings.sound) return;
+    if (!data.settings.sound) {
+      audioSource.current?.stop();
+      audioSource.current = null;
+      return;
+    }
     const unlock = () => { void unlockAudio(); };
     window.addEventListener('pointerdown', unlock, { once: true });
     window.addEventListener('keydown', unlock, { once: true });
@@ -89,9 +119,9 @@ export function useAgendaAlerts({ data, ready, update, copy, titles, locale }: P
     void (async () => {
       try {
         const worker = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration('/tanusas/') : undefined;
-        if (worker?.active) await worker.showNotification(text.title, { body: text.body, icon: '/favicon.svg', tag: notice.id, data: { url } });
+        if (worker?.active) await worker.showNotification(text.title, { body: text.body, icon: '/favicon.svg', tag: notice.id, silent: true, data: { url } });
         else {
-          const notification = new Notification(text.title, { body: text.body, icon: '/favicon.svg', tag: notice.id });
+          const notification = new Notification(text.title, { body: text.body, icon: '/favicon.svg', tag: notice.id, silent: true });
           notification.onclick = () => { window.focus(); window.location.assign(url); notification.close(); };
         }
       } catch { /* The persisted inbox and toast remain available. */ }
@@ -123,8 +153,9 @@ export function useAgendaAlerts({ data, ready, update, copy, titles, locale }: P
   const test = useCallback(() => {
     const notice: AgendaNotice = { id: `test:${Date.now()}`, kind: 'test', session: '', minutes: 0, at: Date.now(), read: false };
     update((value) => ({ ...value, inbox: [notice, ...value.inbox].slice(0, 100) }));
-    void unlockAudio().then(() => notify(notice));
-  }, [notify, unlockAudio, update]);
+    if (data.settings.sound) void unlockAudio().then(() => notify(notice));
+    else notify(notice);
+  }, [data.settings.sound, notify, unlockAudio, update]);
 
   const active = live?.actual ?? live?.siguiente ?? null;
   const currentIndex = active ? moments.findIndex((m) => m.key === active.key) : moments.length;
