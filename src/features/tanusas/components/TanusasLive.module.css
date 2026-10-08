@@ -114,23 +114,6 @@
   text-overflow: ellipsis;
 }
 
-/**
- * Cuando la tira no anuncia un momento sino una frase —todavía no ha empezado,
- * o ya terminó— el rótulo puede ocupar dos líneas.
- *
- * El recorte con puntos suspensivos vale para un título corto: «Bloque 2» cabe
- * siempre. No vale para «El taller empieza el jueves 8 de octubre a las 18:00»,
- * que en un móvil se quedaba en «El taller empieza el jueves 8 de o…» y dejaba
- * fuera justo la hora, que es el dato.
- */
-.bar[data-state='antes'] .title,
-.bar[data-state='despues'] .title {
-  white-space: normal;
-  overflow: visible;
-  text-overflow: clip;
-  line-height: 1.4;
-}
-
 .meta {
   margin: 0.15rem 0 0;
   font-family: var(--font-mono);
@@ -193,6 +176,22 @@
   background: color-mix(in srgb, var(--tira-tinta) 14%, transparent);
 }
 
+/**
+ * Activado, el botón se queda en el icono.
+ *
+ * El rótulo solo hace falta para invitar a pulsarlo; una vez puesto, repetir
+ * «avisos activados» en cada pantalla roba el ancho que necesita lo que la tira
+ * tiene que contar —y en un móvil ese ancho era la diferencia entre una línea y
+ * una columna de una palabra—. El nombre accesible sigue ahí.
+ */
+.sound[aria-pressed='true'] {
+  padding-inline: 0.6em;
+}
+
+.sound[aria-pressed='true'] .soundLabel {
+  display: none;
+}
+
 .soundIcon {
   font-size: 1em;
   line-height: 1;
@@ -229,7 +228,7 @@
     padding-inline: 0.55em;
   }
 
-  .sound span:not(.soundIcon) {
+  .soundLabel {
     display: none;
   }
 }

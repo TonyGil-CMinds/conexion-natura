@@ -129,12 +129,18 @@ export function TanusasLive({ copy }: Props) {
           className={styles.sound}
           onClick={alternar}
           aria-pressed={activos}
+          aria-label={activos ? t.soundOn : t.soundOff}
           title={t.soundHint}
         >
           <span className={styles.soundIcon} aria-hidden>
             {activos ? '🔔' : '🔕'}
           </span>
-          {activos ? t.soundOn : t.soundOff}
+          {/**
+           * El rótulo va en su propio elemento para poder esconderlo con los
+           * avisos ya activados. El nombre accesible no se pierde: queda en
+           * `aria-label`, que es lo que lee quien no ve el icono.
+           */}
+          <span className={styles.soundLabel}>{activos ? t.soundOn : t.soundOff}</span>
         </button>
       </div>
 
