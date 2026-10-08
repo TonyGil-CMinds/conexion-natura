@@ -42,12 +42,14 @@
 .intro h1, .programHead h2, .workshopHead h1, .dialogHeader h2 { font-family: var(--font-menu); text-wrap: balance; overflow-wrap: anywhere; }
 .intro h1 { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); margin: var(--space-4) 0 var(--space-3); font-size: clamp(2.2rem, 3.7vw, 3.5rem); font-weight: 400; line-height: 1.1; letter-spacing: 0.01em; text-transform: uppercase; }
 .intro > p:last-child { margin: 0; color: var(--agenda-muted); font-size: var(--text-sm); line-height: 1.7; }
-.titleMark { flex: none; font-family: var(--font-mono); font-size: 48px; font-weight: 400; color: var(--accent-nav-ink); }
 .dayTabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); }
-.dayTabs button { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); padding: var(--space-4); border: 1px solid var(--rule); color: var(--fg); background: transparent; text-align: left; }
-.dayTabs button > span:first-child { font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
+.dayTabs button { position: relative; isolation: isolate; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); padding: var(--space-4); border: 1px solid var(--rule); color: var(--fg); background: transparent; text-align: left; }
+.dayTabs .dayLabel { font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
 .dayTabs strong { font-size: 28px; line-height: 1; font-weight: 400; }
-.dayTabs button[aria-selected='true'] { background: var(--accent-nav); border-color: var(--accent-nav); color: var(--color-dark); }
+.dayActive { position: absolute; inset: -1px; z-index: -1; pointer-events: none; }
+.dayTabs button[aria-selected='true'] { border-color: transparent; color: var(--color-dark); }
+.dayTabs button[data-day='sabado'][aria-selected='true'] { color: #fff; }
+.dayTabs button { transition: color 180ms ease, border-color 180ms ease; }
 .dayTabs button:hover:not([aria-selected='true']) { border-color: var(--accent-nav-ink); }
 .dayIndicator { position: absolute; right: 12px; bottom: 12px; }
 .nowCard { position: relative; overflow: hidden; padding: var(--space-5); border: 1px solid color-mix(in srgb, var(--accent-nav-ink) 35%, transparent); background: color-mix(in srgb, var(--accent-nav) 8%, var(--bg)); }
@@ -115,7 +117,8 @@
 .cardPlace { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; color: var(--agenda-muted); }
 .cardPlace > svg { width: 13px; height: 13px; }
 .dock { position: fixed; z-index: 40; bottom: 22px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; justify-content: space-around; gap: 12px; width: min(510px, calc(100% - 32px)); padding: 10px 16px; border: 1px solid var(--rule); border-radius: 12px; background: var(--bg); box-shadow: 0 10px 40px color-mix(in srgb, var(--color-dark) 30%, transparent); }
-.dock > button { display: flex; flex-direction: column; justify-content: center; align-items: center; flex: 1; gap: 7px; min-width: 0; min-height: 52px; padding: 0; border: 0; background: transparent; color: var(--agenda-muted); font-size: 10px; }
+.dock > button { position: relative; isolation: isolate; display: flex; flex-direction: column; justify-content: center; align-items: center; flex: 1; gap: 7px; min-width: 0; min-height: 52px; padding: 0; border: 0; background: transparent; color: var(--agenda-muted); font-size: 10px; }
+.dockActive { position: absolute; inset: -2px -4px; z-index: -1; border-radius: 7px; background: color-mix(in srgb, var(--accent-nav) 10%, var(--bg)); border: 1px solid var(--rule); pointer-events: none; }
 .dock > button[aria-current='page'] { color: var(--accent-nav-ink); }
 .dock > button:hover { color: var(--accent-nav-ink); }
 .dock .nowButton { color: var(--fg); position: relative; margin-top: -28px; }
@@ -133,11 +136,15 @@
 .empty > svg { width: 36px; height: 36px; color: var(--accent-nav-ink); }
 .empty h3 { margin: 0; font-size: 20px; line-height: 1.5; }
 .empty p { margin: 0; font-size: 14px; color: var(--agenda-muted); line-height: 1.8; }
-.dialog { --agenda-muted: color-mix(in srgb, var(--fg) 72%, var(--bg)); --agenda-surface: color-mix(in srgb, var(--fg) 4%, var(--bg)); position: fixed; inset: 0 0 0 auto; width: min(680px, 100%); height: 100dvh; max-height: 100dvh; max-width: 100%; margin: 0; padding: 0; overflow-y: auto; overscroll-behavior: contain; border: 0; border-left: 1px solid var(--rule); background: var(--bg); color: var(--fg); font-family: var(--font-mono); }
+.dialog { --agenda-muted: color-mix(in srgb, var(--fg) 72%, var(--bg)); --agenda-surface: color-mix(in srgb, var(--fg) 4%, var(--bg)); position: fixed; inset: auto 0 0; width: min(760px, calc(100% - 48px)); height: auto; max-height: 90dvh; max-width: 100%; margin: 0 auto; padding: 0; overflow-y: auto; overscroll-behavior: contain; border: 1px solid var(--rule); border-bottom: 0; border-radius: 24px 24px 0 0; background: var(--bg); color: var(--fg); font-family: var(--font-mono); }
 .dialog::backdrop { background: color-mix(in srgb, var(--color-dark) 72%, transparent); backdrop-filter: blur(5px); }
-.dialog[open] { animation: sheetIn 240ms ease-out; }
-@keyframes sheetIn { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+.dialog[open]::backdrop { animation: backdropIn 220ms ease-out both; }
+.dialog[data-closing]::backdrop { animation: backdropOut 220ms ease-in both; }
+.dialog[data-closing] { pointer-events: none; }
+@keyframes backdropIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes backdropOut { from { opacity: 1; } to { opacity: 0; } }
 .dialogSurface { min-height: 100%; }
+.dialogContent { display: flex; flex-direction: column; gap: 28px; }
 .dialogHeader { position: sticky; top: 0; z-index: 2; display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-5); padding: 28px 32px; border-bottom: 1px solid var(--rule); background: var(--bg); }
 .dialogHeader h2 { margin: 5px 0 0; font-size: 28px; font-weight: 400; line-height: 1.2; letter-spacing: 0.01em; text-transform: uppercase; }
 .dialogBody { display: flex; flex-direction: column; gap: 28px; padding: 28px 32px max(40px, env(safe-area-inset-bottom)); }
@@ -251,12 +258,11 @@
   .sidebar { position: static; width: 100%; gap: 16px; }
   .backLink { font-size: 10px; }
   .intro h1 { font-size: clamp(2.15rem, 9.5vw, 3.25rem); margin: 14px 0 10px; }
-  .titleMark { font-size: 38px; }
   .intro .eyebrow { font-size: 9px; letter-spacing: 0.06em; }
   .intro > p:last-child { font-size: 12px; }
   .dayTabs { gap: 8px; }
   .dayTabs button { padding: 14px; flex-direction: row; align-items: center; justify-content: space-between; min-height: 64px; }
-  .dayTabs button > span:first-child { font-size: 9px; }
+  .dayTabs .dayLabel { font-size: 9px; }
   .dayTabs strong { font-size: 24px; }
   .dayIndicator { display: none; }
   .nowCard { padding: 16px; }
@@ -278,7 +284,8 @@
   .dock { bottom: 0; width: 100%; gap: 4px; padding: 10px 10px max(10px, env(safe-area-inset-bottom)); border-width: 1px 0 0; border-radius: 0; }
   .dock > button { font-size: 9px; }
   .dock > button > svg { width: 19px; height: 19px; }
-  .dialog { inset: auto 0 0; width: 100%; height: 92dvh; max-height: 92dvh; border: 1px solid var(--rule); border-radius: 16px 16px 0 0; }
+  .dialog { inset: auto 0 0; width: 100%; height: auto; max-height: 92dvh; border: 1px solid var(--rule); border-radius: 16px 16px 0 0; }
+  .dialogContent { gap: 24px; }
   .dialogHeader { padding: 20px; gap: 16px; }
   .dialogHeader h2 { font-size: 24px; }
   .dialogBody { padding: 24px 20px max(30px, env(safe-area-inset-bottom)); gap: 24px; }
@@ -301,7 +308,7 @@
   .header, .main { padding-inline: 16px; }
   .dayTabs button { padding: 10px; }
   .dayTabs strong { font-size: 21px; }
-  .dayTabs button > span:first-child { font-size: 8px; }
+  .dayTabs .dayLabel { font-size: 8px; }
   .ring { width: 80px; height: 80px; }
   .nowBody { gap: 12px; }
   .nowContent h2 { font-size: 15px; }
@@ -309,6 +316,6 @@
   .nowCard { padding: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .dialog[open] { animation: none; }
-  .ringProgress, .sessionCard, .setting input[role='switch']::after { transition: none; }
+  .dialog[open]::backdrop, .dialog[data-closing]::backdrop { animation: none; }
+  .dayTabs button, .ringProgress, .sessionCard, .setting input[role='switch']::after { transition: none; }
 }

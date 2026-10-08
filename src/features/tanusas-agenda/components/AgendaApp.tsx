@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'framer-motion';
 import { ThemedImage } from '@/components/ui/ThemedImage';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { LocaleSwitch } from '@/components/layout/LocaleSwitch';
@@ -13,6 +13,7 @@ import type { Dictionary, Locale } from '@/i18n';
 import { useAgendaNotebook } from '../hooks/useAgendaNotebook';
 import { noticeText, useAgendaAlerts } from '../hooks/useAgendaAlerts';
 import { createCalendar, downloadText, exportNotebook } from '../lib/export';
+import { AgendaTransition } from './AgendaTransition';
 import { AgendaDialog } from './AgendaDialog';
 import { AgendaIcon, type AgendaIconName } from './AgendaIcon';
 import { SessionContent, WorkshopViews } from './WorkshopContent';
@@ -23,6 +24,7 @@ type View = 'agenda' | 'hypotheses' | 'direction';
 type Filter = 'all' | 'work' | 'saved';
 const moments = momentosOrdenados();
 const icons: Record<string, AgendaIconName> = { bloque: 'compass', pausa: 'coffee', traslado: 'move', libre: 'leaf' };
+const dayColors: Record<string, string> = { jueves: 'var(--accent-nav)', viernes: '#F62FA2', sabado: '#005BE8' };
 const viewIcons: Record<View, AgendaIconName> = { agenda: 'agenda', hypotheses: 'leaf', direction: 'compass' };
 
 function resolveSession(value: string | null) {
@@ -72,8 +74,8 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
 
   useEffect(() => {
     if (!pendingScroll.current || view !== 'agenda') return;
-    pendingScroll.current = false;
     const target = document.querySelector<HTMLElement>(`[data-session="${active?.key ?? 'cierre'}"]`);
+    if (target) pendingScroll.current = false;
     target?.scrollIntoView({ block: 'center', behavior: reducedMotion ? 'instant' : 'smooth' });
     target?.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true });
   }, [active?.key, day, filter, reducedMotion, view, chosenDay]);
@@ -98,16 +100,17 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
     // If the requested day is already visible, no state change is necessary.
     requestAnimationFrame(() => {
       if (!pendingScroll.current) return;
-      pendingScroll.current = false;
       const target = document.querySelector<HTMLElement>(`[data-session="${active?.key ?? 'cierre'}"]`);
+      if (target) pendingScroll.current = false;
       target?.scrollIntoView({ block: 'center', behavior: reducedMotion ? 'instant' : 'smooth' });
       target?.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true });
     });
   }
 
   function changeView(value: View) {
+    if (value === view) return;
+    pendingScroll.current = false;
     setView(value);
-    window.scrollTo({ top: 0, behavior: 'instant' });
   }
 
   function navigateDay(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -126,7 +129,7 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
     setFeedback(copy.notesDone);
   };
 
-  return <div className={styles.root}>
+  return <LayoutGroup id="tanusas-agenda"><div className={styles.root}>
     <header className={styles.header}>
       <Link className={styles.brand} href={`/${locale}/tanusas`} aria-label={copy.back}>
         <ThemedImage dark={TANUSAS.media.logo.onDark} light={TANUSAS.media.logo.onLight} width={TANUSAS.media.logo.width} height={TANUSAS.media.logo.height} alt="CEIBA · Tanusas" priority />
@@ -140,14 +143,23 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
     </header>
 
     <main className={styles.main}>
+      <AnimatePresence mode="wait" initial={false} onExitComplete={() => { if (!pendingScroll.current) window.scrollTo({ top: 0, behavior: 'instant' }); }}>
+      <AgendaTransition key={view} onEntered={() => {
+        if (!pendingScroll.current) return;
+        const target = document.querySelector<HTMLElement>(`[data-session="${active?.key ?? 'cierre'}"]`);
+        if (!target) return;
+        pendingScroll.current = false;
+        target.scrollIntoView({ block: 'center', behavior: reducedMotion ? 'instant' : 'smooth' });
+        target.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true });
+      }}>
       {view === 'agenda' ? <div className={styles.layout}>
         <aside className={styles.sidebar}>
           <Link href={`/${locale}/tanusas`} className={styles.backLink}><AgendaIcon name="back" />{copy.back}</Link>
-          <div className={styles.intro}><p className={styles.eyebrow}>{copy.date} · {copy.location}</p><h1>{copy.title}<span className={styles.titleMark} aria-hidden="true">✳</span></h1><p>{copy.subtitle}</p></div>
+          <div className={styles.intro}><h1>{copy.title}</h1><p>{copy.subtitle}</p></div>
           <div className={styles.dayTabs} role="tablist" aria-label={copy.dayAgenda}>
-            {agenda.days.map((item, i) => <button type="button" key={item.key} id={`app-day-${i}`} role="tab" aria-selected={dayIndex === i} aria-controls={`app-panel-${i}`} tabIndex={dayIndex === i ? 0 : -1}
+            {agenda.days.map((item, i) => <button type="button" key={item.key} id={`app-day-${i}`} role="tab" data-day={item.key} aria-selected={dayIndex === i} aria-controls={`app-panel-${i}`} tabIndex={dayIndex === i ? 0 : -1}
               ref={(element) => { tabRefs.current[i] = element; }} onKeyDown={(event) => navigateDay(event, i)} onClick={() => setChosenDay(item.key as TanusasDayKey)}>
-              <span>{item.tab.replace(/\s\d+$/, '')}</span><strong>{String(8 + i).padStart(2, '0')}</strong><span className={styles.dayIndicator} aria-hidden="true">{dayIndex === i ? '↗' : '·'}</span>
+              <>{dayIndex === i && <motion.span className={styles.dayActive} layoutId={reducedMotion ? undefined : 'active-day'} style={{ backgroundColor: dayColors[item.key] }} transition={{ type: 'spring', stiffness: 380, damping: 32 }} aria-hidden="true" />}</><span className={styles.dayLabel}>{item.tab.replace(/\s\d+$/, '')}</span><strong>{String(8 + i).padStart(2, '0')}</strong><span className={styles.dayIndicator} aria-hidden="true">{dayIndex === i ? '↗' : '·'}</span>
             </button>)}
           </div>
           <section className={styles.nowCard} aria-label={copy.nav.now} data-live={!!live?.actual}>
@@ -170,7 +182,7 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
           <div className={styles.programHead}><div><p className={styles.eyebrow}>{copy.dayAgenda} / {String(dayIndex + 1).padStart(2, '0')}</p><h2>{currentDay.title}</h2></div><span className={styles.count}>{allDay.length} {copy.sessions}</span></div>
           <div className={styles.filters} role="group" aria-label={copy.fullProgram}>{(['all', 'work', 'saved'] as const).map((item) => <button type="button" key={item} aria-pressed={filter === item} onClick={() => setFilter(item)}>{item === 'saved' && <AgendaIcon name="save" />}{copy[item]}{item === 'saved' && <span>{allDay.filter((moment) => data.saved.includes(moment.key)).length}</span>}</button>)}</div>
           {agenda.days.map((item, i) => <div key={item.key} role="tabpanel" id={`app-panel-${i}`} aria-labelledby={`app-day-${i}`} hidden={dayIndex !== i} tabIndex={0}>
-            {dayIndex === i && <motion.div key={`${day}-${filter}`} initial={reducedMotion ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+            {dayIndex === i && <motion.div key={`${day}-${filter}`} initial={reducedMotion ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reducedMotion ? 0 : 0.38, ease: [0.16, 1, 0.3, 1] }}>
               {visible.length ? <ol className={styles.timeline}>{visible.map((moment) => {
                 const text = agenda.moments[moment.key as keyof typeof agenda.moments];
                 const isLive = live?.actual?.key === moment.key;
@@ -192,21 +204,24 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
           </div>)}
         </section>
       </div> : <WorkshopViews view={view} copy={copy} agenda={agenda} data={data} update={update} openSession={openSession} />}
+      </AgendaTransition></AnimatePresence>
       {storageError && <p className={styles.storageWarning} role="status">{copy.storageError}</p>}
     </main>
 
     <nav className={styles.dock} aria-label={copy.title}>
-      {(['agenda', 'hypotheses'] as const).map((item) => <button type="button" key={item} onClick={() => changeView(item)} aria-current={view === item ? 'page' : undefined}><AgendaIcon name={viewIcons[item]} /><span>{copy.nav[item]}</span></button>)}
+      {(['agenda', 'hypotheses'] as const).map((item) => <button type="button" key={item} onClick={() => changeView(item)} aria-current={view === item ? 'page' : undefined}><>{view === item && <motion.span className={styles.dockActive} layoutId={reducedMotion ? undefined : 'active-view'} transition={{ type: 'spring', stiffness: 380, damping: 32 }} aria-hidden="true" />}</><AgendaIcon name={viewIcons[item]} /><span>{copy.nav[item]}</span></button>)}
       <button type="button" className={styles.nowButton} onClick={goNow}><span><AgendaIcon name="sun" /></span><small>{copy.nav.now}</small></button>
-      <button type="button" onClick={() => changeView('direction')} aria-current={view === 'direction' ? 'page' : undefined}><AgendaIcon name="compass" /><span>{copy.nav.direction}</span></button>
+      <button type="button" onClick={() => changeView('direction')} aria-current={view === 'direction' ? 'page' : undefined}><>{view === 'direction' && <motion.span className={styles.dockActive} layoutId={reducedMotion ? undefined : 'active-view'} transition={{ type: 'spring', stiffness: 380, damping: 32 }} aria-hidden="true" />}</><AgendaIcon name="compass" /><span>{copy.nav.direction}</span></button>
       <button type="button" onClick={() => openSheet('settings')} aria-haspopup="dialog"><AgendaIcon name="settings" /><span>{copy.nav.settings}</span></button>
     </nav>
 
-    {session && <AgendaDialog key={session.key} title={agenda.moments[session.key as keyof typeof agenda.moments].title} closeLabel={copy.close} onClose={() => openSession(null)}>
+    <AnimatePresence>
+    {(session || sheet) && <AgendaDialog key="agenda-dialog" title={session ? agenda.moments[session.key as keyof typeof agenda.moments].title : sheet === 'settings' ? copy.settingsTitle : copy.inbox} closeLabel={copy.close} onClose={() => { openSession(null); }}>
+    {session && <>
       <SessionContent moment={session} copy={copy} agenda={agenda} data={data} update={update} storageError={storageError} onCalendar={() => calendar(session.key)} onShare={() => { void navigator.clipboard?.writeText(window.location.href).then(() => setFeedback(copy.copied)).catch(() => setFeedback(copy.copyError)); if (!navigator.clipboard) setFeedback(copy.copyError); }} />
       <p className={styles.feedback} role="status">{feedback}</p>
-    </AgendaDialog>}
-    {sheet === 'settings' && <AgendaDialog title={copy.settingsTitle} closeLabel={copy.close} onClose={() => setSheet(null)}>
+    </>}
+    {sheet === 'settings' && <>
       <p className={styles.lede}>{copy.settingsIntro}</p>
       <label className={styles.setting}><span><strong>{copy.reminders}</strong><small>{copy.reminderHint}</small></span><input type="checkbox" role="switch" checked={data.settings.reminders} onChange={(event) => { const checked = event.target.checked; update((value) => ({ ...value, settings: { ...value.settings, reminders: checked } })); }} /></label>
       <label className={styles.setting}><span>{copy.advance}</span><select value={data.settings.minutes} onChange={(event) => { const minutes = Number(event.target.value); update((value) => ({ ...value, settings: { ...value.settings, minutes } })); }}>{[5, 10, 15].map((minutes) => <option value={minutes} key={minutes}>{minutes} min</option>)}</select></label>
@@ -219,11 +234,13 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
       <hr /><p className={styles.muted}>{copy.privacy}</p>
       <button className={styles.secondaryButton} type="button" onClick={exportNotes}><AgendaIcon name="download" />{copy.exportNotes}</button>
       <p className={styles.feedback} role="status">{feedback}</p>
-    </AgendaDialog>}
-    {sheet === 'inbox' && <AgendaDialog title={copy.inbox} closeLabel={copy.close} onClose={() => setSheet(null)}>
+    </>}
+    {sheet === 'inbox' && <>
       {data.inbox.length ? <><button type="button" className={styles.textButton} onClick={() => update((value) => ({ ...value, inbox: value.inbox.map((notice) => ({ ...notice, read: true })) }))}>{copy.readAll}<AgendaIcon name="check" /></button><ol className={styles.inbox}>{data.inbox.map((notice) => { const text = noticeText(notice, copy, agenda.moments); return <li key={notice.id} data-unread={!notice.read || undefined}><span className={styles.eyebrow}>{new Date(notice.at).toLocaleString(locale, { timeZone: 'America/Guayaquil', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })}</span><h3>{text.title}</h3><p>{text.body}</p>{notice.session && <button type="button" className={styles.textButton} onClick={() => { update((value) => ({ ...value, inbox: value.inbox.map((entry) => entry.id === notice.id ? { ...entry, read: true } : entry) })); openSession(notice.session); }}>{copy.details}<AgendaIcon name="arrow" /></button>}</li>; })}</ol></> : <div className={styles.empty}><AgendaIcon name="bell" /><h3>{copy.inboxEmpty}</h3><p>{copy.inboxHint}</p><button type="button" className={styles.primaryButton} onClick={() => setSheet('settings')}>{copy.nav.settings}<AgendaIcon name="arrow" /></button></div>}
+    </>}
     </AgendaDialog>}
+    </AnimatePresence>
     {alerts.toast && !sheet && !session && <aside className={styles.toast} role="status"><AgendaIcon name="bell" /><div><strong>{noticeText(alerts.toast, copy, agenda.moments).title}</strong><p>{noticeText(alerts.toast, copy, agenda.moments).body}</p>{alerts.toast.session && <button type="button" className={styles.textButton} onClick={() => { openSession(alerts.toast!.session); alerts.dismiss(); }}>{copy.details}<AgendaIcon name="arrow" /></button>}</div><button className={styles.iconButton} type="button" aria-label={copy.close} onClick={alerts.dismiss}><AgendaIcon name="close" /></button></aside>}
     {!session && !sheet && feedback && <p className={styles.downloadFeedback} role="status">{feedback}<button type="button" aria-label={copy.close} onClick={() => setFeedback('')}><AgendaIcon name="close" /></button></p>}
-  </div>;
+  </div></LayoutGroup>;
 }
