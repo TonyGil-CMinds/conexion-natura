@@ -10,3 +10,4 @@ self.addEventListener('notificationclick', (event) => {
     if (existing) { await existing.navigate(url.href); return existing.focus(); }
     return self.clients.openWindow(url.href);
   }));
+});
