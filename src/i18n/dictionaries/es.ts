@@ -965,7 +965,7 @@ export const es = {
         { label: 'Lugar', value: 'Tanusas, Puerto Cayo · Manabí, Ecuador' },
         { label: 'Formato', value: 'Retiro residencial · 12 – 15 personas' },
       ],
-      cta: 'Confirmar asistencia',
+      cta: 'Ver agenda',
       /** El campo en que se convierte el botón al pulsarlo. */
       emailLabel: 'Tu correo electrónico',
       emailPlaceholder: 'Tu correo electrónico',

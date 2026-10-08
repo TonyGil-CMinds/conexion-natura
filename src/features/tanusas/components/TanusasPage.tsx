@@ -5,7 +5,7 @@ import { TanusasAccordion } from './TanusasAccordion';
 import { TanusasAgenda } from './TanusasAgenda';
 import { TanusasLive } from './TanusasLive';
 import { TanusasExperience } from './TanusasExperience';
-import { TanusasJoinCta } from './TanusasJoinCta';
+import { TanusasAgendaCta } from './TanusasAgendaCta';
 import { TanusasMarquee } from './TanusasMarquee';
 import { WaterRipple } from './WaterRipple';
 import styles from './Tanusas.module.css';
@@ -80,7 +80,7 @@ export function TanusasPage({ copy, locale, header, photo }: Props) {
 
           <div className={styles.heroFoot}>
             <div className={styles.heroActions}>
-              <TanusasJoinCta copy={copy.hero} autoOpen />
+              <TanusasAgendaCta copy={copy.hero} />
               <p className={styles.heroNote}>{copy.hero.personal}</p>
             </div>
 
@@ -356,7 +356,7 @@ export function TanusasPage({ copy, locale, header, photo }: Props) {
         <p className={styles.closingQuote}>{copy.closing.quote}</p>
         <p className={styles.closingInvite}>{copy.closing.invite}</p>
 
-        <TanusasJoinCta copy={copy.hero} />
+        <TanusasAgendaCta copy={copy.hero} />
 
         <div className={styles.closingFoot}>
           <p>{copy.closing.partners}</p>

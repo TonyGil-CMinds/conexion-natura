@@ -11,6 +11,15 @@
   --quito-button-ink: #003f24;
   --quito-active: #00b000;
   --quito-partner-filter: none;
+
+  /**
+   * El rosa del directo de Tanusas.
+   *
+   * No es el acento de la página ni el de la navegación: es el color de
+   * «estamos emitiendo», y por eso vale que grite. Solo lo llevan la palabra
+   * y el punto que late, que es lo que dice que algo está pasando ahora.
+   */
+  --tanusas-live: #f62fa2;
   --color-dark: #001d09;
   /**
    * Fondo de la interfaz. Es un rol distinto de `--color-dark`: ese sigue siendo

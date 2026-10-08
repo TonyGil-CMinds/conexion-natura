@@ -827,7 +827,7 @@ export const en: Dictionary = {
         { label: 'Place', value: 'Tanusas, Puerto Cayo · Manabí, Ecuador' },
         { label: 'Format', value: 'Residential retreat · 12 – 15 people' },
       ],
-      cta: 'Confirm attendance',
+      cta: 'See the agenda',
       emailLabel: 'Your email address',
       emailPlaceholder: 'Your email address',
       emailSubmit: 'Continue with this email',

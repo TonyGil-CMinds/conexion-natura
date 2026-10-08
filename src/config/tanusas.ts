@@ -116,7 +116,6 @@ export const TANUSAS = {
   sections: [
     { key: 'invitation', id: 'invitacion' },
     { key: 'concept', id: 'concepto' },
-    { key: 'architecture', id: 'arquitectura' },
     { key: 'place', id: 'lugar' },
     { key: 'agenda', id: 'agenda' },
   ],

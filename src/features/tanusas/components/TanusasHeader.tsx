@@ -143,34 +143,18 @@ export function TanusasHeader({ locale, copy, header }: Props) {
     };
   }, [barPx, isRegistering]);
 
-  const items: NavItem[] = [
-    ...TANUSAS.sections.map((section) => ({
-      key: section.id,
-      href: `#${section.id}`,
-      label: copy[section.key],
-      selected: !isRegistering && current === section.id,
-      /**
-       * Durante el registro la invitación no está en el documento, así que un
-       * ancla no lleva a ninguna parte: el enlace pasa a ser la acción de
-       * volver a ella y, ya de vuelta, ir a su sección.
-       */
-      onSelect: isRegistering ? () => exitTo(section.id) : undefined,
-    })),
+  const items: NavItem[] = TANUSAS.sections.map((section) => ({
+    key: section.id,
+    href: `#${section.id}`,
+    label: copy[section.key],
+    selected: !isRegistering && current === section.id,
     /**
-     * La confirmación cierra la fila pero no es un destino: abre el campo del
-     * correo en el hero. Va como acción —y por eso en el color de acento— y no
-     * como ancla a una sección que ya no existe.
+     * Durante el registro la invitación no está en el documento, así que un
+     * ancla no lleva a ninguna parte: el enlace pasa a ser la acción de volver
+     * a ella y, ya de vuelta, ir a su sección.
      */
-    {
-      key: 'confirmar',
-      href: '#',
-      label: copy.rsvp,
-      highlight: true,
-      // Estando ya en el registro es donde se está: se marca como lo actual.
-      selected: isRegistering,
-      onSelect: open,
-    },
-  ];
+    onSelect: isRegistering ? () => exitTo(section.id) : undefined,
+  }));
 
   return (
     <div ref={barRef} className={styles.bar} data-solid={isSolid || isRegistering || undefined}>

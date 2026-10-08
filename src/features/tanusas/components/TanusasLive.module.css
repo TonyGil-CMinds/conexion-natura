@@ -35,14 +35,14 @@
   font-size: var(--text-caption);
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
-  color: var(--accent-nav);
+  color: var(--tanusas-live);
 }
 
 .dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--accent-nav);
+  background: var(--tanusas-live);
 }
 
 /**
