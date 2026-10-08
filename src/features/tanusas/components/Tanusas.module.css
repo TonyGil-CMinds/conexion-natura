@@ -1044,3 +1044,98 @@
     min-height: 64px;
   }
 }
+
+
+/* ——— Agenda en directo ——— */
+
+/**
+ * Lo que ya pasó se apaga: no se tacha ni se esconde.
+ *
+ * Esconderlo dejaría a quien llega tarde sin saber de qué se habla; tacharlo lo
+ * convierte en un error. Atenuado dice lo que es: ocurrió.
+ */
+.row[data-past] {
+  opacity: 0.42;
+}
+
+/**
+ * El momento en curso se marca con un filete al canto y no con un fondo: la
+ * lista vive sobre una foto y cualquier relleno se pelea con ella.
+ */
+.row[data-live] {
+  position: relative;
+  padding-inline-start: var(--space-5);
+}
+
+.row[data-live]::before {
+  content: '';
+  position: absolute;
+  inset-block: var(--space-4);
+  inset-inline-start: 0;
+  width: 3px;
+  background: var(--accent-nav);
+}
+
+.row[data-live] .rowLabel {
+  color: var(--accent-nav);
+}
+
+.rowDash {
+  padding-inline: 0.35em;
+  opacity: 0.5;
+}
+
+.rowTitle {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.rowText {
+  display: block;
+  margin-top: var(--space-2);
+}
+
+/** Dónde ocurre. Al final y en pequeño: solo importa si hay que moverse. */
+.rowPlace {
+  display: block;
+  margin-top: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.rowLive {
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  background: var(--accent-nav);
+  color: #0b0f0c;
+  font-size: var(--text-caption);
+}
+
+/** Una pausa pesa menos que un bloque de trabajo: eso da la forma del día. */
+.row[data-tone='pausa'] .rowTitle,
+.row[data-tone='libre'] .rowTitle,
+.row[data-tone='traslado'] .rowTitle {
+  opacity: 0.74;
+}
+
+/** La pestaña del día que está ocurriendo lleva su propio punto. */
+.dayTab[data-live]::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-inline-start: 0.5em;
+  border-radius: 50%;
+  background: var(--accent-nav);
+  vertical-align: middle;
+}

@@ -3,6 +3,7 @@ import { TANUSAS } from '@/config/tanusas';
 import type { Dictionary, Locale } from '@/i18n';
 import { TanusasAccordion } from './TanusasAccordion';
 import { TanusasAgenda } from './TanusasAgenda';
+import { TanusasLive } from './TanusasLive';
 import { TanusasExperience } from './TanusasExperience';
 import { TanusasJoinCta } from './TanusasJoinCta';
 import { TanusasMarquee } from './TanusasMarquee';
@@ -38,6 +39,12 @@ type Props = {
 export function TanusasPage({ copy, locale, header, photo }: Props) {
   return (
     <TanusasExperience locale={locale} copy={copy} header={header} photoCopy={photo}>
+      {/*
+        La tira del directo va **lo primero de todo**, por encima del hero: lo
+        que pasa ahora no puede estar por debajo de una portada que ocupa la
+        pantalla entera. Fuera de los tres días del taller no se pinta sola.
+      */}
+      <TanusasLive copy={copy.agenda} />
       {/*
         El hero ocupa el viewport entero y la barra va por encima. El rótulo cruza
         de canto a canto de la retícula, y el texto se alinea a los mismos cantos:

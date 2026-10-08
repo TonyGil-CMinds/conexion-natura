@@ -1201,78 +1201,91 @@ export const es = {
       number: '06',
       kicker: 'Agenda general',
       title: 'Tres días, un ritmo distinto',
+      /**
+       * Las horas **no están aquí**: viven en `src/config/tanusas-schedule.ts`,
+       * porque una hora no se traduce. Lo que cambia con el idioma es cómo se
+       * llama cada momento, y es lo que queda en `moments`, buscado por la
+       * misma clave que usa la configuración.
+       */
       days: [
-        {
-          tab: 'Jueves 8',
-          title: 'Llegada, traslado y apertura',
-          rows: [
-            { time: 'Mañana', text: 'Llegada a Quito. Cada persona gestiona su vuelo hasta Quito.' },
-            {
-              time: '12:00',
-              text: 'Punto de encuentro en el aeropuerto de Quito. Viajamos juntas y juntos desde aquí.',
-            },
-            { time: '15:45', text: 'Vuelo Quito → Manta.' },
-            {
-              time: 'Tarde',
-              text: 'Llegada a Manta y traslado terrestre a Tanusas. Check-in y tiempo para aterrizar.',
-            },
-            {
-              time: 'Noche',
-              text: 'Fogata de las intenciones: cena compartida, apertura de CEIBA y una ronda. ¿Con qué llego?, ¿qué quiero comprender?, ¿qué puedo aportar?',
-            },
-          ],
-        },
-        {
-          tab: 'Viernes 9',
-          title: 'Día completo de mesas de trabajo',
-          rows: [
-            {
-              time: 'Amanecer',
-              text: 'Opcional: silencio, guayusa y tabaco con nuestros aliados indígenas, baño en el mar.',
-            },
-            {
-              time: 'Desayuno',
-              text: 'Desayuno del bosque comestible con Rodrigo Pacheco: el origen de los alimentos y su relación con territorio, nutrición y regeneración.',
-            },
-            {
-              time: 'Mañana',
-              text: 'Mesas I y II · Capital stacking. ¿Qué debe sostener el capital? ¿Qué capitales y capacidades necesitan encontrarse, y qué función cumple cada uno?',
-            },
-            { time: 'Mediodía', text: 'Almuerzo del bosque comestible y descanso sin programación.' },
-            {
-              time: 'Tarde',
-              text: 'Mesa III · Portafolio. Cómo financiar la resiliencia como sistema y no como un conjunto de activos rentables.',
-            },
-            {
-              time: 'Atardecer',
-              text: 'Caminata en pares frente al mar. ¿Qué idea solté?, ¿qué veo ahora que antes no veía? Y cena de celebración.',
-            },
-          ],
-        },
-        {
-          tab: 'Sábado 10',
-          title: 'Bosque, síntesis y cierre',
-          rows: [
-            {
-              time: 'Temprano',
-              text: 'Entrada al bosque comestible con Rodrigo Pacheco: caminar, observar y conversaciones caminadas. Círculo en el bosque: una lección del territorio por persona.',
-            },
-            {
-              time: 'Mañana',
-              text: 'Mesa IV · Tejer el camino. Síntesis, decisiones, estructura de publicación, ruta de demostración y compromisos.',
-            },
-            {
-              time: '13:00',
-              text: 'Almuerzo de cierre y círculo final: una gratitud, un compromiso y una conexión que continúa.',
-            },
-            {
-              time: '15:00',
-              text: 'Salida coordinada hacia el aeropuerto de Manta y otros puntos de conexión.',
-            },
-          ],
-        },
+        { key: 'jueves', tab: 'Jueves 8', title: 'Llegada, cena y apertura del círculo' },
+        { key: 'viernes', tab: 'Viernes 9', title: 'Día completo de mesas de trabajo' },
+        { key: 'sabado', tab: 'Sábado 10', title: 'Principios, gobernanza y cierre' },
       ],
-      note: 'Agenda general y sujeta a ajustes. Horarios de vuelo y traslados se confirmarán con cada persona antes de la compra de boletos.',
+      /** Dónde ocurre cada cosa, cuando el sitio importa. */
+      lugares: {
+        fogata: 'Fogata · Playa',
+        salon: 'Salón',
+        playa: 'Playa',
+      },
+      moments: {
+        llegada: { title: 'Llegada', text: 'Recepción y acomodo en Tanusas.' },
+        caminar: { title: 'Caminata al espacio', text: 'Nos movemos juntas y juntos al lugar de la cena.' },
+        cenaJueves: { title: 'Cena', text: 'Primera mesa compartida del taller.' },
+        raices: {
+          title: 'Raíces · Fogata · Apertura del círculo',
+          text: 'El territorio y la intención. Una ronda: ¿qué te hace pensar que necesitamos evolucionar la manera en que movilizamos y conectamos capital con los territorios? Cada persona trae un bloqueo real y una condición necesaria.',
+        },
+        amanecer: { title: 'Amanecer', text: 'Actividad opcional antes del día de trabajo.' },
+        desayunoViernes: { title: 'Desayuno', text: 'En el restaurante.' },
+        trasladoSalon: { title: 'Traslado y acomodo', text: 'Nos instalamos en el salón.' },
+        bloque1: {
+          title: 'Bloque 1 · Contexto',
+          text: '¿Qué transformación territorial estamos tratando de habilitar? Capital stacking, secuenciación y orquestación: ¿existe una función de coordinación que hoy nadie está cumpliendo?',
+        },
+        bloque2: {
+          title: 'Bloque 2 · Del concepto al territorio',
+          text: '¿Qué tendría que financiar una arquitectura integral? ¿Podemos tener una transformación integral sin crear un único instrumento financiero integral?',
+        },
+        cafe: { title: 'Café', text: 'Pausa.' },
+        bloque3: {
+          title: 'Bloque 3 · La unidad de valor',
+          text: '¿Qué significa que el capital haya funcionado? Retención de valor, integridad ecosistémica, capacidad adaptativa, gobernanza, interoperabilidad y reciprocidad.',
+        },
+        bloque4: {
+          title: 'Bloque 4 · De lo territorial a lo regional',
+          text: 'Qué se regionaliza y qué permanece territorial, y bajo qué criterio. Arquitectura v.01: funciones, criterios y tres capacidades regionales prioritarias.',
+        },
+        comida: { title: 'Comida', text: 'Pausa larga.' },
+        libreViernes: { title: 'Tiempo libre', text: 'Para respirar antes del bloque de la tarde.' },
+        bloque5: {
+          title: 'Bloque 5 · Arquitectura regional',
+          text: '¿Qué modelo es viable construir y probar en doce meses, y cuál debería ser la ambición a cinco años? ¿Quién paga por esta infraestructura y quién la mantiene?',
+        },
+        libreTarde: { title: 'Libre', text: 'Tiempo propio.' },
+        caminata: { title: 'Caminata guiada', text: 'Con Rodrigo, por el bosque comestible.' },
+        cenaChef: { title: 'Cena con el chef Rodrigo Pacheco', text: 'Cena por y con el chef, de cierre del día.' },
+        bloque6: { title: 'Bloque 6 · Principios', text: 'Al amanecer, en la playa: de cinco a siete principios.' },
+        desayunoSabado: { title: 'Desayuno', text: 'En el restaurante.' },
+        reflexiones: { title: 'Reflexiones del día anterior', text: 'Qué se asentó durante la noche.' },
+        bloque7: {
+          title: 'Bloque 7 · ¿Quién coordina, quién decide y quién paga?',
+          text: 'Gobernanza de la arquitectura: coordinar sin concentrar poder. Ronda de un minuto: ¿qué tendría que ser verdad para que confiaras, participaras o pusieras recursos detrás de esto?',
+        },
+        bloque8: {
+          title: 'Bloque 8 · Experimentos de doce meses',
+          text: 'Diseño de dos o tres experimentos con hipótesis, capital, socio, evidencia y criterio de avance.',
+        },
+        siguientes: { title: 'Siguientes pasos', text: 'Qué hace cada quien al bajar de la montaña.' },
+        cierre: { title: 'Cierre', text: 'Fin del taller.' },
+      },
+      /** La tira de «en directo» del principio de la página. */
+      live: {
+        badge: 'En vivo',
+        now: 'Ahora',
+        next: 'A continuación',
+        startsIn: 'Empieza en {min} min',
+        startsNow: 'Empieza ya',
+        soon: 'En {min} minutos empieza',
+        between: 'Pausa entre momentos',
+        before: 'El taller empieza el jueves 8 de octubre a las 18:00.',
+        after: 'El taller ha terminado. Gracias por estos tres días.',
+        soundOn: 'Avisos activados',
+        soundOff: 'Avisarme',
+        soundHint: 'Suena y avisa cinco minutos antes de cada momento.',
+        ecuador: 'Hora de Ecuador',
+      },
+      note: 'Agenda general y sujeta a ajustes. Las horas son de Ecuador (UTC-5).',
     },
 
     practical: {

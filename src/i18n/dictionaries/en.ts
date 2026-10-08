@@ -1058,77 +1058,82 @@ export const en: Dictionary = {
       kicker: 'General agenda',
       title: 'Three days, a different pace',
       days: [
-        {
-          tab: 'Thursday 8',
-          title: 'Arrival, transfer and opening',
-          rows: [
-            { time: 'Morning', text: 'Arrival in Quito. Each person arranges their own flight to Quito.' },
-            {
-              time: '12:00',
-              text: 'Meeting point at Quito airport. We travel together from here.',
-            },
-            { time: '15:45', text: 'Quito → Manta flight.' },
-            {
-              time: 'Afternoon',
-              text: 'Arrival in Manta and road transfer to Tanusas. Check-in and time to land.',
-            },
-            {
-              time: 'Evening',
-              text: 'Bonfire of intentions: a shared dinner, the CEIBA opening and a round. What am I arriving with? What do I want to understand? What can I contribute?',
-            },
-          ],
-        },
-        {
-          tab: 'Friday 9',
-          title: 'A full day of working tables',
-          rows: [
-            {
-              time: 'Sunrise',
-              text: 'Optional: silence, guayusa and tobacco with our Indigenous allies, a swim in the sea.',
-            },
-            {
-              time: 'Breakfast',
-              text: 'Edible forest breakfast with Rodrigo Pacheco: where food comes from and how it relates to territory, nutrition and regeneration.',
-            },
-            {
-              time: 'Morning',
-              text: 'Tables I and II · Capital stacking. What must capital sustain? Which capitals and capabilities need to meet, and what function does each one serve?',
-            },
-            { time: 'Midday', text: 'Edible forest lunch and unscheduled rest.' },
-            {
-              time: 'Afternoon',
-              text: 'Table III · Portfolio. How to finance resilience as a system and not as a set of profitable assets.',
-            },
-            {
-              time: 'Sunset',
-              text: 'A walk in pairs facing the sea. Which idea did I let go of? What do I see now that I did not see before? Then a celebration dinner.',
-            },
-          ],
-        },
-        {
-          tab: 'Saturday 10',
-          title: 'Forest, synthesis and closing',
-          rows: [
-            {
-              time: 'Early',
-              text: 'Into the edible forest with Rodrigo Pacheco: walking, observing and conversations on foot. Circle in the forest: one lesson from the territory per person.',
-            },
-            {
-              time: 'Morning',
-              text: 'Table IV · Weaving the path. Synthesis, decisions, publication structure, demonstration route and commitments.',
-            },
-            {
-              time: '13:00',
-              text: 'Closing lunch and final circle: one gratitude, one commitment and a connection that continues.',
-            },
-            {
-              time: '15:00',
-              text: 'Coordinated departure to Manta airport and other connection points.',
-            },
-          ],
-        },
+        { key: 'jueves', tab: 'Thursday 8', title: 'Arrival, dinner and opening circle' },
+        { key: 'viernes', tab: 'Friday 9', title: 'A full day of working sessions' },
+        { key: 'sabado', tab: 'Saturday 10', title: 'Principles, governance and closing' },
       ],
-      note: 'General agenda, subject to adjustments. Flight and transfer times will be confirmed with each person before tickets are bought.',
+      lugares: {
+        fogata: 'Fire pit · Beach',
+        salon: 'Main room',
+        playa: 'Beach',
+      },
+      moments: {
+        llegada: { title: 'Arrival', text: 'Welcome and settling in at Tanusas.' },
+        caminar: { title: 'Walk to the venue', text: 'We move together to the dinner space.' },
+        cenaJueves: { title: 'Dinner', text: 'The first shared table of the workshop.' },
+        raices: {
+          title: 'Roots · Fire pit · Opening circle',
+          text: 'The territory and the intention. One round: what makes you think we need to change the way we mobilise and connect capital with territories? Each person brings one real blocker and one necessary condition.',
+        },
+        amanecer: { title: 'Sunrise', text: 'Optional activity before the working day.' },
+        desayunoViernes: { title: 'Breakfast', text: 'At the restaurant.' },
+        trasladoSalon: { title: 'Transfer and settling in', text: 'We set up in the main room.' },
+        bloque1: {
+          title: 'Block 1 · Context',
+          text: 'What territorial transformation are we trying to enable? Capital stacking, sequencing and orchestration: is there a coordination function nobody is performing today?',
+        },
+        bloque2: {
+          title: 'Block 2 · From concept to territory',
+          text: 'What would an integral architecture have to finance? Can we have an integral transformation without creating a single integral financial instrument?',
+        },
+        cafe: { title: 'Coffee', text: 'Break.' },
+        bloque3: {
+          title: 'Block 3 · The unit of value',
+          text: 'What does it mean for capital to have worked? Value retention, ecosystem integrity, adaptive capacity, governance, interoperability and reciprocity.',
+        },
+        bloque4: {
+          title: 'Block 4 · From territorial to regional',
+          text: 'What gets regionalised and what stays territorial, and on what criteria. Architecture v.01: functions, criteria and three priority regional capabilities.',
+        },
+        comida: { title: 'Lunch', text: 'Long break.' },
+        libreViernes: { title: 'Free time', text: 'To breathe before the afternoon block.' },
+        bloque5: {
+          title: 'Block 5 · Regional architecture',
+          text: 'What model is viable to build and test in twelve months, and what should the five-year ambition be? Who pays for this infrastructure and who maintains it?',
+        },
+        libreTarde: { title: 'Free', text: 'Your own time.' },
+        caminata: { title: 'Guided walk', text: 'With Rodrigo, through the edible forest.' },
+        cenaChef: { title: 'Dinner with chef Rodrigo Pacheco', text: 'Dinner by and with the chef, closing the day.' },
+        bloque6: { title: 'Block 6 · Principles', text: 'At sunrise, on the beach: five to seven principles.' },
+        desayunoSabado: { title: 'Breakfast', text: 'At the restaurant.' },
+        reflexiones: { title: 'Reflections on the previous day', text: 'What settled overnight.' },
+        bloque7: {
+          title: 'Block 7 · Who coordinates, who decides and who pays?',
+          text: 'Governance of the architecture: coordinating without concentrating power. One-minute round: what would have to be true for you to trust, take part or put resources behind this?',
+        },
+        bloque8: {
+          title: 'Block 8 · Twelve-month experiments',
+          text: 'Designing two or three experiments with hypothesis, capital, partner, evidence and a gate.',
+        },
+        siguientes: { title: 'Next steps', text: 'What each of us does coming down the mountain.' },
+        cierre: { title: 'Closing', text: 'End of the workshop.' },
+      },
+      live: {
+        badge: 'Live',
+        now: 'Now',
+        next: 'Up next',
+        startsIn: 'Starts in {min} min',
+        startsNow: 'Starting now',
+        soon: 'Starting in {min} minutes',
+        between: 'Break between sessions',
+        before: 'The workshop starts on Thursday 8 October at 18:00.',
+        after: 'The workshop has ended. Thank you for these three days.',
+        soundOn: 'Alerts on',
+        soundOff: 'Alert me',
+        soundHint: 'Sounds and notifies five minutes before each session.',
+        ecuador: 'Ecuador time',
+      },
+      note: 'General agenda, subject to adjustments. All times are Ecuador time (UTC-5).',
     },
 
     practical: {

@@ -1,0 +1,184 @@
+/**
+ * La tira de «en directo».
+ *
+ * Va pegada arriba y por encima de todo, como la de un canal que emite: lo que
+ * cuenta es que esté siempre a la vista, no que sea bonita. Por eso el fondo es
+ * opaco y no translúcido —debajo pasan fotos y vídeo— y por eso el alto es el
+ * mínimo que cabe sin apretar.
+ */
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: calc(var(--z-header) + 1);
+  background: #0b0f0c;
+  color: #f3f7ef;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent-nav) 28%, transparent);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding: 0.65rem var(--space-6);
+  min-height: 3.25rem;
+}
+
+/** El distintivo: punto que late y una palabra. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent-nav);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-nav);
+}
+
+/**
+ * Late solo mientras hay algo en curso. Fuera de eso el punto se queda quieto:
+ * un latido perpetuo deja de significar «ahora» y pasa a ser decoración.
+ */
+.bar[data-state='enCurso'] .dot {
+  animation: latido 2s ease-in-out infinite;
+}
+
+@keyframes latido {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.82); }
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-note);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meta {
+  margin: 0.15rem 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  opacity: 0.62;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sep {
+  padding-inline: 0.5em;
+  opacity: 0.6;
+}
+
+/** La cuenta atrás solo aparece cuando falta poco, y entonces manda. */
+.countdown {
+  flex-shrink: 0;
+  padding: 0.3em 0.7em;
+  border-radius: 999px;
+  background: var(--accent-nav);
+  color: #0b0f0c;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+/** Cuando el aviso es inminente, la tira entera lo dice. */
+.bar[data-soon] {
+  border-bottom-color: var(--accent-nav);
+}
+
+.sound {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  flex-shrink: 0;
+  min-height: 36px;
+  padding-inline: 0.8em;
+  border: 1px solid color-mix(in srgb, #f3f7ef 26%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.sound[aria-pressed='true'] {
+  border-color: var(--accent-nav);
+  color: var(--accent-nav);
+}
+
+.soundIcon {
+  font-size: 1em;
+  line-height: 1;
+}
+
+/** El avance del momento en curso, al pie de la tira. */
+.track {
+  height: 2px;
+  background: color-mix(in srgb, #f3f7ef 12%, transparent);
+}
+
+.fill {
+  height: 100%;
+  transform-origin: left center;
+  background: var(--accent-nav);
+  transition: transform 0.6s linear;
+}
+
+/**
+ * En móvil cae lo accesorio, no lo principal: desaparecen la línea de abajo y
+ * el rótulo del botón, y se queda qué pasa ahora y cuánto falta.
+ */
+@media (max-width: 640px) {
+  .inner {
+    gap: var(--space-4);
+    padding-inline: var(--space-5);
+  }
+
+  .meta {
+    display: none;
+  }
+
+  .sound {
+    padding-inline: 0.55em;
+  }
+
+  .sound span:not(.soundIcon) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar[data-state='enCurso'] .dot {
+    animation: none;
+  }
+
+  .fill {
+    transition: none;
+  }
+}
