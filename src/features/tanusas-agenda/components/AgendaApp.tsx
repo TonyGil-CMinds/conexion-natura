@@ -3,11 +3,8 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'framer-motion';
-import { ThemedImage } from '@/components/ui/ThemedImage';
-import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { LocaleSwitch } from '@/components/layout/LocaleSwitch';
-import { TANUSAS } from '@/config/tanusas';
-import { momentosOrdenados, type TanusasDayKey } from '@/config/tanusas-schedule';
+import { momentosOrdenados, TANUSAS_DAYS, type TanusasDayKey } from '@/config/tanusas-schedule';
 import { SESSION_ALIASES } from '@/config/tanusas-agenda';
 import { agendaPhotoScene } from '@/config/tanusas-photos';
 import type { Dictionary, Locale } from '@/i18n';
@@ -26,7 +23,7 @@ type View = 'agenda' | 'hypotheses' | 'direction';
 type Filter = 'all' | 'work' | 'saved';
 const moments = momentosOrdenados();
 const icons: Record<string, AgendaIconName> = { bloque: 'compass', pausa: 'coffee', traslado: 'move', libre: 'leaf' };
-const dayColors: Record<string, string> = { jueves: 'var(--accent-nav)', viernes: '#F62FA2', sabado: '#005BE8' };
+const dayColors: Record<string, string> = { jueves: '#D0FF00', viernes: '#F62FA2', sabado: '#005BE8' };
 const viewIcons: Record<View, AgendaIconName> = { agenda: 'agenda', hypotheses: 'leaf', direction: 'compass' };
 
 function resolveSession(value: string | null) {
@@ -48,7 +45,9 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
   const [feedback, setFeedback] = useState('');
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const pendingScroll = useRef(false);
-  const day = chosenDay ?? live?.diaVisible ?? 'jueves';
+  const today = live ? new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Guayaquil', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()) : null;
+  const calendarDay = TANUSAS_DAYS.find((item) => item.date === today)?.key;
+  const day = chosenDay ?? calendarDay ?? live?.diaVisible ?? 'jueves';
   const dayIndex = agenda.days.findIndex((item) => item.key === day);
   const currentDay = agenda.days[dayIndex]!;
   const allDay = moments.filter((moment) => moment.day === day);
@@ -132,18 +131,17 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
     setFeedback(copy.notesDone);
   };
 
-  return <LayoutGroup id="tanusas-agenda"><div className={styles.root}>
+  return <LayoutGroup id="tanusas-agenda"><div className={styles.root} data-agenda-day={day}>
     <header className={styles.header}>
       {/**
         * El logotipo lleva al sitio y ya no a la micropágina: esa dirección
         * redirige aquí, así que pulsarlo no habría movido nada.
         */}
       <Link className={styles.brand} href={`/${locale}`} aria-label={copy.home}>
-        <ThemedImage dark={TANUSAS.media.logo.onDark} light={TANUSAS.media.logo.onLight} width={TANUSAS.media.logo.width} height={TANUSAS.media.logo.height} alt="CEIBA · Tanusas" priority />
+        <span className={styles.brandLogo} role="img" aria-label="CEIBA · Tanusas" />
       </Link>
       <span className={styles.headerTitle}>TANUSAS <span>/</span> 2026</span>
       <div className={styles.headerActions}>
-        <ThemeToggle toLight={header.themeToLight} toDark={header.themeToDark} />
         <LocaleSwitch locale={locale} label={header.language} />
         <button type="button" className={styles.iconButton} onClick={() => openSheet('inbox')} aria-label={`${copy.inbox}${unread ? ` · ${unread} ${copy.unread}` : ''}`}><AgendaIcon name="bell" />{unread > 0 && <span className={styles.badge}>{unread}</span>}</button>
       </div>

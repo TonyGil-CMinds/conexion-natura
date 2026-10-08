@@ -1,4 +1,11 @@
 ﻿.root {
+  --bg: #151d17;
+  --fg: #f7ffd2;
+  --accent-nav: #d0ff00;
+  --accent-nav-ink: #d0ff00;
+  --agenda-photo-ink: #d0ff00;
+  --agenda-on-accent: #001d09;
+  --rule: color-mix(in srgb, var(--fg) 18%, transparent);
   --agenda-muted: color-mix(in srgb, var(--fg) 72%, var(--bg));
   --agenda-surface: color-mix(in srgb, var(--fg) 4%, var(--bg));
   min-height: 100dvh;
@@ -6,7 +13,25 @@
   color: var(--fg);
   font-family: var(--font-mono);
 }
-:global(html[data-theme='light']) .root, :global(html[data-theme='light']) .dialog { --accent-nav-ink: var(--color-dark); }
+.root[data-agenda-day='viernes'] {
+  --bg: #21151e;
+  --fg: #fff3fa;
+  --accent-nav: #f62fa2;
+  --accent-nav-ink: #ff75c3;
+  --agenda-photo-ink: #ff98d2;
+  --agenda-on-accent: #21101a;
+}
+.root[data-agenda-day='sabado'] {
+  --bg: #111b2c;
+  --fg: #edf3ff;
+  --accent-nav: #005be8;
+  --accent-nav-ink: #8dbdff;
+  --agenda-photo-ink: #a6cdff;
+  --agenda-on-accent: #fff;
+}
+.root, .header, .dock, .dialog, .sessionCard, .upNext, .primaryButton, .secondaryButton, .nowButton > span, .eyebrow, .ring, .textButton, .brandLogo, .brandLogo::after {
+  transition: background-color 320ms ease, color 320ms ease, border-color 320ms ease;
+}
 .root button, .dialog button, .root input, .dialog input, .dialog textarea, .dialog select { font: inherit; }
 .root button, .dialog button { cursor: pointer; }
 .root button:disabled, .dialog button:disabled { cursor: not-allowed; opacity: 0.5; }
@@ -26,13 +51,14 @@
   background: var(--bg);
 }
 .brand { flex: none; }
-.brand img { width: 120px; height: auto; }
+.brandLogo { position: relative; display: block; width: 120px; height: 24px; background-color: var(--fg); mask: url('/brand/logo-ceiba-tanusas.svg') center / contain no-repeat; }
+.brandLogo::after { content: ''; position: absolute; inset: 0; background-color: var(--accent-nav); clip-path: inset(0 76% 0 0); }
 .headerTitle { font-size: var(--text-sm); letter-spacing: 0.16em; }
 .headerTitle > span { color: var(--accent-nav-ink); padding-inline: var(--space-3); }
 .headerActions { display: flex; align-items: center; gap: var(--space-4); }
 .iconButton { position: relative; display: inline-grid; place-items: center; flex: none; width: 44px; height: 44px; padding: 0; border: 1px solid var(--rule); border-radius: 50%; color: var(--fg); background: transparent; }
 .iconButton:hover { background: color-mix(in srgb, var(--fg) 8%, transparent); }
-.badge { position: absolute; top: -2px; right: -4px; min-width: 18px; padding: 1px 4px; border-radius: 99px; background: var(--accent-nav); color: var(--color-dark); font-size: 10px; }
+.badge { position: absolute; top: -2px; right: -4px; min-width: 18px; padding: 1px 4px; border-radius: 99px; background: var(--accent-nav); color: var(--agenda-on-accent); font-size: 10px; }
 .main { max-width: 1320px; margin-inline: auto; padding: clamp(28px, 4vw, 64px) var(--container-margin) 150px; }
 .layout { display: grid; grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1.45fr); align-items: start; gap: clamp(32px, 5vw, 80px); }
 .sidebar { position: sticky; top: 116px; display: flex; flex-direction: column; gap: var(--space-6); min-width: 0; }
@@ -47,12 +73,11 @@
 .dayTabs .dayLabel { font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
 .dayTabs strong { font-size: 28px; line-height: 1; font-weight: 400; }
 .dayActive { position: absolute; inset: -1px; z-index: -1; pointer-events: none; }
-.dayTabs button[aria-selected='true'] { border-color: transparent; color: var(--color-dark); }
-.dayTabs button[data-day='sabado'][aria-selected='true'] { color: #fff; }
+.dayTabs button[aria-selected='true'] { border-color: transparent; color: var(--agenda-on-accent); }
 .dayTabs button { transition: color 180ms ease, border-color 180ms ease; }
 .dayTabs button:hover:not([aria-selected='true']) { border-color: var(--accent-nav-ink); }
 .dayIndicator { position: absolute; right: 12px; bottom: 12px; }
-.nowCard { --fg: var(--color-light); --bg: #111714; --accent-nav-ink: var(--color-lime); --agenda-muted: #d7dfd2; --rule: rgb(247 255 210 / 22%); position: relative; isolation: isolate; overflow: hidden; padding: var(--space-5); border: 1px solid var(--rule); background: var(--bg); color: var(--fg); }
+.nowCard { --fg: var(--color-light); --bg: #111714; --accent-nav-ink: var(--agenda-photo-ink); --agenda-muted: #d7dfd2; --rule: rgb(247 255 210 / 22%); position: relative; isolation: isolate; overflow: hidden; padding: var(--space-5); border: 1px solid var(--rule); background: var(--bg); color: var(--fg); }
 .nowCard > :not(.nowBackdrop) { position: relative; z-index: 1; }
 .nowBackdrop { position: absolute; inset: -28px; z-index: 0; pointer-events: none; }
 .nowPhoto { object-fit: cover; filter: blur(4px) brightness(0.62) saturate(0.8); }
@@ -103,7 +128,6 @@
 .timelineItem[data-kind='pausa'] { --kind-color: var(--color-yellow); }
 .timelineItem[data-kind='libre'] { --kind-color: var(--color-aqua); }
 .timelineItem[data-kind='traslado'] { --kind-color: var(--fg); }
-:global(html[data-theme='light']) .timelineItem[data-kind='pausa'], :global(html[data-theme='light']) .timelineItem[data-kind='libre'] { --kind-color: var(--accent-nav-ink); }
 .timeColumn { display: flex; flex-direction: column; gap: 6px; padding-top: var(--space-4); font-size: 11px; font-variant-numeric: tabular-nums; }
 .timeColumn span { color: var(--agenda-muted); font-size: 10px; }
 .timelineMarker { position: relative; display: flex; justify-content: center; padding-top: var(--space-3); }
@@ -130,11 +154,11 @@
 .dock > button[aria-current='page'] { color: var(--accent-nav-ink); }
 .dock > button:hover { color: var(--accent-nav-ink); }
 .dock .nowButton { color: var(--fg); position: relative; margin-top: -28px; }
-.nowButton > span { display: grid; place-items: center; width: 50px; height: 50px; border: 5px solid var(--bg); border-radius: 50%; background: var(--accent-nav); color: var(--color-dark); box-shadow: 0 0 0 1px var(--rule); }
+.nowButton > span { display: grid; place-items: center; width: 50px; height: 50px; border: 5px solid var(--bg); border-radius: 50%; background: var(--accent-nav); color: var(--agenda-on-accent); box-shadow: 0 0 0 1px var(--rule); }
 .nowButton small { font-size: 10px; }
 .textButton { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 36px; padding: 0; border: 0; background: transparent; color: var(--accent-nav-ink); font-size: 11px !important; text-align: left; text-decoration: none; }
 .textButton > svg { width: 16px; height: 16px; flex: none; }
-.primaryButton, .secondaryButton { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-3); min-height: 44px; padding: 12px 16px; border: 1px solid var(--accent-nav); background: var(--accent-nav); color: var(--color-dark); font-size: 12px !important; text-align: left; line-height: 1.6; }
+.primaryButton, .secondaryButton { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-3); min-height: 44px; padding: 12px 16px; border: 1px solid var(--accent-nav); background: var(--accent-nav); color: var(--agenda-on-accent); font-size: 12px !important; text-align: left; line-height: 1.6; }
 .secondaryButton { border-color: var(--rule); background: transparent; color: var(--fg); }
 .secondaryButton[aria-pressed='true'] { border-color: var(--accent-nav-ink); color: var(--accent-nav-ink); }
 .primaryButton > svg, .secondaryButton > svg { flex: none; width: 17px; height: 17px; }
@@ -145,7 +169,7 @@
 .empty h3 { margin: 0; font-size: 20px; line-height: 1.5; }
 .empty p { margin: 0; font-size: 14px; color: var(--agenda-muted); line-height: 1.8; }
 .dialog { --agenda-muted: color-mix(in srgb, var(--fg) 72%, var(--bg)); --agenda-surface: color-mix(in srgb, var(--fg) 4%, var(--bg)); position: fixed; inset: auto 0 0; width: min(760px, calc(100% - 48px)); height: auto; max-height: 90dvh; max-width: 100%; margin: 0 auto; padding: 0; overflow-y: auto; overscroll-behavior: contain; border: 1px solid var(--rule); border-bottom: 0; border-radius: 24px 24px 0 0; background: var(--bg); color: var(--fg); font-family: var(--font-mono); }
-.dialog::backdrop { background: color-mix(in srgb, var(--color-dark) 72%, transparent); backdrop-filter: blur(5px); }
+.dialog::backdrop { background: rgb(5 6 10 / 72%); backdrop-filter: blur(5px); }
 .dialog[open]::backdrop { animation: backdropIn 220ms ease-out both; }
 .dialog[data-closing]::backdrop { animation: backdropOut 220ms ease-in both; }
 .dialog[data-closing] { pointer-events: none; }
@@ -178,7 +202,7 @@
 .detailHypothesis > h3 { margin: 0; }
 .votes { display: flex; flex-wrap: wrap; gap: 6px; }
 .votes > button { min-height: 36px; padding: 7px 10px; border: 1px solid var(--rule); border-radius: 3px; background: transparent; color: var(--agenda-muted); font-size: 10px; }
-.votes > button[aria-pressed='true'] { background: var(--accent-nav); border-color: var(--accent-nav); color: var(--color-dark); }
+.votes > button[aria-pressed='true'] { background: var(--accent-nav); border-color: var(--accent-nav); color: var(--agenda-on-accent); }
 .matrix { overflow-x: auto; }
 .matrix table { width: 100%; border-collapse: collapse; font-size: 12px; line-height: 1.7; }
 .matrix th, .matrix td { padding: 12px; border: 1px solid var(--rule); text-align: left; vertical-align: top; min-width: 120px; }
@@ -197,7 +221,7 @@
 .setting input[role='switch'] { appearance: none; flex: none; position: relative; width: 44px; height: 26px; margin: 0; border: 1px solid var(--rule); border-radius: 99px; background: var(--agenda-surface); cursor: pointer; }
 .setting input[role='switch']::after { content: ''; position: absolute; top: 4px; left: 4px; width: 16px; height: 16px; border-radius: 50%; background: var(--fg); transition: transform 180ms; }
 .setting input[role='switch']:checked { background: var(--accent-nav); border-color: var(--accent-nav); }
-.setting input[role='switch']:checked::after { transform: translateX(18px); background: var(--color-dark); }
+.setting input[role='switch']:checked::after { transform: translateX(18px); background: var(--agenda-on-accent); }
 .setting select { min-height: 44px; padding: 8px 14px; border: 1px solid var(--rule); background: var(--bg); color: var(--fg); }
 .inbox { list-style: none; margin: 0; padding: 0; }
 .inbox li { padding: 20px 0; border-top: 1px solid var(--rule); }
@@ -257,7 +281,7 @@
 }
 @media (max-width: 760px) {
   .header { min-height: 72px; padding: 12px 20px; gap: 12px; }
-  .brand img { width: 94px; }
+  .brandLogo { width: 94px; height: 19px; }
   .headerTitle { display: none; }
   .headerActions { gap: 8px; }
   .headerActions .iconButton { width: 38px; height: 38px; }
@@ -324,6 +348,7 @@
   .nowCard { padding: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .root, .root *, .root *::after { transition: none !important; }
   .dialog[open]::backdrop, .dialog[data-closing]::backdrop { animation: none; }
   .pexelsPhoto, .dayTabs button, .ringProgress, .sessionCard, .setting input[role='switch']::after { transition: none; }
 }
