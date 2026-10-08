@@ -1,3 +1,4 @@
+import { agendaAppEn } from './tanusas-agenda/en';
 import type { Dictionary } from '../index';
 
 /**
@@ -808,6 +809,8 @@ export const en: Dictionary = {
   },
 
   tanusas: {
+    /** La copia de la agenda como aplicación: avisos, notas y exportación. */
+    agendaApp: agendaAppEn,
     nav: {
       label: 'Retreat sections',
       invitation: 'Invitation',

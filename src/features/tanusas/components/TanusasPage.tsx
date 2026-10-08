@@ -80,7 +80,7 @@ export function TanusasPage({ copy, locale, header, photo }: Props) {
 
           <div className={styles.heroFoot}>
             <div className={styles.heroActions}>
-              <TanusasAgendaCta copy={copy.hero} />
+              <TanusasAgendaCta copy={copy.hero} locale={locale} />
               <p className={styles.heroNote}>{copy.hero.personal}</p>
             </div>
 
@@ -323,6 +323,7 @@ export function TanusasPage({ copy, locale, header, photo }: Props) {
             <h2 className={styles.title}>{copy.agenda.title}</h2>
           </div>
 
+          <a href={`/${locale}/tanusas/agenda`} className={styles.agendaCta}>{copy.agendaApp.open}</a>
           <TanusasAgenda copy={copy.agenda} />
 
           <p className={styles.note}>{copy.agenda.note}</p>
@@ -356,7 +357,7 @@ export function TanusasPage({ copy, locale, header, photo }: Props) {
         <p className={styles.closingQuote}>{copy.closing.quote}</p>
         <p className={styles.closingInvite}>{copy.closing.invite}</p>
 
-        <TanusasAgendaCta copy={copy.hero} />
+        <TanusasAgendaCta copy={copy.hero} locale={locale} />
 
         <div className={styles.closingFoot}>
           <p>{copy.closing.partners}</p>

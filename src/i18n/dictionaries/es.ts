@@ -1,3 +1,4 @@
+import { agendaAppEs } from './tanusas-agenda/es';
 /**
  * Copia en español. Es el diccionario de referencia: el tipo `Dictionary` sale de
  * aquí, así que al añadir una clave el inglés deja de compilar hasta traducirla.
@@ -938,6 +939,8 @@ export const es = {
    * —fechas, sede, aforo, imágenes— vive en `src/config/tanusas.ts`.
    */
   tanusas: {
+    /** La copia de la agenda como aplicación: avisos, notas y exportación. */
+    agendaApp: agendaAppEs,
     /** Navegación de la propia página: son anclas, no rutas. */
     nav: {
       /** Nombre accesible del bloque. No es una de las anclas. */
