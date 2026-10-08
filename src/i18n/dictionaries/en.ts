@@ -1070,6 +1070,8 @@ export const en: Dictionary = {
         salon: 'Main room',
         playa: 'Beach',
         restaurante: 'Restaurant',
+        casaPrincipal: 'Leaving from the main house',
+        bv: 'BV',
       },
       moments: {
         llegada: { title: 'Arrival', text: 'Welcome and settling in at Tanusas.' },
@@ -1106,8 +1108,14 @@ export const en: Dictionary = {
           text: 'What model is viable to build and test? Identifying existing capabilities, where a new architecture adds value and what it must demonstrate to sustain itself. Who pays for this infrastructure and who maintains it?',
         },
         libreTarde: { title: 'Free', text: 'Your own time.' },
-        caminata: { title: 'Guided walk', text: 'With Rodrigo, through the edible forest.' },
-        cenaChef: { title: 'Dinner with chef Rodrigo Pacheco', text: 'Dinner by and with the chef, closing the day.' },
+        caminata: {
+          title: 'Walk to the trail',
+          text: 'We leave the main house for the trail. It takes about an hour, depending on what we find along the way. Bring insect repellent.',
+        },
+        cenaChef: {
+          title: 'Dinner with chef Rodrigo Pacheco',
+          text: 'Dinner by and with the chef, closing the day, at BV.',
+        },
         bloque6: { title: 'Block 6 · Principles', text: 'A conversation at sunrise, on the beach.' },
         desayunoSabado: { title: 'Breakfast', text: 'At the restaurant.' },
         reflexiones: { title: 'Reflections on the previous day', text: 'What settled overnight.' },

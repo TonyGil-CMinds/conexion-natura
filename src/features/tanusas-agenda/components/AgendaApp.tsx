@@ -9,11 +9,13 @@ import { LocaleSwitch } from '@/components/layout/LocaleSwitch';
 import { TANUSAS } from '@/config/tanusas';
 import { momentosOrdenados, type TanusasDayKey } from '@/config/tanusas-schedule';
 import { SESSION_ALIASES } from '@/config/tanusas-agenda';
+import { agendaPhotoScene } from '@/config/tanusas-photos';
 import type { Dictionary, Locale } from '@/i18n';
 import { useAgendaNotebook } from '../hooks/useAgendaNotebook';
 import { noticeText, useAgendaAlerts } from '../hooks/useAgendaAlerts';
 import { createCalendar, downloadText, exportNotebook } from '../lib/export';
 import { AgendaTransition } from './AgendaTransition';
+import { AgendaBackdrop } from './AgendaBackdrop';
 import { AgendaDialog } from './AgendaDialog';
 import { AgendaIcon, type AgendaIconName } from './AgendaIcon';
 import { SessionContent, WorkshopViews } from './WorkshopContent';
@@ -60,6 +62,7 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
   const status = live?.estado === 'despues' ? copy.ended : live?.actual ? copy.live : live?.estado === 'antes' ? copy.before : copy.next;
   const progress = live?.actual ? live.avance : live?.estado === 'despues' ? 1 : 0;
   const next = live?.actual ? live.siguiente : null;
+  const photoScene = agendaPhotoScene(active);
 
   useEffect(() => {
     const readUrl = () => {
@@ -175,6 +178,7 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
               <div className={styles.nowContent}><p className={styles.eyebrow}>{live?.estado === 'despues' ? copy.ended : live?.actual ? copy.remaining : copy.until}</p><h2>{activeText?.title ?? (live ? copy.after : copy.title)}</h2>{active && <p>{live?.actual ? copy.ends : copy.starts} <b>{live?.actual ? active.end : active.start}</b></p>}</div>
             </div>
             {active ? <button type="button" className={styles.nowAction} onClick={() => openSession(active.key)}>{copy.details}<AgendaIcon name="arrow" /></button> : <p className={styles.muted}>{live?.estado === 'despues' ? copy.afterBody : copy.clock}</p>}
+            <AgendaBackdrop key={photoScene} scene={photoScene} credit={copy.photoCredit} />
           </section>
           {next && <button type="button" className={styles.upNext} onClick={() => openSession(next.key)}><span><small>{copy.next} · {next.start}</small><strong>{agenda.moments[next.key as keyof typeof agenda.moments].title}</strong></span><AgendaIcon name="arrow" /></button>}
           <div className={styles.sidebarFooter}><span><AgendaIcon name="clock" />{copy.clock}</span><button type="button" className={styles.textButton} onClick={() => calendar()}><AgendaIcon name="download" />{copy.exportCalendar}</button></div>

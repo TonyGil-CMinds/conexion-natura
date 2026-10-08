@@ -56,5 +56,6 @@ export const agendaAppEs = {
   soon: 'Empieza en {min} min', starting: 'Empieza ahora',
   privacy: 'Tus notas, sesiones guardadas y reflexiones se guardan solo en este navegador.',
   fullProgram: 'Programa completo', subjectToChange: 'Programa sujeto a ajustes.',
+  photoCredit: 'Foto:',
   detailsContent: detailsEs,
 };

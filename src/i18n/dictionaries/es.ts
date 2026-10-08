@@ -1221,6 +1221,8 @@ export const es = {
         salon: 'Salón',
         playa: 'Playa',
         restaurante: 'Restaurante',
+        casaPrincipal: 'Salida desde la casa principal',
+        bv: 'BV',
       },
       moments: {
         llegada: { title: 'Llegada', text: 'Recepción y acomodo en Tanusas.' },
@@ -1257,8 +1259,14 @@ export const es = {
           text: '¿Qué modelo es viable construir y probar? Identificar capacidades existentes, dónde una nueva arquitectura aportaría valor y qué debe demostrar para sostenerse. ¿Quién paga por esta infraestructura y quién la mantiene?',
         },
         libreTarde: { title: 'Libre', text: 'Tiempo propio.' },
-        caminata: { title: 'Caminata guiada', text: 'Con Rodrigo, por el bosque comestible.' },
-        cenaChef: { title: 'Cena con el chef Rodrigo Pacheco', text: 'Cena por y con el chef, de cierre del día.' },
+        caminata: {
+          title: 'Caminata al sendero',
+          text: 'Salimos de la casa principal hacia el sendero. Dura una hora aproximada: depende de lo que vayamos encontrando. Lleva repelente.',
+        },
+        cenaChef: {
+          title: 'Cena con el chef Rodrigo Pacheco',
+          text: 'Cena por y con el chef, de cierre del día, en BV.',
+        },
         bloque6: { title: 'Bloque 6 · Principios', text: 'Una conversación al amanecer, en la playa.' },
         desayunoSabado: { title: 'Desayuno', text: 'En el restaurante.' },
         reflexiones: { title: 'Reflexiones del día anterior', text: 'Qué se asentó durante la noche.' },

@@ -63,9 +63,9 @@ export const TANUSAS_SCHEDULE = [
   { key: 'comida', day: 'viernes', start: '13:00', end: '14:00', tono: 'pausa' },
   { key: 'libreViernes', day: 'viernes', start: '14:00', end: '15:00', tono: 'libre' },
   { key: 'bloque5', day: 'viernes', start: '15:15', end: '17:00', tono: 'bloque', lugar: 'salon' },
-  { key: 'libreTarde', day: 'viernes', start: '17:00', end: '18:00', tono: 'libre' },
-  { key: 'caminata', day: 'viernes', start: '18:00', end: '19:00', tono: 'libre' },
-  { key: 'cenaChef', day: 'viernes', start: '19:00', end: '22:00', tono: 'pausa' },
+  { key: 'caminata', day: 'viernes', start: '17:00', end: '18:00', tono: 'libre', lugar: 'casaPrincipal' },
+  { key: 'libreTarde', day: 'viernes', start: '18:00', end: '19:00', tono: 'libre' },
+  { key: 'cenaChef', day: 'viernes', start: '19:00', end: '21:30', tono: 'pausa', lugar: 'bv' },
 
   // Sábado 10
   { key: 'bloque6', day: 'sabado', start: '05:30', end: '06:40', tono: 'bloque', lugar: 'playa' },

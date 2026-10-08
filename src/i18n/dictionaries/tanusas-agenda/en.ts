@@ -51,4 +51,5 @@ export const agendaAppEn: Copy = {
   soon: 'Starts in {min} min', starting: 'Starting now',
   privacy: 'Your notes, saved sessions and reflections are stored only in this browser.',
   fullProgram: 'Full programme', subjectToChange: 'Programme subject to adjustments.', detailsContent: detailsEn,
+  photoCredit: 'Photo:',
 };
