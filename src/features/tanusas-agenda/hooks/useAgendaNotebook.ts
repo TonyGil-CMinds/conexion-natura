@@ -6,6 +6,7 @@ import { TANUSAS_SCHEDULE } from '@/config/tanusas-schedule';
 export type Verdict = 'keep' | 'revise' | 'drop';
 export type AgendaNotice = { id: string; session: string; kind: 'soon' | 'live' | 'test'; minutes: number; at: number; read: boolean };
 export type Notebook = {
+  onboardingComplete: boolean;
   notes: Record<string, string>;
   saved: string[];
   votes: Record<string, Verdict>;
@@ -15,7 +16,7 @@ export type Notebook = {
 };
 export const NOTEBOOK_KEY = 'tanusas-agenda:2026:v1';
 const keys = new Set<string>(TANUSAS_SCHEDULE.map((s) => s.key));
-const defaults = (): Notebook => ({ notes: {}, saved: [], votes: {}, clarity: [], settings: { reminders: false, minutes: 5, sound: false, browser: false }, inbox: [] });
+const defaults = (): Notebook => ({ onboardingComplete: false, notes: {}, saved: [], votes: {}, clarity: [], settings: { reminders: true, minutes: 5, sound: true, browser: false }, inbox: [] });
 
 /** Local data is untrusted and may be from an older version. */
 export function parseNotebook(raw: string | null): Notebook {
@@ -24,12 +25,15 @@ export function parseNotebook(raw: string | null): Notebook {
   try {
     const value = JSON.parse(raw);
     if (!value || typeof value !== 'object') return base;
+    base.onboardingComplete = value.onboardingComplete === true;
     if (value.notes && typeof value.notes === 'object') base.notes = Object.fromEntries(Object.entries(value.notes).filter(([key, note]) => keys.has(key) && typeof note === 'string').map(([key, note]) => [key, (note as string).slice(0, 10000)]));
     if (Array.isArray(value.saved)) base.saved = [...new Set<string>(value.saved.filter((key: unknown) => typeof key === 'string' && keys.has(key)))];
     if (value.votes && typeof value.votes === 'object') base.votes = Object.fromEntries(Object.entries(value.votes).filter(([key, vote]) => Number.isInteger(Number(key)) && Number(key) >= 1 && Number(key) <= 16 && ['keep', 'revise', 'drop'].includes(String(vote)))) as Notebook['votes'];
     if (Array.isArray(value.clarity)) base.clarity = [...new Set<number>(value.clarity.filter((n: unknown) => Number.isInteger(n) && Number(n) >= 0 && Number(n) < 7))];
     if (value.settings && typeof value.settings === 'object') {
-      for (const key of ['reminders', 'sound', 'browser'] as const) base.settings[key] = value.settings[key] === true;
+      for (const key of ['reminders', 'sound', 'browser'] as const) {
+        if (typeof value.settings[key] === 'boolean') base.settings[key] = value.settings[key];
+      }
       if ([5, 10, 15].includes(value.settings.minutes)) base.settings.minutes = value.settings.minutes;
     }
     if (Array.isArray(value.inbox)) base.inbox = value.inbox.filter((n: AgendaNotice) => n && typeof n.id === 'string' && ['soon', 'live', 'test'].includes(n.kind) && (keys.has(n.session) || n.kind === 'test') && Number.isFinite(n.at) && Number.isFinite(n.minutes) && typeof n.read === 'boolean').slice(0, 100);

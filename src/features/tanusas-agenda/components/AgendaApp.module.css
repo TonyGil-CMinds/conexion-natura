@@ -215,6 +215,14 @@
 .feedback { margin: 0; color: var(--accent-nav-ink); font-size: 12px; line-height: 1.8; }
 .feedback:empty { display: none; }
 .setting { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 10px; }
+.welcome { display: flex; flex-direction: column; gap: 16px; }
+.welcome .setting { padding-block: 2px; }
+.welcome > .textButton { align-self: flex-start; }
+.welcomeBrowser { padding-block: 14px; border-block: 1px solid var(--rule); }
+.welcomeBrowser summary { cursor: pointer; color: var(--accent-nav-ink); font-size: 12px; line-height: 1.7; }
+.welcomeBrowser > :not(summary) { margin-top: 14px; }
+.welcomeActions { display: flex; flex-wrap: wrap; gap: 10px; }
+.welcomeActions > button { flex: 1 1 220px; }
 .setting > span { display: flex; flex-direction: column; gap: 8px; }
 .setting strong { font-size: 14px; font-weight: 400; }
 .setting small { max-width: 34ch; color: var(--agenda-muted); font-size: 12px; line-height: 1.7; }

@@ -14,6 +14,7 @@ import { createCalendar, downloadText, exportNotebook } from '../lib/export';
 import { AgendaTransition } from './AgendaTransition';
 import { AgendaBackdrop } from './AgendaBackdrop';
 import { AgendaDialog } from './AgendaDialog';
+import { AgendaWelcome } from './AgendaWelcome';
 import { AgendaIcon, type AgendaIconName } from './AgendaIcon';
 import { SessionContent, WorkshopViews } from './WorkshopContent';
 import styles from './AgendaApp.module.css';
@@ -34,6 +35,7 @@ function resolveSession(value: string | null) {
 export function AgendaApp({ copy, agenda, header, locale }: Props) {
   const notebook = useAgendaNotebook();
   const { data, update, ready, storageError } = notebook;
+  const welcome = ready && !data.onboardingComplete;
   const alerts = useAgendaAlerts({ data, update, ready, copy, titles: agenda.moments, locale });
   const { live, active } = alerts;
   const reducedMotion = useReducedMotion();
@@ -94,6 +96,13 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
   function openSheet(value: 'settings' | 'inbox') {
     openSession(null);
     setSheet(value);
+  }
+
+  function finishWelcome(silent = false) {
+    if (!silent && data.settings.sound) void alerts.unlockAudio();
+    update((value) => ({ ...value, onboardingComplete: true, settings: silent
+      ? { ...value.settings, reminders: false, sound: false, browser: false }
+      : value.settings }));
   }
 
   function goNow() {
@@ -221,12 +230,13 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
     </nav>
 
     <AnimatePresence>
-    {(session || sheet) && <AgendaDialog key="agenda-dialog" title={session ? agenda.moments[session.key as keyof typeof agenda.moments].title : sheet === 'settings' ? copy.settingsTitle : copy.inbox} closeLabel={copy.close} onClose={() => { openSession(null); }}>
-    {session && <>
+    {ready && (welcome || session || sheet) && <AgendaDialog key="agenda-dialog" title={welcome ? copy.welcomeTitle : session ? agenda.moments[session.key as keyof typeof agenda.moments].title : sheet === 'settings' ? copy.settingsTitle : copy.inbox} closeLabel={welcome ? copy.welcomeSkip : copy.close} onClose={() => { if (welcome) finishWelcome(true); else openSession(null); }}>
+    {welcome && <AgendaWelcome copy={copy} data={data} update={update} alerts={alerts} onComplete={finishWelcome} storageError={storageError} />}
+    {!welcome && session && <>
       <SessionContent moment={session} copy={copy} agenda={agenda} data={data} update={update} storageError={storageError} onCalendar={() => calendar(session.key)} onShare={() => { void navigator.clipboard?.writeText(window.location.href).then(() => setFeedback(copy.copied)).catch(() => setFeedback(copy.copyError)); if (!navigator.clipboard) setFeedback(copy.copyError); }} />
       <p className={styles.feedback} role="status">{feedback}</p>
     </>}
-    {sheet === 'settings' && <>
+    {!welcome && sheet === 'settings' && <>
       <p className={styles.lede}>{copy.settingsIntro}</p>
       <label className={styles.setting}><span><strong>{copy.reminders}</strong><small>{copy.reminderHint}</small></span><input type="checkbox" role="switch" checked={data.settings.reminders} onChange={(event) => { const checked = event.target.checked; update((value) => ({ ...value, settings: { ...value.settings, reminders: checked } })); }} /></label>
       <label className={styles.setting}><span>{copy.advance}</span><select value={data.settings.minutes} onChange={(event) => { const minutes = Number(event.target.value); update((value) => ({ ...value, settings: { ...value.settings, minutes } })); }}>{[5, 10, 15].map((minutes) => <option value={minutes} key={minutes}>{minutes} min</option>)}</select></label>
@@ -240,7 +250,7 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
       <button className={styles.secondaryButton} type="button" onClick={exportNotes}><AgendaIcon name="download" />{copy.exportNotes}</button>
       <p className={styles.feedback} role="status">{feedback}</p>
     </>}
-    {sheet === 'inbox' && <>
+    {!welcome && sheet === 'inbox' && <>
       {data.inbox.length ? <><button type="button" className={styles.textButton} onClick={() => update((value) => ({ ...value, inbox: value.inbox.map((notice) => ({ ...notice, read: true })) }))}>{copy.readAll}<AgendaIcon name="check" /></button><ol className={styles.inbox}>{data.inbox.map((notice) => { const text = noticeText(notice, copy, agenda.moments); return <li key={notice.id} data-unread={!notice.read || undefined}><span className={styles.eyebrow}>{new Date(notice.at).toLocaleString(locale, { timeZone: 'America/Guayaquil', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })}</span><h3>{text.title}</h3><p>{text.body}</p>{notice.session && <button type="button" className={styles.textButton} onClick={() => { update((value) => ({ ...value, inbox: value.inbox.map((entry) => entry.id === notice.id ? { ...entry, read: true } : entry) })); openSession(notice.session); }}>{copy.details}<AgendaIcon name="arrow" /></button>}</li>; })}</ol></> : <div className={styles.empty}><AgendaIcon name="bell" /><h3>{copy.inboxEmpty}</h3><p>{copy.inboxHint}</p><button type="button" className={styles.primaryButton} onClick={() => setSheet('settings')}>{copy.nav.settings}<AgendaIcon name="arrow" /></button></div>}
     </>}
     </AgendaDialog>}

@@ -86,11 +86,12 @@ export function useAgendaAlerts({ data, ready, update, copy, titles, locale }: P
       audioSource.current = null;
       return;
     }
+    if (!ready || !data.onboardingComplete) return;
     const unlock = () => { void unlockAudio(); };
     window.addEventListener('pointerdown', unlock, { once: true });
     window.addEventListener('keydown', unlock, { once: true });
     return () => { window.removeEventListener('pointerdown', unlock); window.removeEventListener('keydown', unlock); };
-  }, [data.settings.sound, unlockAudio]);
+  }, [data.onboardingComplete, data.settings.sound, ready, unlockAudio]);
 
   const requestPermission = useCallback(async () => {
     if (typeof Notification === 'undefined') { setPermission('unsupported'); return; }
@@ -129,7 +130,7 @@ export function useAgendaAlerts({ data, ready, update, copy, titles, locale }: P
   }, [copy, data.settings.browser, data.settings.sound, locale, play, titles]);
 
   useEffect(() => {
-    if (!ready || !live || !data.settings.reminders) return;
+    if (!ready || !data.onboardingComplete || !live || !data.settings.reminders) return;
     const now = Date.now();
     const candidate = live.actual && now - live.actual.desde.getTime() < 60_000
       ? { session: live.actual.key, kind: 'live' as const, minutes: 0 }
@@ -148,7 +149,11 @@ export function useAgendaAlerts({ data, ready, update, copy, titles, locale }: P
     };
     if (navigator.locks) void navigator.locks.request('tanusas-agenda-alert', deliver);
     else deliver();
-  }, [data.inbox, data.settings.minutes, data.settings.reminders, live, notify, ready, update]);
+  }, [data.inbox, data.onboardingComplete, data.settings.minutes, data.settings.reminders, live, notify, ready, update]);
+
+  const previewSound = useCallback(() => {
+    if (data.settings.sound) void unlockAudio().then(play);
+  }, [data.settings.sound, play, unlockAudio]);
 
   const test = useCallback(() => {
     const notice: AgendaNotice = { id: `test:${Date.now()}`, kind: 'test', session: '', minutes: 0, at: Date.now(), read: false };
@@ -159,5 +164,5 @@ export function useAgendaAlerts({ data, ready, update, copy, titles, locale }: P
 
   const active = live?.actual ?? live?.siguiente ?? null;
   const currentIndex = active ? moments.findIndex((m) => m.key === active.key) : moments.length;
-  return { live, active, currentIndex, permission, requestPermission, toast, dismiss: () => setToast(null), test, unlockAudio };
+  return { live, active, currentIndex, permission, requestPermission, toast, dismiss: () => setToast(null), test, previewSound, unlockAudio };
 }
