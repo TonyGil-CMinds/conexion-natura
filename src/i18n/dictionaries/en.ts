@@ -1071,6 +1071,7 @@ export const en: Dictionary = {
         playa: 'Beach',
         restaurante: 'Restaurant',
         casaPrincipal: 'Departure from the Main House',
+        recepcion: 'Departure from reception',
         bv: 'BV',
       },
       moments: {
@@ -1093,6 +1094,7 @@ export const en: Dictionary = {
           text: 'What would an integral architecture have to finance? Integrating the transformation pathway while deploying capital modularly, starting from territorial priorities and the recirculation of value.',
         },
         cafe: { title: 'Coffee', text: 'Break.' },
+        cafeTarde: { title: 'Afternoon coffee break', text: 'A coffee break before getting ready for the walk.' },
         bloque3: {
           title: 'Block 3 · The unit of value',
           text: 'What does it mean for capital to have worked? Value retention and recirculation, ecosystem integrity, adaptive capacity, governance, interoperability and reciprocity. Which variables are measurable and can inform capital decisions?',
@@ -1107,10 +1109,10 @@ export const en: Dictionary = {
           title: 'Block 5 · Regional architecture',
           text: 'What model is viable to build and test? Identifying existing capabilities, where a new architecture adds value and what it must demonstrate to sustain itself. Who pays for this infrastructure and who maintains it?',
         },
-        libreTarde: { title: 'Free', text: 'Your own time.' },
+        libreTarde: { title: 'Free', text: 'Time to get ready before the walk.' },
         caminata: {
           title: 'Walk to the trail',
-          text: 'Bring insect repellent. We leave for the trail from the Main House. Duration: approximately one hour, depending on the interactions along the way.',
+          text: 'Bring insect repellent. We leave for the trail at 17:30 from reception and go straight to dinner afterwards.',
         },
         cenaChef: {
           title: 'Dinner with chef Rodrigo Pacheco',

@@ -1222,6 +1222,7 @@ export const es = {
         playa: 'Playa',
         restaurante: 'Restaurante',
         casaPrincipal: 'Salida desde la Casa Principal',
+        recepcion: 'Salida desde recepción',
         bv: 'BV',
       },
       moments: {
@@ -1244,6 +1245,7 @@ export const es = {
           text: '¿Qué tendría que financiar una arquitectura integral? Integrar la trayectoria de transformación, aunque el capital se despliegue modularmente, partiendo de las prioridades del territorio y de la recirculación del valor.',
         },
         cafe: { title: 'Café', text: 'Pausa.' },
+        cafeTarde: { title: 'Coffee break de la tarde', text: 'Pausa para tomar café antes de prepararnos para la caminata.' },
         bloque3: {
           title: 'Bloque 3 · La unidad de valor',
           text: '¿Qué significa que el capital haya funcionado? Retención y recirculación de valor, integridad ecosistémica, capacidad adaptativa, gobernanza, interoperabilidad y reciprocidad. ¿Qué variables son medibles y pueden orientar decisiones de capital?',
@@ -1258,10 +1260,10 @@ export const es = {
           title: 'Bloque 5 · Arquitectura regional',
           text: '¿Qué modelo es viable construir y probar? Identificar capacidades existentes, dónde una nueva arquitectura aportaría valor y qué debe demostrar para sostenerse. ¿Quién paga por esta infraestructura y quién la mantiene?',
         },
-        libreTarde: { title: 'Libre', text: 'Tiempo propio.' },
+        libreTarde: { title: 'Libre', text: 'Tiempo para prepararse antes de la caminata.' },
         caminata: {
           title: 'Caminata al sendero',
-          text: 'Lleva repelente. Salimos al sendero desde la Casa Principal. Duración: una hora aproximadamente, según las interacciones.',
+          text: 'Lleva repelente. Salimos al sendero a las 17:30 desde recepción. Al terminar, vamos directo a la cena.',
         },
         cenaChef: {
           title: 'Cena con el chef Rodrigo Pacheco',
