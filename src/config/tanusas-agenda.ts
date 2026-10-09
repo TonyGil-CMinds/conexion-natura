@@ -16,6 +16,12 @@ export type AgendaDetail = {
   questions?: string[];
   prompts?: string[];
   notes?: string[];
+  /**
+   * Material de apoyo de la sesión. Va aparte de `notes` porque una nota se
+   * lee y un enlace se abre: mezclarlos dejaría la dirección en medio de una
+   * frase, sin poder pulsarla.
+   */
+  links?: readonly { label: string; href: string }[];
   round?: string;
   steps?: { title: string; body?: string }[];
   matrix?: { head: string[]; rows: string[][] };

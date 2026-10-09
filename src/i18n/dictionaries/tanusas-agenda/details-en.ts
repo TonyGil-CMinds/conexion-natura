@@ -3,6 +3,7 @@
 export const detailsEn: AgendaDetails = {
   cenaJueves: {
     notes: ['Read about each participant’s experience and professional role beforehand to understand their perspectives and make the most of their knowledge.'],
+    links: [{ label: 'Participant backgrounds', href: 'https://drive.google.com/drive/folders/1LxBHg-Dz5xnCaXQstHBZvabPg_4nOGGj' }],
   },
   raices: {
     objective: 'One real blocker and one necessary condition per person.',

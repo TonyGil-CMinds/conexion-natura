@@ -78,7 +78,7 @@
 .dayTabs button:hover:not([aria-selected='true']) { border-color: var(--accent-nav-ink); }
 .dayIndicator { position: absolute; right: 12px; bottom: 12px; }
 .nowCard { --fg: var(--color-light); --bg: #111714; --accent-nav-ink: var(--agenda-photo-ink); --agenda-muted: #d7dfd2; --rule: rgb(247 255 210 / 22%); position: relative; isolation: isolate; overflow: hidden; padding: var(--space-5); border: 1px solid var(--rule); background: var(--bg); color: var(--fg); }
-.nowCard > :not(.nowBackdrop) { position: relative; z-index: 1; }
+.nowCard > :not(.nowBackdrop):not(.liveBorder) { position: relative; z-index: 1; }
 .nowBackdrop { position: absolute; inset: -28px; z-index: 0; pointer-events: none; }
 .nowPhoto { object-fit: cover; filter: blur(4px) brightness(0.62) saturate(0.8); }
 .pexelsPhoto { opacity: 0; transition: opacity 700ms ease; }
@@ -89,8 +89,7 @@
 .photoCredit a:hover { color: var(--fg); }
 .nowTop { position: relative; display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); color: var(--accent-nav-ink); font-size: 10px; line-height: 1.6; text-transform: uppercase; }
 .nowTop > span { display: inline-flex; align-items: center; gap: 8px; }
-.nowTop i { display: block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.nowCard[data-live='true'] .nowTop i { background: var(--tanusas-live); box-shadow: 0 0 0 4px color-mix(in srgb, var(--tanusas-live) 15%, transparent); }
+.nowTop > span > i { display: block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .nowBody { display: flex; align-items: center; gap: var(--space-5); margin-top: var(--space-5); }
 .ring { position: relative; width: 112px; height: 112px; flex: none; color: var(--accent-nav-ink); }
 .ring > svg { position: absolute; width: 100%; height: 100%; fill: none; stroke: var(--rule); stroke-width: 2; transform: rotate(-90deg); }
@@ -137,12 +136,46 @@
 .timelineItem[data-past] .timelineMarker::before { background: color-mix(in srgb, var(--accent-nav-ink) 55%, transparent); }
 .sessionCard { display: flex; flex-direction: column; align-items: stretch; gap: var(--space-3); width: 100%; min-width: 0; padding: var(--space-5); border: 1px solid var(--rule); border-radius: 3px; background: var(--agenda-surface); color: var(--fg); text-align: left; transition: border-color 180ms, background-color 180ms; }
 .sessionCard:hover { border-color: color-mix(in srgb, var(--accent-nav-ink) 65%, transparent); background: color-mix(in srgb, var(--accent-nav) 5%, var(--bg)); }
-.timelineItem[data-live] .sessionCard { border-color: var(--tanusas-live); background: color-mix(in srgb, var(--accent-nav) 5%, var(--bg)); }
-.timelineItem[data-live] .timelineMarker > svg { border-color: var(--tanusas-live); color: var(--tanusas-live); }
+.timelineItem[data-live] .sessionCard { position: relative; border-color: var(--accent-nav-ink); background: color-mix(in srgb, var(--accent-nav) 5%, var(--bg)); }
+.timelineItem[data-live] .timelineMarker > svg { border-color: var(--accent-nav-ink); color: var(--accent-nav-ink); }
+.nowCard[data-live='true'] { border-color: var(--accent-nav-ink); }
+.liveBorder {
+  --live-angle: 0deg;
+  position: absolute;
+  inset: -1px;
+  z-index: 2;
+  padding: 2px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(from var(--live-angle), var(--accent-nav) 0%, var(--accent-nav-ink) 15%, var(--fg) 23%, var(--accent-nav) 32%, transparent 47%, var(--accent-nav) 62%, var(--accent-nav-ink) 78%, transparent 90%, var(--accent-nav) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
 .cardMeta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; font-size: 10px; line-height: 1.5; color: var(--agenda-muted); }
 .cardMeta > svg { width: 14px; height: 14px; margin-left: auto; color: var(--accent-nav-ink); }
 .kindChip { display: inline-block; padding: 3px 7px; border: 1px solid color-mix(in srgb, var(--kind-color) 40%, transparent); border-radius: 3px; color: var(--kind-color); text-transform: uppercase; }
-.liveChip { padding: 3px 7px; color: var(--color-dark); background: var(--tanusas-live); border-radius: 3px; font-weight: 500; text-transform: uppercase; }
+.liveChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px 3px 5px;
+  color: var(--color-dark);
+  background: linear-gradient(110deg, var(--accent-nav-ink), color-mix(in srgb, var(--accent-nav-ink) 55%, white), var(--accent-nav-ink));
+  background-size: 220% 100%;
+  background-position: 0% 50%;
+  border-radius: 3px;
+  font-size: 10px;
+  line-height: 1.5;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.liveSignal { position: relative; display: inline-block; flex: none; width: 20px; height: 16px; }
+.liveSignal > i { position: absolute; top: 50%; left: 50%; border-radius: 50%; }
+.liveSignal > i:first-child { width: 4px; height: 4px; margin: -2px; background: currentColor; }
+.liveSignal > i[data-live-wave] { width: 14px; height: 14px; margin: -7px; border: 1.5px solid currentColor; border-top-color: transparent; border-bottom-color: transparent; opacity: 0.65; }
+.liveSignal > i[data-live-wave]:last-child { width: 20px; height: 20px; margin: -10px; opacity: 0.4; }
 .cardTitle { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); font-size: 15px; line-height: 1.5; text-transform: uppercase; letter-spacing: -0.025em; }
 .cardTitle > svg { flex: none; width: 17px; height: 17px; margin-top: 3px; color: var(--accent-nav-ink); }
 .cardSummary { display: -webkit-box; overflow: hidden; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-size: 12px; line-height: 1.75; color: var(--agenda-muted); }
@@ -356,7 +389,12 @@
   .nowCard { padding: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .root, .root *, .root *::after { transition: none !important; }
+  .root, .root *, .root *::before, .root *::after { transition: none !important; }
   .dialog[open]::backdrop, .dialog[data-closing]::backdrop { animation: none; }
   .pexelsPhoto, .dayTabs button, .ringProgress, .sessionCard, .setting input[role='switch']::after { transition: none; }
 }
+
+/** El enlace de apoyo de una sesión: se lee como nota pero se abre. */
+.detailLink { margin: 0; font-size: 12px; line-height: 1.8; }
+.detailLink a { display: inline-flex; align-items: center; gap: 7px; color: var(--agenda-accent, currentColor); text-decoration: underline; text-underline-offset: 3px; }
+.detailLink svg { width: 15px; height: 15px; flex-shrink: 0; }

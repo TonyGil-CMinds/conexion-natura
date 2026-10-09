@@ -80,6 +80,7 @@ export function SessionContent({ moment, copy, agenda, data, update, storageErro
     {detail?.round && <p className={styles.objective}>{detail.round}</p>}
     {detail?.matrix && <section><h3>{copy.horizon}</h3><div className={styles.matrix} tabIndex={0} role="region" aria-label={copy.horizon}><table><thead><tr><th scope="col">{copy.dimension}</th>{detail.matrix.head.map((title) => <th scope="col" key={title}>{title}</th>)}</tr></thead><tbody>{detail.matrix.rows.map(([label, first, second]) => <tr key={label}><th scope="row">{label}</th><td>{first}</td><td>{second}</td></tr>)}</tbody></table></div></section>}
     {detail?.notes?.map((note) => <p className={styles.muted} key={note}>{note}</p>)}
+    {detail?.links?.map((link) => <p className={styles.detailLink} key={link.href}><a href={link.href} target="_blank" rel="noreferrer"><AgendaIcon name="link" />{link.label}</a></p>)}
     <section className={styles.personalNotes}><label htmlFor="session-notes">{copy.notes}</label><p id="notes-hint" className={styles.muted}>{copy.notesHint}</p>
       <textarea id="session-notes" value={data.notes[moment.key] ?? ''} maxLength={10000} rows={6} placeholder={copy.notesPlaceholder} aria-describedby="notes-hint notes-storage"
         onChange={(event) => { const note = event.target.value; update((value) => ({ ...value, notes: { ...value.notes, [moment.key]: note } })); }} />

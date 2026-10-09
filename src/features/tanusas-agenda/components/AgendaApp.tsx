@@ -15,6 +15,7 @@ import { AgendaTransition } from './AgendaTransition';
 import { AgendaBackdrop } from './AgendaBackdrop';
 import { AgendaDialog } from './AgendaDialog';
 import { AgendaWelcome } from './AgendaWelcome';
+import { AgendaLiveBadge, AgendaLiveBorder } from './AgendaLive';
 import { AgendaIcon, type AgendaIconName } from './AgendaIcon';
 import { SessionContent, WorkshopViews } from './WorkshopContent';
 import styles from './AgendaApp.module.css';
@@ -176,7 +177,8 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
             </button>)}
           </div>
           <section className={styles.nowCard} aria-label={copy.nav.now} data-live={!!live?.actual}>
-            <div className={styles.nowTop}><span><i />{status}</span><AgendaIcon name="sun" /></div>
+            {live?.actual && <AgendaLiveBorder />}
+            <div className={styles.nowTop}>{live?.actual ? <AgendaLiveBadge>{status}</AgendaLiveBadge> : <span><i aria-hidden="true" />{status}</span>}<AgendaIcon name="sun" /></div>
             <div className={styles.nowBody}>
               <div className={styles.ring}>
                 <svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" /><circle className={styles.ringProgress} cx="60" cy="60" r="52" pathLength="100" strokeDasharray="100" strokeDashoffset={100 - progress * 100} /></svg>
@@ -207,7 +209,8 @@ export function AgendaApp({ copy, agenda, header, locale }: Props) {
                   <div className={styles.timeColumn}><time dateTime={moment.desde.toISOString()}>{moment.start}</time><span>{moment.end}</span></div>
                   <span className={styles.timelineMarker}><AgendaIcon name={icon} /></span>
                   <button type="button" className={styles.sessionCard} onClick={() => openSession(moment.key)} aria-haspopup="dialog">
-                    <span className={styles.cardMeta}><span className={styles.kindChip}>{agenda.ui.categories[moment.tono]}</span><span>{(moment.hasta.getTime() - moment.desde.getTime()) / 60000} min</span>{isLive && <b className={styles.liveChip}>{copy.live}</b>}{isPast && <span>{copy.done}</span>}{data.saved.includes(moment.key) && <AgendaIcon name="save" />}</span>
+                    {isLive && <AgendaLiveBorder />}
+                    <span className={styles.cardMeta}><span className={styles.kindChip}>{agenda.ui.categories[moment.tono]}</span><span>{(moment.hasta.getTime() - moment.desde.getTime()) / 60000} min</span>{isLive && <AgendaLiveBadge>{copy.live}</AgendaLiveBadge>}{isPast && <span>{copy.done}</span>}{data.saved.includes(moment.key) && <AgendaIcon name="save" />}</span>
                     <span className={styles.cardTitle}>{text.title}<AgendaIcon name="arrow" /></span>
                     <span className={styles.cardSummary}>{text.text}</span>
                     {place && <span className={styles.cardPlace}><AgendaIcon name="pin" />{place}</span>}

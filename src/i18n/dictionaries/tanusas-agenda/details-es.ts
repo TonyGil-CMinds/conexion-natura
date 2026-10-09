@@ -5,7 +5,8 @@ export const detailsEs: AgendaDetails = {
   cenaJueves: {
     notes: [
       'Se recomienda leer con anticipación la trayectoria y el rol profesional de cada persona para entender sus perspectivas y aprovechar su conocimiento.'
-    ]
+    ],
+    links: [{ label: 'Trayectorias de quienes participan', href: 'https://drive.google.com/drive/folders/1LxBHg-Dz5xnCaXQstHBZvabPg_4nOGGj' }]
   },
   raices: {
     objective: 'Un bloqueo real y una condición necesaria por persona.',
