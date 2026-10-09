@@ -136,9 +136,20 @@
 .timelineItem[data-past] .timelineMarker::before { background: color-mix(in srgb, var(--accent-nav-ink) 55%, transparent); }
 .sessionCard { display: flex; flex-direction: column; align-items: stretch; gap: var(--space-3); width: 100%; min-width: 0; padding: var(--space-5); border: 1px solid var(--rule); border-radius: 3px; background: var(--agenda-surface); color: var(--fg); text-align: left; transition: border-color 180ms, background-color 180ms; }
 .sessionCard:hover { border-color: color-mix(in srgb, var(--accent-nav-ink) 65%, transparent); background: color-mix(in srgb, var(--accent-nav) 5%, var(--bg)); }
-.timelineItem[data-live] .sessionCard { position: relative; border-color: var(--accent-nav-ink); background: color-mix(in srgb, var(--accent-nav) 5%, var(--bg)); }
-.timelineItem[data-live] .timelineMarker > svg { border-color: var(--accent-nav-ink); color: var(--accent-nav-ink); }
-.nowCard[data-live='true'] { border-color: var(--accent-nav-ink); }
+/**
+ * Lo que está ocurriendo va en rosa, no en el lima del sitio.
+ *
+ * Es el mismo color que la tira de «en vivo»: el lima es el acento de todo
+ * —pestañas, botones, enlaces— y con él, «en curso» no se distinguía del
+ * resto de la pantalla. El rosa solo significa una cosa y por eso se ve.
+ *
+ * Va por una variable para que el rosa se escriba una vez: quien quiera
+ * llevarlo también al anillo o a los rótulos cambia aquí.
+ */
+.timelineItem[data-live], .nowCard[data-live='true'] { --vivo: var(--tanusas-live); }
+.timelineItem[data-live] .sessionCard { position: relative; border-color: var(--vivo); background: color-mix(in srgb, var(--vivo) 7%, var(--bg)); }
+.timelineItem[data-live] .timelineMarker > svg { border-color: var(--vivo); color: var(--vivo); }
+.nowCard[data-live='true'] { border-color: var(--vivo); }
 .liveBorder {
   --live-angle: 0deg;
   position: absolute;
@@ -147,7 +158,8 @@
   padding: 2px;
   border-radius: inherit;
   pointer-events: none;
-  background: conic-gradient(from var(--live-angle), var(--accent-nav) 0%, var(--accent-nav-ink) 15%, var(--fg) 23%, var(--accent-nav) 32%, transparent 47%, var(--accent-nav) 62%, var(--accent-nav-ink) 78%, transparent 90%, var(--accent-nav) 100%);
+  /* El mismo rosa, con un tramo claro que es lo que hace que el giro se vea. */
+  background: conic-gradient(from var(--live-angle), var(--vivo, var(--tanusas-live)) 0%, color-mix(in srgb, var(--vivo, var(--tanusas-live)) 60%, white) 15%, var(--fg) 23%, var(--vivo, var(--tanusas-live)) 32%, transparent 47%, var(--vivo, var(--tanusas-live)) 62%, color-mix(in srgb, var(--vivo, var(--tanusas-live)) 60%, white) 78%, transparent 90%, var(--vivo, var(--tanusas-live)) 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -162,7 +174,7 @@
   gap: 5px;
   padding: 3px 8px 3px 5px;
   color: var(--color-dark);
-  background: linear-gradient(110deg, var(--accent-nav-ink), color-mix(in srgb, var(--accent-nav-ink) 55%, white), var(--accent-nav-ink));
+  background: linear-gradient(110deg, var(--tanusas-live), color-mix(in srgb, var(--tanusas-live) 55%, white), var(--tanusas-live));
   background-size: 220% 100%;
   background-position: 0% 50%;
   border-radius: 3px;
