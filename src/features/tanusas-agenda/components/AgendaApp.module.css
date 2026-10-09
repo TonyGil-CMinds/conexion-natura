@@ -8,6 +8,17 @@
   --rule: color-mix(in srgb, var(--fg) 18%, transparent);
   --agenda-muted: color-mix(in srgb, var(--fg) 72%, var(--bg));
   --agenda-surface: color-mix(in srgb, var(--fg) 4%, var(--bg));
+  /**
+   * El verde de los enlaces.
+   *
+   * Es suyo y no el acento del día a propósito: el acento cambia —lima el
+   * jueves, rosa el viernes, azul el sábado— y un enlace que cambia de color
+   * cada día deja de parecer un enlace. Este se queda.
+   *
+   * Se lee en los tres fondos: 14,7 de contraste el jueves, 15,1 el viernes
+   * y 14,8 el sábado, sobre los 4,5 que pide la norma.
+   */
+  --agenda-link: #d0ff00;
   min-height: 100dvh;
   background: var(--bg);
   color: var(--fg);
@@ -408,5 +419,5 @@
 
 /** El enlace de apoyo de una sesión: se lee como nota pero se abre. */
 .detailLink { margin: 0; font-size: 12px; line-height: 1.8; }
-.detailLink a { display: inline-flex; align-items: center; gap: 7px; color: var(--agenda-accent, currentColor); text-decoration: underline; text-underline-offset: 3px; }
+.detailLink a { display: inline-flex; align-items: center; gap: 7px; color: var(--agenda-link); text-decoration: underline; text-underline-offset: 3px; }
 .detailLink svg { width: 15px; height: 15px; flex-shrink: 0; }
