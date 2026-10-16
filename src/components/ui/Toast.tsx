@@ -12,7 +12,8 @@ type Props = {
   onDismiss: () => void;
   /** Milisegundos en pantalla. */
   duration?: number;
-  tone?: 'error';
+  /** `info` para lo que sale bien y solo hay que contar, como un enlace copiado. */
+  tone?: 'error' | 'info';
 };
 
 /**

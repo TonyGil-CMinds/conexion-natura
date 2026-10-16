@@ -33,7 +33,9 @@
     "lista:importar": "tsx scripts/import-invitees.ts",
     "lista:verificar": "tsx scripts/verify-invitees.ts",
     "rsvp": "tsx scripts/rsvp.ts",
-    "lista:asistentes": "tsx scripts/import-attendees.ts"
+    "lista:asistentes": "tsx scripts/import-attendees.ts",
+    "galeria:subir": "tsx scripts/upload-gallery.ts",
+    "galeria:subir:send": "tsx scripts/upload-gallery.ts --send"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1119.0",

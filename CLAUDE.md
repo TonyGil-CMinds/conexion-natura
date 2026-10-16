@@ -1,7 +1,29 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # Conexión Natura — notas para Claude
 
 Stack: Next.js 15 App Router, TypeScript estricto, CSS Modules + tokens (sin
 Tailwind), GSAP, Framer Motion, react-three-fiber.
+
+## Comandos
+
+```bash
+npm run dev          # http://localhost:3000 (redirige a /es)
+npm run typecheck    # tsc --noEmit
+npm run lint
+npm run build
+npm run db:studio    # inspeccionar la base; db:seed la siembra
+```
+
+No hay suite de tests: se valida con `typecheck`, `lint`, `build` y revisión
+visual (ver «Verificación visual»).
+
+Los scripts de `scripts/` que escriben a personas reales o tocan la base
+(`mail:*`, `lista:*`, `rsvp`, `db:remove`…) **no actúan por defecto**: listan lo
+que harían. La acción va en la variante `:send` / `:enviar` / `--programar`.
+Son dos scripts y no un argumento porque npm 11 se come el `-- --flag`.
 
 ## Convenciones
 
@@ -26,6 +48,12 @@ Tailwind), GSAP, Framer Motion, react-three-fiber.
 Dos idiomas con URL propia: `/es` y `/en`, y dentro `/agenda`, `/speakers`,
 `/faq` y `/registro`. Los slugs no se traducen.
 
+Además del sitio principal hay sub-sitios con su propia piel, cada uno con su
+feature y su modelo en Prisma: `/quito` (feature `quito`, con su agenda, ponentes
+y registro), `/tanusas` (el retiro: `tanusas`, `tanusas-agenda`,
+`TanusasRegistration`) y el registro de empresas de Ecuador (`ecuador`,
+`EcuadorRegistration`, `POST /api/registro/ecuador`).
+
 El layout raíz vive en `app/[locale]/` porque solo él pinta `<html lang>`. Por
 eso `/` no existe como ruta y `middleware.ts` la redirige a `/es`. La API va
 fuera de `[locale]`: no tiene idioma.
@@ -49,8 +77,36 @@ armazón, y así los filetes verticales lo cruzan. No sale en la portada ni en
 registro (`hideFooter`): la portada cabe en una pantalla y el pie repetiría su
 CTA.
 
-Solo la portada va envuelta en `LoaderGate`: el loader es la entrada al sitio, no
-un peaje en cada ruta, y se ve una sola vez por sesión de pestaña.
+Excepción: la portada, `/quito` y `/tanusas` traen su propia barra, y
+`HeaderGate` retira la del sitio en esas rutas.
+
+Solo las portadas (la raíz y `/quito`) van envueltas en `LoaderGate`: el loader es
+la entrada al sitio, no un peaje en cada ruta, y se ve una sola vez por sesión de
+pestaña.
+
+## Portada
+
+Desde que el acto pasó, la portada (`features/home`) viste la piel de Quito:
+`data-quito` trae la paleta aleatoria (azul, rosa o blanca) y fija los colores,
+así que no hay cambio de tema. La barra es `QuitoBar`, la misma pieza que pinta
+`QuitoHeader`, con los enlaces de la portada: tres llevan a `/quito` y la llamada
+es la galería. No usa `PageFrame` (ni filetes ni pie) y conserva el
+`--content-max` del sitio, no el de la sección. `PageTransition` la trata como a
+Quito: fondo de la paleta y entrada sin desplazamiento, que movería la barra.
+
+`SITE.gallery.href` es el único destino de los tres botones de galería (hero,
+barra y menú). Mientras sea `null` salen como `<a>` sin `href`, un marcador: se
+ven pero no navegan.
+
+El hero se mide desde `--wordmark-width`, acotado por ancho y por alto: año,
+tortuga y llamada guardan con él la proporción del diseño. La banda de píxeles
+(`PixelChain`) se genera en código con 4n + 1 columnas: 33 en escritorio, 17 en
+la columna móvil, que también usan las pantallas en vertical.
+
+En la columna, la tortuga parte de su tamaño del diseño (por ancho) y no es la
+única pieza elástica: cuando falta alto cede primero el hueco de encima del
+rótulo. Siendo ella sola la que cedía, en un teléfono bajo quedaba en un sello
+arrinconado a la izquierda.
 
 En móvil el selector de idioma no va en la cabecera sino dentro del menú, arriba
 y centrado, con los nombres largos (`header.localeNames`): es el mismo componente
@@ -185,6 +241,11 @@ instantes concretos y volca la consola. Para revisar animaciones hay que usar
 esto y no `chrome --screenshot --virtual-time-budget`: el tiempo virtual solo
 avanza cuando la página está inactiva, y con GSAP corriendo nunca lo está.
 
+Si ya hay un `next dev` corriendo, se captura contra ese y no se arranca otro:
+dos servidores comparten `.next` y se pisan los chunks, que llegan al navegador
+corruptos («Unexpected token»). Tocar la fecha de un archivo no basta para
+rehacerlos: webpack no reemite un chunk cuyo contenido no ha cambiado.
+
 ## Ritmo vertical del hero
 
 Los huecos del hero son tokens (`--hero-*`) con escalones por **altura** de
@@ -194,23 +255,27 @@ va como token y entra en esos escalones.
 
 ## Correo
 
-El registro dispara una plantilla dinámica de SendGrid. `src/lib/sendgrid.ts` es
-de servidor. El envío va en `after()`: la respuesta no espera al correo, y un
-fallo se anota y no rompe el registro —la fila ya está guardada—.
+El proveedor es **Resend** (antes SendGrid). `src/lib/resend.ts` es de servidor,
+va por `fetch` contra la API y no por el SDK, lee la configuración al enviar y
+**nunca lanza**: devuelve `sent` / `skipped` / `failed` y quien llama decide. Un
+fallo del correo no puede romper un registro ya guardado. `npm run mail:verify`
+comprueba la configuración.
 
-Se manda una sola vez, con la marca en la columna `confirmationSentAt`. Si falla,
-la marca queda nula y `npm run mail:pending` lo recupera.
+Plantillas por nombre (`TEMPLATES`), con los ids en variables de entorno. El
+retiro (Tanusas) y Ecuador tienen una plantilla por idioma. `sendTemplate` **no
+manda `subject`**: en Resend el del mensaje taparía el de la plantilla. Los avisos
+puntuales (cambio de hora…) mandan HTML desde el repo, sin plantilla.
 
-Que SendGrid acepte el envío no significa que llegue **autenticado**: eso depende
-de que el dominio del remitente tenga publicados sus CNAME. `npm run mail:auth`
-lo comprueba resolviendo el DNS, porque la API de SendGrid devuelve el resultado
-de la última validación y sigue diciendo `valid: true` aunque ya no existan.
+**Fuera de Vercel no sale correo** salvo a `CEIBA_EMAIL_ALLOWLIST` (direcciones o
+sufijos `@dominio`) y a los buzones `@resend.dev`. La señal es `VERCEL`, no
+`NODE_ENV`: en local la clave es la de producción y ya se escribió a invitados
+reales probando.
 
-El **asunto lo pone el mensaje**, no la plantilla: la plantilla no trae ninguno y
-una sola sirve a los dos idiomas. Se edita en `confirmation-email.ts`.
-
-Al depurar SendGrid hay que mirar `error.response.body`: manda «Maximum credits
-exceeded» con un 401, cuyo mensaje suelto es «Unauthorized».
+En `/api/registro` el envío se espera con tope de 8 s (`Promise.race`), porque en
+serverless una promesa suelta se congela al responder; Tanusas y Ecuador usan
+`after()`. Se manda una sola vez, con la marca en `confirmationSentAt` (o
+`waitlistSentAt` para la lista de espera). Si falla, la marca queda nula y
+`npm run mail:pending` lo recupera.
 
 ## Imágenes por viewport
 
@@ -337,6 +402,33 @@ decide el servidor, no el cliente.
 Al añadir un dominio hay que sumarlo a la regla CORS del bucket **y** a
 `R2_CORS_ORIGINS`. La regla solo se puede poner con un token de admin de R2 o a
 mano en el panel: con el token de objetos da `AccessDenied`.
+
+## Galería
+
+`/galeria` (`features/gallery`) lleva la piel de Quito y su propia fila arriba
+(glifo, álbumes, acciones), sin la cabecera del sitio. La foto actual vive en la
+URL (`?album=…&foto=…`): compartir es compartir ese enlace, y su tarjeta es la
+foto.
+
+Las fotos viven en R2 bajo `galeria/`, con un índice `galeria/manifest.json` que
+lee la página (caché de 5 min). Añadir fotos es `npm run galeria:subir:send`, sin
+desplegar. La fuente son `public/img/{Quito,Tanusas}/{Preview,Originals}`,
+ignoradas en git; en desarrollo sin R2 la galería se arma con ellas.
+
+Las claves de R2 son *Secret* y solo de Production en Vercel: `vercel env pull`
+las trae vacías. Por eso el script firma con ellas si están en local y, si no,
+pide las firmas a `/api/galeria/firmar` con `CEIBA_GALLERY_TOKEN`. Sin esa
+variable la ruta da 404: borrarla la apaga.
+
+Previews y miniaturas se leen por `/galeria-media` (rewrite en `next.config.ts`)
+y no por la URL pública: el visor las sube a WebGL, que exige CORS de lectura, y
+la regla del bucket solo abre el PUT. Los originales van directos al bucket con
+`Content-Disposition: attachment`: el atributo `download` no vale entre orígenes.
+
+El visor (`MorphGallery`) carga texturas bajo demanda (la actual y sus vecinas),
+encaja la foto entera en vertical y solo pinta cuando algo cambia. Compartir
+prepara un JPEG antes del clic: Safari exige llamar a `navigator.share` en el
+mismo gesto, y WhatsApp manda un `.webp` como sticker.
 
 ## Assets
 

@@ -10,3 +10,6 @@ export { QuitoForum } from './components/QuitoForum';
 export { Reveal } from './components/Reveal';
 
 export { QuitoHosts } from './components/QuitoHosts';
+
+/** La barra de la piel, sin la navegación de la sección: la usa la portada del sitio. */
+export { QuitoBar } from './components/QuitoBar';

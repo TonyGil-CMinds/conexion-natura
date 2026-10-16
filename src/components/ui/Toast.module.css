@@ -32,3 +32,8 @@
   /* Se lee sobre cualquier fondo, incluida la credencial en 3D. */
   box-shadow: 0 10px 28px #0006;
 }
+
+/* Lo que sale bien no va en rojo: el oscuro de la marca, que se lee igual. */
+.toast[data-tone='info'] {
+  background-color: var(--color-dark);
+}

@@ -28,8 +28,11 @@ type Input = {
   description: string;
   locale: Locale;
   siteName: string;
-  /** Por omisión la del sitio; el retiro pasa la suya. */
-  image?: string;
+  /**
+   * Por omisión la del sitio; el retiro pasa la suya. La galería pasa la foto
+   * compartida, con sus medidas: no son las de las imágenes de marca.
+   */
+  image?: string | { url: string; width?: number; height?: number };
 };
 
 /**
@@ -44,7 +47,8 @@ type Input = {
  * etiqueta `<title>`, y no alcanza a `og:title`.
  */
 export function socialMeta({ title, description, locale, siteName, image }: Input): Metadata {
-  const url = image ?? OG_IMAGES.site;
+  const { url, ...size } =
+    typeof image === 'object' ? image : { url: image ?? OG_IMAGES.site, ...OG_SIZE };
 
   return {
     openGraph: {
@@ -53,7 +57,7 @@ export function socialMeta({ title, description, locale, siteName, image }: Inpu
       locale: OG_LOCALE[locale],
       title,
       description,
-      images: [{ url, ...OG_SIZE, alt: title }],
+      images: [{ url, ...size, alt: title }],
     },
     twitter: {
       // La grande: estas imágenes son apaisadas y con una tarjeta pequeña se

@@ -1,0 +1,190 @@
+/**
+ * La foto ocupa la pantalla y lo demás flota encima: el glifo a la izquierda,
+ * los álbumes en el centro y las acciones a la derecha, a la altura de la barra
+ * del sitio. En vertical las acciones bajan al pie, que es donde llega el pulgar
+ * y donde la foto —entera, no recortada— deja sitio.
+ */
+.root {
+  position: relative;
+  height: 100dvh;
+  min-height: 420px;
+  overflow: hidden;
+  background-color: var(--bg);
+  color: var(--fg);
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+}
+
+.top {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--header-height);
+  padding-inline: var(--quito-gutter);
+  /* La fila no tapa la foto: solo sus piezas recogen clics. */
+  pointer-events: none;
+}
+
+.top > * {
+  pointer-events: auto;
+}
+
+.brand {
+  position: absolute;
+  top: 50%;
+  left: var(--quito-gutter);
+  display: inline-flex;
+  translate: 0 -50%;
+}
+
+.brand img {
+  width: 41px;
+  height: auto;
+}
+
+.albums {
+  display: flex;
+  gap: 8px;
+}
+
+.actions {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  right: var(--quito-gutter);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--header-height);
+}
+
+.counter {
+  max-width: none;
+  margin: 0 8px 0 0;
+  color: var(--color-white);
+  font: 700 var(--text-nav) / 1 var(--font-mono);
+  letter-spacing: var(--tracking-nav);
+  font-variant-numeric: tabular-nums;
+  /* Va sobre la foto, sin caja: la sombra lo despega de las zonas claras. */
+  text-shadow: 0 1px 8px color-mix(in srgb, var(--color-dark) 70%, transparent);
+}
+
+/**
+ * Las etiquetas del diseño: cajas a escuadra con el cuerpo de la navegación,
+ * como «Galería» en la barra de la portada.
+ *
+ * - `light`: el álbum que se ve. Tinta de la paleta y rótulo del fondo, así que
+ *   en la azul es crema con letras azules, como en el diseño.
+ * - `glass`: lo que se puede pulsar sin ser lo principal. Va sobre cualquier
+ *   foto, así que no toma color de la paleta.
+ * - `accent`: descargar, en lima.
+ */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 13px;
+  border: 0;
+  font: 700 var(--text-nav) / 1.5 var(--font-mono);
+  letter-spacing: var(--tracking-nav);
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    filter var(--duration-fast) ease,
+    background-color var(--duration-fast) ease;
+}
+
+.chip[data-tone='light'] {
+  background-color: var(--fg);
+  color: var(--bg);
+}
+
+.chip[data-tone='glass'] {
+  background-color: color-mix(in srgb, var(--color-dark) 40%, transparent);
+  color: var(--color-white);
+  backdrop-filter: blur(10px);
+}
+
+.chip[data-tone='glass']:hover {
+  background-color: color-mix(in srgb, var(--color-dark) 65%, transparent);
+}
+
+.chip[data-tone='accent'] {
+  background-color: var(--color-green-brand);
+  color: var(--color-dark);
+}
+
+.chip[data-tone='accent']:hover {
+  filter: brightness(1.08);
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 3px;
+}
+
+.empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 24px;
+  padding: 24px;
+  text-align: center;
+}
+
+.empty p {
+  margin: 0;
+  font: 700 clamp(18px, 2.4vw, 28px) / 1.3 var(--font-mono);
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+@media (max-width: 640px) {
+  .top {
+    justify-content: flex-end;
+  }
+
+  /**
+   * Abajo y a todo el ancho, dos botones iguales. El contador va encima, sobre
+   * el fondo y no sobre la foto: en vertical la foto va entera y deja ese hueco.
+   */
+  .actions {
+    top: auto;
+    right: 24px;
+    bottom: max(24px, env(safe-area-inset-bottom));
+    left: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: auto;
+  }
+
+  .counter {
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin: 0 0 8px;
+    color: var(--fg);
+    text-shadow: none;
+  }
+
+  .actions .chip {
+    min-height: 52px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip {
+    transition: none;
+  }
+}

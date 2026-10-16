@@ -35,6 +35,10 @@ export const es = {
       title: 'Registro',
       description: 'Confirma tu asistencia a CEIBA Quito.',
     },
+    gallery: {
+      title: 'Galería',
+      description: 'Revive los mejores momentos de CEIBA en Quito y en Tanusas. Mira, descarga y comparte las fotos.',
+    },
     quito: {
       title: 'Welcome to Quito',
       /**
@@ -101,6 +105,54 @@ export const es = {
     ctaLabel: 'Registro abierto',
     ctaNote: 'Cupo limitado*',
     countdownLabel: 'CEIBA Quito',
+  },
+
+  /**
+   * La portada desde que el acto pasó: lleva la piel de Quito y su llamada ya no
+   * es el registro, sino la galería.
+   */
+  home: {
+    nav: {
+      label: 'Navegación principal',
+      about: 'Acerca de',
+      agenda: 'Agenda',
+      speakers: 'Speakers',
+      gallery: 'Galería',
+    },
+    hero: {
+      /** El rótulo va como imagen: es un logotipo, no texto compuesto. */
+      wordmarkAlt: 'CEIBA',
+      /** Por líneas: el salto es decisión de diseño, no del navegador. */
+      note: ['Revive los', 'mejores momentos'],
+      cta: 'Ver galería',
+    },
+  },
+
+  /**
+   * La galería. Las plantillas llevan huecos entre llaves que rellena quien pinta:
+   * `{album}`, `{photo}`, `{n}` y `{total}`.
+   */
+  gallery: {
+    /** Nombre accesible del visor. */
+    region: 'Galería de fotos',
+    albumsLabel: 'Álbumes',
+    albums: {
+      quito: 'Quito',
+      tanusas: 'Tanusas',
+    },
+    photoAlt: '{album}, foto {n} de {total}',
+    position: '{n} de {total}',
+    previous: 'Foto anterior',
+    next: 'Foto siguiente',
+    show: 'Ver {photo}',
+    download: 'Descargar',
+    share: 'Compartir',
+    /** Lo que acompaña a la foto al compartirla. */
+    shareTitle: 'CEIBA 2026 · {album}',
+    linkCopied: 'Enlace copiado',
+    shareFailed: 'No se pudo compartir',
+    home: 'Volver al inicio',
+    empty: 'Las fotos están llegando. Vuelve en un rato.',
   },
 
   footer: {

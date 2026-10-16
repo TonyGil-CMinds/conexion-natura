@@ -27,7 +27,15 @@ const ENTER_DURATION = 0.5;
 export function PageTransition({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const isQuito = pathname.split('/')[2] === 'quito';
+  const segments = pathname.split('/').filter(Boolean);
+  /**
+   * Las rutas con la piel de Quito: la sección, la portada —que la viste desde
+   * que el acto pasó— y la galería. Llevan su barra dentro de este árbol, así
+   * que la entrada va sin desplazamiento —movería la barra con la página— y el
+   * fondo es el de la paleta, no el oscuro del sitio, para que el fundido no
+   * destelle.
+   */
+  const isQuito = segments[1] === 'quito' || segments[1] === 'galeria' || segments.length === 1;
   const reducedMotion = useReducedMotion();
   const [isExiting, setIsExiting] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);

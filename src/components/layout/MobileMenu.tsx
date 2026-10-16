@@ -20,10 +20,15 @@ type Props = {
   light?: boolean;
   labels: Dictionary['nav'];
   header: Dictionary['header'];
-  cta: { label: string; confirmedLabel: string; waitlistLabel: string; note: string };
+  cta?: { label: string; confirmedLabel: string; waitlistLabel: string; note: string };
+  /**
+   * Lo que ocupa el sitio de la llamada, en lugar del registro. La portada lo
+   * usa para la galería: el acto ya pasó, y allí el registro no pinta nada.
+   */
+  action?: React.ReactNode;
 };
 
-export function MobileMenu({ locale, labels, header, cta, items, homeHref = '/', registrationHref = SITE.cta.href, light = false }: Props) {
+export function MobileMenu({ locale, labels, header, cta, action, items, homeHref = '/', registrationHref = SITE.cta.href, light = false }: Props) {
   const pathname = usePathname();
   const links = items ?? NAV_LINKS.map((link) => ({
     ...link, href: localePath(locale, link.href), label: labels[link.key],
@@ -165,14 +170,18 @@ export function MobileMenu({ locale, labels, header, cta, items, homeHref = '/',
             </ul>
           </nav>
           <div className={styles.cta} data-menu-cta>
-            <RegistrationCta
-              label={cta.label}
-              confirmedLabel={cta.confirmedLabel}
-              waitlistLabel={cta.waitlistLabel}
-              href={localePath(locale, registrationHref)}
-              size="mobile"
-            />
-            <p className={styles.note}>{cta.note}</p>
+            {action ?? (cta && (
+              <>
+                <RegistrationCta
+                  label={cta.label}
+                  confirmedLabel={cta.confirmedLabel}
+                  waitlistLabel={cta.waitlistLabel}
+                  href={localePath(locale, registrationHref)}
+                  size="mobile"
+                />
+                <p className={styles.note}>{cta.note}</p>
+              </>
+            ))}
           </div>
         </div>
       </dialog>

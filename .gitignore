@@ -26,3 +26,10 @@ tmp-*.mjs
 
 # Material de trabajo para revisar correos y capturas: no es del proyecto.
 tmp/
+
+# Fotos de la galería: la fuente de `npm run galeria:subir`, que las sube a R2.
+# Pesan cientos de MB y la web las sirve del bucket, no de aquí.
+/public/img/Quito/
+/public/img/Tanusas/
+.vercel
+.env*

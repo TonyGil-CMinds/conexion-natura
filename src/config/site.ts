@@ -78,6 +78,15 @@ export const SITE = {
 
   /** Destino del botón principal. El rótulo sale del diccionario. */
   cta: { href: '/registro' },
+
+  /**
+   * La galería del acto, que es la llamada de la portada desde que el acto pasó.
+   *
+   * Sus tres botones —el del hero, el de la barra y el del menú— leen de aquí.
+   * Con `null` se pintan pero no llevan a ninguna parte, que es como estuvieron
+   * mientras la galería no existía.
+   */
+  gallery: { href: '/galeria' as string | null },
 } as const;
 
 /**

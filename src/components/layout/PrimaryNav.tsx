@@ -6,7 +6,12 @@ import styles from './PrimaryNav.module.css';
 /** Un enlace de la navegación, ya resuelto: aquí no se consulta ni ruta ni copia. */
 export type NavItem = {
   key: string;
-  /** Ruta con prefijo de idioma, o ancla (`#seccion`) de la propia página. */
+  /**
+   * Ruta con prefijo de idioma, o ancla (`#seccion`) de la propia página.
+   *
+   * Vacía si el destino todavía no existe: sale como `<a>` sin `href`, que en
+   * HTML es justo eso, el sitio donde irá un enlace. Se ve, pero no navega.
+   */
   href: string;
   label: string;
   /** Lo actual: es lo que dibuja el zigzag. */
@@ -77,6 +82,8 @@ export function PrimaryNav({ items, ariaLabel, compact }: Props) {
                 <button type="button" onClick={item.onSelect} {...attrs}>
                   {content}
                 </button>
+              ) : !item.href ? (
+                <a {...attrs}>{content}</a>
               ) : isAnchor ? (
                 <a href={item.href} {...attrs}>
                   {content}

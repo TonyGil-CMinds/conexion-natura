@@ -1,6 +1,5 @@
 .root {
   --content-max: 1470px;
-  --quito-gutter: clamp(24px, 5.6vw, 82px);
   min-height: 100dvh;
   background-color: var(--bg);
   color: var(--fg);

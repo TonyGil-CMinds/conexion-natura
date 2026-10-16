@@ -105,6 +105,49 @@ export async function signPhotoUpload({ contentType, id }: { contentType: Allowe
   return { uploadUrl, key, url: publicUrl(key) };
 }
 
+/**
+ * Firma la subida de un archivo de la galería.
+ *
+ * Las cabeceras de caché y de descarga entran en la firma: quien sube tiene que
+ * mandarlas tal cual, y por eso se devuelven junto a la URL. Es lo que hace que
+ * un original se **descargue** al pulsarlo en vez de abrirse: el atributo
+ * `download` del enlace no vale entre orígenes, la cabecera sí.
+ */
+export async function signGalleryUpload({
+  key,
+  contentType,
+  cacheControl,
+  contentDisposition,
+}: {
+  key: string;
+  contentType: string;
+  cacheControl: string;
+  contentDisposition?: string;
+}) {
+  const { bucket } = config();
+  const uploadUrl = await getSignedUrl(
+    r2(),
+    new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      ContentType: contentType,
+      CacheControl: cacheControl,
+      ContentDisposition: contentDisposition,
+    }),
+    { expiresIn: 900 },
+  );
+
+  const headers: Record<string, string> = { 'content-type': contentType, 'cache-control': cacheControl };
+  if (contentDisposition) headers['content-disposition'] = contentDisposition;
+
+  return { key, uploadUrl, headers, url: publicUrl(key) };
+}
+
+/** La base pública del bucket, para quien firma fuera de aquí. */
+export function publicBaseUrl() {
+  return config().publicBaseUrl;
+}
+
 /** Borra un objeto. Para reemplazos, cuando la extensión cambia. */
 export async function deleteObject(key: string) {
   const { bucket } = config();

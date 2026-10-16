@@ -1,0 +1,315 @@
+/**
+ * Las medidas salen de la referencia a 1280×832 y se expresan **desde el
+ * rótulo**, que es lo que se acota: el año, la tortuga y la llamada guardan con
+ * él la proporción del diseño, y así no se cruzan cuando el rótulo se encoge
+ * por alto en una pantalla apaisada.
+ *
+ * Los `cqw` son del ancho del hero (`container-type`), que va a sangre: la banda
+ * de píxeles cuenta sus celdas sobre la pantalla entera, no sobre el contenido.
+ */
+.root {
+  /**
+   * El rótulo: el 89,5 % del ancho del diseño (1146 px a 1280), topado por alto
+   * —a 138svh mide 38svh, el mismo reparto de la referencia— y por el ancho
+   * máximo del contenido.
+   */
+  --wordmark-width: min(89.5cqw, 138svh, calc(var(--content-max) * 0.895));
+  --lockup-top: clamp(110px, 21.6svh, 240px);
+  /** Lado de la celda de la banda: 33 a lo ancho, como en el diseño. */
+  --cell: calc(100cqw / 33);
+  --hero-height: max(700px, 100dvh);
+  position: relative;
+  height: var(--hero-height);
+  /* Por debajo de la barra, que va transparente encima. */
+  margin-top: calc(var(--header-height) * -1);
+  background: var(--bg);
+  color: var(--fg);
+  isolation: isolate;
+  overflow: clip;
+  container-type: inline-size;
+}
+
+.inner {
+  position: relative;
+  width: 100%;
+  max-width: var(--content-max);
+  height: 100%;
+  margin-inline: auto;
+}
+
+.lockup {
+  position: absolute;
+  z-index: 1;
+  top: var(--lockup-top);
+  left: 50%;
+  width: var(--wordmark-width);
+  margin: 0;
+  letter-spacing: 0;
+  translate: -50% 0;
+}
+
+.wordmark {
+  display: block;
+  width: 100%;
+  aspect-ratio: 915 / 254;
+  background: currentColor;
+  mask: url('/hero/logo-ceiba.svg') center / contain no-repeat;
+}
+
+/**
+ * El año, en dos pisos, en el hueco que deja la pendiente de la A. Su cuerpo
+ * es el del diseño (50 px sobre 1146) y crece con el rótulo.
+ */
+.year {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font: 700 calc(var(--wordmark-width) * 0.0436) / 0.96 var(--font-mono);
+}
+
+/**
+ * La tortuga cruza el rótulo por delante. El archivo trae aire transparente
+ * alrededor, así que la caja es mayor que lo que se ve: estas medidas son las
+ * de la caja.
+ */
+.turtle {
+  position: absolute;
+  z-index: 2;
+  top: calc(var(--lockup-top) + var(--wordmark-width) * 0.014);
+  left: calc(50% + var(--wordmark-width) * 0.044);
+  width: calc(var(--wordmark-width) * 0.676);
+  translate: -50% 0;
+  pointer-events: none;
+}
+
+.turtleImage img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/**
+ * La banda va a sangre por abajo y el borde de la pantalla la corta: de sus
+ * cinco filas se ven dos y media, como en el diseño.
+ */
+.pixelsWide {
+  position: absolute;
+  z-index: 0;
+  bottom: calc(var(--cell) * -2.3);
+  left: 0;
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--color-green-brand);
+}
+
+/* La de móvil vive en la tortuga; aquí no hace falta. */
+.pixelsNarrow {
+  display: none;
+}
+
+/** La llamada se apoya en el borde de arriba de la banda. */
+.action {
+  position: absolute;
+  z-index: 3;
+  bottom: calc(var(--cell) * 2.7);
+  left: calc(50% - var(--wordmark-width) * 0.465);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.note {
+  max-width: none;
+  margin: 0;
+  color: var(--quito-note);
+  font: 700 clamp(18px, calc(var(--wordmark-width) * 0.0245), 34px) / 1.3 var(--font-mono);
+  text-transform: uppercase;
+}
+
+.line {
+  display: block;
+  white-space: nowrap;
+}
+
+/**
+ * La caja que recorta. El relleno de abajo con el margen negativo que lo
+ * compensa deja sitio a los rasgos que bajan de la línea base.
+ */
+.character {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+.characterInner {
+  display: inline-block;
+  will-change: transform;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/**
+ * En estrecho —y en pantallas en vertical, donde la composición apaisada
+ * dejaba un socavón entre la tortuga y la llamada— el hero pasa a ser una
+ * **columna**: rótulo, tortuga y llamada, repartiendo el alto que haya.
+ *
+ * La tortuga parte del tamaño del diseño, medido por el ancho. Cuando no cabe,
+ * lo primero que cede es el hueco de encima del rótulo y solo después ella: si
+ * fuera la única pieza elástica, en un teléfono bajo se quedaba en un sello.
+ * Cuando sobra, el alto se reparte entre ese hueco y el de encima de la tortuga.
+ */
+@media (max-width: 640px), (max-aspect-ratio: 4/5) {
+  .root {
+    --hero-height: 100dvh;
+    --wordmark-width: min(88cqw, 48svh);
+    /* 17 celdas a lo ancho, como en el diseño móvil. */
+    --cell: calc(100cqw / 17);
+    --hero-gutter: clamp(24px, 8.5cqw, 64px);
+    /**
+     * La tortuga del diseño: 115,5 % del ancho de la pantalla, y en la
+     * proporción del archivo eso son 81,9cqw de alto.
+     */
+    --turtle-width: 115.5cqw;
+    --turtle-height: 81.9cqw;
+    /**
+     * Cuánto puede subir sobre el rótulo cuando le falta alto, además del aire
+     * transparente del archivo. Poco: la cabeza roza el pie de las letras.
+     */
+    --turtle-reach: calc(var(--wordmark-width) * 0.06);
+  }
+
+  .inner {
+    display: flex;
+    flex-direction: column;
+    padding: calc(var(--header-height) + 8px) var(--hero-gutter)
+      max(clamp(24px, 6.6svh, 56px), env(safe-area-inset-bottom));
+  }
+
+  /**
+   * El hueco de encima del rótulo, como pieza flexible y no como relleno: el
+   * relleno no cede. Encoge diez veces antes que la tortuga y crece a la par.
+   */
+  .inner::before {
+    content: '';
+    flex: 1 10 clamp(0px, calc(14.2svh - 8px), 132px);
+  }
+
+  .lockup {
+    position: relative;
+    top: auto;
+    left: auto;
+    flex: none;
+    /* Más ancho que la columna de texto, centrado sobre ella. */
+    align-self: center;
+    translate: none;
+  }
+
+  .year {
+    display: none;
+  }
+
+  /**
+   * A sangre por los dos lados y montada sobre el rótulo y la nota: el aire
+   * transparente del archivo cae encima de ellos y lo que se ve queda justo
+   * entre los dos.
+   */
+  .turtle {
+    position: relative;
+    top: auto;
+    left: auto;
+    flex: 1 1 var(--turtle-height);
+    width: auto;
+    min-height: 0;
+    margin: calc(var(--wordmark-width) * -0.089) calc(var(--hero-gutter) * -1) -5cqw;
+    translate: none;
+  }
+
+  .turtleImage {
+    position: absolute;
+    inset: 0;
+  }
+
+  /**
+   * Más ancha que la pantalla, como en el diseño: la aleta de atrás se sale por
+   * la derecha. La caja va centrada en el 57 % —el sitio de la referencia, que
+   * con el aire del archivo deja la tortuga que se ve en el centro— y `contain`
+   * con el ancla abajo y al centro la encoge entera si el alto no le llega, en
+   * vez de recortarla o arrinconarla a la izquierda.
+   *
+   * Sin el tope del reset (`max-width: 100%`): la dejaba al ancho de la
+   * pantalla, y con eso un sexto más pequeña que en el diseño.
+   */
+  .turtleImage img {
+    position: absolute;
+    bottom: 0;
+    left: 57%;
+    width: var(--turtle-width);
+    max-width: none;
+    height: calc(100% + var(--turtle-reach));
+    object-fit: contain;
+    object-position: center bottom;
+    translate: -50% 0;
+  }
+
+  .pixelsWide {
+    display: none;
+  }
+
+  /**
+   * Detrás de la tortuga, a su altura y no a la de la pantalla. Se mide desde
+   * abajo porque la imagen va anclada abajo, con el mismo alto pintado que
+   * ella: el de la caja más lo que sube o, si el ancho manda, el del diseño.
+   */
+  .pixelsNarrow {
+    position: absolute;
+    bottom: calc(min(100% + var(--turtle-reach), var(--turtle-height)) * 0.238);
+    left: 0;
+    display: block;
+    width: 100%;
+    height: auto;
+    color: var(--color-green-brand);
+  }
+
+  .action {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    flex: none;
+    width: 100%;
+    max-width: 520px;
+    gap: clamp(14px, 2.8svh, 24px);
+  }
+
+  .note {
+    font-size: min(7.06cqw, 3.8svh, 40px);
+  }
+
+  .action .cta {
+    width: 100%;
+    min-height: 68px;
+  }
+}
+
+/* Sin movimiento no hay nada que recortar ni que esperar. */
+@media (prefers-reduced-motion: reduce) {
+  .character {
+    overflow: visible;
+  }
+
+  .characterInner {
+    transform: none !important;
+    will-change: auto;
+  }
+}

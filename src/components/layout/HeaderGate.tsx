@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation';
  * Se comparan por el final del camino para no repetir el prefijo de idioma: la
  * micropágina existe en `/es/tanusas` y en `/en/tanusas`.
  */
-const OWN_HEADER = ['/tanusas', '/quito'];
+const OWN_HEADER = ['/tanusas', '/quito', '/galeria'];
 
 /**
  * Deja pasar la cabecera del sitio salvo en las rutas que traen la suya.
@@ -32,7 +32,12 @@ export function HeaderGate({ children }: { children: React.ReactNode }) {
    * páginas dentro, y su barra es la misma en todas. Con solo mirar el final,
    * `/es/quito/agenda` se quedaba con las dos cabeceras.
    */
-  const hasOwn = OWN_HEADER.some(
+  /**
+   * Y la portada, que viste la piel de Quito y lleva su barra. Es el único
+   * camino con un solo segmento: el del idioma.
+   */
+  const isHome = pathname.split('/').filter(Boolean).length === 1;
+  const hasOwn = isHome || OWN_HEADER.some(
     (route) => pathname.endsWith(route) || pathname.includes(`${route}/`),
   );
 

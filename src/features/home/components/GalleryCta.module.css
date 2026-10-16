@@ -1,0 +1,43 @@
+/**
+ * Las medidas y el color son los del botón del hero de Quito: es la misma pieza
+ * con otra acción. El color sale de la paleta —en azul es rosa, en las otras
+ * lima— y no de un valor suelto, porque la caja tiene que cambiar con ella.
+ */
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: min(272px, 100%);
+  min-height: 70px;
+  padding: 18px 32px;
+  background-color: var(--quito-button);
+  color: var(--quito-button-ink);
+  font: 700 18px/1.3 var(--font-mono);
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    transform 180ms ease,
+    filter 180ms ease;
+}
+
+.root[data-block] {
+  width: 100%;
+}
+
+/* Solo con destino: sin él no hay nada que prometer al pasar por encima. */
+.root[href]:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.06);
+}
+
+.root:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    transition: none;
+  }
+}

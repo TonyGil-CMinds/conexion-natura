@@ -11,6 +11,14 @@
   --quito-button-ink: #003f24;
   --quito-active: #00b000;
   --quito-partner-filter: none;
+  /**
+   * Tinta de la nota de la portada («Revive los mejores momentos»). Por omisión
+   * es la de la paleta; la azul la aclara a su celeste.
+   */
+  --quito-note: var(--quito-palette-ink);
+  /* El celeste de la nota sobre la paleta azul. Llegó con la portada de la
+     galería y no está en colores.txt. */
+  --color-sky: #9fd6ff;
 
   /**
    * El rosa del directo de Tanusas.
@@ -362,6 +370,9 @@
 }
 
 [data-quito] {
+  /* Aquí y no en el armazón de la sección: la portada del sitio lleva la misma
+     piel —barra incluida— sin el armazón de `/quito`. */
+  --quito-gutter: clamp(24px, 5.6vw, 82px);
   --quito-ink: var(--quito-palette-ink);
   --bg: var(--color-quito-surface);
   --fg: var(--quito-ink);
@@ -378,6 +389,7 @@ html[data-quito-palette='blue'] {
   --quito-button-ink: #fff;
   --quito-active: #d0ff00;
   --quito-partner-filter: brightness(0) invert(1);
+  --quito-note: var(--color-sky);
 }
 html[data-quito-palette='pink'] {
   --quito-action-direction: column;

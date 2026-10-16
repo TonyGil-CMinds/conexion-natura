@@ -1,0 +1,200 @@
+/**
+ * Las piezas del componente original, a escuadra como el resto del sitio: sin
+ * radios en las flechas ni en las miniaturas.
+ *
+ * El color de los controles es blanco y no de la paleta: van sobre la foto, que
+ * puede ser de cualquier color.
+ */
+.root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /* Deslizar en horizontal es de la galería, no del navegador: sin esto, el gesto
+     se lo queda la página y el `pointerup` no llega. */
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* Hasta que llega la primera textura no hay nada: aparecer evita un destello. */
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+
+.canvas[data-ready] {
+  opacity: 1;
+}
+
+.fallback {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.fallback[data-active] {
+  opacity: 1;
+}
+
+/* El mismo encaje que el sombreador: en vertical, la foto entera. */
+@media (orientation: portrait) {
+  .root[data-fit='auto'] .fallback {
+    object-fit: contain;
+  }
+}
+
+.root[data-fit='contain'] .fallback {
+  object-fit: contain;
+}
+
+/** Oscurece el pie de la foto para que la tira de miniaturas se lea. */
+.shade {
+  position: absolute;
+  z-index: 5;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 14rem;
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--color-dark) 65%, transparent));
+  pointer-events: none;
+}
+
+.arrow {
+  position: absolute;
+  z-index: 10;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--color-white) 25%, transparent);
+  background: color-mix(in srgb, var(--color-dark) 30%, transparent);
+  color: var(--color-white);
+  backdrop-filter: blur(12px);
+  translate: 0 -50%;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) ease;
+}
+
+.arrow:hover {
+  background: color-mix(in srgb, var(--color-white) 25%, transparent);
+}
+
+.arrow:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
+}
+
+.previous {
+  left: 32px;
+}
+
+.next {
+  right: 32px;
+}
+
+.thumbs {
+  position: absolute;
+  z-index: 10;
+  right: 0;
+  bottom: 32px;
+  left: 0;
+  display: flex;
+  gap: 8px;
+  width: max-content;
+  max-width: calc(100% - 2rem);
+  margin: 0 auto;
+  padding: 0 0 10px;
+  overflow-x: auto;
+  list-style: none;
+  scroll-behavior: smooth;
+  scrollbar-color: color-mix(in srgb, var(--color-white) 35%, transparent) transparent;
+  scrollbar-width: thin;
+}
+
+.thumbs li {
+  flex: none;
+}
+
+.thumb {
+  display: block;
+  padding: 0;
+  border: 2px solid transparent;
+  background: transparent;
+  opacity: 0.55;
+  cursor: pointer;
+  transition:
+    opacity var(--duration-fast) ease,
+    border-color var(--duration-fast) ease;
+}
+
+.thumb:hover {
+  opacity: 0.85;
+}
+
+.thumb[aria-current='true'] {
+  border-color: var(--color-white);
+  opacity: 1;
+}
+
+.thumb:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
+}
+
+.thumb img {
+  display: block;
+  width: 80px;
+  max-width: none;
+  height: 50px;
+  object-fit: cover;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/**
+ * En estrecho no caben las miniaturas: se pasa con las flechas o deslizando, y
+ * la sombra, que solo estaba para ellas, sobra.
+ */
+@media (max-width: 640px) {
+  .thumbs,
+  .shade {
+    display: none;
+  }
+
+  .previous {
+    left: 12px;
+  }
+
+  .next {
+    right: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .canvas,
+  .fallback {
+    transition: none;
+  }
+}

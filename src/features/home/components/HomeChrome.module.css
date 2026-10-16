@@ -1,0 +1,26 @@
+.root {
+  min-height: 100dvh;
+  background-color: var(--bg);
+  color: var(--fg);
+  overflow-x: clip;
+}
+
+/**
+ * «Galería» va **en caja** en la barra: es la llamada, no un destino más. La
+ * caja es de la tinta de la paleta y el rótulo del fondo, así que se invierte
+ * con ella —en la blanca sale oscura—.
+ *
+ * El margen negativo deja que la caja se coma parte del hueco con el enlace
+ * anterior en vez de empujar la fila: en el diseño, el rótulo de la caja queda
+ * más cerca de su vecino que los demás entre sí.
+ */
+.root nav [data-highlight] {
+  margin-left: -13px;
+  padding: 4px 13px;
+  background-color: var(--fg);
+  color: var(--bg);
+}
+
+.root nav [data-highlight]:hover {
+  color: var(--bg);
+}

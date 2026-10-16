@@ -33,6 +33,10 @@ export const en: Dictionary = {
       title: 'Registration',
       description: 'Confirm your attendance at CEIBA Quito.',
     },
+    gallery: {
+      title: 'Gallery',
+      description: 'Relive the best moments of CEIBA in Quito and Tanusas. View, download and share the photos.',
+    },
     quito: {
       title: 'Welcome to Quito',
       description:
@@ -88,6 +92,42 @@ export const en: Dictionary = {
     ctaLabel: 'Registration open',
     ctaNote: 'Limited capacity*',
     countdownLabel: 'CEIBA Quito',
+  },
+
+  home: {
+    nav: {
+      label: 'Main navigation',
+      about: 'About',
+      agenda: 'Agenda',
+      speakers: 'Speakers',
+      gallery: 'Gallery',
+    },
+    hero: {
+      wordmarkAlt: 'CEIBA',
+      note: ['Relive the', 'best moments'],
+      cta: 'View gallery',
+    },
+  },
+
+  gallery: {
+    region: 'Photo gallery',
+    albumsLabel: 'Albums',
+    albums: {
+      quito: 'Quito',
+      tanusas: 'Tanusas',
+    },
+    photoAlt: '{album}, photo {n} of {total}',
+    position: '{n} of {total}',
+    previous: 'Previous photo',
+    next: 'Next photo',
+    show: 'Show {photo}',
+    download: 'Download',
+    share: 'Share',
+    shareTitle: 'CEIBA 2026 · {album}',
+    linkCopied: 'Link copied',
+    shareFailed: 'Could not share',
+    home: 'Back to home',
+    empty: 'The photos are on their way. Check back soon.',
   },
 
   footer: {
