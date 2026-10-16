@@ -3,9 +3,8 @@ import path from 'node:path';
 import {
   GALLERY,
   GALLERY_ALBUMS,
-  ORIGINAL_TYPES,
   downloadName,
-  photoId,
+  pairSources,
   type GalleryAlbum,
   type GalleryManifest,
   type GalleryPhoto,
@@ -14,7 +13,7 @@ import {
 export type GalleryData = Record<GalleryAlbum, GalleryPhoto[]>;
 
 /**
- * Las fotos de la galería, por álbum.
+ * Las piezas de la galería, por álbum: fotos y vídeos.
  *
  * **Solo servidor**: lee el entorno y, en desarrollo, el disco.
  *
@@ -25,6 +24,9 @@ export type GalleryData = Record<GalleryAlbum, GalleryPhoto[]>;
  * En desarrollo, sin R2 configurado —en local las claves no existen: en Vercel
  * son secretas—, se arma con las carpetas de `public/img`, para poder ver la
  * galería antes de subir nada.
+ *
+ * Devuelve todos los álbumes, también los ocultos: cuáles se enseñan lo decide
+ * quien pinta (`VISIBLE_ALBUMS`).
  */
 export async function loadGallery(): Promise<GalleryData | null> {
   const base = process.env.R2_PUBLIC_BASE_URL?.replace(/\/+$/, '');
@@ -52,9 +54,13 @@ async function fromManifest(base: string): Promise<GalleryData | null> {
           preview: proxied(photo.preview.key),
           thumb: proxied(photo.thumb.key),
           /**
-           * La descarga va **directa** al bucket y no por el reenvío: son
-           * archivos de hasta 12 MB y no hace falta que pasen por Vercel. Se
-           * descargan en vez de abrirse porque el script los sube con
+           * El vídeo se reproduce **directo** del bucket: un `<video>` no pide
+           * CORS —solo una textura lo pide— y así sus megas no pasan por Vercel.
+           */
+          video: photo.video ? `${base}/${photo.video.key}` : undefined,
+          /**
+           * La descarga también va directa: son archivos de hasta cientos de MB.
+           * Se descargan en vez de abrirse porque el script los sube con
            * `Content-Disposition: attachment`; el atributo `download` no
            * serviría, el navegador lo ignora en otro origen.
            */
@@ -77,28 +83,22 @@ async function fromLocalFiles(): Promise<GalleryData | null> {
   const albums = await Promise.all(
     GALLERY_ALBUMS.map(async (album) => {
       const folder = source.albums[album];
-      const list = (dir: string) =>
-        readdir(path.join(root, folder, dir)).catch(() => [] as string[]);
+      const list = (dir: string) => readdir(path.join(root, folder, dir)).catch(() => [] as string[]);
       const [previews, originals] = await Promise.all([list(source.preview), list(source.originals)]);
+      const url = (dir: string, file: string) => encodeURI(`/img/${folder}/${dir}/${file}`);
 
-      const photos = previews
-        .filter((file) => file.toLowerCase().endsWith('.webp'))
-        .sort()
-        .map((file): GalleryPhoto => {
-          const name = file.replace(/\.webp$/i, '');
-          const id = photoId(name);
-          const original = originals.find((candidate) => {
-            const [base, ext = ''] = candidate.split(/\.(?=[^.]+$)/);
-            return base === name && ext.toLowerCase() in ORIGINAL_TYPES;
-          });
-          const preview = `/img/${folder}/${source.preview}/${file}`;
-          const ext = original?.split('.').pop()?.toLowerCase() ?? 'webp';
+      const photos = pairSources(previews, originals)
+        // Sin original no hay qué descargar, y un vídeo sin portada no tiene qué disolver.
+        .filter((pair) => pair.original && (pair.kind === 'photo' || pair.poster))
+        .map((pair): GalleryPhoto => {
+          const image = url(source.preview, pair.kind === 'video' ? pair.poster! : pair.preview);
           return {
-            id,
-            preview,
-            thumb: preview,
-            original: original ? `/img/${folder}/${source.originals}/${original}` : preview,
-            filename: downloadName(album, id, ext),
+            id: pair.id,
+            preview: image,
+            thumb: image,
+            video: pair.kind === 'video' ? url(source.preview, pair.preview) : undefined,
+            original: url(source.originals, pair.original!),
+            filename: downloadName(album, pair.id, pair.originalExt!),
           };
         });
 

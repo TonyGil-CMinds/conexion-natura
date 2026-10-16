@@ -54,8 +54,49 @@
   }
 }
 
-.root[data-fit='contain'] .fallback {
+.root[data-fit='contain'] .fallback,
+.fallback[data-video] {
   object-fit: contain;
+}
+
+/**
+ * El reproductor va encima de su portada, entero como ella, y fondo
+ * transparente: lo que asoma a los lados es la misma portada del lienzo.
+ * Aparece cuando acaba la disolución (`--dissolve`), no antes.
+ */
+.video {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  object-fit: contain;
+  background: transparent;
+  animation: video-in 400ms ease var(--dissolve, 0ms) both;
+}
+
+@keyframes video-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Mientras suena, la tira y su sombra se apartan: tapaban los controles. */
+.root[data-playing] .thumbs,
+.root[data-playing] .shade {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.thumbs,
+.shade {
+  transition: opacity var(--duration-fast) ease;
 }
 
 /** Oscurece el pie de la foto para que la tira de miniaturas se lea. */
@@ -130,6 +171,7 @@
 }
 
 .thumb {
+  position: relative;
   display: block;
   padding: 0;
   border: 2px solid transparent;
@@ -161,6 +203,20 @@
   max-width: none;
   height: 50px;
   object-fit: cover;
+}
+
+/* La de un vídeo lleva el triángulo de reproducir: se distingue en la tira. */
+.thumb[data-video]::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 18px;
+  background: var(--color-white);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  translate: -40% -50%;
+  filter: drop-shadow(0 1px 3px color-mix(in srgb, var(--color-dark) 70%, transparent));
 }
 
 .srOnly {
@@ -196,5 +252,9 @@
   .canvas,
   .fallback {
     transition: none;
+  }
+
+  .video {
+    animation: none;
   }
 }

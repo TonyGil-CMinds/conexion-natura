@@ -109,6 +109,13 @@
   color: var(--bg);
 }
 
+/* El álbum como etiqueta, cuando es el único: no se pulsa. */
+p.chip {
+  max-width: none;
+  margin: 0;
+  cursor: default;
+}
+
 .chip[data-tone='glass'] {
   background-color: color-mix(in srgb, var(--color-dark) 40%, transparent);
   color: var(--color-white);

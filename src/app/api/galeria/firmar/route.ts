@@ -10,7 +10,7 @@ const digest = (value: string) => createHash('sha256').update(value).digest();
 
 /** Lo que se puede subir a la galería. Nada fuera de su carpeta ni de estos tipos. */
 const KEY = /^galeria\/[a-z0-9][a-z0-9/_.-]*$/;
-const TYPES = new Set(['image/webp', 'image/jpeg', 'image/png', 'application/json']);
+const TYPES = new Set(['image/webp', 'image/jpeg', 'image/png', 'video/mp4', 'application/json']);
 const MAX_OBJECTS = 300;
 
 type Requested = {

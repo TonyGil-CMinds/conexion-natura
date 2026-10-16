@@ -7,10 +7,15 @@
  * Son dos scripts y no un argumento porque npm 11 se come el `-- --send`.
  *
  * Lee `public/img/<Álbum>/Preview` (lo que se ve) y `.../Originals` (lo que se
- * descarga), los empareja por nombre y sube tres objetos por foto: la preview,
- * una miniatura que genera aquí y el original. Las `.webp` de `Originals` se
- * ignoran. Al final sube `galeria/manifest.json`, que es lo que lee la página:
- * añadir fotos es volver a ejecutar esto, sin desplegar.
+ * descarga), los empareja por nombre (`pairSources`) y sube por cada foto la
+ * preview, una miniatura que genera aquí y el original. Las `.webp` de
+ * `Originals` se ignoran. Al final sube `galeria/manifest.json`, que es lo que
+ * lee la página: añadir fotos es volver a ejecutar esto, sin desplegar.
+ *
+ * **Vídeos.** La preview es un `.mp4` ligero y el original, el que se descarga.
+ * Hace falta además una **portada**: una imagen con el mismo nombre que el `.mp4`
+ * de `Preview` (`Recap - 720p.mp4` → `Recap - 720p.jpg`). Es lo que se disuelve
+ * en la galería y lo que sale al compartir el enlace.
  *
  * **Quién firma.** Con las claves de R2 en `.env.local`, este mismo script. Sin
  * ellas —lo normal: en Vercel son secretas y `vercel env pull` las trae vacías—
@@ -28,11 +33,12 @@ import {
   GALLERY_ALBUMS,
   ORIGINAL_TYPES,
   downloadName,
-  photoId,
+  pairSources,
   photoKeys,
   type GalleryAlbum,
   type GalleryManifest,
   type ManifestPhoto,
+  type OriginalExt,
 } from '../src/features/gallery/config/gallery';
 
 config({ path: ['.env.local', '.env'], quiet: true });
@@ -59,56 +65,66 @@ const mb = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 async function scanAlbum(album: GalleryAlbum) {
   const { source } = GALLERY;
   const folder = path.join(source.dir, source.albums[album]);
-  const previews = (await readdir(path.join(folder, source.preview)))
-    .filter((file) => file.toLowerCase().endsWith('.webp'))
-    .sort();
+  const previews = await readdir(path.join(folder, source.preview));
   const originals = await readdir(path.join(folder, source.originals));
 
   const photos: { manifest: ManifestPhoto; objects: Pending[] }[] = [];
-  const missing: string[] = [];
+  const skipped: string[] = [];
 
-  for (const file of previews) {
-    const name = file.replace(/\.webp$/i, '');
-    const original = originals.find((candidate) => {
-      const dot = candidate.lastIndexOf('.');
-      return candidate.slice(0, dot) === name && candidate.slice(dot + 1).toLowerCase() in ORIGINAL_TYPES;
-    });
-    if (!original) {
-      missing.push(file);
+  for (const pair of pairSources(previews, originals)) {
+    if (!pair.original || !pair.originalExt) {
+      skipped.push(`${pair.preview}: sin original en ${source.originals}`);
+      continue;
+    }
+    if (pair.kind === 'video' && !pair.poster) {
+      skipped.push(`${pair.preview}: sin portada (una imagen con el mismo nombre en ${source.preview})`);
       continue;
     }
 
-    const id = photoId(name);
-    const ext = original.slice(original.lastIndexOf('.') + 1).toLowerCase() as keyof typeof ORIGINAL_TYPES;
-    const keys = photoKeys(album, id, ext === 'jpeg' ? 'jpg' : ext);
-    const filename = downloadName(album, id, ext === 'jpeg' ? 'jpg' : ext);
+    const { id, originalExt } = pair;
+    const keys = photoKeys(album, id, originalExt);
+    const filename = downloadName(album, id, originalExt);
+    const contentType = ORIGINAL_TYPES[originalExt as OriginalExt];
 
-    const previewBody = await readFile(path.join(folder, source.preview, file));
-    const originalBody = await readFile(path.join(folder, source.originals, original));
+    const read = (dir: string, file: string) => readFile(path.join(folder, dir, file));
+    const originalBody = await read(source.originals, pair.original);
+    /**
+     * La imagen que se ve. De una foto, su preview tal cual; de un vídeo, su
+     * portada pasada a WebP, que es lo que espera la clave.
+     */
+    const previewBody =
+      pair.kind === 'video'
+        ? await sharp(await read(source.preview, pair.poster!)).webp({ quality: 85 }).toBuffer()
+        : await read(source.preview, pair.preview);
     const thumbBody = await sharp(previewBody).resize({ width: GALLERY.thumbWidth }).webp({ quality: 72 }).toBuffer();
-    const [previewMeta, originalMeta, thumbMeta] = await Promise.all([
-      sharp(previewBody).metadata(),
-      sharp(originalBody).metadata(),
-      sharp(thumbBody).metadata(),
-    ]);
-    const size = (meta: sharp.Metadata) => ({
-      width: meta.autoOrient?.width ?? meta.width ?? 0,
-      height: meta.autoOrient?.height ?? meta.height ?? 0,
-    });
+    const videoBody = pair.kind === 'video' ? await read(source.preview, pair.preview) : null;
+
+    const size = async (body: Buffer) => {
+      const meta = await sharp(body).metadata();
+      return { width: meta.autoOrient?.width ?? meta.width ?? 0, height: meta.autoOrient?.height ?? meta.height ?? 0 };
+    };
+    const previewSize = await size(previewBody);
+    // Las medidas de un vídeo no se leen sin ffprobe: valen las de su portada.
+    const originalSize = pair.kind === 'video' ? previewSize : await size(originalBody);
 
     photos.push({
       manifest: {
         id,
-        preview: { key: keys.preview, ...size(previewMeta) },
-        thumb: { key: keys.thumb, ...size(thumbMeta) },
-        original: { key: keys.original, ...size(originalMeta), bytes: originalBody.length, filename },
+        ...(pair.kind === 'video' ? { kind: 'video' as const } : {}),
+        preview: { key: keys.preview, ...previewSize },
+        thumb: { key: keys.thumb, ...(await size(thumbBody)) },
+        ...(videoBody ? { video: { key: keys.video, bytes: videoBody.length } } : {}),
+        original: { key: keys.original, ...originalSize, bytes: originalBody.length, filename },
       },
       objects: [
         { key: keys.preview, contentType: 'image/webp', cacheControl: CACHE_PHOTO, body: previewBody },
         { key: keys.thumb, contentType: 'image/webp', cacheControl: CACHE_PHOTO, body: thumbBody },
+        ...(videoBody
+          ? [{ key: keys.video, contentType: 'video/mp4', cacheControl: CACHE_PHOTO, body: videoBody }]
+          : []),
         {
           key: keys.original,
-          contentType: ORIGINAL_TYPES[ext],
+          contentType,
           cacheControl: CACHE_PHOTO,
           contentDisposition: `attachment; filename="${filename}"`,
           body: originalBody,
@@ -117,7 +133,7 @@ async function scanAlbum(album: GalleryAlbum) {
     });
   }
 
-  return { photos, missing };
+  return { photos, skipped };
 }
 
 /** Firma con las claves locales si las hay; si no, pide la firma a producción. */
@@ -189,10 +205,10 @@ async function main() {
   };
   const scanned = await Promise.all(GALLERY_ALBUMS.map(async (album) => [album, await scanAlbum(album)] as const));
 
-  for (const [album, { photos, missing }] of scanned) {
+  for (const [album, { photos, skipped }] of scanned) {
     const bytes = photos.flatMap((photo) => photo.objects).reduce((sum, object) => sum + object.body.length, 0);
     console.log(`\n${album}: ${photos.length} fotos, ${mb(bytes)}`);
-    for (const file of missing) console.log(`  ⚠ ${file}: sin original en ${GALLERY.source.originals}, no se sube`);
+    for (const reason of skipped) console.log(`  ⚠ ${reason}: no se sube`);
     manifest.albums[album] = photos.map((photo) => photo.manifest);
   }
 

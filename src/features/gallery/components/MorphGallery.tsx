@@ -26,10 +26,19 @@ import styles from './MorphGallery.module.css';
  */
 
 export type MorphItem = {
-  /** La foto. Del mismo dominio o servida con CORS, o no se podrá disolver. */
+  /**
+   * La imagen que se disuelve: la foto, o la portada si es un vídeo. Del mismo
+   * dominio o servida con CORS, o no se podrá disolver.
+   */
   src: string;
   /** Miniatura de la tira. */
   thumb?: string;
+  /**
+   * Si es un vídeo, el que se reproduce. La disolución llega a su portada y, al
+   * acabar, el reproductor aparece encima. Siempre entero (`contain`): recortar
+   * un vídeo le comería los rótulos.
+   */
+  video?: string;
   alt: string;
 };
 
@@ -101,7 +110,8 @@ uniform float u_scale;
 uniform float u_direction;
 uniform float u_edge;
 uniform float u_drift;
-uniform float u_contain;
+uniform float u_fromContain;
+uniform float u_toContain;
 
 varying vec2 v_uv;
 
@@ -157,8 +167,9 @@ vec2 mirror(vec2 uv) {
   return 1.0 - abs(1.0 - mod(uv, 2.0));
 }
 
-// Recortar (cover) o encajar entera (contain), como object-fit.
-vec2 fitUV(vec2 uv, float imgAspect) {
+// Recortar (cover) o encajar entera (contain), como object-fit. Cada foto lleva
+// el suyo: un vídeo va siempre entero aunque las fotos vayan recortadas.
+vec2 fitUV(vec2 uv, float imgAspect, float containIt) {
   float canvasAspect = u_resolution.x / u_resolution.y;
   vec2 cover = (canvasAspect > imgAspect)
     ? vec2(1.0, imgAspect / canvasAspect)
@@ -166,7 +177,7 @@ vec2 fitUV(vec2 uv, float imgAspect) {
   vec2 contain = (canvasAspect > imgAspect)
     ? vec2(canvasAspect / imgAspect, 1.0)
     : vec2(1.0, imgAspect / canvasAspect);
-  return (uv - 0.5) * mix(cover, contain, u_contain) + 0.5;
+  return (uv - 0.5) * mix(cover, contain, containIt) + 0.5;
 }
 
 // 1 dentro de la foto y 0 fuera: en contain, lo de fuera es transparente.
@@ -180,8 +191,8 @@ void main() {
   // u otra del todo y no medio disueltas.
   float adjusted = u_progress * (1.0 + 2.0 * u_edge) - u_edge;
 
-  vec2 fromFrame = fitUV(v_uv, u_fromAspect);
-  vec2 toFrame = fitUV(v_uv, u_toAspect);
+  vec2 fromFrame = fitUV(v_uv, u_fromAspect, u_fromContain);
+  vec2 toFrame = fitUV(v_uv, u_toAspect, u_toContain);
 
   float noise = fbm(v_uv * u_scale + vec2(0.0, u_progress * u_direction)) * 0.5 + 0.5;
   // El umbral se inclina con el brillo de la foto que entra: sus zonas claras
@@ -192,8 +203,8 @@ void main() {
 
   // Las dos se deslizan, distinto y en sentidos opuestos: los jirones tienen
   // paralaje entre sí en vez de estar en un mismo plano.
-  vec2 fromUV = fitUV(v_uv + vec2(0.0, noise * u_progress * u_drift * u_direction), u_fromAspect);
-  vec2 toUV = fitUV(v_uv + vec2(0.0, noise * (1.0 - u_progress) * -0.5 * u_drift * u_direction), u_toAspect);
+  vec2 fromUV = fitUV(v_uv + vec2(0.0, noise * u_progress * u_drift * u_direction), u_fromAspect, u_fromContain);
+  vec2 toUV = fitUV(v_uv + vec2(0.0, noise * (1.0 - u_progress) * -0.5 * u_drift * u_direction), u_toAspect, u_toContain);
 
   // El marco se mide sin deslizar: el borde de la foto se queda quieto y lo que
   // se mueve es lo de dentro. Color premultiplicado por el marco.
@@ -274,6 +285,7 @@ export function MorphGallery({
   const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
   const [generation, setGeneration] = useState(0);
+  const [playing, setPlaying] = useState(false);
 
   const count = items.length;
   const active = wrapIndex(index, count);
@@ -326,7 +338,8 @@ export function MorphGallery({
       direction: uniform('direction'),
       edge: uniform('edge'),
       drift: uniform('drift'),
-      contain: uniform('contain'),
+      fromContain: uniform('fromContain'),
+      toContain: uniform('toContain'),
     };
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     gl.clearColor(0, 0, 0, 0);
@@ -460,8 +473,8 @@ export function MorphGallery({
       if (!fromTexture || !toTexture) return;
       dirty = false;
 
-      const contain =
-        t.fit === 'contain' || (t.fit === 'auto' && canvas.width < canvas.height) ? 1 : 0;
+      const fitContain = t.fit === 'contain' || (t.fit === 'auto' && canvas.width < canvas.height);
+      const containFor = (i: number) => (fitContain || items[i]?.video ? 1 : 0);
 
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.activeTexture(gl.TEXTURE0);
@@ -478,7 +491,8 @@ export function MorphGallery({
       gl.uniform1f(u.direction, direction);
       gl.uniform1f(u.edge, Math.max(t.edge, 0.001));
       gl.uniform1f(u.drift, t.drift);
-      gl.uniform1f(u.contain, contain);
+      gl.uniform1f(u.fromContain, containFor(from));
+      gl.uniform1f(u.toContain, containFor(to));
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
       if (!shown) {
@@ -521,16 +535,23 @@ export function MorphGallery({
     engine.show(active);
   }, [active, count, sources, generation]);
 
+  // Al cambiar de pieza el vídeo se desmonta sin avisar con `pause`.
+  useEffect(() => {
+    setPlaying(false);
+  }, [active]);
+
   // La miniatura actual, siempre a la vista en la tira.
   useEffect(() => {
     const current = thumbsRef.current?.querySelector<HTMLElement>('[aria-current="true"]');
     current?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   }, [active]);
 
-  // Flechas del teclado en toda la página: la galería es la página.
+  // Flechas del teclado en toda la página: la galería es la página. Salvo con
+  // el foco en el vídeo, donde las flechas avanzan y retroceden en él.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.target instanceof HTMLMediaElement) return;
       if (event.key === 'ArrowLeft') onIndexChange(wrapIndex(active - 1, count));
       else if (event.key === 'ArrowRight') onIndexChange(wrapIndex(active + 1, count));
     };
@@ -541,7 +562,8 @@ export function MorphGallery({
   // Deslizar con el dedo o el ratón.
   const swipe = useRef<number | null>(null);
   const onPointerDown = (event: React.PointerEvent) => {
-    swipe.current = event.clientX;
+    // Arrastrar la barra del vídeo no es pasar de foto.
+    swipe.current = (event.target as HTMLElement).closest('video') ? null : event.clientX;
   };
   const onPointerUp = (event: React.PointerEvent) => {
     const start = swipe.current;
@@ -559,8 +581,11 @@ export function MorphGallery({
       aria-roledescription="carousel"
       aria-label={labels.region}
       data-fit={fit}
+      // Mientras suena el vídeo, la tira se aparta: tapaba sus controles.
+      data-playing={current?.video && playing ? '' : undefined}
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
+      style={{ ['--dissolve' as string]: `${duration}ms` }}
     >
       {failed ? (
         // La misma galería sin sombreador: solo la actual y sus vecinas, con un
@@ -574,6 +599,7 @@ export function MorphGallery({
               alt={i === active ? item.alt : ''}
               className={styles.fallback}
               data-active={i === active || undefined}
+              data-video={item.video ? '' : undefined}
               aria-hidden={i !== active}
             />
           ) : null,
@@ -584,6 +610,27 @@ export function MorphGallery({
           className={styles.canvas}
           data-ready={ready || undefined}
           aria-hidden="true"
+        />
+      )}
+
+      {/**
+       * El reproductor, encima de su portada. Aparece cuando la disolución ha
+       * llegado (el retraso es su duración) y con la portada ya puesta, así que
+       * el relevo no se nota. No arranca solo: tiene sonido.
+       */}
+      {current?.video && (
+        <video
+          key={current.video}
+          className={styles.video}
+          src={current.video}
+          poster={current.src}
+          controls
+          playsInline
+          preload="metadata"
+          aria-label={current.alt}
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          onEnded={() => setPlaying(false)}
         />
       )}
 
@@ -618,6 +665,7 @@ export function MorphGallery({
                 <button
                   type="button"
                   className={styles.thumb}
+                  data-video={item.video ? '' : undefined}
                   onClick={() => go(i)}
                   aria-current={i === active}
                   aria-label={labels.show(item.alt)}

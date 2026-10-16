@@ -55,6 +55,7 @@ export function GalleryViewer({ locale, copy, header, albums, initial }: Props) 
       photos.map((item, i) => ({
         src: item.preview,
         thumb: item.thumb,
+        video: item.video,
         alt: fill(copy.photoAlt, { album: albumLabel, n: i + 1, total: photos.length }),
       })),
     [photos, albumLabel, copy.photoAlt],
@@ -94,10 +95,13 @@ export function GalleryViewer({ locale, copy, header, albums, initial }: Props) 
    *
    * Se comparte en **JPEG** y no en el WebP de la preview: WhatsApp manda un
    * `.webp` como sticker, y hay apps que ni lo aceptan.
+   *
+   * Un vídeo se comparte por enlace: mandar sus megas por la hoja de compartir
+   * es lento, y el enlace ya lleva su portada como tarjeta.
    */
   const shareFile = useRef<{ id: string; file: File } | null>(null);
   useEffect(() => {
-    if (!photo || typeof navigator.canShare !== 'function') return;
+    if (!photo || photo.video || typeof navigator.canShare !== 'function') return;
     let cancelled = false;
     (async () => {
       const blob = await (await fetch(photo.preview)).blob();
@@ -179,6 +183,13 @@ export function GalleryViewer({ locale, copy, header, albums, initial }: Props) 
 
       <div className={styles.top}>
         {brand}
+
+        {/* Con un solo álbum, su nombre como etiqueta: no hay nada que elegir. */}
+        {albums.length === 1 && (
+          <p className={styles.chip} data-tone="light">
+            {copy.albums[album.key]}
+          </p>
+        )}
 
         {albums.length > 1 && (
           <div className={styles.albums} role="group" aria-label={copy.albumsLabel}>

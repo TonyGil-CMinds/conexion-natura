@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { GALLERY_ALBUMS, GalleryViewer, loadGallery, resolveSelection } from '@/features/gallery';
+import { GalleryViewer, VISIBLE_ALBUMS, loadGallery, resolveSelection } from '@/features/gallery';
 import { getDictionary, isLocale } from '@/i18n';
 import { socialMeta } from '@/config/seo';
 
@@ -52,7 +52,7 @@ export default async function GalleryPage({ params, searchParams }: Props) {
   const gallery = await loadGallery();
   const selection = gallery ? resolveSelection(gallery, await searchParams) : null;
   const albums = gallery
-    ? GALLERY_ALBUMS.filter((album) => gallery[album].length > 0).map((album) => ({
+    ? VISIBLE_ALBUMS.filter((album) => gallery[album].length > 0).map((album) => ({
         key: album,
         photos: gallery[album],
       }))
@@ -64,7 +64,7 @@ export default async function GalleryPage({ params, searchParams }: Props) {
       copy={t.gallery}
       header={t.header}
       albums={albums}
-      initial={selection ?? { album: GALLERY_ALBUMS[0], index: 0 }}
+      initial={selection ?? { album: VISIBLE_ALBUMS[0], index: 0 }}
     />
   );
 }

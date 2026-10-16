@@ -8,4 +8,4 @@
 export { GalleryViewer } from './components/GalleryViewer';
 export { loadGallery, type GalleryData } from './lib/load-gallery';
 export { resolveSelection } from './lib/selection';
-export { GALLERY_ALBUMS } from './config/gallery';
+export { VISIBLE_ALBUMS } from './config/gallery';
