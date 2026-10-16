@@ -50,7 +50,12 @@ export default async function GalleryPage({ params, searchParams }: Props) {
   const t = getDictionary(locale);
 
   const gallery = await loadGallery();
-  const selection = gallery ? resolveSelection(gallery, await searchParams) : null;
+  const query = await searchParams;
+  const selection = gallery ? resolveSelection(gallery, query) : null;
+  const requestedPhoto = Array.isArray(query.foto) ? query.foto[0] : query.foto;
+  const initialPhotoOpen = Boolean(
+    requestedPhoto && gallery && selection && gallery[selection.album][selection.index]?.id === requestedPhoto,
+  );
   const albums = gallery
     ? VISIBLE_ALBUMS.filter((album) => gallery[album].length > 0).map((album) => ({
         key: album,
@@ -65,6 +70,7 @@ export default async function GalleryPage({ params, searchParams }: Props) {
       header={t.header}
       albums={albums}
       initial={selection ?? { album: VISIBLE_ALBUMS[0], index: 0 }}
+      initialPhotoOpen={initialPhotoOpen}
     />
   );
 }

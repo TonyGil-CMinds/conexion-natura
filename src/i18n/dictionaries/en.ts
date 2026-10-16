@@ -111,6 +111,9 @@ export const en: Dictionary = {
 
   gallery: {
     region: 'Photo gallery',
+    overview: 'All photos',
+    itemCount: '{n} items',
+    video: 'Video',
     albumsLabel: 'Albums',
     albums: {
       quito: 'Quito',

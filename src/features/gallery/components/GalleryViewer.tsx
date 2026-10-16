@@ -21,6 +21,7 @@ type Props = {
   albums: Album[];
   /** Lo que pide la URL: el enlace compartido abre en esa foto. */
   initial: { album: GalleryAlbum; index: number };
+  initialPhotoOpen: boolean;
 };
 
 /** Rellena los huecos `{nombre}` de una plantilla del diccionario. */
@@ -29,8 +30,7 @@ function fill(template: string, values: Record<string, string | number>) {
 }
 
 /**
- * La galería: la foto a pantalla completa, el álbum arriba y las acciones a un
- * lado, como en el diseño.
+ * Mosaico por defecto; al elegir una pieza se abre el visor a pantalla completa.
  *
  * La foto actual **vive en la URL** (`?album=…&foto=…`): compartir una foto es
  * compartir ese enlace, y quien lo abre aterriza en ella —con la propia foto
@@ -40,10 +40,15 @@ function fill(template: string, values: Record<string, string | number>) {
  * se quiere para mandarla por un chat o subirla a una historia. Si no, el
  * enlace; y si tampoco, se copia.
  */
-export function GalleryViewer({ locale, copy, header, albums, initial }: Props) {
+export function GalleryViewer({ locale, copy, header, albums, initial, initialPhotoOpen }: Props) {
   const [albumKey, setAlbumKey] = useState(initial.album);
   const [index, setIndex] = useState(initial.index);
+  const [photoOpen, setPhotoOpen] = useState(initialPhotoOpen);
   const [notice, setNotice] = useState<{ message: string; tone: 'info' | 'error' } | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const gridScroll = useRef(0);
+  const selectedTile = useRef<HTMLButtonElement | null>(null);
+  const overviewButton = useRef<HTMLButtonElement>(null);
 
   const album = albums.find((candidate) => candidate.key === albumKey) ?? albums[0];
   const photos = useMemo(() => album?.photos ?? [], [album]);
@@ -75,6 +80,22 @@ export function GalleryViewer({ locale, copy, header, albums, initial }: Props) 
   // Estable: la galería escucha el teclado con ella.
   const onIndexChange = useCallback((next: number) => setIndex(next), []);
 
+  const closePhoto = useCallback(() => setPhotoOpen(false), []);
+
+  useEffect(() => {
+    if (!photoOpen) {
+      if (gridRef.current) gridRef.current.scrollTop = gridScroll.current;
+      selectedTile.current?.focus({ preventScroll: true });
+      return;
+    }
+    overviewButton.current?.focus({ preventScroll: true });
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closePhoto();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [photoOpen, closePhoto]);
+
   /**
    * La URL sigue a la foto. `replaceState` y no `push`: pasar fotos no son
    * páginas, y llenar el historial haría que «atrás» recorriera la galería
@@ -84,9 +105,10 @@ export function GalleryViewer({ locale, copy, header, albums, initial }: Props) 
     if (!album || !photo) return;
     const url = new URL(window.location.href);
     url.searchParams.set('album', album.key);
-    url.searchParams.set('foto', photo.id);
+    if (photoOpen) url.searchParams.set('foto', photo.id);
+    else url.searchParams.delete('foto');
     window.history.replaceState(null, '', url);
-  }, [album, photo]);
+  }, [album, photo, photoOpen]);
 
   /**
    * El archivo para compartir se prepara **antes** de pulsar: en Safari,
@@ -101,7 +123,7 @@ export function GalleryViewer({ locale, copy, header, albums, initial }: Props) 
    */
   const shareFile = useRef<{ id: string; file: File } | null>(null);
   useEffect(() => {
-    if (!photo || photo.video || typeof navigator.canShare !== 'function') return;
+    if (!photoOpen || !photo || photo.video || typeof navigator.canShare !== 'function') return;
     let cancelled = false;
     (async () => {
       const blob = await (await fetch(photo.preview)).blob();
@@ -119,7 +141,7 @@ export function GalleryViewer({ locale, copy, header, albums, initial }: Props) 
     return () => {
       cancelled = true;
     };
-  }, [photo]);
+  }, [photo, photoOpen]);
 
   const share = async () => {
     if (!album || !photo) return;
@@ -169,8 +191,37 @@ export function GalleryViewer({ locale, copy, header, albums, initial }: Props) 
   }
 
   return (
-    <div className={styles.root} data-quito>
-      <MorphGallery
+    <div className={styles.root} data-quito data-view={photoOpen ? 'photo' : 'grid'}>
+      <div ref={gridRef} className={styles.overview} hidden={photoOpen}>
+        <div className={styles.overviewHeading}>
+          <h1>{copy.region}</h1>
+          <p>{fill(copy.itemCount, { n: photos.length })}</p>
+        </div>
+        <ul className={styles.grid} aria-label={albumLabel}>
+          {photos.map((item, i) => (
+            <li key={item.id}>
+              <button
+                type="button"
+                className={styles.tile}
+                aria-label={`${fill(copy.show, { photo: items[i].alt })}${item.video ? ` · ${copy.video}` : ''}`}
+                onClick={(event) => {
+                  gridScroll.current = gridRef.current?.scrollTop ?? 0;
+                  selectedTile.current = event.currentTarget;
+                  setIndex(i);
+                  setPhotoOpen(true);
+                }}
+              >
+                {/* El bucket ya entrega miniaturas a medida. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={item.thumb} alt="" width={240} height={240} loading={i < 12 ? 'eager' : 'lazy'} decoding="async" />
+                {item.video && <span className={styles.videoBadge} aria-hidden="true">▶ {copy.video}</span>}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {photoOpen && <MorphGallery
         // Otro álbum es otra lista: la galería se monta de nuevo y no intenta
         // disolverse entre fotos que no son vecinas.
         key={album.key}
@@ -179,7 +230,7 @@ export function GalleryViewer({ locale, copy, header, albums, initial }: Props) 
         onIndexChange={onIndexChange}
         labels={labels}
         className={styles.stage}
-      />
+      />}
 
       <div className={styles.top}>
         {brand}
@@ -204,6 +255,9 @@ export function GalleryViewer({ locale, copy, header, albums, initial }: Props) 
                   if (candidate.key === album.key) return;
                   setAlbumKey(candidate.key);
                   setIndex(0);
+                  gridScroll.current = 0;
+                  selectedTile.current = null;
+                  if (gridRef.current) gridRef.current.scrollTop = 0;
                 }}
               >
                 {copy.albums[candidate.key]}
@@ -213,7 +267,13 @@ export function GalleryViewer({ locale, copy, header, albums, initial }: Props) 
         )}
       </div>
 
-      <div className={styles.actions}>
+      {photoOpen && <div className={styles.actions}>
+        <button ref={overviewButton} type="button" className={styles.chip} data-tone="glass" onClick={closePhoto}>
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M2 2h6v6H2zm10 0h6v6h-6zM2 12h6v6H2zm10 0h6v6h-6z" />
+          </svg>
+          {copy.overview}
+        </button>
         <p className={styles.counter} aria-hidden>
           {String(index + 1).padStart(2, '0')} / {String(photos.length).padStart(2, '0')}
         </p>
@@ -225,7 +285,7 @@ export function GalleryViewer({ locale, copy, header, albums, initial }: Props) 
         <a href={photo.original} download={photo.filename} className={styles.chip} data-tone="accent">
           {copy.download}
         </a>
-      </div>
+      </div>}
 
       <Toast message={notice?.message ?? null} tone={notice?.tone} duration={2800} onDismiss={() => setNotice(null)} />
     </div>

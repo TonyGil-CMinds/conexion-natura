@@ -135,6 +135,9 @@ export const es = {
   gallery: {
     /** Nombre accesible del visor. */
     region: 'Galería de fotos',
+    overview: 'Todas las fotos',
+    itemCount: '{n} elementos',
+    video: 'Video',
     albumsLabel: 'Álbumes',
     albums: {
       quito: 'Quito',
