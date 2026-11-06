@@ -12,11 +12,11 @@ export const GALLERY_ALBUMS = ['quito', 'tanusas'] as const;
 export type GalleryAlbum = (typeof GALLERY_ALBUMS)[number];
 
 /**
- * Los que se enseñan. Tanusas está oculto: sigue en el bucket y en el índice,
- * pero la página no lo pinta ni lo abre por enlace. Volver a mostrarlo es
- * añadirlo aquí.
+ * Los que se enseñan, en el orden de los botones. Ocultar uno es quitarlo de
+ * aquí: sigue en el bucket y en el índice, pero la página no lo pinta ni lo abre
+ * por enlace (un enlace a él cae en el primero).
  */
-export const VISIBLE_ALBUMS: readonly GalleryAlbum[] = ['quito'];
+export const VISIBLE_ALBUMS: readonly GalleryAlbum[] = ['quito', 'tanusas'];
 
 export function isGalleryAlbum(value: unknown): value is GalleryAlbum {
   return typeof value === 'string' && (GALLERY_ALBUMS as readonly string[]).includes(value);
