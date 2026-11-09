@@ -16,22 +16,11 @@
   user-select: none;
 }
 
-.canvas {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  /* Hasta que llega la primera textura no hay nada: aparecer evita un destello. */
-  opacity: 0;
-  transition: opacity 400ms ease;
-}
-
-.canvas[data-ready] {
-  opacity: 1;
-}
-
-.fallback {
+/**
+ * Las fotos montadas, apiladas: la actual opaca y sus vecinas transparentes y ya
+ * cargadas. El paso de una a otra es el fundido de la opacidad.
+ */
+.photo {
   position: absolute;
   inset: 0;
   display: block;
@@ -43,26 +32,25 @@
   transition: opacity 700ms ease;
 }
 
-.fallback[data-active] {
+.photo[data-active] {
   opacity: 1;
 }
 
-/* El mismo encaje que el sombreador: en vertical, la foto entera. */
+/* Entera, sin recortar: en pantalla vertical, un vídeo y una foto vertical. */
 @media (orientation: portrait) {
-  .root[data-fit='auto'] .fallback {
+  .photo {
     object-fit: contain;
   }
 }
 
-.root[data-fit='contain'] .fallback,
-.fallback[data-video] {
+.photo[data-video],
+.photo[data-portrait] {
   object-fit: contain;
 }
 
 /**
  * El reproductor va encima de su portada, entero como ella, y fondo
- * transparente: lo que asoma a los lados es la misma portada del lienzo.
- * Aparece cuando acaba la disolución (`--dissolve`), no antes.
+ * transparente: lo que asoma a los lados es la misma portada.
  */
 .video {
   position: absolute;
@@ -74,7 +62,7 @@
   height: 100%;
   object-fit: contain;
   background: transparent;
-  animation: video-in 400ms ease var(--dissolve, 0ms) both;
+  animation: video-in 400ms ease both;
 }
 
 @keyframes video-in {
@@ -249,8 +237,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .canvas,
-  .fallback {
+  .photo {
     transition: none;
   }
 

@@ -8,7 +8,7 @@ import { QUITO } from '@/config/quito';
 import { SITE } from '@/config/site';
 import { localePath, type Dictionary, type Locale } from '@/i18n';
 import type { GalleryAlbum, GalleryPhoto } from '../config/gallery';
-import { MorphGallery } from './MorphGallery';
+import { Slideshow } from './Slideshow';
 import styles from './GalleryViewer.module.css';
 
 type Album = { key: GalleryAlbum; photos: GalleryPhoto[] };
@@ -221,9 +221,9 @@ export function GalleryViewer({ locale, copy, header, albums, initial, initialPh
         </ul>
       </div>
 
-      {photoOpen && <MorphGallery
+      {photoOpen && <Slideshow
         // Otro álbum es otra lista: la galería se monta de nuevo y no intenta
-        // disolverse entre fotos que no son vecinas.
+        // fundirse entre fotos que no son vecinas.
         key={album.key}
         items={items}
         index={index}

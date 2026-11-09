@@ -9,10 +9,10 @@ const nextConfig: NextConfig = {
   /**
    * Las fotos de la galería, servidas desde este dominio aunque vivan en R2.
    *
-   * El visor las sube a WebGL, y una textura de otro origen exige CORS de
-   * lectura, que el bucket no tiene: su regla solo abre el PUT de los retratos,
-   * y cambiarla pide un token de administración. Por el mismo dominio no hay
-   * nada que pedir. Solo pasan por aquí las previews y las miniaturas; las
+   * «Compartir» descarga la foto en la página para pasarla a JPEG, y eso exige
+   * CORS de lectura en otro origen, que el bucket no tiene: su regla solo abre
+   * el PUT de los retratos, y cambiarla pide un token de administración. Por el
+   * mismo dominio no hay nada que pedir. Solo pasan por aquí las previews y las miniaturas; las
    * descargas van directas al bucket.
    *
    * Sin `R2_PUBLIC_BASE_URL` —en local, donde las claves no existen— no hay

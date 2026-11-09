@@ -30,9 +30,9 @@ export const GALLERY = {
   /**
    * Ruta del mismo dominio que reenvía a la carpeta del bucket (ver
    * `next.config.ts`). Las imágenes se leen por aquí y no por la URL pública de
-   * R2 porque el visor las sube a WebGL: una textura de otro origen exige CORS
-   * de lectura, y la regla del bucket solo abre el PUT de los retratos. Por el
-   * mismo dominio no hay nada que pedir.
+   * R2 porque «Compartir» descarga la foto en la página para pasarla a JPEG, y
+   * eso exige CORS de lectura en otro origen; la regla del bucket solo abre el PUT
+   * de los retratos. Por el mismo dominio no hay nada que pedir.
    */
   proxyPath: '/galeria-media',
   /**
@@ -86,7 +86,7 @@ export type GalleryManifest = {
 /** Lo que recibe el visor: cada pieza con sus direcciones ya resueltas. */
 export type GalleryPhoto = {
   id: string;
-  /** La imagen que se ve, del mismo dominio: entra en WebGL. En un vídeo, su portada. */
+  /** La imagen que se ve, del mismo dominio. En un vídeo, su portada. */
   preview: string;
   thumb: string;
   /** Si es un vídeo, el que se reproduce. */

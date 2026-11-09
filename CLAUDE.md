@@ -421,7 +421,7 @@ pide las firmas a `/api/galeria/firmar` con `CEIBA_GALLERY_TOKEN`. Sin esa
 variable la ruta da 404: borrarla la apaga.
 
 Previews y miniaturas se leen por `/galeria-media` (rewrite en `next.config.ts`)
-y no por la URL pública: el visor las sube a WebGL, que exige CORS de lectura, y
+y no por la URL pública: «Compartir» descarga la foto en la página, que exige CORS de lectura, y
 la regla del bucket solo abre el PUT. Los originales van directos al bucket con
 `Content-Disposition: attachment`: el atributo `download` no vale entre orígenes.
 
@@ -432,12 +432,13 @@ Preview y original se emparejan por nombre aproximado (`pairSources`: sin tildes
 y la preview puede empezar por el nombre del original). Un vídeo lleva un `.mp4`
 ligero en `Preview`, el pesado en `Originals` y una **portada** con el mismo
 nombre que el `.mp4` de `Preview`: sin ella no se sube. No hay `ffmpeg`, así que
-la portada no se genera sola. Los vídeos van los primeros del álbum. La
-disolución llega a la portada y el reproductor aparece encima. El `.mp4` se
+la portada no se genera sola. Los vídeos van los primeros del álbum: se ve
+la portada y el reproductor aparece encima. El `.mp4` se
 reproduce directo del bucket: un `<video>` no pide CORS.
 
-El visor (`MorphGallery`) carga texturas bajo demanda (la actual y sus vecinas),
-encaja la foto entera en vertical y solo pinta cuando algo cambia. Compartir
+El visor (`Slideshow`) pasa de foto con un fundido de opacidad; la disolución
+WebGL de antes se quitó. Solo monta la actual y sus vecinas, y enseña entera la
+foto en pantalla vertical y la foto vertical en cualquier pantalla. Compartir
 prepara un JPEG antes del clic: Safari exige llamar a `navigator.share` en el
 mismo gesto, y WhatsApp manda un `.webp` como sticker.
 
