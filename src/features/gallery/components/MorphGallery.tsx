@@ -474,7 +474,10 @@ export function MorphGallery({
       dirty = false;
 
       const fitContain = t.fit === 'contain' || (t.fit === 'auto' && canvas.width < canvas.height);
-      const containFor = (i: number) => (fitContain || items[i]?.video ? 1 : 0);
+      // Un vídeo, o una foto vertical en pantalla apaisada, va entera: recortada
+      // a lo ancho perdía dos tercios.
+      const containFor = (i: number) =>
+        fitContain || items[i]?.video || (aspects[i] < 1 && canvas.width > canvas.height) ? 1 : 0;
 
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.activeTexture(gl.TEXTURE0);
